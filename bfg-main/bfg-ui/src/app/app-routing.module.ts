@@ -7,13 +7,13 @@ import { LayoutComponent } from './core/components/layout/layout.component';
 
 const routes: Routes = [
   {
-    path: routingPaths.empty, component: LayoutComponent, children: [
-      { path: routingPaths.empty, redirectTo: routingPaths.home, pathMatch: 'full' },
-      { path: routingPaths.home, loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
-      { path: routingPaths.reports, loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule) },
+    path: routingPaths.EMPTY, component: LayoutComponent, children: [
+      { path: routingPaths.EMPTY, redirectTo: routingPaths.HOME, pathMatch: 'full' },
+      { path: routingPaths.HOME, loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
+      { path: routingPaths.REPORTS, loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule) },
     ]
   },
-  { path: routingPaths.pageNotFound, component: PageNotFoundComponent }
+  { path: routingPaths.PAGE_NOT_FOUND, component: PageNotFoundComponent }
 ];
 [];
 

@@ -2,7 +2,7 @@
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
       <li class="mat-tree-node">
-        <a mat-button [href]="node.route">{{node.name}}</a>
+        <a mat-button [routerLink]="'/' + node.route">{{node.name}}</a>
       </li>
     </mat-tree-node>
     <!-- This is the tree node template for expandable nodes -->

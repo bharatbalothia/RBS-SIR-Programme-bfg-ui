@@ -11,9 +11,9 @@ const routes: Routes = [
       { path: routingPaths.EMPTY, redirectTo: routingPaths.HOME, pathMatch: 'full' },
       { path: routingPaths.HOME, loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
       { path: routingPaths.REPORTS, loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule) },
+      { path: routingPaths.PAGE_NOT_FOUND, component: PageNotFoundComponent },
     ]
-  },
-  { path: routingPaths.PAGE_NOT_FOUND, component: PageNotFoundComponent }
+  }
 ];
 [];
 

@@ -6,9 +6,6 @@ export const routingPaths = {
   // home routes
   HOME: 'home',
 
-  // reports routes
-  REPORTS: 'reports',
-
   // monitor routes
   FILE_MONITOR: 'file-monitor',
   ERROR_MONITOR: 'error-monitor',

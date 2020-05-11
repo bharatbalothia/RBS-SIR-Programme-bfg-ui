@@ -1,4 +1,4 @@
-import { routingPaths } from './routing-paths';
+import { routingPaths } from '../../constants/routing-paths';
 
 export interface MenuNode {
     name: string;
@@ -10,10 +10,6 @@ export  const MENU_DATA: MenuNode[] = [
     {
       name: 'Home',
       route: routingPaths.HOME
-    },
-    {
-      name: 'Reports',
-      route: routingPaths.REPORTS
     },
     {
       name: 'Monitor',

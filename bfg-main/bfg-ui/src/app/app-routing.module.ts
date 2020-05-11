@@ -14,10 +14,6 @@ const routes: Routes = [
         loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
       },
       {
-        path: routingPaths.REPORTS,
-        loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule)
-      },
-      {
         path: routingPaths.ENTITIES,
         loadChildren: () => import('./features/setup/entities/entities.module').then(m => m.EntitiesModule)
       },

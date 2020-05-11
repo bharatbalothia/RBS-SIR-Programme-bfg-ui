@@ -9,13 +9,27 @@ const routes: Routes = [
   {
     path: routingPaths.EMPTY, component: LayoutComponent, children: [
       { path: routingPaths.EMPTY, redirectTo: routingPaths.HOME, pathMatch: 'full' },
-      { path: routingPaths.HOME, loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
-      { path: routingPaths.REPORTS, loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule) },
+      {
+        path: routingPaths.HOME,
+        loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
+      },
+      {
+        path: routingPaths.REPORTS,
+        loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule)
+      },
+      {
+        path: routingPaths.ENTITIES,
+        loadChildren: () => import('./features/setup/entities/entities.module').then(m => m.EntitiesModule)
+      },
+      {
+        path: routingPaths.TRUSTED_CERTIFICATES,
+        loadChildren: () => import('./features/setup/trusted-certificates/trusted-certificates.module')
+          .then(m => m.TrustedCertificatesModule)
+      },
       { path: routingPaths.PAGE_NOT_FOUND, component: PageNotFoundComponent },
     ]
   }
 ];
-[];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

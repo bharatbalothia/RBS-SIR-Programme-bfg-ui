@@ -2,12 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home.component';
-import { HomeOverviewComponent } from './home-overview/home-overview.component';
+import { routingPaths } from 'src/app/core/constants/routing-paths';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, children: [
-    { path: '', component: HomeOverviewComponent }
-  ] }
+  { path: routingPaths.EMPTY, component: HomeComponent}
 ];
 
 @NgModule({

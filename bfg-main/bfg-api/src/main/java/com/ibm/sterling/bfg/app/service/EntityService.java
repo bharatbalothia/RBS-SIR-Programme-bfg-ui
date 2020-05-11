@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class EntityService {
-    private static final Logger log = LogManager.getLogger(EntityService.class);
+    private static final Logger LOG = LogManager.getLogger(EntityService.class);
+
     @Autowired
     private EntityRepository entityRepository;
 
@@ -22,31 +24,32 @@ public class EntityService {
         return entityRepository.findAll();
     }
 
-    public void save(Entity entity) {
-        entityRepository.save(entity);
+    public Optional<Entity> findById(int id) {
+        LOG.info("entity by id {}", id);
+        return entityRepository.findById(id);
     }
 
-    public Entity get(int id) {
-        log.info("entity by id {}", id);
-        return entityRepository.findById(id).get();
-    }
-
-    public void delete(int id) {
+    public void deleteById(int id) {
+        LOG.info("deleting entity by id {}", id);
         entityRepository.deleteById(id);
     }
 
+    public Entity save(Entity entity) {
+        return entityRepository.save(entity);
+    }
+
     public Page<Entity> findEntities(Pageable pageable) {
-        log.info("all existing entities");
+        LOG.info("all existing entities");
         return entityRepository.findByDeleted(false, pageable);
     }
 
     public Page<Entity> findEntitiesByService(String service, Pageable pageable) {
-        log.info("existing entities by service");
+        LOG.info("existing entities by service");
         return entityRepository.findByServiceIgnoreCaseAndDeleted(service, false, pageable);
     }
 
     public Page<Entity> findEntitiesByEntity(String entity, Pageable pageable) {
-        log.info("existing entities by name");
+        LOG.info("existing entities by name");
         return entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false, pageable);
     }
 

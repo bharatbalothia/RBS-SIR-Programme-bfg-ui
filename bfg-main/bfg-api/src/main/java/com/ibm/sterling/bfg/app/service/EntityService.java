@@ -22,8 +22,8 @@ public class EntityService {
         return entityRepository.findAll();
     }
 
-    public void save(Entity bank) {
-        entityRepository.save(bank);
+    public void save(Entity entity) {
+        entityRepository.save(entity);
     }
 
     public Entity get(int id) {

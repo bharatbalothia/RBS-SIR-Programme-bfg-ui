@@ -30,7 +30,7 @@ public class EntityController {
     }
 
     @GetMapping("/{id}")
-    public Entity getEntitiesById(@PathVariable(name = "id") int id) {
+    public Entity getEntityById(@PathVariable(name = "id") int id) {
         return entityService.get(id);
     }
 

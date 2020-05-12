@@ -14,40 +14,47 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class EntityService {
-    private static final Logger LOG = LogManager.getLogger(EntityService.class);
+public class EntityServiceImpl implements EntityService {
+    private static final Logger LOG = LogManager.getLogger(EntityServiceImpl.class);
 
     @Autowired
     private EntityRepository entityRepository;
 
+    @Override
     public List<Entity> listAll() {
         return entityRepository.findAll();
     }
 
+    @Override
     public Optional<Entity> findById(int id) {
         LOG.info("entity by id {}", id);
         return entityRepository.findById(id);
     }
 
+    @Override
     public void deleteById(int id) {
         LOG.info("deleting entity by id {}", id);
         entityRepository.deleteById(id);
     }
 
+    @Override
     public Entity save(Entity entity) {
         return entityRepository.save(entity);
     }
 
+    @Override
     public Page<Entity> findEntities(Pageable pageable) {
         LOG.info("all existing entities");
         return entityRepository.findByDeleted(false, pageable);
     }
 
+    @Override
     public Page<Entity> findEntitiesByService(String service, Pageable pageable) {
         LOG.info("existing entities by service");
         return entityRepository.findByServiceIgnoreCaseAndDeleted(service, false, pageable);
     }
 
+    @Override
     public Page<Entity> findEntitiesByEntity(String entity, Pageable pageable) {
         LOG.info("existing entities by name");
         return entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false, pageable);

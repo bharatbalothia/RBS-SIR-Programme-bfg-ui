@@ -1,6 +1,7 @@
-export const routingPaths = {
+export const ROUTING_PATHS = {
   // root routes
   EMPTY: '',
+  CREATE: 'create',
   PAGE_NOT_FOUND: '**',
 
   // home routes

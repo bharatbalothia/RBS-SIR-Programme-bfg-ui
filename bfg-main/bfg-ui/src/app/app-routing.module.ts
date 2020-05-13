@@ -1,28 +1,28 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './core/components/page-not-found/page-not-found.component';
-import { routingPaths } from './core/constants/routing-paths';
+import { ROUTING_PATHS } from './core/constants/routing-paths';
 import { LayoutComponent } from './core/components/layout/layout.component';
 
 
 const routes: Routes = [
   {
-    path: routingPaths.EMPTY, component: LayoutComponent, children: [
-      { path: routingPaths.EMPTY, redirectTo: routingPaths.HOME, pathMatch: 'full' },
+    path: ROUTING_PATHS.EMPTY, component: LayoutComponent, children: [
+      { path: ROUTING_PATHS.EMPTY, redirectTo: ROUTING_PATHS.HOME, pathMatch: 'full' },
       {
-        path: routingPaths.HOME,
+        path: ROUTING_PATHS.HOME,
         loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
       },
       {
-        path: routingPaths.ENTITIES,
+        path: ROUTING_PATHS.ENTITIES,
         loadChildren: () => import('./features/setup/entities/entities.module').then(m => m.EntitiesModule)
       },
       {
-        path: routingPaths.TRUSTED_CERTIFICATES,
+        path: ROUTING_PATHS.TRUSTED_CERTIFICATES,
         loadChildren: () => import('./features/setup/trusted-certificates/trusted-certificates.module')
           .then(m => m.TrustedCertificatesModule)
       },
-      { path: routingPaths.PAGE_NOT_FOUND, component: PageNotFoundComponent },
+      { path: ROUTING_PATHS.PAGE_NOT_FOUND, component: PageNotFoundComponent },
     ]
   }
 ];

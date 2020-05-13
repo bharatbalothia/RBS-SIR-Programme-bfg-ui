@@ -1,1 +1,30 @@
-<p>Entity home</p>
+<div class="entity-home-content">
+
+    <mat-card class="entity-home-card">
+        <mat-card-header>
+            <mat-card-title>Create Entity</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="card-content">
+            <a mat-raised-button [routerLink]="ROUTING_PATHS.CREATE">Create</a>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="entity-home-card">
+        <mat-card-header>
+            <mat-card-title>Search Entities</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="card-content">
+            <button mat-raised-button>Search</button>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="entity-home-card">
+        <mat-card-header>
+            <mat-card-title>Pending Changes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="card-content">
+            <button mat-raised-button>Go to list pending changes</button>
+        </mat-card-content>
+    </mat-card>
+
+</div>

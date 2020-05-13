@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { routingPaths } from 'src/app/core/constants/routing-paths';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { TrustedCertificatesHomeComponent } from './trusted-certificates-home/trusted-certificates-home.component';
 
 
 export const routes: Routes = [
-    { path: routingPaths.EMPTY, component: TrustedCertificatesHomeComponent }
+    { path: ROUTING_PATHS.EMPTY, component: TrustedCertificatesHomeComponent }
 ];
 
 @NgModule({

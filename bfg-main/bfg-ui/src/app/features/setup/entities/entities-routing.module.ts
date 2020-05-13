@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { routingPaths } from 'src/app/core/constants/routing-paths';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { EntityHomeComponent } from './entity-home/entity-home.component';
+import { EntityCreateComponent } from './entity-create/entity-create.component';
 
 
 export const routes: Routes = [
-    { path: routingPaths.EMPTY, component: EntityHomeComponent }
+    { path: ROUTING_PATHS.EMPTY, component: EntityHomeComponent },
+    { path: ROUTING_PATHS.CREATE, component: EntityCreateComponent }
 ];
 
 @NgModule({

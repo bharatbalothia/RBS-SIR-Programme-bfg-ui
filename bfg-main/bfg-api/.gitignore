@@ -2,6 +2,8 @@
 /.apt_generated_tests/
 /.settings/
 /target/
+/src/main/webapp/
+!/src/main/webapp/WEB-INF/
 .classpath
 .project
 .factorypath

@@ -3,152 +3,221 @@
         <mat-card-title>Create Entity</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-                    <mat-horizontal-stepper #stepper>
-                <mat-step [stepControl]="entityTypeFormGroup">
-                    <form [formGroup]="entityTypeFormGroup">
-                        <ng-template matStepLabel>Choose entity type</ng-template>
+        <mat-horizontal-stepper #stepper>
+            <mat-step [stepControl]="entityTypeFormGroup">
+                <form [formGroup]="entityTypeFormGroup">
+                    <ng-template matStepLabel>Choose entity type</ng-template>
+                    <mat-form-field>
+                        <mat-label>Entity type</mat-label>
+                        <mat-select formControlName="entityTypeSelect">
+                            <mat-option value="GPL">GPL</mat-option>
+                            <mat-option value="SCT">SCT</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="entityPageFormGroup">
+                <form [formGroup]="entityPageFormGroup">
+                    <ng-template matStepLabel>Fill entity page</ng-template>
+                    <mat-form-field>
+                        <mat-label>Entity</mat-label>
+                        <input matInput formControlName="entity">
+                    </mat-form-field>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Route Inbound:</label>
+                        <mat-radio-group formControlName='routeInbound'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section>
                         <mat-form-field>
-                            <mat-label>Entity type</mat-label>
-                            <mat-select required formControlName="entityTypeSelect">
-                                <mat-option value="GPL">GPL</mat-option>
-                                <mat-option value="SCT">SCT</mat-option>
+                            <mat-label>Inbound Requestor DN</mat-label>
+                            <input matInput formControlName="inboundRequestorDN">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Inbound Responder DN</mat-label>
+                            <input matInput formControlName="inboundResponderDN">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Inbound Service</mat-label>
+                            <input matInput formControlName="inboundService">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Inbound Request Type</mat-label>
+                            <mat-select formControlName="inboundRequestType" multiple>
+                                <mat-select-trigger>
+                                    <mat-chip-list>
+                                        <mat-chip
+                                            *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
+                                            [removable]="true"
+                                            (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
+                                            {{ inboundRequestType }}
+                                            <mat-icon matChipRemove>cancel</mat-icon>
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </mat-select-trigger>
+                                <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
+                                    [value]="inboundRequestType">{{inboundRequestType}}
+                                </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <div class='stepper-actions'>
-                            <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        </div>
-                    </form>
-                </mat-step>
-                <mat-step [stepControl]="entityPageFormGroup">
-                    <form [formGroup]="entityPageFormGroup">
-                        <ng-template matStepLabel>Fill entity page</ng-template>
-                        <mat-form-field>
-                            <mat-label>Entity</mat-label>
-                            <input matInput formControlName="entity" required>
-                        </mat-form-field>
-                        <section>
-                            <mat-checkbox matInput formControlName="routeInbound" required>Route Inbound</mat-checkbox>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Inbound Requestor DN</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Inbound Responder DN</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Inbound Service</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <p>
-                            <mat-checkbox matInput required>Inbound Directory</mat-checkbox>
-                        </p>
-                        <section>
-                            <mat-checkbox matInput required>Inbound Routing Rule</mat-checkbox>
-                        </section>
-                        <div class='stepper-actions'>
-                            <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                            <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        </div>
-                    </form>
-                </mat-step>
-                <mat-step [stepControl]="SWIFTDetailsFormGroup">
-                    <form [formGroup]="SWIFTDetailsFormGroup">
-                        <ng-template matStepLabel>Fill SWIFT details</ng-template>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Requestor DN</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Responder DN</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-checkbox matInput>Trace</mat-checkbox>
-                        </section>
-                        <section>
-                            <mat-checkbox matInput>SnF</mat-checkbox>
-                        </section>
-                        <section>
-                            <mat-checkbox matInput>Delivery Notification</mat-checkbox>
-                        </section>
-                        <section>
-                            <mat-checkbox matInput>Non-Repudiation</mat-checkbox>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>End to End Signing</mat-label>
-                                <input matInput required>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>Request Reference</mat-label>
-                                <input matInput>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                            <mat-form-field>
-                                <mat-label>File Info</mat-label>
-                                <input matInput>
-                            </mat-form-field>
-                        </section>
-                        <section>
-                        <mat-form-field>
-                            <mat-label>File Description</mat-label>
-                            <input matInput>
-                        </mat-form-field>
-                        </section>
-                        <section>
-                        <mat-form-field>
-                            <mat-label>Transfer Info</mat-label>
-                            <input matInput>
-                        </mat-form-field>
-                        </section>
-                        <section>
-                        <mat-form-field>
-                            <mat-label>Transfer Description</mat-label>
-                            <input matInput>
-                        </mat-form-field>
-                        </section>
-                        <div class='stepper-actions'>
-                            <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                            <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        </div>
-                    </form>
-                </mat-step>
-                <mat-step [stepControl]="summaryPageFormGroup">
-                    <form [formGroup]="summaryPageFormGroup">
-                        <ng-template matStepLabel>Fill summary page</ng-template>
-                        <mat-form-field>
-                            <mat-label>Changer comments</mat-label>
-                            <textarea matInput required></textarea>
-                        </mat-form-field>
-                        <div class='stepper-actions'>
-                            <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                            <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        </div>
-                    </form>
-                </mat-step>
-                <mat-step>
-                    <ng-template matStepLabel>Done</ng-template>
-                    <p>You are now done.</p>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Inbound Directory:</label>
+                        <mat-radio-group formControlName='inboundDirectory'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Inbound Routing Rule:</label>
+                        <mat-radio-group formControlName='inboundRoutingRule'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="stepper.reset()">Reset</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
                     </div>
-                </mat-step>
-            </mat-horizontal-stepper>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="SWIFTDetailsFormGroup">
+                <form [formGroup]="SWIFTDetailsFormGroup">
+                    <ng-template matStepLabel>Fill SWIFT details</ng-template>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Requestor DN</mat-label>
+                            <input matInput formControlName="requestorDN">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Responder DN</mat-label>
+                            <input matInput formControlName="responderDN">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Request Type</mat-label>
+                            <input matInput formControlName="requestType">
+                        </mat-form-field>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Trace:</label>
+                        <mat-radio-group formControlName='trace'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>SnF:</label>
+                        <mat-radio-group formControlName='snF'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Delivery Notification:</label>
+                        <mat-radio-group formControlName='deliveryNotification'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>Non-Repudiation:</label>
+                        <mat-radio-group formControlName='nonRepudiation'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section class='radio-group-section'>
+                        <label class='radio-group-label'>End to End Signing:</label>
+                        <mat-radio-group formControlName='endToEndSigning'>
+                            <mat-radio-button value="None">Yes</mat-radio-button>
+                            <mat-radio-button value="Crypto">No</mat-radio-button>
+                        </mat-radio-group>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Delivery Notification DN</mat-label>
+                            <input matInput formControlName="deliveryNotificationDN">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Delivery Notification RT</mat-label>
+                            <input matInput formControlName="deliveryNotificationRT">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Request Reference</mat-label>
+                            <input matInput formControlName="requestReference">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>File Info</mat-label>
+                            <input matInput formControlName="fileInfo">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>File Description</mat-label>
+                            <input matInput formControlName="fileDescription">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Transfer Info</mat-label>
+                            <input matInput formControlName="transferInfo">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <mat-label>Transfer Description</mat-label>
+                            <input matInput formControlName="transferDescription">
+                        </mat-form-field>
+                    </section>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="summaryPageFormGroup">
+                <form [formGroup]="summaryPageFormGroup">
+                    <ng-template matStepLabel>Fill summary page</ng-template>
+                    <mat-form-field>
+                        <mat-label>Changer comments</mat-label>
+                        <textarea matInput formControlName="changerComments"></textarea>
+                    </mat-form-field>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step>
+                <ng-template matStepLabel>Done</ng-template>
+                <p>You are now done.</p>
+                <div class='stepper-actions'>
+                    <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                    <button mat-raised-button class="action-button" color='warn'
+                        (click)="stepper.reset()">Reset</button>
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
     </mat-card-content>
 </mat-card>

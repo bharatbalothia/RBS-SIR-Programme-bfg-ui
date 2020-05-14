@@ -14,7 +14,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
-
+import {MatChipsModule} from '@angular/material/chips';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [],
@@ -34,7 +36,10 @@ import {MatSelectModule} from '@angular/material/select';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatRadioModule
   ],
   exports: [
     CommonModule,
@@ -51,7 +56,10 @@ import {MatSelectModule} from '@angular/material/select';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatRadioModule
   ]
 })
 export class SharedModule { }

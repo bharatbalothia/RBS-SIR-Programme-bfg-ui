@@ -13,6 +13,12 @@
                             <mat-option value="GPL">GPL</mat-option>
                             <mat-option value="SCT">SCT</mat-option>
                         </mat-select>
+                        <mat-error *ngFor="let validation of validationMessages.entityTypeSelect">
+                            <mat-error class="error-message" *ngIf="entityTypeFormGroup.get('entityTypeSelect').hasError(validation.type)
+                                && (entityTypeFormGroup.get('entityTypeSelect').dirty
+                                || entityTypeFormGroup.get('entityTypeSelect').touched)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                     </mat-form-field>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
@@ -25,6 +31,12 @@
                     <mat-form-field>
                         <mat-label>Entity</mat-label>
                         <input matInput formControlName="entity" required>
+                        <mat-error *ngFor="let validation of validationMessages.entity">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)
+                                && (entityPageFormGroup.get('entity').dirty
+                                || entityPageFormGroup.get('entity').touched)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                     </mat-form-field>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Route Inbound:</label>
@@ -37,6 +49,12 @@
                         <mat-form-field>
                             <mat-label>Inbound Requestor DN</mat-label>
                             <input matInput formControlName="inboundRequestorDN" required>
+                            <mat-error *ngFor="let validation of validationMessages.entity">
+                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)
+                                    && (entityPageFormGroup.get('inboundRequestorDN').dirty
+                                    || entityPageFormGroup.get('inboundRequestorDN').touched)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>

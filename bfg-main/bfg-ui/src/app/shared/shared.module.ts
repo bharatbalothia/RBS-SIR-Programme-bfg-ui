@@ -21,6 +21,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatAutocompleteModule,
     MatRadioModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTableModule
   ],
   exports: [
     // Modules
@@ -71,9 +73,11 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatAutocompleteModule,
     MatRadioModule,
     MatDialogModule,
+    MatTableModule,
 
     // Components
     ConfirmDialogComponent
+
   ]
 })
 export class SharedModule { }

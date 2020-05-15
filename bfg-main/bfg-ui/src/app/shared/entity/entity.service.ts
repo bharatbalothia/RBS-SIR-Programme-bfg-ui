@@ -17,4 +17,8 @@ export class EntityService {
     return this.http.post<Entity>(this.apiUrl, entity);
   }
 
+  getEntites<EntitiesWithPagination>() {
+    return this.http.get(this.apiUrl);
+  }
+
 }

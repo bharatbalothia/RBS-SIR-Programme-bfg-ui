@@ -2,6 +2,8 @@ export const ROUTING_PATHS = {
   // root routes
   EMPTY: '',
   CREATE: 'create',
+  SEARCH: 'search',
+  PENDING: 'pending',
   PAGE_NOT_FOUND: '**',
 
   // home routes

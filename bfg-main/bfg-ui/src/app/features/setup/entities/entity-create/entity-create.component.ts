@@ -1,13 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { EntityService } from 'src/app/shared/entity/entity.service';
+import { Entity } from 'src/app/shared/entity/entity.model';
+
+
 @Component({
   selector: 'app-entity-create',
   templateUrl: './entity-create.component.html',
   styleUrls: ['./entity-create.component.scss']
 })
 export class EntityCreateComponent implements OnInit {
+
+  isLinear = true;
+
+  @ViewChild('stepper') stepper;
 
   inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
   validationMessages = ENTITY_VALIDATION_MESSAGES;
@@ -17,26 +28,28 @@ export class EntityCreateComponent implements OnInit {
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private dialog: MatDialog,
+    private entityService: EntityService
+  ) { }
 
   ngOnInit() {
+    this.initializeFormGroups();
+  }
+
+  initializeFormGroups() {
     this.entityTypeFormGroup = this.formBuilder.group({
-      entityTypeSelect: ['', Validators.required]
+      service: ['', Validators.required]
     });
     this.entityPageFormGroup = this.formBuilder.group({
-      entity: ['', [
-        Validators.required,
-        Validators.pattern('[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}')
-      ]],
+      entity: ['', Validators.required],
       routeInbound: [true, Validators.required],
-      inboundRequestorDN: ['', [
-        Validators.required,
-        Validators.pattern(/^ou=(.*?),o=([A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}),o=swift$/)
-      ]],
+      inboundRequestorDN: ['', Validators.required],
       inboundResponderDN: ['', Validators.required],
-      inboundService: ['', Validators.required],
+      inboundService: ['swift.corp.fa', Validators.required],
       inboundRequestType: [[], Validators.nullValidator],
-      inboundDirectory: [true, Validators.required],
+      inboundDir: [true, Validators.required],
       inboundRoutingRule: [true, Validators.required]
     });
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
@@ -47,14 +60,14 @@ export class EntityCreateComponent implements OnInit {
       snF: [null, Validators.nullValidator],
       deliveryNotification: ['', Validators.nullValidator],
       nonRepudiation: ['', Validators.nullValidator],
-      endToEndSigning: ['None', Validators.required],
-      deliveryNotificationDN: ['', Validators.nullValidator],
-      deliveryNotificationRT: ['', Validators.nullValidator],
-      requestReference: ['', Validators.nullValidator],
+      e2eSigning: ['None', Validators.required],
+      deliveryNotifDN: ['', Validators.nullValidator],
+      deliveryNotifRT: ['', Validators.nullValidator],
+      requestRef: ['', Validators.nullValidator],
       fileInfo: ['', Validators.nullValidator],
-      fileDescription: ['', Validators.nullValidator],
+      fileDesc: ['', Validators.nullValidator],
       transferInfo: ['', Validators.nullValidator],
-      transferDescription: ['', Validators.nullValidator]
+      transferDesc: ['', Validators.nullValidator]
     });
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: ['', Validators.nullValidator]
@@ -74,4 +87,49 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
+  createEntity() {
+    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+      title: `Create ${entityName} entity`,
+      text: `Are you sure to create ${entityName} entity?`,
+      yesCaption: 'Create',
+      noCaption: 'Cancel'
+    }));
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.entityService.createEntity({
+          ...this.entityTypeFormGroup.value,
+          ...this.entityPageFormGroup.value,
+          ...this.SWIFTDetailsFormGroup.value,
+          ...this.summaryPageFormGroup.value
+        }).subscribe(
+          () => {
+            this.stepper.reset();
+            this.initializeFormGroups();
+          },
+          (error) => {
+            this.stepper.reset();
+            this.initializeFormGroups();
+          }
+        );
+      }
+    });
+  }
+
+  cancelCreationEntity() {
+    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+      title: `Cancel creation of the ${entityName} entity`,
+      text: `Are you sure to cancel the creation of the ${entityName} entity?`,
+      yesCaption: 'Cancel',
+      yesCaptionColor: 'warn',
+      noCaption: 'Close'
+    }));
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.stepper.reset();
+        this.initializeFormGroups();
+      }
+    });
+  }
 }

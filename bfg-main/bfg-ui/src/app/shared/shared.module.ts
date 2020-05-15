@@ -19,9 +19,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatRadioModule } from '@angular/material/radio';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    // Components
+    ConfirmDialogComponent
+  ],
   imports: [
     CommonModule,
     LayoutModule,
@@ -42,9 +47,11 @@ import { MatRadioModule } from '@angular/material/radio';
     MatChipsModule,
     MatAutocompleteModule,
     MatRadioModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule
   ],
   exports: [
+    // Modules
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
@@ -62,7 +69,11 @@ import { MatRadioModule } from '@angular/material/radio';
     MatSelectModule,
     MatChipsModule,
     MatAutocompleteModule,
-    MatRadioModule
+    MatRadioModule,
+    MatDialogModule,
+
+    // Components
+    ConfirmDialogComponent
   ]
 })
 export class SharedModule { }

@@ -3,20 +3,20 @@
         <mat-card-title>Create Entity</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <mat-horizontal-stepper #stepper>
+        <mat-horizontal-stepper #stepper [linear]="isLinear">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">
                     <ng-template matStepLabel>Choose entity type</ng-template>
                     <mat-form-field>
                         <mat-label>Entity type</mat-label>
-                        <mat-select formControlName="entityTypeSelect" required>
+                        <mat-select formControlName="service" required>
                             <mat-option value="GPL">GPL</mat-option>
                             <mat-option value="SCT">SCT</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of validationMessages.entityTypeSelect">
-                            <mat-error class="error-message" *ngIf="entityTypeFormGroup.get('entityTypeSelect').hasError(validation.type)
-                                && (entityTypeFormGroup.get('entityTypeSelect').dirty
-                                || entityTypeFormGroup.get('entityTypeSelect').touched)">
+                        <mat-error *ngFor="let validation of validationMessages.service">
+                            <mat-error class="error-message" *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)
+                                && (entityTypeFormGroup.get('service').dirty
+                                || entityTypeFormGroup.get('service').touched)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                     </mat-form-field>
@@ -49,7 +49,7 @@
                         <mat-form-field>
                             <mat-label>Inbound Requestor DN</mat-label>
                             <input matInput formControlName="inboundRequestorDN" required>
-                            <mat-error *ngFor="let validation of validationMessages.entity">
+                            <mat-error *ngFor="let validation of validationMessages.inboundRequestorDN">
                                 <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)
                                     && (entityPageFormGroup.get('inboundRequestorDN').dirty
                                     || entityPageFormGroup.get('inboundRequestorDN').touched)">
@@ -61,12 +61,24 @@
                         <mat-form-field>
                             <mat-label>Inbound Responder DN</mat-label>
                             <input matInput formControlName="inboundResponderDN" required>
+                            <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
+                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)
+                                    && (entityPageFormGroup.get('inboundResponderDN').dirty
+                                    || entityPageFormGroup.get('inboundResponderDN').touched)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Inbound Service</mat-label>
                             <input matInput formControlName="inboundService" required>
+                            <mat-error *ngFor="let validation of validationMessages.inboundService">
+                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)
+                                    && (entityPageFormGroup.get('inboundService').dirty
+                                    || entityPageFormGroup.get('inboundService').touched)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
@@ -92,7 +104,7 @@
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Inbound Directory:</label>
-                        <mat-radio-group formControlName='inboundDirectory'>
+                        <mat-radio-group formControlName='inboundDir'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
@@ -107,6 +119,8 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                            Cancel</button>
                     </div>
                 </form>
             </mat-step>
@@ -117,12 +131,24 @@
                         <mat-form-field>
                             <mat-label>Requestor DN</mat-label>
                             <input matInput formControlName="requestorDN" required>
+                            <mat-error *ngFor="let validation of validationMessages.requestorDN">
+                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)
+                                    && (SWIFTDetailsFormGroup.get('requestorDN').dirty
+                                    || SWIFTDetailsFormGroup.get('requestorDN').touched)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Responder DN</mat-label>
                             <input matInput formControlName="responderDN" required>
+                            <mat-error *ngFor="let validation of validationMessages.responderDN">
+                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)
+                                    && (SWIFTDetailsFormGroup.get('responderDN').dirty
+                                    || SWIFTDetailsFormGroup.get('responderDN').touched)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
@@ -161,7 +187,7 @@
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>End to End Signing:</label>
-                        <mat-radio-group formControlName='endToEndSigning'>
+                        <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>
                             <mat-radio-button value="Crypto">Crypto</mat-radio-button>
                         </mat-radio-group>
@@ -169,19 +195,19 @@
                     <section>
                         <mat-form-field>
                             <mat-label>Delivery Notification DN</mat-label>
-                            <input matInput formControlName="deliveryNotificationDN">
+                            <input matInput formControlName="deliveryNotifDN">
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Delivery Notification RT</mat-label>
-                            <input matInput formControlName="deliveryNotificationRT">
+                            <input matInput formControlName="deliveryNotifRT">
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Request Reference</mat-label>
-                            <input matInput formControlName="requestReference">
+                            <input matInput formControlName="requestRef">
                         </mat-form-field>
                     </section>
                     <section>
@@ -193,7 +219,7 @@
                     <section>
                         <mat-form-field>
                             <mat-label>File Description</mat-label>
-                            <input matInput formControlName="fileDescription">
+                            <input matInput formControlName="fileDesc">
                         </mat-form-field>
                     </section>
                     <section>
@@ -205,12 +231,14 @@
                     <section>
                         <mat-form-field>
                             <mat-label>Transfer Description</mat-label>
-                            <input matInput formControlName="transferDescription">
+                            <input matInput formControlName="transferDesc">
                         </mat-form-field>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                            Cancel</button>
                     </div>
                 </form>
             </mat-step>
@@ -224,6 +252,8 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                            Cancel</button>
                     </div>
                 </form>
             </mat-step>
@@ -232,8 +262,10 @@
                 <p>You are now done.</p>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                    <button mat-raised-button class="action-button" color='warn'
-                        (click)="stepper.reset()">Reset</button>
+                    <button mat-raised-button class="action-button" color='primary'
+                        (click)="createEntity()">Create</button>
+                    <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                        Cancel</button>
                 </div>
             </mat-step>
         </mat-horizontal-stepper>

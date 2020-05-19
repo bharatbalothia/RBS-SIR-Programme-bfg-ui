@@ -3,6 +3,8 @@
         <mat-card-title>Create Entity</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
+        <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
+        </mat-error>
         <mat-horizontal-stepper #stepper [linear]="isLinear">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">
@@ -18,6 +20,9 @@
                                 && (entityTypeFormGroup.get('service').dirty
                                 || entityTypeFormGroup.get('service').touched)">
                                 {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('service')">
+                            {{getErrorByField('service')}}
                         </mat-error>
                     </mat-form-field>
                     <div class='stepper-actions'>
@@ -37,6 +42,9 @@
                                 || entityPageFormGroup.get('entity').touched)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('entity')">
+                            {{getErrorByField('entity')}}
+                        </mat-error>
                     </mat-form-field>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Route Inbound:</label>
@@ -44,6 +52,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('routeInbound')">
+                            {{getErrorByField('routeInbound')}}
+                        </mat-error>
                     </section>
                     <section>
                         <mat-form-field>
@@ -55,9 +66,11 @@
                                     || entityPageFormGroup.get('inboundRequestorDN').touched)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestorDN')">
+                                {{getErrorByField('inboundRequestorDN')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
-                    <section>
                         <mat-form-field>
                             <mat-label>Inbound Responder DN</mat-label>
                             <input matInput formControlName="inboundResponderDN" required>
@@ -67,9 +80,10 @@
                                     || entityPageFormGroup.get('inboundResponderDN').touched)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
+                                {{getErrorByField('inboundResponderDN')}}
+                            </mat-error>
                         </mat-form-field>
-                    </section>
-                    <section>
                         <mat-form-field>
                             <mat-label>Inbound Service</mat-label>
                             <input matInput formControlName="inboundService" required>
@@ -79,9 +93,10 @@
                                     || entityPageFormGroup.get('inboundService').touched)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
+                                {{getErrorByField('inboundService')}}
+                            </mat-error>
                         </mat-form-field>
-                    </section>
-                    <section>
                         <mat-form-field>
                             <mat-label>Inbound Request Type</mat-label>
                             <mat-select formControlName="inboundRequestType" multiple>
@@ -100,14 +115,19 @@
                                     [value]="inboundRequestType">{{inboundRequestType}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
+                                {{getErrorByField('inboundRequestType')}}
+                            </mat-error>
                         </mat-form-field>
-                    </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Inbound Directory:</label>
                         <mat-radio-group formControlName='inboundDir'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('inboundDir')">
+                            {{getErrorByField('inboundDir')}}
+                        </mat-error>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Inbound Routing Rule:</label>
@@ -115,6 +135,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('inboundRoutingRule')">
+                            {{getErrorByField('inboundRoutingRule')}}
+                        </mat-error>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
@@ -137,6 +160,9 @@
                                     || SWIFTDetailsFormGroup.get('requestorDN').touched)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('requestorDN')">
+                                {{getErrorByField('requestorDN')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
@@ -149,12 +175,18 @@
                                     || SWIFTDetailsFormGroup.get('responderDN').touched)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('responderDN')">
+                                {{getErrorByField('responderDN')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Request Type</mat-label>
                             <input matInput formControlName="requestType">
+                            <mat-error class="error-message" *ngIf="getErrorByField('requestType')">
+                                {{getErrorByField('requestType')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section class='radio-group-section'>
@@ -163,6 +195,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('trace')">
+                            {{getErrorByField('trace')}}
+                        </mat-error>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>SnF:</label>
@@ -170,6 +205,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('snF')">
+                            {{getErrorByField('snF')}}
+                        </mat-error>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Delivery Notification:</label>
@@ -177,6 +215,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotification')">
+                            {{getErrorByField('deliveryNotification')}}
+                        </mat-error>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Non-Repudiation:</label>
@@ -184,6 +225,9 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('nonRepudiation')">
+                            {{getErrorByField('nonRepudiation')}}
+                        </mat-error>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>End to End Signing:</label>
@@ -191,47 +235,71 @@
                             <mat-radio-button value="None">None</mat-radio-button>
                             <mat-radio-button value="Crypto">Crypto</mat-radio-button>
                         </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('e2eSigning')">
+                            {{getErrorByField('e2eSigning')}}
+                        </mat-error>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Delivery Notification DN</mat-label>
                             <input matInput formControlName="deliveryNotifDN">
+                            <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotifDN')">
+                                {{getErrorByField('deliveryNotifDN')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Delivery Notification RT</mat-label>
                             <input matInput formControlName="deliveryNotifRT">
+                            <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotifRT')">
+                                {{getErrorByField('deliveryNotifRT')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Request Reference</mat-label>
                             <input matInput formControlName="requestRef">
+                            <mat-error class="error-message" *ngIf="getErrorByField('requestRef')">
+                                {{getErrorByField('requestRef')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>File Info</mat-label>
                             <input matInput formControlName="fileInfo">
+                            <mat-error class="error-message" *ngIf="getErrorByField('fileInfo')">
+                                {{getErrorByField('fileInfo')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>File Description</mat-label>
                             <input matInput formControlName="fileDesc">
+                            <mat-error class="error-message" *ngIf="getErrorByField('fileDesc')">
+                                {{getErrorByField('fileDesc')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Transfer Info</mat-label>
                             <input matInput formControlName="transferInfo">
+                            <mat-error class="error-message" *ngIf="getErrorByField('transferInfo')">
+                                {{getErrorByField('transferInfo')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>Transfer Description</mat-label>
                             <input matInput formControlName="transferDesc">
+                            <mat-error class="error-message" *ngIf="getErrorByField('transferDesc')">
+                                {{getErrorByField('transferDesc')}}
+                            </mat-error>
                         </mat-form-field>
                     </section>
                     <div class='stepper-actions'>
@@ -245,29 +313,48 @@
             <mat-step [stepControl]="summaryPageFormGroup">
                 <form [formGroup]="summaryPageFormGroup">
                     <ng-template matStepLabel>Fill summary page</ng-template>
-                    <mat-form-field>
-                        <mat-label>Changer comments</mat-label>
-                        <textarea matInput formControlName="changerComments"></textarea>
-                    </mat-form-field>
+                    <mat-table [dataSource]="summaryPageDataSource">
+                        <ng-container matColumnDef="field">
+                            <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.field}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="value">
+                            <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="error">
+                            <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-error class='error-table-cell'>{{element.error}}</mat-error>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="changerComment">
+                            <mat-footer-cell *matFooterCellDef colspan="2">
+                                <mat-form-field>
+                                    <mat-label>Changer comments</mat-label>
+                                    <textarea matInput formControlName="changerComments"></textarea>
+                                    <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
+                                        {{getErrorByField('changerComments')}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </mat-footer-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: summaryDisplayedColumns;"></mat-row>
+                        <mat-footer-row *matFooterRowDef="['changerComment']; sticky: true"></mat-footer-row>
+                    </mat-table>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='primary'
+                            (click)="createEntity()">Create</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
                             Cancel</button>
                     </div>
                 </form>
             </mat-step>
-            <mat-step>
-                <ng-template matStepLabel>Done</ng-template>
-                <p>You are now done.</p>
-                <div class='stepper-actions'>
-                    <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                    <button mat-raised-button class="action-button" color='primary'
-                        (click)="createEntity()">Create</button>
-                    <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
-                        Cancel</button>
-                </div>
-            </mat-step>
         </mat-horizontal-stepper>
     </mat-card-content>
+    <mat-card-footer>
+        <app-progress-bar [loading]="saving$" (stateChange)="saving = $event"></app-progress-bar>
+    </mat-card-footer>
 </mat-card>

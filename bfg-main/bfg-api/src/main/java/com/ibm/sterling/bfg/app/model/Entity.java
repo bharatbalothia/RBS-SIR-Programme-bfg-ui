@@ -1,22 +1,31 @@
 package com.ibm.sterling.bfg.app.model;
 
-import org.apache.logging.log4j.*;
+import com.ibm.sterling.bfg.app.model.validation.EntityValid;
+import com.ibm.sterling.bfg.app.model.validation.Unique;
+import com.ibm.sterling.bfg.app.service.EntityService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.*;
-import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
+@EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LogManager.getLogger(Entity.class);
-
     @Id
     @Column(name = "ENTITY_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
     @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
+    @NotBlank(message = "ENTITY has to be present")
     private String entity;
+    @NotBlank(message = "SERVICE has to be present")
     private String service;
     @Column(name = "REQUESTORDN")
     private String requestorDN;
@@ -27,9 +36,12 @@ public class Entity {
     @Column(name = "REQUESTTYPE")
     private String requestType;
     @Column(name = "SNF")
+    @NotNull(message = "SNF has to be present")
     private Boolean SnF = Boolean.FALSE;
+    @NotNull(message = "TRACE has to be present")
     private Boolean trace = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIF")
+    @NotNull(message = "DELIVERYNOTIF has to be present")
     private Boolean deliveryNotification = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIFDN")
     private String deliveryNotifDN;
@@ -46,26 +58,35 @@ public class Entity {
     @Column(name = "TRANSFERINFO")
     private String transferInfo;
     @Column(name = "COMPRESSION")
+    @NotNull(message = "COMPRESSION has to be present")
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
+    @NotBlank(message = "MAILBOXPATHIN has to be present")
     private String mailboxPathIn;
     @Column(name = "MAILBOXPATHOUT")
+    @NotBlank(message = "MAILBOXPATHOUT has to be present")
+    @Unique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
     private String mailboxPathOut;
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
+    @Unique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;
     @Column(name = "DIRECT_PARTICIPANT")
     private String directParticipant;
     @Column(name = "MAXTRANSPERBULK")
+    @NotNull(message = "MAXTRANSPERBULK has to be present")
     private Integer maxTransfersPerBulk;
     @Column(name = "MAXBULKSPERFILE")
+    @NotNull(message = "MAXBULKSPERFILE has to be present")
     private Integer maxBulksPerFile;
     @Column(name = "STARTOFDAY")
+    @NotNull(message = "STARTOFDAY has to be present")
     private Integer startOfDay;
     @Column(name = "ENDOFDAY")
+    @NotNull(message = "ENDOFDAY has to be present")
     private Integer endOfDay;
     @Transient
     private List schedules = new ArrayList();
@@ -144,10 +165,13 @@ public class Entity {
     @Transient
     private String[] inboundRequestType = new String[0];
     @Column(name = "NONREPUDIATION")
+    @NotNull(message = "NONREPUDIATION has to be present")
     private Boolean nonRepudiation = Boolean.FALSE;
     @Column(name = "PAUSE_INBOUND")
+    @NotNull(message = "PAUSE_INBOUND has to be present")
     private Boolean pauseInbound = Boolean.FALSE;
     @Column(name = "PAUSE_OUTBOUND")
+    @NotNull(message = "PAUSE_OUTBOUND has to be present")
     private Boolean pauseOutbound = Boolean.FALSE;
     @Column(name = "ISDELETED")
     private Boolean deleted = Boolean.FALSE;

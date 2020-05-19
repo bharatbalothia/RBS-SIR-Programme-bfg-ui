@@ -1,12 +1,16 @@
 .entity-create-card {
     margin: 15px 15px 15px 15px;
 
-    .mat-form-field {
-        width: 100%;
+    .top-error-message {
+        padding-left: 24px;
     }
 
-    .error-message {
-        margin-bottom: 5px;
+    .mat-form-field {
+        width: 100%;
+
+        .error-message {
+            white-space: pre-wrap;
+        }
     }
 
     .radio-group-section {
@@ -22,6 +26,10 @@
             margin-right: 15px;
         }
 
+    }
+
+    .error-table-cell {
+        white-space: pre-line;
     }
 
     .stepper-actions {

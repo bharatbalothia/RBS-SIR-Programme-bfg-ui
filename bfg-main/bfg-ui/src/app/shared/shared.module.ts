@@ -22,11 +22,14 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
     // Components
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ProgressBarComponent,
   ],
   imports: [
     CommonModule,
@@ -50,7 +53,8 @@ import {MatTableModule} from '@angular/material/table';
     MatRadioModule,
     HttpClientModule,
     MatDialogModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressBarModule
   ],
   exports: [
     // Modules
@@ -74,10 +78,11 @@ import {MatTableModule} from '@angular/material/table';
     MatRadioModule,
     MatDialogModule,
     MatTableModule,
+    MatProgressBarModule,
 
     // Components
-    ConfirmDialogComponent
-
+    ConfirmDialogComponent,
+    ProgressBarComponent
   ]
 })
 export class SharedModule { }

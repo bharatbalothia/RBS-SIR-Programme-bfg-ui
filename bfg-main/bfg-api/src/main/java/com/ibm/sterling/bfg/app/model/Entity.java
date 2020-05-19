@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityValid
+//@EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity {

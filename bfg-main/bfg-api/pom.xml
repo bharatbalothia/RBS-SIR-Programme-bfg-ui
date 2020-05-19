@@ -58,6 +58,25 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
     </dependencies>
+    <profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+                <active.profile>dev</active.profile>
+				<server.port>9080</server.port>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+                <active.profile>test</active.profile>
+				<server.port>25001</server.port>
+			</properties>
+		</profile>
+	</profiles>
     <build>
         <plugins>
             <plugin>
@@ -70,10 +89,9 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.2.1</version>
                 <configuration>
-                    <bootstrapProperties>
-                        <httpPort>9080</httpPort>
-                    </bootstrapProperties>
-                </configuration>
+					<serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
+					<bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
+				</configuration>
                 <executions>
                     <execution>
                         <id>create_server</id>
@@ -124,5 +142,11 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 </project>

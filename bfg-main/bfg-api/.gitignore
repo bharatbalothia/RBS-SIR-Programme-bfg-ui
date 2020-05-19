@@ -7,3 +7,5 @@
 .classpath
 .project
 .factorypath
+.idea
+bfg-api.iml

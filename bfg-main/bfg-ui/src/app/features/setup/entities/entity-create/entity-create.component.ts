@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
@@ -7,7 +7,7 @@ import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/co
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
-import { ErrorMessage } from 'src/app/core/utils/error-template';
+import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get } from 'lodash';
 import { Observable } from 'rxjs';
 import { Entity } from 'src/app/shared/entity/entity.model';
@@ -46,7 +46,6 @@ export class EntityCreateComponent implements OnInit {
 
   ngOnInit() {
     this.initializeFormGroups();
-    this.getSummaryFieldsSource();
   }
 
   initializeFormGroups() {
@@ -59,7 +58,7 @@ export class EntityCreateComponent implements OnInit {
       inboundRequestorDN: ['', Validators.required],
       inboundResponderDN: ['', Validators.required],
       inboundService: ['swift.corp.fa', Validators.required],
-      inboundRequestType: [[]],
+      inboundRequestType: [],
       inboundDir: [true, Validators.required],
       inboundRoutingRule: [true, Validators.required]
     });
@@ -108,7 +107,6 @@ export class EntityCreateComponent implements OnInit {
     }));
     dialogRef.afterClosed().subscribe(result => {
       this.errorMessage = null;
-      this.getSummaryFieldsSource();
       if (result) {
         const entity = removeEmpties({
           ...this.entityTypeFormGroup.value,
@@ -123,7 +121,7 @@ export class EntityCreateComponent implements OnInit {
             this.initializeFormGroups();
           },
           (error) => {
-            this.errorMessage = error;
+            this.errorMessage = getApiErrorMessage(error);
             this.getSummaryFieldsSource();
             this.markAllFieldsTouched();
           }
@@ -144,7 +142,6 @@ export class EntityCreateComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.errorMessage = null;
-        this.getSummaryFieldsSource();
         this.stepper.reset();
         this.initializeFormGroups();
       }

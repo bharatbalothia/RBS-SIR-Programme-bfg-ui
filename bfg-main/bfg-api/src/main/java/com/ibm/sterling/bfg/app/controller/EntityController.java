@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("entities")
+@RequestMapping("api/entities")
 public class EntityController {
 
     private static final Logger LOG = LogManager.getLogger(EntityController.class);

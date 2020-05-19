@@ -5,7 +5,7 @@
     <mat-card-content class="card-content">
         <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
         </mat-error>
-        <mat-horizontal-stepper #stepper [linear]="isLinear">
+        <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getSummaryFieldsSource()">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">
                     <ng-template matStepLabel>Choose entity type</ng-template>
@@ -71,54 +71,53 @@
                             </mat-error>
                         </mat-form-field>
                     </section>
-                        <mat-form-field>
-                            <mat-label>Inbound Responder DN</mat-label>
-                            <input matInput formControlName="inboundResponderDN" required>
-                            <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
-                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)
+                    <mat-form-field>
+                        <mat-label>Inbound Responder DN</mat-label>
+                        <input matInput formControlName="inboundResponderDN" required>
+                        <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)
                                     && (entityPageFormGroup.get('inboundResponderDN').dirty
                                     || entityPageFormGroup.get('inboundResponderDN').touched)">
-                                    {{validation.message}}</mat-error>
-                            </mat-error>
-                            <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
-                                {{getErrorByField('inboundResponderDN')}}
-                            </mat-error>
-                        </mat-form-field>
-                        <mat-form-field>
-                            <mat-label>Inbound Service</mat-label>
-                            <input matInput formControlName="inboundService" required>
-                            <mat-error *ngFor="let validation of validationMessages.inboundService">
-                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
+                            {{getErrorByField('inboundResponderDN')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Inbound Service</mat-label>
+                        <input matInput formControlName="inboundService" required>
+                        <mat-error *ngFor="let validation of validationMessages.inboundService">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)
                                     && (entityPageFormGroup.get('inboundService').dirty
                                     || entityPageFormGroup.get('inboundService').touched)">
-                                    {{validation.message}}</mat-error>
-                            </mat-error>
-                            <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
-                                {{getErrorByField('inboundService')}}
-                            </mat-error>
-                        </mat-form-field>
-                        <mat-form-field>
-                            <mat-label>Inbound Request Type</mat-label>
-                            <mat-select formControlName="inboundRequestType" multiple>
-                                <mat-select-trigger>
-                                    <mat-chip-list>
-                                        <mat-chip
-                                            *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
-                                            [removable]="true"
-                                            (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
-                                            {{ inboundRequestType }}
-                                            <mat-icon matChipRemove>cancel</mat-icon>
-                                        </mat-chip>
-                                    </mat-chip-list>
-                                </mat-select-trigger>
-                                <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
-                                    [value]="inboundRequestType">{{inboundRequestType}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
-                                {{getErrorByField('inboundRequestType')}}
-                            </mat-error>
-                        </mat-form-field>
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
+                            {{getErrorByField('inboundService')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Inbound Request Type</mat-label>
+                        <mat-select formControlName="inboundRequestType" multiple>
+                            <mat-select-trigger>
+                                <mat-chip-list>
+                                    <mat-chip
+                                        *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
+                                        [removable]="true" (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
+                                        {{ inboundRequestType }}
+                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                    </mat-chip>
+                                </mat-chip-list>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
+                                [value]="inboundRequestType">{{inboundRequestType}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
+                            {{getErrorByField('inboundRequestType')}}
+                        </mat-error>
+                    </mat-form-field>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>Inbound Directory:</label>
                         <mat-radio-group formControlName='inboundDir'>

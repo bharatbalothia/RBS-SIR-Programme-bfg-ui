@@ -3,13 +3,17 @@ package com.ibm.sterling.bfg.app.model;
 import org.apache.logging.log4j.*;
 
 import javax.persistence.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
-public class Entity {
+public class Entity implements Serializable, ByteEntity {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LogManager.getLogger(Entity.class);
+    private static final Logger LOGGER = LogManager.getLogger(Entity.class);
 
     @Id
     @Column(name = "ENTITY_ID")
@@ -163,10 +167,6 @@ public class Entity {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public static Logger getLog() {
-        return log;
     }
 
     public Integer getEntityId() {
@@ -751,5 +751,96 @@ public class Entity {
 
     public void setE2eSigning(String e2eSigning) {
         this.e2eSigning = e2eSigning;
+    }
+
+//    public byte[] getObjectBytes() {
+//        try(ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ObjectOutputStream oout = new ObjectOutputStream(baos)) {
+//            oout.writeObject(this);
+//            return baos.toByteArray();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "entityId=" + entityId +
+                ", entity='" + entity + '\'' +
+                ", service='" + service + '\'' +
+                ", requestorDN='" + requestorDN + '\'' +
+                ", responderDN='" + responderDN + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                ", requestType='" + requestType + '\'' +
+                ", SnF=" + SnF +
+                ", trace=" + trace +
+                ", deliveryNotification=" + deliveryNotification +
+                ", deliveryNotifDN='" + deliveryNotifDN + '\'' +
+                ", deliveryNotifRT='" + deliveryNotifRT + '\'' +
+                ", requestRef='" + requestRef + '\'' +
+                ", fileDesc='" + fileDesc + '\'' +
+                ", fileInfo='" + fileInfo + '\'' +
+                ", transferDesc='" + transferDesc + '\'' +
+                ", transferInfo='" + transferInfo + '\'' +
+                ", compression=" + compression +
+                ", mailboxPathIn='" + mailboxPathIn + '\'' +
+                ", mailboxPathOut='" + mailboxPathOut + '\'' +
+                ", mqQueueIn='" + mqQueueIn + '\'' +
+                ", mqQueueOut='" + mqQueueOut + '\'' +
+                ", entityParticipantType='" + entityParticipantType + '\'' +
+                ", directParticipant='" + directParticipant + '\'' +
+                ", maxTransfersPerBulk=" + maxTransfersPerBulk +
+                ", maxBulksPerFile=" + maxBulksPerFile +
+                ", startOfDay=" + startOfDay +
+                ", endOfDay=" + endOfDay +
+                ", schedules=" + schedules +
+                ", deletedSchedules=" + deletedSchedules +
+                ", cdNode='" + cdNode + '\'' +
+                ", idfWTOMsgId='" + idfWTOMsgId + '\'' +
+                ", cdfWTOMsgId='" + cdfWTOMsgId + '\'' +
+                ", sdfWTOMsgId='" + sdfWTOMsgId + '\'' +
+                ", rsfWTOMsgId='" + rsfWTOMsgId + '\'' +
+                ", dnfWTOMsgId='" + dnfWTOMsgId + '\'' +
+                ", dvfWTOMsgId='" + dvfWTOMsgId + '\'' +
+                ", msrWTOMsgId='" + msrWTOMsgId + '\'' +
+                ", psrWTOMsgId='" + psrWTOMsgId + '\'' +
+                ", drrWTOMsgId='" + drrWTOMsgId + '\'' +
+                ", rtfWTOMsgId='" + rtfWTOMsgId + '\'' +
+                ", mbpWTOMsgId='" + mbpWTOMsgId + '\'' +
+                ", mqHost='" + mqHost + '\'' +
+                ", mqPort=" + mqPort +
+                ", mqQManager='" + mqQManager + '\'' +
+                ", mqChannel='" + mqChannel + '\'' +
+                ", mqQueueName='" + mqQueueName + '\'' +
+                ", mqQueueBinding='" + mqQueueBinding + '\'' +
+                ", mqQueueContext='" + mqQueueContext + '\'' +
+                ", mqDebug=" + mqDebug +
+                ", mqSSLoptions='" + mqSSLoptions + '\'' +
+                ", mqSSLciphers='" + mqSSLciphers + '\'' +
+                ", mqSSLkey='" + mqSSLkey + '\'' +
+                ", mqSSLcaCert='" + mqSSLcaCert + '\'' +
+                ", mqHeader='" + mqHeader + '\'' +
+                ", mqSessionTimeout=" + mqSessionTimeout +
+                ", routeInbound=" + routeInbound +
+                ", routeOutbound=" + routeOutbound +
+                ", inboundDir=" + inboundDir +
+                ", inboundRoutingRule=" + inboundRoutingRule +
+                ", inboundRequestorDN='" + inboundRequestorDN + '\'' +
+                ", inboundResponderDN='" + inboundResponderDN + '\'' +
+                ", inboundService='" + inboundService + '\'' +
+                ", inboundType='" + inboundType + '\'' +
+                ", inboundRequestType=" + Arrays.toString(inboundRequestType) +
+                ", nonRepudiation=" + nonRepudiation +
+                ", pauseInbound=" + pauseInbound +
+                ", pauseOutbound=" + pauseOutbound +
+                ", deleted=" + deleted +
+                ", changeID='" + changeID + '\'' +
+                ", changerComments='" + changerComments + '\'' +
+                ", irishStep2=" + irishStep2 +
+                ", e2eSigning='" + e2eSigning + '\'' +
+                '}';
     }
 }

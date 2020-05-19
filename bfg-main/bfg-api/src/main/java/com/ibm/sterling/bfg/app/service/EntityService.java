@@ -16,6 +16,8 @@ public interface EntityService {
 
     Entity save(Entity entity);
 
+    Entity saveEntityToChangeControl(Entity entity);
+
     Page<Entity> findEntities(Pageable pageable);
 
     Page<Entity> findEntitiesByService(String service, Pageable pageable);

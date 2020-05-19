@@ -65,12 +65,15 @@ public class Entity {
     private String mailboxPathIn;
     @Column(name = "MAILBOXPATHOUT")
     @NotBlank(message = "MAILBOXPATHOUT has to be present")
+    /*
+    Revision required. Do not use this annotation
     @Unique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
+     */
     private String mailboxPathOut;
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
-    @Unique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
+    //@Unique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;

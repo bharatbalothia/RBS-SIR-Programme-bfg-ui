@@ -24,6 +24,7 @@ import java.util.*;
 
 @RestControllerAdvice(assignableTypes = EntityController.class)
 public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
+
     private static final Logger LOG = LogManager.getLogger(EntityExceptionHandler.class);
 
     @Autowired
@@ -35,13 +36,12 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
+        List<Object> errors = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-
-            errors.put(error.getField(),error.getDefaultMessage());
+            errors.add(Collections.singletonMap(error.getField(), error.getDefaultMessage()));
         }
         for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.put(error.getObjectName(),error.getDefaultMessage());
+            errors.add(Collections.singletonMap(error.getObjectName(), error.getDefaultMessage()));
         }
         ErrorMessage errorMessage =
                 errorConfig.getErrorMessage(EntityErrorCode.METHOD_ARGUMENT_NOT_VALID_EXCEPTION, errors);
@@ -55,7 +55,7 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus status, WebRequest request) {
         ErrorMessage errorMessage =
                 errorConfig.getErrorMessage(EntityErrorCode.METHOD_MISSING_ARGUMENT_EXCEPTION,
-                        Collections.singletonMap(ex.getParameterName(), ex.getParameterName() + " parameter is missing"));
+                        Collections.singletonList(Collections.singletonMap(ex.getParameterName(), ex.getParameterName() + " parameter is missing")));
         return new ResponseEntity<>(
                 errorMessage, new HttpHeaders(), errorMessage.getHttpStatus());
     }
@@ -65,9 +65,9 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentTypeMismatchException ex) {
         ErrorMessage errorMessage =
                 errorConfig.getErrorMessage(EntityErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION,
-                        Collections.singletonMap(ex.getName(),
+                        Collections.singletonList(Collections.singletonMap(ex.getName(),
                                 ex.getName() + " should be of type " +
-                                        Objects.requireNonNull(ex.getRequiredType()).getName()));
+                                        Objects.requireNonNull(ex.getRequiredType()).getName())));
         return new ResponseEntity<>(
                 errorMessage, new HttpHeaders(), errorMessage.getHttpStatus());
     }

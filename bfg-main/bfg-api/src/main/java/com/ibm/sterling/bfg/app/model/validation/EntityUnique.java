@@ -11,9 +11,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
 @Target({ElementType.METHOD, ElementType.FIELD})
-@Constraint(validatedBy = UniqueValidator.class)
+@Constraint(validatedBy = EntityUniqueValidator.class)
 @Retention(RUNTIME)
-public @interface Unique {
+public @interface EntityUnique {
 
     String message();
 

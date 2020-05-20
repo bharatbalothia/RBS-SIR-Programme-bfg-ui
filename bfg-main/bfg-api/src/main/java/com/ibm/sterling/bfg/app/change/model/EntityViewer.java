@@ -7,6 +7,11 @@ public class EntityViewer implements ChangeViewer {
     public final static String OBJECT_TYPE="Entity";
 
     public EntityViewer(){
+
+    }
+
+    public EntityViewer(ChangeControl changeControl) {
+        this.changeControl = changeControl;
     }
 
     @Override

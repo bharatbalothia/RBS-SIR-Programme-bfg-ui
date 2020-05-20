@@ -1,20 +1,20 @@
 package com.ibm.sterling.bfg.app.change.model;
 
-import com.ibm.sterling.bfg.app.model.ByteEntity;
+import com.ibm.sterling.bfg.app.model.EntityLog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.time.ZonedDateTime;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
@@ -39,7 +39,6 @@ public class ChangeControl implements ChangeControlConstants {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Operation operation; //change operation - CREATE,UPDATE,DELETE
-//    private String operation; //change operation - CREATE,UPDATE,DELETE
 
     @Column(name = "STATUS")
     @NotNull
@@ -57,35 +56,23 @@ public class ChangeControl implements ChangeControlConstants {
     private String changer; //user making the change
 
     @Column(name = "CHANGE_DATE")
-    @NotNull
-    @UpdateTimestamp
-    private LocalDateTime dateChanged; //date change was requested
+    @CreationTimestamp
+    private Timestamp dateChanged; //date change was requested
+//    private LocalDateTime dateChanged; //date change was requested
 
     @Column(name = "APPROVE_USER")
     private String approver; //user approving/rejecting the change
 
     @Column(name = "APPROVE_DATE")
-    private String dateApproved; //date change was approved/rejected
+    @UpdateTimestamp
+//    private String dateApproved; //date change was approved/rejected
+    private Timestamp dateApproved; //date change was approved/rejected
 
     @Column(name = "CHANGE_COMMENTS")
     private String changerComments; //comments made by changer
 
     @Column(name = "APPROVE_COMMENTS")
     private String approverComments; //comments made by approver
-
-    @Column(name = "ACTION_TYPE")
-    private String actionType; //type of change e.g. XAPI_manageCertificae, CUSTOM_xyzClasss
-
-    @Column(name = "ACTION_OBJECT")
-    @Lob
-    private byte[] actionObject; //DATA_ID for the action object that will fulfil the operation
-
-    @Column(name = "RESULT_TYPE")
-    private String resultType; //type of object view that displays when action is fulfilled
-
-    @Column(name = "RESULT_OBJECT")
-    @Lob
-    private byte[] resultObject; //DATA_ID for the object view when the action is fulfilled
 
     @Column(name = "RESULT_META1")
     private String resultMeta1; //meta-data about the object when using CREATE action (searchable)
@@ -95,6 +82,12 @@ public class ChangeControl implements ChangeControlConstants {
 
     @Column(name = "RESULT_META3")
     private String resultMeta3; //meta-data about the object when using CREATE action (searchable)
+
+    @OneToOne(cascade = CascadeType.ALL,
+              orphanRemoval = true,
+              fetch = FetchType.LAZY)
+    @JoinColumn(name = "ENTITY_LOG_ID")
+    private EntityLog entityLog;
 
     public ChangeControl() {
         this.setStatus(ChangeControlStatus.PENDING);
@@ -157,13 +150,13 @@ public class ChangeControl implements ChangeControlConstants {
         return LOGGER;
     }
 
-    public LocalDateTime getDateChanged() {
-        return dateChanged;
-    }
-
-    public void setDateChanged(LocalDateTime dateChanged) {
-        this.dateChanged = dateChanged;
-    }
+//    public LocalDateTime getDateChanged() {
+//        return dateChanged;
+//    }
+//
+//    public void setDateChanged(LocalDateTime dateChanged) {
+//        this.dateChanged = dateChanged;
+//    }
 
     public String getApprover() {
         return approver;
@@ -173,13 +166,13 @@ public class ChangeControl implements ChangeControlConstants {
         this.approver = approver;
     }
 
-    public String getDateApproved() {
-        return dateApproved;
-    }
-
-    public void setDateApproved(String dateApproved) {
-        this.dateApproved = dateApproved;
-    }
+//    public String getDateApproved() {
+//        return dateApproved;
+//    }
+//
+//    public void setDateApproved(String dateApproved) {
+//        this.dateApproved = dateApproved;
+//    }
 
     public String getChangerComments() {
         return changerComments;
@@ -195,38 +188,6 @@ public class ChangeControl implements ChangeControlConstants {
 
     public void setApproverComments(String approverComments) {
         this.approverComments = approverComments;
-    }
-
-    public String getActionType() {
-        return actionType;
-    }
-
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
-    }
-
-    public byte[] getActionObject() {
-        return actionObject;
-    }
-
-    public void setActionObject(byte[] actionObject) {
-        this.actionObject = actionObject;
-    }
-
-    public String getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(String resultType) {
-        this.resultType = resultType;
-    }
-
-    public byte[] getResultObject() {
-        return resultObject;
-    }
-
-    public void setResultObject(byte[] resultObject) {
-        this.resultObject = resultObject;
     }
 
     public String getResultMeta1() {
@@ -257,6 +218,88 @@ public class ChangeControl implements ChangeControlConstants {
         return status.getStatusText();
     }
 
+    public EntityLog getEntityLog() {
+        return entityLog;
+    }
+
+    public void setEntityLog(EntityLog entityLog) {
+        this.entityLog = entityLog;
+    }
+
+    public com.ibm.sterling.bfg.app.model.Entity getEntityFromEntityLog() {
+        com.ibm.sterling.bfg.app.model.Entity entityFromLog = new com.ibm.sterling.bfg.app.model.Entity();
+        entityFromLog.setEntityId(entityLog.getEntityId());
+        entityFromLog.setEntity(entityLog.getEntity());
+        entityFromLog.setService(entityLog.getService());
+        entityFromLog.setMailboxPathOut(entityLog.getMailboxPathOut());
+        entityFromLog.setMqQueueOut(entityLog.getMqQueueOut());
+        entityFromLog.setRequestorDN(entityLog.getRequestorDN());
+        entityFromLog.setResponderDN(entityLog.getResponderDN());
+        entityFromLog.setServiceName(entityLog.getServiceName());
+        entityFromLog.setRequestType(entityLog.getRequestType());
+        entityFromLog.setSnF(entityLog.getSnF());
+        entityFromLog.setTrace(entityLog.getTrace());
+        entityFromLog.setDeliveryNotification(entityLog.getDeliveryNotification());
+        entityFromLog.setDeliveryNotifDN(entityLog.getDeliveryNotifDN());
+        entityFromLog.setDeliveryNotifRT(entityLog.getDeliveryNotifRT());
+        entityFromLog.setRequestRef(entityLog.getRequestRef());
+        entityFromLog.setFileDesc(entityLog.getFileDesc());
+        entityFromLog.setFileInfo(entityLog.getFileInfo());
+        entityFromLog.setTransferDesc(entityLog.getTransferDesc());
+        entityFromLog.setTransferInfo(entityLog.getTransferInfo());
+        entityFromLog.setCompression(entityLog.getCompression());
+        entityFromLog.setMailboxPathIn(entityLog.getMailboxPathIn());
+        entityFromLog.setMqQueueIn(entityLog.getMqQueueIn());
+        entityFromLog.setEntityParticipantType(entityLog.getEntityParticipantType());
+        entityFromLog.setDirectParticipant(entityLog.getDirectParticipant());
+        entityFromLog.setMaxTransfersPerBulk(entityLog.getMaxTransfersPerBulk());
+        entityFromLog.setMaxBulksPerFile(entityLog.getMaxBulksPerFile());
+        entityFromLog.setStartOfDay(entityLog.getStartOfDay());
+        entityFromLog.setEndOfDay(entityLog.getEndOfDay());
+        entityFromLog.setCdNode(entityLog.getCdNode());
+        entityFromLog.setIdfWTOMsgId(entityLog.getIdfWTOMsgId());
+        entityFromLog.setCdfWTOMsgId(entityLog.getCdfWTOMsgId());
+        entityFromLog.setSdfWTOMsgId(entityLog.getSdfWTOMsgId());
+        entityFromLog.setRsfWTOMsgId(entityLog.getRsfWTOMsgId());
+        entityFromLog.setDnfWTOMsgId(entityLog.getDnfWTOMsgId());
+        entityFromLog.setDvfWTOMsgId(entityLog.getDvfWTOMsgId());
+        entityFromLog.setMsrWTOMsgId(entityLog.getMsrWTOMsgId());
+        entityFromLog.setPsrWTOMsgId(entityLog.getPsrWTOMsgId());
+        entityFromLog.setDrrWTOMsgId(entityLog.getDrrWTOMsgId());
+        entityFromLog.setRtfWTOMsgId(entityLog.getRtfWTOMsgId());
+        entityFromLog.setMbpWTOMsgId(entityLog.getMbpWTOMsgId());
+        entityFromLog.setMqHost(entityLog.getMqHost());
+        entityFromLog.setMqPort(entityLog.getMqPort());
+        entityFromLog.setMqQManager(entityLog.getMqQManager());
+        entityFromLog.setMqChannel(entityLog.getMqChannel());
+        entityFromLog.setMqQueueName(entityLog.getMqQueueName());
+        entityFromLog.setMqQueueBinding(entityLog.getMqQueueBinding());
+        entityFromLog.setMqQueueContext(entityLog.getMqQueueContext());
+        entityFromLog.setMqDebug(entityLog.getMqDebug());
+        entityFromLog.setMqSSLoptions(entityLog.getMqSSLoptions());
+        entityFromLog.setMqSSLciphers(entityLog.getMqSSLciphers());
+        entityFromLog.setMqSSLkey(entityLog.getMqSSLkey());
+        entityFromLog.setMqSSLcaCert(entityLog.getMqSSLcaCert());
+        entityFromLog.setMqHeader(entityLog.getMqHeader());
+        entityFromLog.setMqSessionTimeout(entityLog.getMqSessionTimeout());
+        entityFromLog.setInboundRequestorDN(entityLog.getInboundRequestorDN());
+        entityFromLog.setInboundResponderDN(entityLog.getInboundResponderDN());
+        entityFromLog.setInboundService(entityLog.getInboundService());
+        entityFromLog.setInboundType(entityLog.getInboundType());
+        entityFromLog.setNonRepudiation(entityLog.getNonRepudiation());
+        entityFromLog.setPauseInbound(entityLog.getPauseInbound());
+        entityFromLog.setPauseOutbound(entityLog.getPauseOutbound());
+        entityFromLog.setE2eSigning(entityLog.getE2eSigning());
+        entityFromLog.setRouteInbound(entityLog.getRouteInbound());
+        entityFromLog.setRouteOutbound(entityLog.getRouteOutbound());
+        entityFromLog.setInboundDir(entityLog.getInboundDir());
+        entityFromLog.setInboundRequestType( entityLog.getInboundRequestType().stream().toArray(String[]::new));
+        entityFromLog.setChangeID(changeID);
+        entityFromLog.setChangerComments(changerComments);
+        entityFromLog.setIrishStep2(entityLog.getIrishStep2());
+        return entityFromLog;
+    }
+
     public String getShortType(){
         String shortType = "Unknown";
         try {
@@ -285,13 +328,25 @@ public class ChangeControl implements ChangeControlConstants {
                 ", dateApproved='" + dateApproved + '\'' +
                 ", changerComments='" + changerComments + '\'' +
                 ", approverComments='" + approverComments + '\'' +
-                ", actionType='" + actionType + '\'' +
-                ", actionObject=" + Arrays.toString(actionObject) +
-                ", resultType='" + resultType + '\'' +
-                ", resultObject=" + Arrays.toString(resultObject) +
                 ", resultMeta1='" + resultMeta1 + '\'' +
                 ", resultMeta2='" + resultMeta2 + '\'' +
                 ", resultMeta3='" + resultMeta3 + '\'' +
                 '}';
+    }
+
+    public Timestamp getDateChanged() {
+        return dateChanged;
+    }
+
+    public void setDateChanged(Timestamp dateChanged) {
+        this.dateChanged = dateChanged;
+    }
+
+    public Timestamp getDateApproved() {
+        return dateApproved;
+    }
+
+    public void setDateApproved(Timestamp dateApproved) {
+        this.dateApproved = dateApproved;
     }
 }

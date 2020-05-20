@@ -4,13 +4,11 @@ import com.ibm.sterling.bfg.app.change.model.ChangeControl;
 import com.ibm.sterling.bfg.app.change.model.ChangeControlConstants;
 import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.change.repository.ChangeControlRepository;
-import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
 import com.ibm.sterling.bfg.app.service.EntityServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +20,9 @@ public class ChangeControlService {
 
     @Autowired
     private ChangeControlRepository controlRepository;
+
+    @Autowired
+    private EntityLogRepository entityLogRepository;
 
     public List<ChangeControl> listAll() {
         return controlRepository.findAll();
@@ -57,25 +58,14 @@ public class ChangeControlService {
     }
 
     public boolean isNameUnique(String entityName) {
-        return !controlRepository
+        return controlRepository
                 .findAll()
                 .stream()
-                .filter(changeControl ->
+                .noneMatch(changeControl ->
                         changeControl.getResultMeta1().equalsIgnoreCase(entityName) &&
                                 changeControl.getObjectType().equals(ChangeControlConstants.OBJECT_TYPE) &&
                                 changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                )
-                .findAny()
-                .isPresent();
+                );
     }
-//
-//    public ChangeControl findChangeControlByService(String service) {
-//        LOGGER.info("existing change control by service");
-//        return controlRepository.findByService(service);
-//    }
-//
-//    public ChangeControl findChangeControlByEntity(String entity) {
-//        LOGGER.info("existing change control by name");
-//        return controlRepository.findByEntityContainingIgnoreCaseAndDeleted(entity);
-//    }
+
 }

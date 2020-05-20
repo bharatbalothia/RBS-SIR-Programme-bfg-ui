@@ -3,10 +3,9 @@ package com.ibm.sterling.bfg.app.service;
 
 import com.ibm.sterling.bfg.app.change.model.*;
 import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
-import com.ibm.sterling.bfg.app.model.ByteEntity;
 import com.ibm.sterling.bfg.app.model.Entity;
-import com.ibm.sterling.bfg.app.model.EntityAction;
-import com.ibm.sterling.bfg.app.model.EntityCreateAction;
+import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private EntityLogRepository entityLogRepository;
 
     @Override
     public boolean existsByMqQueueOut(String mqQueueOut) {
@@ -61,11 +63,11 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Entity save(Entity entity) {
         LOG.debug("Entity saving");
-        LOG.debug("Trying to save entity :" + entity);
+        LOG.debug("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
         entity.setChangeID(changeControl.getChangeID());
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity " + savedEntity);
+        LOG.debug("Saved entity {}", savedEntity);
         return entity;
     }
 
@@ -80,16 +82,13 @@ public class EntityServiceImpl implements EntityService {
         }
         LOG.debug("Change control id:" + changeControl.getChangeID());
         entity.setChangeID(changeControl.getChangeID());
-        EntityCreateAction eca = new EntityCreateAction(entity);
-        changeControl.setActionType(eca.getClassName());
-        changeControl.setActionObject(eca.getObjectBytes());
         changeControl.setOperation(Operation.CREATE);
         changeControl.setChanger("TEST_USER");
+        changeControl.setEntityLog(new EntityLog(entity));
         changeControl.setChangerComments(entity.getChangerComments());
-        changeControl.setResultType(entity.getClass().getName());
-        changeControl.setResultObject(entity.getObjectBytes());
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
+        changeControl.setEntityLog(new EntityLog(entity));
         try {
             changeControlService.save(changeControl);
         } catch (Exception e) {
@@ -100,18 +99,53 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity saveEntityAfterApprove(ChangeViewer changeViewer) throws Exception {
+    public Entity getEntityAfterApprove(ChangeViewer changeViewer) throws Exception {
         ChangeControl changeControl = changeViewer.getChange();
         if(changeControl.getStatus() != ChangeControlStatus.PENDING){
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
-        byte[] bActionObj = changeControl.getActionObject();
-        EntityAction entityAction = (EntityAction) ByteEntity.getEntityObject(bActionObj).get();
+        Entity entity = new Entity();
+        Operation operation = changeControl.getOperation();
+        switch (operation) {
+            case CREATE :
+                entity = saveEntityAfterApprove(changeControl);
+                break;
+            case UPDATE:
+            case DELETE:
+        }
+        return entity;
+    }
+
+    private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.debug("Approve the Entity create action");
-        Entity savedEntity = entityRepository.save(entityAction.getEntity());
-        LOG.debug("Saved entity to DB " + savedEntity);
+        Entity savedEntity = entityRepository.save(changeControl.getEntityFromEntityLog());
+        LOG.debug("Saved entity to DB {}", savedEntity);
+        changeControlService.setApproveInfo(
+                changeControl,
+                "TEST_APPROVER",
+                "TEST_APPROVE_COMMENTS",
+                ChangeControlStatus.ACCEPTED);
+        EntityLog entityLog = changeControl.getEntityLog();
+        entityLog.setEntityId(savedEntity.getEntityId());
+        entityLogRepository.save(entityLog) ;
+        try {
+            changeControlService.save(changeControl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return savedEntity;
     }
+
+//    public Entity saveEntityAfterApprove(ChangeViewer changeViewer) throws Exception {
+//        ChangeControl changeControl = changeViewer.getChange();
+//        if(changeControl.getStatus() != ChangeControlStatus.PENDING){
+//            throw new Exception("Status is not pending and therefore no action can be taken");
+//        }
+//        LOG.debug("Approve the Entity create action");
+//        Entity savedEntity = entityRepository.save(changeControl.getEntityFromEntityLog());
+//        LOG.debug("Saved entity to DB {}", savedEntity);
+//        return savedEntity;
+//    }
 
 
     @Override

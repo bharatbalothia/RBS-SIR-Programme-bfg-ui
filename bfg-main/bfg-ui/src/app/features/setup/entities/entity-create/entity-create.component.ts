@@ -185,6 +185,8 @@ export class EntityCreateComponent implements OnInit {
     this.entityPageFormGroup.markAllAsTouched();
     this.SWIFTDetailsFormGroup.markAllAsTouched();
     this.summaryPageFormGroup.markAllAsTouched();
+  }
+
   resetAllForms() {
     this.formGroups.forEach(formGroup => formGroup.resetForm());
   }

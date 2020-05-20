@@ -3,10 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
-import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import com.ibm.sterling.bfg.app.service.EntityService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +16,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/entities")
 public class EntityController {
-
-    private static final Logger LOG = LogManager.getLogger(EntityController.class);
 
     @Autowired
     private ErrorConfig errorConfig;
@@ -51,7 +46,6 @@ public class EntityController {
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
         return ResponseEntity.ok(entityService.save(entity));
-        // errorConfig.getErrorMessage(EntityErrorCode.SUCCESS, entityService.save(entity));
     }
 
     @PutMapping("/{id}")

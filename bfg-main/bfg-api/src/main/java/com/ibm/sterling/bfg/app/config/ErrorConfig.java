@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
-import java.util.Map;
+import java.util.List;
 
 @Configuration
 @PropertySource({"classpath:response.properties", "classpath:entityresponse.properties"})
@@ -33,7 +33,7 @@ public class ErrorConfig {
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public ErrorMessage getErrorMessage(ErrorCode errorCode, Map<String, String> data) {
+    public ErrorMessage getErrorMessage(ErrorCode errorCode, List<Object> data) {
         return new ErrorMessage(environment, errorCode, data);
     }
 

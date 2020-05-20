@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.model;
 
+import com.ibm.sterling.bfg.app.model.validation.EntityUnique;
 import com.ibm.sterling.bfg.app.model.validation.EntityValid;
-import com.ibm.sterling.bfg.app.model.validation.Unique;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-//@EntityValid
+@EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity {
@@ -65,15 +65,12 @@ public class Entity {
     private String mailboxPathIn;
     @Column(name = "MAILBOXPATHOUT")
     @NotBlank(message = "MAILBOXPATHOUT has to be present")
-    /*
-    Revision required. Do not use this annotation
-    @Unique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
-     */
+    @EntityUnique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
     private String mailboxPathOut;
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
-    //@Unique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
+    @EntityUnique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;

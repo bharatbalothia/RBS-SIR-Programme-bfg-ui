@@ -51,9 +51,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         ErrorMessage errorMessage = errorConfig.getErrorMessage(
                 GlobalErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION,
-                Collections.singletonMap(ex.getMethod(),
-                        "method is not supported for this request. Supported methods are " +
-                                Objects.requireNonNull(ex.getSupportedHttpMethods())
+                Collections.singletonList(
+                        Collections.singletonMap(ex.getMethod(),
+                                "method is not supported for this request. Supported methods are " +
+                                        Objects.requireNonNull(ex.getSupportedHttpMethods())
+                        )
                 )
         );
         return new ResponseEntity<>(

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 
-import java.util.Map;
+import java.util.List;
 
 public class ErrorMessage {
 
@@ -13,7 +13,7 @@ public class ErrorMessage {
     private String message;
     private HttpStatus httpStatus;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, String> errors;
+    private List<Object> errors;
 
     public ErrorMessage(Environment environment, ErrorCode code) {
         this.setCode(environment.getProperty(code.val()));
@@ -27,7 +27,7 @@ public class ErrorMessage {
         this.setHttpStatus(HttpStatus.valueOf(environment.getProperty(code.status())));
     }
 
-    public ErrorMessage(Environment environment, ErrorCode code, Map<String, String> data) {
+    public ErrorMessage(Environment environment, ErrorCode code, List<Object> data) {
         this.setCode(environment.getProperty(code.val()));
         this.setMessage(environment.getProperty(code.msg()));
         this.setHttpStatus(HttpStatus.valueOf(environment.getProperty(code.status())));
@@ -50,11 +50,11 @@ public class ErrorMessage {
         this.message = message;
     }
 
-    public Map getErrors() {
+    public List<Object> getErrors() {
         return errors;
     }
 
-    public void setErrors(Map errors) {
+    public void setErrors(List<Object> errors) {
         this.errors = errors;
     }
 

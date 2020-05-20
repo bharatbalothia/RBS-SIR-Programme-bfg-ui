@@ -14,6 +14,7 @@ export class ConfirmDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Yes';
+    this.data.shouldHideYesCaption = this.data.shouldHideYesCaption || false;
     this.data.yesCaptionColor = this.data.yesCaptionColor || 'primary';
     this.data.noCaption = this.data.noCaption || 'No';
   }

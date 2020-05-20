@@ -96,13 +96,12 @@ export class EntityCreateComponent implements OnInit {
 
   createEntity() {
     const entityName = this.entityTypeFormGroup.get('service').value || 'new';
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+    this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Create ${entityName} entity`,
       text: `Are you sure to create ${entityName} entity?`,
       yesCaption: 'Create',
       noCaption: 'Cancel'
-    }));
-    dialogRef.afterClosed().subscribe(result => {
+    })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
         const entity = removeEmpties({
@@ -114,8 +113,15 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.createEntity(entity).pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
-            this.stepper.reset();
-            this.initializeFormGroups();
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Entity created`,
+              text: `Entity ${entityName} has been created`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.stepper.reset();
+              this.initializeFormGroups();
+            });
           },
           (error) => {
             this.isLoading = false;
@@ -138,9 +144,9 @@ export class EntityCreateComponent implements OnInit {
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Cancel creation of the ${entityName} entity`,
       text: `Are you sure to cancel the creation of the ${entityName} entity?`,
-      yesCaption: 'Reset',
+      yesCaption: 'Cancel creation',
       yesCaptionColor: 'warn',
-      noCaption: 'Cancel'
+      noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

@@ -75,9 +75,9 @@ public class EntityServiceImpl implements EntityService {
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
         if (fieldName.equals("MQQUEUEOUT"))
-            return this.entityRepository.existsByMqQueueOut(value.toString());
+            return entityRepository.existsByMqQueueOut(String.valueOf(value));
         if (fieldName.equals("MAILBOXPATHOUT"))
-            return this.entityRepository.existsByMailboxPathOut(value.toString());
+            return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
     }
 

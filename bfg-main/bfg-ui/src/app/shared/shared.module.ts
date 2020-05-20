@@ -22,14 +22,12 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
-import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
     // Components
     ConfirmDialogComponent,
-    ProgressBarComponent,
   ],
   imports: [
     CommonModule,
@@ -82,7 +80,6 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 
     // Components
     ConfirmDialogComponent,
-    ProgressBarComponent
   ]
 })
 export class SharedModule { }

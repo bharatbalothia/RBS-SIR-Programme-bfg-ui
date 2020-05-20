@@ -1,16 +1,13 @@
 package com.ibm.sterling.bfg.app.model.validation;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
+import javax.validation.*;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target(FIELD)
 @Constraint(validatedBy = EntityUniqueValidator.class)
 @Retention(RUNTIME)
 public @interface EntityUnique {

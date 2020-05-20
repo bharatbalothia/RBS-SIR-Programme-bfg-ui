@@ -22,7 +22,7 @@ public class EntityController {
 
     @Autowired
     private EntityService entityService;
-
+    @CrossOrigin
     @GetMapping
     public Page<Entity> getEntities(@RequestParam(value = "service", required = false) String serviceName,
                                     @RequestParam(value = "entity", required = false) String entityName,
@@ -35,26 +35,26 @@ public class EntityController {
                                 .orElse(entityService.findEntities(pageable))
                 );
     }
-
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
         return entityService.findById(id)
                 .map(record -> ResponseEntity.ok().body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
-
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
         return ResponseEntity.ok(entityService.save(entity));
     }
-
+    @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> ResponseEntity.ok().body(entityService.save(entity)))
                 .orElseThrow(EntityNotFoundException::new);
     }
-
+    @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEntity(@PathVariable int id) {
         return entityService.findById(id)

@@ -20,6 +20,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class EntityServiceImpl implements EntityService {
+
     private static final Logger LOG = LogManager.getLogger(EntityServiceImpl.class);
 
     @Autowired
@@ -27,6 +28,18 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Override
+    public boolean existsByMqQueueOut(String mqQueueOut) {
+        LOG.info("exists by mqQueueOut {}", mqQueueOut);
+        return entityRepository.existsByMqQueueOut(mqQueueOut);
+    }
+
+    @Override
+    public boolean existsByServiceAndEntity(String service, String entity) {
+        LOG.info("exists by {} and {}", service, entity);
+        return entityRepository.existsByServiceAndEntity(service, entity);
+    }
 
     @Override
     public List<Entity> listAll() {
@@ -117,6 +130,14 @@ public class EntityServiceImpl implements EntityService {
     public Page<Entity> findEntitiesByEntity(String entity, Pageable pageable) {
         LOG.info("existing entities by name");
         return entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false, pageable);
+    }
+
+    public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
+        if (fieldName.equals("MQQUEUEOUT"))
+            return this.entityRepository.existsByMqQueueOut(value.toString());
+        if (fieldName.equals("MAILBOXPATHOUT"))
+            return this.entityRepository.existsByMailboxPathOut(value.toString());
+        return false;
     }
 
 }

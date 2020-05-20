@@ -7,6 +7,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntityRepository extends JpaRepository<Entity, Integer> {
+
+    boolean existsByMqQueueOut(String mqQueueOut);
+
+    boolean existsByMailboxPathOut(String mailboxPathOut);
+
+    boolean existsByServiceAndEntity(String service, String entity);
+
     Page<Entity> findByDeleted(boolean deleted, Pageable pageable);
 
     Page<Entity> findByServiceIgnoreCaseAndDeleted(String service, boolean deleted, Pageable pageable);

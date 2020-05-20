@@ -24,12 +24,15 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { LoadingContainerComponent } from './components/loading-container/loading-container.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
     // Components
     ConfirmDialogComponent,
     ProgressBarComponent,
+    LoadingContainerComponent,
   ],
   imports: [
     CommonModule,
@@ -54,7 +57,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     HttpClientModule,
     MatDialogModule,
     MatTableModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     // Modules
@@ -79,10 +83,12 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
 
     // Components
     ConfirmDialogComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    LoadingContainerComponent,
   ]
 })
 export class SharedModule { }

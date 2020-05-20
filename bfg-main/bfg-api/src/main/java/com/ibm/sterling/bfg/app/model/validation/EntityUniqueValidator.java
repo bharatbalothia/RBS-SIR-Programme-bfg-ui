@@ -27,7 +27,7 @@ public class EntityUniqueValidator implements ConstraintValidator<EntityUnique, 
         Boolean isUniqueField = Optional.ofNullable(entityService)
                 .map(validService -> !validService.fieldValueExists(value, fieldName))
                 .orElse(false);
-        LOG.info("Is {} unique {}", fieldName, isUniqueField);
+        LOG.info("Is {} unique for {}: {}", value, fieldName, isUniqueField);
         return isUniqueField;
     }
 

@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.model.validation.EntityValid;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -61,12 +62,10 @@ public class Entity {
     @NotNull(message = "COMPRESSION has to be present")
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
-    @NotBlank(message = "MAILBOXPATHIN has to be present")
-    private String mailboxPathIn;
+    private String mailboxPathIn = "";
     @Column(name = "MAILBOXPATHOUT")
-    @NotBlank(message = "MAILBOXPATHOUT has to be present")
     @EntityUnique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
-    private String mailboxPathOut;
+    private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
@@ -78,16 +77,16 @@ public class Entity {
     private String directParticipant;
     @Column(name = "MAXTRANSPERBULK")
     @NotNull(message = "MAXTRANSPERBULK has to be present")
-    private Integer maxTransfersPerBulk;
+    private Integer maxTransfersPerBulk = 0;
     @Column(name = "MAXBULKSPERFILE")
     @NotNull(message = "MAXBULKSPERFILE has to be present")
-    private Integer maxBulksPerFile;
+    private Integer maxBulksPerFile = 0;
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present")
-    private Integer startOfDay;
+    private Integer startOfDay = 0;
     @Column(name = "ENDOFDAY")
     @NotNull(message = "ENDOFDAY has to be present")
-    private Integer endOfDay;
+    private Integer endOfDay = 0;
     @Transient
     private List schedules = new ArrayList();
     @Transient
@@ -184,6 +183,14 @@ public class Entity {
 
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
+
+    @PrePersist
+    public void init() {
+        if (StringUtils.isEmpty(mailboxPathIn))
+            mailboxPathIn = entity + "_GPL";
+        if (StringUtils.isEmpty(mailboxPathOut))
+            mailboxPathOut = entity + "_GPL";
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

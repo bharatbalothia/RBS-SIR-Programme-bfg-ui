@@ -22,17 +22,12 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
-import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import { LoadingContainerComponent } from './components/loading-container/loading-container.component';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
     // Components
     ConfirmDialogComponent,
-    ProgressBarComponent,
-    LoadingContainerComponent,
   ],
   imports: [
     CommonModule,
@@ -57,8 +52,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     HttpClientModule,
     MatDialogModule,
     MatTableModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule
+    MatProgressBarModule
   ],
   exports: [
     // Modules
@@ -83,12 +77,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule,
 
     // Components
     ConfirmDialogComponent,
-    ProgressBarComponent,
-    LoadingContainerComponent,
   ]
 })
 export class SharedModule { }

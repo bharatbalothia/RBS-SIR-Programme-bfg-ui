@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.ibm.sterling</groupId>
@@ -59,24 +57,26 @@
         </dependency>
     </dependencies>
     <profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
                 <active.profile>dev</active.profile>
-				<server.port>9080</server.port>
-			</properties>
-		</profile>
-		<profile>
-			<id>test</id>
-			<properties>
+                <server.host>localhost</server.host>
+                <server.port>9080</server.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
                 <active.profile>test</active.profile>
-				<server.port>25001</server.port>
-			</properties>
-		</profile>
-	</profiles>
+                <server.host>*</server.host>
+                <server.port>25001</server.port>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -89,9 +89,9 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.2.1</version>
                 <configuration>
-					<serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
-					<bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
-				</configuration>
+                    <serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
+                    <bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
+                </configuration>
                 <executions>
                     <execution>
                         <id>create_server</id>
@@ -143,9 +143,9 @@
             </plugin>
         </plugins>
         <resources>
-			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-				<filtering>true</filtering>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
     </build>

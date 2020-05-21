@@ -45,7 +45,7 @@ public class EntityController {
     @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
-        return ResponseEntity.ok(entityService.save(entity));
+        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
     }
     @CrossOrigin
     @PutMapping("/{id}")

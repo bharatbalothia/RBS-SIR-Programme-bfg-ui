@@ -37,7 +37,7 @@ class EntityServiceImplTest {
 
     @Test
     void getEntityAfterApprove() {
-        ChangeViewer changeViewer = new EntityViewer(controlService.findById("ID_1000058").orElse(new ChangeControl()));
+        ChangeViewer changeViewer = new EntityViewer(controlService.findById("ID_1000059").orElse(new ChangeControl()));
         Entity entity = null;
         try {
             entity = service.getEntityAfterApprove(changeViewer);

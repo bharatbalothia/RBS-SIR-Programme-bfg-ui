@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
+import com.ibm.sterling.bfg.app.change.model.ChangeControl;
 import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
@@ -44,15 +45,17 @@ public class EntityController {
 
     @CrossOrigin
     @GetMapping("pending")
-    public List<Entity> getPendingEntities(Pageable pageable) {
-        return changeControlService.findAllPendingEntities(pageable);
+    public List<ChangeControl> getPendingEntities() {
+        List<ChangeControl> list = changeControlService.findAllPending();
+        return list;
     }
 
     @CrossOrigin
     @PostMapping("pending/{changeId}")
     public ResponseEntity<Entity> PendingEntities(@PathVariable(name = "changeId" ) String changeId,
-                                                     @RequestBody Map<String, String> approverComments) throws Exception {
-        return Optional.ofNullable(entityService.getEntityAfterApprove(changeId, approverComments.get("approverComments")))
+                                                     @RequestBody Map<String, Object> approverComments) throws Exception {
+        return Optional.ofNullable(
+                entityService.getEntityAfterApprove(changeId, (String) approverComments.get("approverComments")))
                 .map(record -> ResponseEntity.ok().body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }

@@ -105,7 +105,7 @@ public class EntityServiceImpl implements EntityService {
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl, String approverComments) {
         LOG.debug("Approve the Entity create action");
-        Entity savedEntity = entityRepository.save(changeControl.getEntityFromEntityLog());
+        Entity savedEntity = entityRepository.save(changeControl.convertEntityLogToEntity());
         LOG.debug("Saved entity to DB {}", savedEntity);
         changeControlService.setApproveInfo(
                 changeControl,

@@ -54,4 +54,9 @@ class ChangeControlServiceTest {
     void isNameUnique() {
         System.out.println(service.isNameUnique("FOMGB2BXXX"));
     }
+
+    @Test
+    void findAllPending() {
+        service.findAllPending().forEach(System.out::println);
+    }
 }

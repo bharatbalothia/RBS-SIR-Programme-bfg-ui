@@ -71,11 +71,11 @@ public class ChangeControlService {
                 );
     }
 
-    public List<Entity> findAllPendingEntities(Pageable pageable) {
+    public List<ChangeControl> findAllPending() {
         return controlRepository
                 .findByStatus(ChangeControlStatus.PENDING)
                 .stream()
-                .map(changeControl -> changeControl.getEntityFromEntityLog())
+                .sorted()
                 .collect(Collectors.toList());
     }
 }

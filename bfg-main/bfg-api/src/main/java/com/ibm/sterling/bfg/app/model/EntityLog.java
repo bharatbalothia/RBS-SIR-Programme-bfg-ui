@@ -183,10 +183,6 @@ public class EntityLog {
     @Column(name = "INBOUND_REQUEST_TYPE", columnDefinition = "varchar2(2255)", nullable = false)
     private List<String> inboundRequestType = new ArrayList<>();
 
-    @OneToOne(mappedBy = "entityLog", orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    private ChangeControl changeID;
-
     @Column(name = "IRISH_STEP2")
     private Boolean irishStep2;
 
@@ -370,13 +366,13 @@ public class EntityLog {
         this.inboundRequestType = inboundRequestType;
     }
 
-    public ChangeControl getChangeID() {
-        return changeID;
-    }
-
-    public void setChangeID(ChangeControl changeID) {
-        this.changeID = changeID;
-    }
+//    public ChangeControl getChangeID() {
+//        return changeID;
+//    }
+//
+//    public void setChangeID(ChangeControl changeID) {
+//        this.changeID = changeID;
+//    }
 
     public Boolean getIrishStep2() {
         return irishStep2;

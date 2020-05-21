@@ -9,11 +9,12 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
-public class ChangeControl implements ChangeControlConstants {
+public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(com.ibm.sterling.bfg.app.model.Entity.class);
 
@@ -201,7 +202,7 @@ public class ChangeControl implements ChangeControlConstants {
         this.entityLog = entityLog;
     }
 
-    public com.ibm.sterling.bfg.app.model.Entity getEntityFromEntityLog() {
+    public com.ibm.sterling.bfg.app.model.Entity convertEntityLogToEntity() {
         com.ibm.sterling.bfg.app.model.Entity entityFromLog = new com.ibm.sterling.bfg.app.model.Entity();
         entityFromLog.setEntityId(entityLog.getEntityId());
         entityFromLog.setEntity(entityLog.getEntity());
@@ -323,5 +324,10 @@ public class ChangeControl implements ChangeControlConstants {
 
     public void setDateApproved(Timestamp dateApproved) {
         this.dateApproved = dateApproved;
+    }
+
+    @Override
+    public int compareTo(ChangeControl o) {
+        return changeID.compareTo(o.getChangeID());
     }
 }

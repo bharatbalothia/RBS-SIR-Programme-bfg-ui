@@ -69,14 +69,6 @@ public class EntityServiceImpl implements EntityService {
     public Entity saveEntityToChangeControl(Entity entity) {
         LOG.debug("Trying to save entity to change control:" + entity);
         ChangeControl changeControl = new ChangeControl();
-//        try {
-//            changeControlService.save(changeControl);
-//        } catch (Exception e) {
-//            LOG.error("Error persisting the Change Control record: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        LOG.debug("Change control id:" + changeControl.getChangeID());
-//        entity.setChangeID(changeControl.getChangeID());
         changeControl.setOperation(Operation.CREATE);
         changeControl.setChanger("TEST_USER");
         changeControl.setChangerComments(entity.getChangerComments());

@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
@@ -20,6 +20,7 @@ export class EntityCreateComponent implements OnInit {
   isLinear = true;
 
   @ViewChild('stepper') stepper;
+  @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
   validationMessages = ENTITY_VALIDATION_MESSAGES;
@@ -76,6 +77,7 @@ export class EntityCreateComponent implements OnInit {
       transferInfo: [],
       transferDesc: []
     });
+
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [, Validators.nullValidator]
     });
@@ -121,6 +123,7 @@ export class EntityCreateComponent implements OnInit {
             })).afterClosed().subscribe(() => {
               this.stepper.reset();
               this.initializeFormGroups();
+              this.resetAllForms();
             });
           },
           (error) => {
@@ -153,6 +156,7 @@ export class EntityCreateComponent implements OnInit {
         this.errorMessage = null;
         this.stepper.reset();
         this.initializeFormGroups();
+        this.resetAllForms();
       }
     });
   }
@@ -181,5 +185,9 @@ export class EntityCreateComponent implements OnInit {
     this.entityPageFormGroup.markAllAsTouched();
     this.SWIFTDetailsFormGroup.markAllAsTouched();
     this.summaryPageFormGroup.markAllAsTouched();
+  }
+
+  resetAllForms() {
+    this.formGroups.forEach(formGroup => formGroup.resetForm());
   }
 }

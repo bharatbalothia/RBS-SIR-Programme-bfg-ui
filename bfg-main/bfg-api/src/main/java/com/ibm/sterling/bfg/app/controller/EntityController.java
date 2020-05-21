@@ -64,4 +64,10 @@ public class EntityController {
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
+    @CrossOrigin
+    @GetMapping("/existence")
+    public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
+        return ResponseEntity.ok(entityService.existsByServiceAndEntity(service, entity));
+    }
+
 }

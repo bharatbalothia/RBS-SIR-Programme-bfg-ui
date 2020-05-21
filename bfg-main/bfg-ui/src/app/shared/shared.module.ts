@@ -25,6 +25,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { DetailsDialogComponent } from './components/details-dialog/details-dial
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
   exports: [
     // Modules
@@ -82,6 +84,7 @@ import { DetailsDialogComponent } from './components/details-dialog/details-dial
     MatTableModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
 
     // Components
     ConfirmDialogComponent,

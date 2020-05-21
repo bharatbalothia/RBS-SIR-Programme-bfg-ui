@@ -12,7 +12,7 @@ public interface EntityRepository extends JpaRepository<Entity, Integer> {
 
     boolean existsByMailboxPathOut(String mailboxPathOut);
 
-    boolean existsByServiceAndEntity(String service, String entity);
+    boolean existsByServiceAndEntityAllIgnoreCase(String service, String entity);
 
     Page<Entity> findByDeleted(boolean deleted, Pageable pageable);
 

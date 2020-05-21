@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
@@ -9,6 +9,7 @@ import { EntityService } from 'src/app/shared/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get } from 'lodash';
+import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-create',
@@ -17,9 +18,11 @@ import { get } from 'lodash';
 })
 export class EntityCreateComponent implements OnInit {
 
+  entityDisplayNames = ENTITY_DISPLAY_NAMES;
   isLinear = true;
 
   @ViewChild('stepper') stepper;
+  @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
   validationMessages = ENTITY_VALIDATION_MESSAGES;
@@ -76,6 +79,7 @@ export class EntityCreateComponent implements OnInit {
       transferInfo: [],
       transferDesc: []
     });
+
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [, Validators.nullValidator]
     });
@@ -96,13 +100,12 @@ export class EntityCreateComponent implements OnInit {
 
   createEntity() {
     const entityName = this.entityTypeFormGroup.get('service').value || 'new';
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+    this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Create ${entityName} entity`,
       text: `Are you sure to create ${entityName} entity?`,
       yesCaption: 'Create',
       noCaption: 'Cancel'
-    }));
-    dialogRef.afterClosed().subscribe(result => {
+    })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
         const entity = removeEmpties({
@@ -114,8 +117,16 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.createEntity(entity).pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
-            this.stepper.reset();
-            this.initializeFormGroups();
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Entity created`,
+              text: `Entity ${entityName} has been created`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.stepper.reset();
+              this.initializeFormGroups();
+              this.resetAllForms();
+            });
           },
           (error) => {
             this.isLoading = false;
@@ -138,15 +149,16 @@ export class EntityCreateComponent implements OnInit {
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Cancel creation of the ${entityName} entity`,
       text: `Are you sure to cancel the creation of the ${entityName} entity?`,
-      yesCaption: 'Reset',
+      yesCaption: 'Cancel creation',
       yesCaptionColor: 'warn',
-      noCaption: 'Cancel'
+      noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.errorMessage = null;
         this.stepper.reset();
         this.initializeFormGroups();
+        this.resetAllForms();
       }
     });
   }
@@ -175,5 +187,13 @@ export class EntityCreateComponent implements OnInit {
     this.entityPageFormGroup.markAllAsTouched();
     this.SWIFTDetailsFormGroup.markAllAsTouched();
     this.summaryPageFormGroup.markAllAsTouched();
+  }
+
+  resetRadioButton(formGroup: FormGroup, fieldName) {
+    formGroup.get(fieldName).reset();
+  }
+
+  resetAllForms() {
+    this.formGroups.forEach(formGroup => formGroup.resetForm());
   }
 }

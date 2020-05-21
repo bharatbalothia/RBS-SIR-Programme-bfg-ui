@@ -11,6 +11,6 @@ export interface Section {
 
 export interface SectionItem {
     fieldName: string;
-    fieldValue: string;
-
+    fieldValue: any;
+    shouldDisplayValueUpperCase?: boolean;
 }

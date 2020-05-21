@@ -8,7 +8,9 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-icon inline>format_list_numbered</mat-icon> Version manager
+          <button mat-button (click)="openApprovingDialog()">
+            <mat-icon inline>format_list_numbered</mat-icon> Version manager
+          </button>
         </mat-cell>
       </ng-container>
 
@@ -21,9 +23,13 @@
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="entity">
+      <ng-container matColumnDef="entity">openEntityDetailsDialog
         <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.entity}} </mat-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button (click)="openEntityDetailsDialog(element)">
+            {{element.entity}}
+          </button>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="service">

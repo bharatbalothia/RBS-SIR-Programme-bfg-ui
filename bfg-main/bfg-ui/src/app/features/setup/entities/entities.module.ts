@@ -4,6 +4,7 @@ import { EntityHomeComponent } from './entity-home/entity-home.component';
 import { EntitiesRoutingModule } from './entities-routing.module';
 import { EntityCreateComponent } from './entity-create/entity-create.component';
 import { EntityPendingComponent } from './entity-pending/entity-pending.component';
+import { EntityApprovingDialogComponent } from './entity-approving-dialog/entity-approving-dialog.component';
 
 
 
@@ -11,7 +12,8 @@ import { EntityPendingComponent } from './entity-pending/entity-pending.componen
   declarations: [
     EntityHomeComponent,
     EntityCreateComponent,
-    EntityPendingComponent
+    EntityPendingComponent,
+    EntityApprovingDialogComponent
   ],
   imports: [
     SharedModule,

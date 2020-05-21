@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription, Observable } from 'rxjs';
 import { EntitiesWithPagination } from 'src/app/shared/entity/entities-with-pagination.model';
 import { take } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 
 @Component({
   selector: 'app-entity-pending',
@@ -13,17 +15,20 @@ import { take } from 'rxjs/operators';
 })
 export class EntityPendingComponent implements OnInit {
 
-  loading$: Observable<any>;
+  isLoading = true;
   entities: Entity[] = [];
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
   dataSource: MatTableDataSource<Entity>;
   entitiesSubscription: Subscription;
 
-  constructor(private entityService: EntityService) { }
+  constructor(
+    private entityService: EntityService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
-    this.loading$ = this.entityService.getEntities();
-    this.loading$.pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
+    this.entityService.getEntities().pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
+      this.isLoading = false;
       this.entities = data.content;
       this.updateTable();
     });
@@ -33,4 +38,10 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.entities);
   }
 
+  openInfoDialog() {
+     this.dialog.open(DetailsDialogComponent, new DetailsDialogComponent({
+      title: `Info`,
+      sections: [],
+    }));
+  }
 }

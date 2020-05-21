@@ -9,6 +9,7 @@ import { EntityService } from 'src/app/shared/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get } from 'lodash';
+import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-create',
@@ -17,6 +18,7 @@ import { get } from 'lodash';
 })
 export class EntityCreateComponent implements OnInit {
 
+  entityDisplayNames = ENTITY_DISPLAY_NAMES;
   isLinear = true;
 
   @ViewChild('stepper') stepper;

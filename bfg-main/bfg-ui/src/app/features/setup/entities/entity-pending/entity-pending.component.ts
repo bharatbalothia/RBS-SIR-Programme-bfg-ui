@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Entity } from 'src/app/shared/entity/entity.model';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { EntitiesWithPagination } from 'src/app/shared/entity/entities-with-pagination.model';
 import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
@@ -10,6 +9,7 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { ENTITY_DISPLAY_NAMES, getEntityDisplayName, getEntityDetailsFields } from '../entity-display-names';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { ChangeControl } from 'src/app/shared/entity/change-control.model';
 
 @Component({
   selector: 'app-entity-pending',
@@ -21,9 +21,9 @@ export class EntityPendingComponent implements OnInit {
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
 
   isLoading = true;
-  entities: Entity[] = [];
+  changeControls: ChangeControl[] = [];
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
-  dataSource: MatTableDataSource<Entity>;
+  dataSource: MatTableDataSource<ChangeControl>;
 
   constructor(
     private entityService: EntityService,
@@ -31,15 +31,15 @@ export class EntityPendingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.entityService.getEntities().pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
+    this.entityService.getPendingChanges().pipe(take(1)).subscribe((data: ChangeControl[]) => {
       this.isLoading = false;
-      this.entities = data.content;
+      this.changeControls = data;
       this.updateTable();
     });
   }
 
   updateTable() {
-    this.dataSource = new MatTableDataSource(this.entities);
+    this.dataSource = new MatTableDataSource(this.changeControls);
   }
 
   getPendingChangesDialogInfo(): Section[] {

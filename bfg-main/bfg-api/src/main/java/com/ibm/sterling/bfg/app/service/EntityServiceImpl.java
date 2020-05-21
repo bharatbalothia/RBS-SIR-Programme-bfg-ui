@@ -28,9 +28,6 @@ public class EntityServiceImpl implements EntityService {
     @Autowired
     private ChangeControlService changeControlService;
 
-    @Autowired
-    private EntityLogRepository entityLogRepository;
-
     @Override
     public boolean existsByMqQueueOut(String mqQueueOut) {
         LOG.info("exists by mqQueueOut {}", mqQueueOut);

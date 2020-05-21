@@ -10,6 +10,7 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
+import { EntityValidators } from '../../../../shared/entity/entity-validators';
 
 @Component({
   selector: 'app-entity-create',
@@ -41,7 +42,8 @@ export class EntityCreateComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
-    private entityService: EntityService
+    private entityService: EntityService,
+    private entityValidators: EntityValidators
   ) { }
 
   ngOnInit() {
@@ -53,7 +55,10 @@ export class EntityCreateComponent implements OnInit {
       service: ['', Validators.required]
     });
     this.entityPageFormGroup = this.formBuilder.group({
-      entity: ['', Validators.required],
+      entity: ['', {
+        validators: Validators.required,
+        asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+        updateOn: 'blur'}],
       routeInbound: [true, Validators.required],
       inboundRequestorDN: ['', Validators.required],
       inboundResponderDN: ['', Validators.required],

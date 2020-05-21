@@ -4,6 +4,7 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     entity: [
         { type: 'required', message: 'Entity is required' },
+        { type: 'entityExists', message: 'Entuty with this name already exists' },
     ],
     inboundRequestorDN: [
         { type: 'required', message: 'Inbound Requestor DN is required' },

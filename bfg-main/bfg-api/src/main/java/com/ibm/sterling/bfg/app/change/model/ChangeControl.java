@@ -5,16 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
@@ -58,14 +52,12 @@ public class ChangeControl implements ChangeControlConstants {
     @Column(name = "CHANGE_DATE")
     @CreationTimestamp
     private Timestamp dateChanged; //date change was requested
-//    private LocalDateTime dateChanged; //date change was requested
 
     @Column(name = "APPROVE_USER")
     private String approver; //user approving/rejecting the change
 
     @Column(name = "APPROVE_DATE")
     @UpdateTimestamp
-//    private String dateApproved; //date change was approved/rejected
     private Timestamp dateApproved; //date change was approved/rejected
 
     @Column(name = "CHANGE_COMMENTS")
@@ -83,9 +75,7 @@ public class ChangeControl implements ChangeControlConstants {
     @Column(name = "RESULT_META3")
     private String resultMeta3; //meta-data about the object when using CREATE action (searchable)
 
-    @OneToOne(cascade = CascadeType.ALL,
-              orphanRemoval = true,
-              fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ENTITY_LOG_ID")
     private EntityLog entityLog;
 
@@ -150,14 +140,6 @@ public class ChangeControl implements ChangeControlConstants {
         return LOGGER;
     }
 
-//    public LocalDateTime getDateChanged() {
-//        return dateChanged;
-//    }
-//
-//    public void setDateChanged(LocalDateTime dateChanged) {
-//        this.dateChanged = dateChanged;
-//    }
-
     public String getApprover() {
         return approver;
     }
@@ -165,14 +147,6 @@ public class ChangeControl implements ChangeControlConstants {
     public void setApprover(String approver) {
         this.approver = approver;
     }
-
-//    public String getDateApproved() {
-//        return dateApproved;
-//    }
-//
-//    public void setDateApproved(String dateApproved) {
-//        this.dateApproved = dateApproved;
-//    }
 
     public String getChangerComments() {
         return changerComments;

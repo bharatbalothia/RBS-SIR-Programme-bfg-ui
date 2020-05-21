@@ -37,7 +37,7 @@ class ChangeControlServiceTest {
     void save() {
         try {
             Entity entity = new Entity();
-            entity.setEntity("FOMGC2LXXX");
+            entity.setEntity("FOMGC2LEXX");
             ChangeControl cc = new ChangeControl();
             cc.setOperation(Operation.CREATE);
             cc.setChanger("testChanger");

@@ -183,7 +183,8 @@ public class EntityLog {
     @Column(name = "INBOUND_REQUEST_TYPE", columnDefinition = "varchar2(2255)", nullable = false)
     private List<String> inboundRequestType = new ArrayList<>();
 
-    @OneToOne(mappedBy = "entityLog")
+    @OneToOne(mappedBy = "entityLog", orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private ChangeControl changeID;
 
     @Column(name = "IRISH_STEP2")

@@ -74,23 +74,22 @@ public class EntityServiceImpl implements EntityService {
     public Entity saveEntityToChangeControl(Entity entity) {
         LOG.debug("Trying to save entity to change control:" + entity);
         ChangeControl changeControl = new ChangeControl();
-        try {
-            changeControlService.save(changeControl);
-        } catch (Exception e) {
-            LOG.error("Error persisting the Change Control record: " + e.getMessage());
-            e.printStackTrace();
-        }
-        LOG.debug("Change control id:" + changeControl.getChangeID());
-        entity.setChangeID(changeControl.getChangeID());
+//        try {
+//            changeControlService.save(changeControl);
+//        } catch (Exception e) {
+//            LOG.error("Error persisting the Change Control record: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        LOG.debug("Change control id:" + changeControl.getChangeID());
+//        entity.setChangeID(changeControl.getChangeID());
         changeControl.setOperation(Operation.CREATE);
         changeControl.setChanger("TEST_USER");
-        changeControl.setEntityLog(new EntityLog(entity));
         changeControl.setChangerComments(entity.getChangerComments());
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
         try {
-            changeControlService.save(changeControl);
+            entity.setChangeID(changeControlService.save(changeControl).getChangeID());
         } catch (Exception e) {
             LOG.error("Error persisting the Change Control record: " + e.getMessage());
             LOG.error("The Entity could not be saved " + entity);
@@ -127,7 +126,7 @@ public class EntityServiceImpl implements EntityService {
                 ChangeControlStatus.ACCEPTED);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
-        entityLogRepository.save(entityLog) ;
+        changeControl.setEntityLog(entityLog);
         try {
             changeControlService.save(changeControl);
         } catch (Exception e) {
@@ -135,18 +134,6 @@ public class EntityServiceImpl implements EntityService {
         }
         return savedEntity;
     }
-
-//    public Entity saveEntityAfterApprove(ChangeViewer changeViewer) throws Exception {
-//        ChangeControl changeControl = changeViewer.getChange();
-//        if(changeControl.getStatus() != ChangeControlStatus.PENDING){
-//            throw new Exception("Status is not pending and therefore no action can be taken");
-//        }
-//        LOG.debug("Approve the Entity create action");
-//        Entity savedEntity = entityRepository.save(changeControl.getEntityFromEntityLog());
-//        LOG.debug("Saved entity to DB {}", savedEntity);
-//        return savedEntity;
-//    }
-
 
     @Override
     public Page<Entity> findEntities(Pageable pageable) {

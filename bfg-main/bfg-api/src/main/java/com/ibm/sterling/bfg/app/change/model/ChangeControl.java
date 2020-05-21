@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,9 +24,9 @@ public class ChangeControl implements ChangeControlConstants {
             name = "SFG_CHANGE_CONTROL_IDSEQ",
             strategy = "com.ibm.sterling.bfg.app.change.model.ChangeControlIdSequenceGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d") })
+                    @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d") })
     @NotNull
     private String changeID; //pkey for the record
 
@@ -267,7 +268,7 @@ public class ChangeControl implements ChangeControlConstants {
         entityFromLog.setRouteInbound(entityLog.getRouteInbound());
         entityFromLog.setRouteOutbound(entityLog.getRouteOutbound());
         entityFromLog.setInboundDir(entityLog.getInboundDir());
-        entityFromLog.setInboundRequestType( entityLog.getInboundRequestType().stream().toArray(String[]::new));
+        entityFromLog.setInboundRequestType(entityLog.getInboundRequestType().toArray(new String[0]));
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);
         entityFromLog.setIrishStep2(entityLog.getIrishStep2());

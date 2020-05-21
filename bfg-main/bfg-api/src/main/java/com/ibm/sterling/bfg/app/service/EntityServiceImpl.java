@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ibm.sterling.bfg.app.change.model.ChangeControlStatus.ACCEPTED;
+
 @Service
 @Transactional
 public class EntityServiceImpl implements EntityService {
@@ -85,14 +87,40 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity getEntityAfterApprove(String changeId, String approverComments) throws Exception {
+    public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
         ChangeControl changeControl = changeControlService.findById(changeId)
                 .orElseThrow(EntityNotFoundException::new);
         if(changeControl.getStatus() != ChangeControlStatus.PENDING){
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
+
+        Entity entity = new Entity();
+        switch (status) {
+            case ACCEPTED :
+               entity = approve(changeControl, approverComments);
+               break;
+            case FAILED:
+
+            case REJECTED:
+        }
+
+        try {
+            changeControlService.setApproveInfo(
+                    changeControl,
+                    "TEST_APPROVER",
+                    approverComments,
+                    status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    private Entity approve(ChangeControl changeControl, String approverComments) {
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
+
         switch (operation) {
             case CREATE :
                 entity = saveEntityAfterApprove(changeControl, approverComments);
@@ -100,18 +128,15 @@ public class EntityServiceImpl implements EntityService {
             case UPDATE:
             case DELETE:
         }
+
         return entity;
     }
+
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl, String approverComments) {
         LOG.debug("Approve the Entity create action");
         Entity savedEntity = entityRepository.save(changeControl.convertEntityLogToEntity());
         LOG.debug("Saved entity to DB {}", savedEntity);
-        changeControlService.setApproveInfo(
-                changeControl,
-                "TEST_APPROVER",
-                approverComments,
-                ChangeControlStatus.ACCEPTED);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);

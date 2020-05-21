@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public interface EntityService extends FieldValueExists {
 
     Entity save(Entity entity);
 
-    public Entity getEntityAfterApprove(String changeId, String approverComments) throws Exception;
+    public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception;
 
     Entity saveEntityToChangeControl(Entity entity);
 

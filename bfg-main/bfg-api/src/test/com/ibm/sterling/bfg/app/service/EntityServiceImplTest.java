@@ -1,8 +1,5 @@
 package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
-import com.ibm.sterling.bfg.app.change.model.ChangeViewer;
-import com.ibm.sterling.bfg.app.change.model.EntityViewer;
 import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.model.Entity;
 import org.junit.jupiter.api.Test;
@@ -38,11 +35,11 @@ class EntityServiceImplTest {
     @Test
     void getEntityAfterApprove() {
         Entity entity = null;
-        try {
-            entity = service.getEntityAfterApprove("ID_1000059", "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            entity = service.getEntityAfterApprove("ID_1000059", "", (Integer) approverComments.get("status"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         System.out.println(entity);
     }
 }

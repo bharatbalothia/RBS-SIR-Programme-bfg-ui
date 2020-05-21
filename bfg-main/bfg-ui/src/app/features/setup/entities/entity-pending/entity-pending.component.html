@@ -21,9 +21,13 @@
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="entity">
+      <ng-container matColumnDef="entity">openEntityDetailsDialog
         <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.entity}} </mat-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button (click)="openEntityDetailsDialog(element)">
+            {{element.entity}}
+          </button>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="service">

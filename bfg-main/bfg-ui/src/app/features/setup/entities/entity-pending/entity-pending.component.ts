@@ -7,6 +7,8 @@ import { EntitiesWithPagination } from 'src/app/shared/entity/entities-with-pagi
 import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { ENTITY_DISPLAY_NAMES, getEntityDisplayName, getEntityDetailsFields } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-pending',
@@ -15,11 +17,12 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 })
 export class EntityPendingComponent implements OnInit {
 
+  entityDisplayNames = ENTITY_DISPLAY_NAMES;
+
   isLoading = true;
   entities: Entity[] = [];
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
   dataSource: MatTableDataSource<Entity>;
-  entitiesSubscription: Subscription;
 
   constructor(
     private entityService: EntityService,
@@ -39,9 +42,28 @@ export class EntityPendingComponent implements OnInit {
   }
 
   openInfoDialog() {
-     this.dialog.open(DetailsDialogComponent, new DetailsDialogComponent({
-      title: `Info`,
-      sections: [],
+    const modref = this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `Change Record: Pending`,
+      sections: [
+        {
+          sectionTitle: 'Change Details',
+          sectionItems: [
+            { fieldName: 'Change ID', fieldValue: '7385s5sd4fsdfsd' },
+            { fieldName: 'Object type', fieldValue: 'Entity' },
+            { fieldName: 'Before Changes', fieldValue: 'None' },
+            { fieldName: 'Operation', fieldValue: 'CREATE' },
+            { fieldName: 'Status', fieldValue: 'Pending' },
+          ]
+        }
+      ],
+    }));
+    modref.componentInstance.body = `<input matInput type="text">`;
+  }
+
+  openEntityDetailsDialog(entity: Entity) {
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `${entity.service}: ${entity.entity}`,
+      sections: getEntityDetailsFields(entity),
     }));
   }
 }

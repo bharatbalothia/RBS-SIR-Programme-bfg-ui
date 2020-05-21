@@ -8,7 +8,9 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-icon inline>format_list_numbered</mat-icon> Version manager
+          <button mat-button (click)="openApprovingDialog()">
+            <mat-icon inline>format_list_numbered</mat-icon> Version manager
+          </button>
         </mat-cell>
       </ng-container>
 

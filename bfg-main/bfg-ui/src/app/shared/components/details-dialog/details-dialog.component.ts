@@ -13,8 +13,6 @@ export class DetailsDialogComponent implements OnInit {
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   dataSources = [];
 
-  body: string;
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData
   ) {

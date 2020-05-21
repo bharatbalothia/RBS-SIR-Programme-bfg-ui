@@ -2,13 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Entity } from 'src/app/shared/entity/entity.model';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subscription, Observable } from 'rxjs';
 import { EntitiesWithPagination } from 'src/app/shared/entity/entities-with-pagination.model';
 import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { ENTITY_DISPLAY_NAMES, getEntityDisplayName, getEntityDetailsFields } from '../entity-display-names';
+import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
+import { Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 
 @Component({
   selector: 'app-entity-pending',
@@ -41,23 +42,26 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.entities);
   }
 
+  getPendingChangesDialogInfo(): Section[] {
+    return [
+      {
+        sectionTitle: 'Change Details',
+        sectionItems: [
+          { fieldName: 'Change ID', fieldValue: '7385s5sd4fsdfsd' },
+          { fieldName: 'Object type', fieldValue: 'Entity' },
+          { fieldName: 'Before Changes', fieldValue: 'None' },
+          { fieldName: 'Operation', fieldValue: 'CREATE' },
+          { fieldName: 'Status', fieldValue: 'Pending' },
+        ]
+      }
+    ];
+  }
+
   openInfoDialog() {
-    const modref = this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `Change Record: Pending`,
-      sections: [
-        {
-          sectionTitle: 'Change Details',
-          sectionItems: [
-            { fieldName: 'Change ID', fieldValue: '7385s5sd4fsdfsd' },
-            { fieldName: 'Object type', fieldValue: 'Entity' },
-            { fieldName: 'Before Changes', fieldValue: 'None' },
-            { fieldName: 'Operation', fieldValue: 'CREATE' },
-            { fieldName: 'Status', fieldValue: 'Pending' },
-          ]
-        }
-      ],
+      sections: this.getPendingChangesDialogInfo(),
     }));
-    modref.componentInstance.body = `<input matInput type="text">`;
   }
 
   openEntityDetailsDialog(entity: Entity) {
@@ -66,4 +70,12 @@ export class EntityPendingComponent implements OnInit {
       sections: getEntityDetailsFields(entity),
     }));
   }
+
+  openApprovingDialog() {
+    this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+      title: 'Approve Change',
+      sections: this.getPendingChangesDialogInfo()
+    }));
+  }
+
 }

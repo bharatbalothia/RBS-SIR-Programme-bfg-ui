@@ -23,6 +23,7 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     HttpClientModule,
     MatDialogModule,
     MatTableModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule
   ],
   exports: [
     // Modules
@@ -77,6 +79,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
+    MatTooltipModule,
 
     // Components
     ConfirmDialogComponent,

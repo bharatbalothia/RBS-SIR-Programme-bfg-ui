@@ -182,4 +182,8 @@ export class EntityCreateComponent implements OnInit {
     this.SWIFTDetailsFormGroup.markAllAsTouched();
     this.summaryPageFormGroup.markAllAsTouched();
   }
+
+  resetRadioButton(formGroup: FormGroup, fieldName) {
+    formGroup.get(fieldName).reset();
+  }
 }

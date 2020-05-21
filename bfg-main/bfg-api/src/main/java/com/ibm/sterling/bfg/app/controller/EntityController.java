@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
+import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
@@ -9,8 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -22,6 +24,10 @@ public class EntityController {
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private ChangeControlService changeControlService;
+
     @CrossOrigin
     @GetMapping
     public Page<Entity> getEntities(@RequestParam(value = "service", required = false) String serviceName,
@@ -35,6 +41,22 @@ public class EntityController {
                                 .orElse(entityService.findEntities(pageable))
                 );
     }
+
+    @CrossOrigin
+    @GetMapping("pending")
+    public List<Entity> getPendingEntities(Pageable pageable) {
+        return changeControlService.findAllPendingEntities(pageable);
+    }
+
+    @CrossOrigin
+    @PostMapping("pending/{changeId}")
+    public ResponseEntity<Entity> PendingEntities(@PathVariable(name = "changeId" ) String changeId,
+                                                     @RequestBody Map<String, String> approverComments) throws Exception {
+        return Optional.ofNullable(entityService.getEntityAfterApprove(changeId, approverComments.get("approverComments")))
+                .map(record -> ResponseEntity.ok().body(record))
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {

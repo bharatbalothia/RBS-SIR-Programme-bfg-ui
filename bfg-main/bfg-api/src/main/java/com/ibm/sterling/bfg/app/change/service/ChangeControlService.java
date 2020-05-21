@@ -4,15 +4,19 @@ import com.ibm.sterling.bfg.app.change.model.ChangeControl;
 import com.ibm.sterling.bfg.app.change.model.ChangeControlConstants;
 import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.change.repository.ChangeControlRepository;
+import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
 import com.ibm.sterling.bfg.app.service.EntityServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ChangeControlService {
@@ -45,7 +49,7 @@ public class ChangeControlService {
             return controlFromBD;
     }
 
-    public ChangeControl setApproveInfo(ChangeControl changeControl,
+    public void setApproveInfo(ChangeControl changeControl,
                                         String user,
                                         String comments,
                                         ChangeControlStatus status) {
@@ -54,7 +58,6 @@ public class ChangeControlService {
         changeControl.setStatus(status);
 
         controlRepository.save(changeControl);
-        return changeControl;
     }
 
     public boolean isNameUnique(String entityName) {
@@ -68,4 +71,11 @@ public class ChangeControlService {
                 );
     }
 
+    public List<Entity> findAllPendingEntities(Pageable pageable) {
+        return controlRepository
+                .findByStatus(ChangeControlStatus.PENDING)
+                .stream()
+                .map(changeControl -> changeControl.getEntityFromEntityLog())
+                .collect(Collectors.toList());
+    }
 }

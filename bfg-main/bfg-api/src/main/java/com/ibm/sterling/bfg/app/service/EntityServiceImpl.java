@@ -30,7 +30,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public boolean existsByServiceAndEntity(String service, String entity) {
         LOG.info("exists by {} and {}", service, entity);
-        return entityRepository.existsByServiceAndEntity(service, entity);
+        return entityRepository.existsByServiceAndEntityAllIgnoreCase(service, entity);
     }
 
     @Override

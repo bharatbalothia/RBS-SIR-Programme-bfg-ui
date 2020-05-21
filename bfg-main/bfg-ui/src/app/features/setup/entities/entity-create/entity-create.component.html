@@ -30,7 +30,7 @@
             </mat-step>
             <mat-step [stepControl]="entityPageFormGroup">
                 <form [formGroup]="entityPageFormGroup">
-                    <ng-template matStepLabel>Fill entity page</ng-template>
+                    <ng-template matStepLabel>Complete entity page</ng-template>
                     <mat-form-field>
                         <mat-label>Entity</mat-label>
                         <input matInput formControlName="entity" required>
@@ -138,7 +138,7 @@
             </mat-step>
             <mat-step [stepControl]="SWIFTDetailsFormGroup">
                 <form [formGroup]="SWIFTDetailsFormGroup">
-                    <ng-template matStepLabel>Fill SWIFT details</ng-template>
+                    <ng-template matStepLabel>Complete SWIFT details</ng-template>
                     <section>
                         <mat-form-field>
                             <mat-label>Requestor DN</mat-label>
@@ -313,7 +313,7 @@
             </mat-step>
             <mat-step [stepControl]="summaryPageFormGroup">
                 <form [formGroup]="summaryPageFormGroup">
-                    <ng-template matStepLabel>Fill summary page</ng-template>
+                    <ng-template matStepLabel>Summary page</ng-template>
                     <mat-table [dataSource]="summaryPageDataSource">
                         <ng-container matColumnDef="field">
                             <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>

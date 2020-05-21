@@ -28,9 +28,15 @@
 
     }
 
-    .error-table-cell {
-        white-space: pre-line;
+    .mat-cell {
+
+        word-break: break-word;
+        
+        .error-table-cell {
+            white-space: pre-line;
+        }
     }
+   
 
     .stepper-actions {
         margin-top: 15px;

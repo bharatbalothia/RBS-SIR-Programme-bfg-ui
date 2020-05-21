@@ -37,7 +37,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public boolean existsByServiceAndEntity(String service, String entity) {
         LOG.info("exists by {} and {}", service, entity);
-        return entityRepository.existsByServiceAndEntity(service, entity);
+        return entityRepository.existsByServiceAndEntityAllIgnoreCase(service, entity);
     }
 
     @Override
@@ -152,9 +152,9 @@ public class EntityServiceImpl implements EntityService {
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
         if (fieldName.equals("MQQUEUEOUT"))
-            return this.entityRepository.existsByMqQueueOut(value.toString());
+            return entityRepository.existsByMqQueueOut(String.valueOf(value));
         if (fieldName.equals("MAILBOXPATHOUT"))
-            return this.entityRepository.existsByMailboxPathOut(value.toString());
+            return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
     }
 

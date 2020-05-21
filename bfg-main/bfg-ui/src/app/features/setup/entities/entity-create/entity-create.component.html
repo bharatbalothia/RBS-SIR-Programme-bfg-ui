@@ -16,9 +16,7 @@
                             <mat-option value="SCT">SCT</mat-option>
                         </mat-select>
                         <mat-error *ngFor="let validation of validationMessages.service">
-                            <mat-error class="error-message" *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)
-                                && (entityTypeFormGroup.get('service').dirty
-                                || entityTypeFormGroup.get('service').touched)">
+                            <mat-error class="error-message" *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('service')">
@@ -37,9 +35,7 @@
                         <mat-label>Entity</mat-label>
                         <input matInput formControlName="entity" required>
                         <mat-error *ngFor="let validation of validationMessages.entity">
-                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)
-                                && (entityPageFormGroup.get('entity').dirty
-                                || entityPageFormGroup.get('entity').touched)">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('entity')">
@@ -47,7 +43,7 @@
                         </mat-error>
                     </mat-form-field>
                     <section class='radio-group-section'>
-                        <label class='radio-group-label'>Route Inbound:</label>
+                        <label class='radio-group-label'>Route Inbound:*</label>
                         <mat-radio-group formControlName='routeInbound'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -61,9 +57,7 @@
                             <mat-label>Inbound Requestor DN</mat-label>
                             <input matInput formControlName="inboundRequestorDN" required>
                             <mat-error *ngFor="let validation of validationMessages.inboundRequestorDN">
-                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)
-                                    && (entityPageFormGroup.get('inboundRequestorDN').dirty
-                                    || entityPageFormGroup.get('inboundRequestorDN').touched)">
+                                <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestorDN')">
@@ -75,9 +69,7 @@
                         <mat-label>Inbound Responder DN</mat-label>
                         <input matInput formControlName="inboundResponderDN" required>
                         <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
-                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)
-                                    && (entityPageFormGroup.get('inboundResponderDN').dirty
-                                    || entityPageFormGroup.get('inboundResponderDN').touched)">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
@@ -88,9 +80,7 @@
                         <mat-label>Inbound Service</mat-label>
                         <input matInput formControlName="inboundService" required>
                         <mat-error *ngFor="let validation of validationMessages.inboundService">
-                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)
-                                    && (entityPageFormGroup.get('inboundService').dirty
-                                    || entityPageFormGroup.get('inboundService').touched)">
+                            <mat-error class="error-message" *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
@@ -119,7 +109,7 @@
                         </mat-error>
                     </mat-form-field>
                     <section class='radio-group-section'>
-                        <label class='radio-group-label'>Inbound Directory:</label>
+                        <label class='radio-group-label'>Inbound Directory:*</label>
                         <mat-radio-group formControlName='inboundDir'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -129,7 +119,7 @@
                         </mat-error>
                     </section>
                     <section class='radio-group-section'>
-                        <label class='radio-group-label'>Inbound Routing Rule:</label>
+                        <label class='radio-group-label'>Inbound Routing Rule:*</label>
                         <mat-radio-group formControlName='inboundRoutingRule'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -154,9 +144,7 @@
                             <mat-label>Requestor DN</mat-label>
                             <input matInput formControlName="requestorDN" required>
                             <mat-error *ngFor="let validation of validationMessages.requestorDN">
-                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)
-                                    && (SWIFTDetailsFormGroup.get('requestorDN').dirty
-                                    || SWIFTDetailsFormGroup.get('requestorDN').touched)">
+                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('requestorDN')">
@@ -169,9 +157,7 @@
                             <mat-label>Responder DN</mat-label>
                             <input matInput formControlName="responderDN" required>
                             <mat-error *ngFor="let validation of validationMessages.responderDN">
-                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)
-                                    && (SWIFTDetailsFormGroup.get('responderDN').dirty
-                                    || SWIFTDetailsFormGroup.get('responderDN').touched)">
+                                <mat-error class="error-message" *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
                             </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('responderDN')">
@@ -194,6 +180,10 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <button mat-icon-button color="warn" matTooltip="Reset Trace value"
+                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'trace')">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('trace')">
                             {{getErrorByField('trace')}}
                         </mat-error>
@@ -204,6 +194,10 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <button mat-icon-button color="warn" matTooltip="Reset SnF value"
+                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'snF')">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('snF')">
                             {{getErrorByField('snF')}}
                         </mat-error>
@@ -214,6 +208,10 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <button mat-icon-button color="warn" matTooltip="Reset Delivery Notification value"
+                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'deliveryNotification')">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotification')">
                             {{getErrorByField('deliveryNotification')}}
                         </mat-error>
@@ -224,12 +222,16 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
+                        <button mat-icon-button color="warn" matTooltip="Reset Non-Repudiation value"
+                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'nonRepudiation')">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('nonRepudiation')">
                             {{getErrorByField('nonRepudiation')}}
                         </mat-error>
                     </section>
                     <section class='radio-group-section'>
-                        <label class='radio-group-label'>End to End Signing:</label>
+                        <label class='radio-group-label'>End to End Signing:*</label>
                         <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>
                             <mat-radio-button value="Crypto">Crypto</mat-radio-button>
@@ -354,6 +356,6 @@
         </mat-horizontal-stepper>
     </mat-card-content>
     <mat-card-footer>
-        <app-progress-bar [loading]="saving$" (stateChange)="saving = $event"></app-progress-bar>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
     </mat-card-footer>
 </mat-card>

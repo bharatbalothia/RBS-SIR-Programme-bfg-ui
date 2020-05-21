@@ -45,9 +45,8 @@ public class EntityController {
     @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
-        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
+        return ResponseEntity.ok(entityService.save(entity));
     }
-
     @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
@@ -63,6 +62,12 @@ public class EntityController {
                     entityService.deleteById(id);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @CrossOrigin
+    @GetMapping("/existence")
+    public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
+        return ResponseEntity.ok(entityService.existsByServiceAndEntity(service, entity));
     }
 
 }

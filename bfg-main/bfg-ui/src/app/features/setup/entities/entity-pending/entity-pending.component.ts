@@ -31,6 +31,10 @@ export class EntityPendingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.getPendingChanges();
+  }
+
+  getPendingChanges() {
     this.entityService.getPendingChanges().pipe(take(1)).subscribe((data: ChangeControl[]) => {
       this.isLoading = false;
       this.changeControls = data;
@@ -56,7 +60,7 @@ export class EntityPendingComponent implements OnInit {
           { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
           { fieldName: 'Approver', fieldValue: changeControl.approver },
           { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
-        ]
+        ],
       }
     ];
   }
@@ -78,8 +82,13 @@ export class EntityPendingComponent implements OnInit {
   openApprovingDialog(changeControl: ChangeControl) {
     this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
       title: 'Approve Change',
-      sections: this.getPendingChangesDialogInfo(changeControl)
-    }));
+      sections: this.getPendingChangesDialogInfo(changeControl),
+      actionData: { changeID: changeControl.changeID }
+    })).afterClosed().subscribe(data => {
+      if (data.refreshList) {
+        this.getPendingChanges();
+      }
+    });
   }
 
 }

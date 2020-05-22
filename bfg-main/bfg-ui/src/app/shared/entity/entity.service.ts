@@ -23,7 +23,7 @@ export class EntityService {
     return this.http.get<ChangeControl[]>(this.apiUrl + 'pending');
   }
 
-  rosolveChange(resolution: {changeID: string, status: string, approverComments: string}){
+  resolveChange(resolution: {changeID: string, status: string, approverComments: string}){
     return this.http.post(this.apiUrl + 'pending', resolution);
   }
 

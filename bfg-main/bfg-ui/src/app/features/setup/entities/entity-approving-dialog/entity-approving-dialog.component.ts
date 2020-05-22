@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Section, DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
+import { EntityService } from 'src/app/shared/entity/entity.service';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -8,6 +10,8 @@ import { Section, DetailsDialogData } from 'src/app/shared/components/details-di
   styleUrls: ['./entity-approving-dialog.component.scss']
 })
 export class EntityApprovingDialogComponent implements OnInit {
+
+  changeStatus = CHANGE_STATUS;
 
   isLoading = false;
 
@@ -21,9 +25,11 @@ export class EntityApprovingDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityApprovingDialogComponent>,
+    private entityService: EntityService,
   ) {
     this.data.sections = this.data.sections || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
+    this.data.actionData.changeID = this.data.actionData.changeID || '';
   }
 
   ngOnInit() {
@@ -35,7 +41,16 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   entityApprovingAction(status) {
-    // make request with status, then change isLoading and close dialog
+    this.isLoading = true;
+    this.entityService.resolveChange({ changeID: this.data.actionData.changeID, status, approverComments: this.approverComments })
+      .subscribe(() => {
+        this.isLoading = false;
+        this.dialog.close({refreshList: true});
+      },
+      (error) => {
+        this.isLoading = false;
+        this.dialog.close({refreshList: false});
+      });
   }
 
 }

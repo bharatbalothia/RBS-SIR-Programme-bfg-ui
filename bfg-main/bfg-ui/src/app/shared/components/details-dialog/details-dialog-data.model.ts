@@ -2,6 +2,7 @@ export interface DetailsDialogData {
     title: string;
     sections: Section[];
     yesCaption?: string;
+    actionData?: any;
 }
 
 export interface Section {

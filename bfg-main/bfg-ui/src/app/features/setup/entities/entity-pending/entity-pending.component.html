@@ -8,7 +8,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-button (click)="openApprovingDialog()">
+          <button mat-button (click)="openApprovingDialog(element)">
             <mat-icon inline>format_list_numbered</mat-icon> Version manager
           </button>
         </mat-cell>
@@ -17,7 +17,7 @@
       <ng-container matColumnDef="changes">
         <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-button (click)="openInfoDialog()">
+          <button mat-button (click)="openInfoDialog(element)">
             <mat-icon inline>info</mat-icon> Changes
           </button>
         </mat-cell>
@@ -26,7 +26,7 @@
       <ng-container matColumnDef="entity">openEntityDetailsDialog
         <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-button (click)="openEntityDetailsDialog(element)">
+          <button mat-button (click)="openEntityDetailsDialog(element.entityLog)">
             {{element.resultMeta1}}
           </button>
         </mat-cell>

@@ -42,25 +42,29 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.changeControls);
   }
 
-  getPendingChangesDialogInfo(): Section[] {
+  getPendingChangesDialogInfo(changeControl: ChangeControl): Section[] {
     return [
       {
         sectionTitle: 'Change Details',
         sectionItems: [
-          { fieldName: 'Change ID', fieldValue: '7385s5sd4fsdfsd' },
-          { fieldName: 'Object type', fieldValue: 'Entity' },
-          { fieldName: 'Before Changes', fieldValue: 'None' },
-          { fieldName: 'Operation', fieldValue: 'CREATE' },
-          { fieldName: 'Status', fieldValue: 'Pending' },
+          { fieldName: 'Change ID', fieldValue: changeControl.changeID },
+          { fieldName: 'Object type', fieldValue: changeControl.objectType },
+          { fieldName: 'Operation', fieldValue: changeControl.operation },
+          { fieldName: 'Status', fieldValue: changeControl.status },
+          { fieldName: 'Changer', fieldValue: changeControl.changer },
+          { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
+          { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
+          { fieldName: 'Approver', fieldValue: changeControl.approver },
+          { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
         ]
       }
     ];
   }
 
-  openInfoDialog() {
+  openInfoDialog(changeControl: ChangeControl) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `Change Record: Pending`,
-      sections: this.getPendingChangesDialogInfo(),
+      sections: this.getPendingChangesDialogInfo(changeControl),
     }));
   }
 
@@ -71,10 +75,10 @@ export class EntityPendingComponent implements OnInit {
     }));
   }
 
-  openApprovingDialog() {
+  openApprovingDialog(changeControl: ChangeControl) {
     this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
       title: 'Approve Change',
-      sections: this.getPendingChangesDialogInfo()
+      sections: this.getPendingChangesDialogInfo(changeControl)
     }));
   }
 

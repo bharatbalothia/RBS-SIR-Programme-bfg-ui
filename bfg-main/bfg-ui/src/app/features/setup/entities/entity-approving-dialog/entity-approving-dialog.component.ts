@@ -3,6 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Section, DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
+import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
+import { get } from 'lodash';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -14,13 +16,13 @@ export class EntityApprovingDialogComponent implements OnInit {
   changeStatus = CHANGE_STATUS;
 
   isLoading = false;
+  errorMessage: ErrorMessage;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   dataSources = [];
 
+  changeId: string;
   approverComments: string;
-
-  body: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -29,7 +31,8 @@ export class EntityApprovingDialogComponent implements OnInit {
   ) {
     this.data.sections = this.data.sections || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
-    this.data.actionData.changeID = this.data.actionData.changeID || '';
+
+    this.changeId = get(this.data, 'actionData.changeID', '');
   }
 
   ngOnInit() {
@@ -42,15 +45,16 @@ export class EntityApprovingDialogComponent implements OnInit {
 
   entityApprovingAction(status) {
     this.isLoading = true;
-    this.entityService.resolveChange({ changeID: this.data.actionData.changeID, status, approverComments: this.approverComments })
+    this.errorMessage = null;
+    this.entityService.resolveChange({ changeID: this.changeId, status, approverComments: this.approverComments })
       .subscribe(() => {
         this.isLoading = false;
-        this.dialog.close({refreshList: true});
+        this.dialog.close({ refreshList: true });
       },
-      (error) => {
-        this.isLoading = false;
-        this.dialog.close({refreshList: false});
-      });
+        (error) => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
 }

@@ -6,10 +6,13 @@ import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { ENTITY_DISPLAY_NAMES, getEntityDisplayName, getEntityDetailsFields } from '../entity-display-names';
+import { ENTITY_DISPLAY_NAMES, getEntityDetailsFields } from '../entity-display-names';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/entity/change-control.model';
+import { get } from 'lodash';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 
 @Component({
   selector: 'app-entity-pending',
@@ -85,8 +88,15 @@ export class EntityPendingComponent implements OnInit {
       sections: this.getPendingChangesDialogInfo(changeControl),
       actionData: { changeID: changeControl.changeID }
     })).afterClosed().subscribe(data => {
-      if (data.refreshList) {
-        this.getPendingChanges();
+      if (get(data, 'refreshList')) {
+        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+          title: `Entity saved`,
+          text: `Entity ${changeControl.entityLog.entity} has been saved`,
+          shouldHideYesCaption: true,
+          noCaption: 'Back'
+        })).afterClosed().subscribe(() => {
+          this.getPendingChanges();
+        });
       }
     });
   }

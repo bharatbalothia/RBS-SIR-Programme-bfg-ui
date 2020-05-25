@@ -26,7 +26,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { InputLowercaseDirective } from './directives/input-lowercase/input-uppercase.directive';
+import { InputLowercaseDirective } from './directives/input-lowercase/input-lowercase.directive';
 
 @NgModule({
   declarations: [

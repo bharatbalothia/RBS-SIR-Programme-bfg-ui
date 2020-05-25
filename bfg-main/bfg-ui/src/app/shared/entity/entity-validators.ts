@@ -27,7 +27,7 @@ export class EntityValidators {
       const pattern = service.value === 'GPL' ?
         '^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$' :
         '^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]$';
-      const error = 'GPL' ? 'dontMatchGPL' : 'dontMatchPattern';
+      const error = service.value === 'GPL' ? 'dontMatchGPL' : 'dontMatchPattern';
       const regexp = new RegExp(pattern);
       const match = regexp.test(control.value);
       return match ? null : { [error]: true } ;

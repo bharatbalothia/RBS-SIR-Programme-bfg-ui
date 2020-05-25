@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Section, DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
-import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
+import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
 import { get } from 'lodash';
 
 @Component({
@@ -56,5 +56,7 @@ export class EntityApprovingDialogComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  getErrorsMessage = (error: ErrorsField) => Object.values(error);
 
 }

@@ -10,8 +10,11 @@ import com.ibm.sterling.bfg.app.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.ServerRequest;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +49,13 @@ public class EntityController {
 
     @CrossOrigin
     @GetMapping("pending")
-    public List<ChangeControl> getPendingEntities() {
+    public ResponseEntity<List<ChangeControl>> getPendingEntities() {
         List<ChangeControl> list = changeControlService.findAllPending();
-        return list;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(list);
     }
 
     @CrossOrigin
@@ -56,20 +63,28 @@ public class EntityController {
     public ResponseEntity<Entity> PendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
         return Optional.ofNullable(
                 entityService.getEntityAfterApprove(
                         changeId,
                         (String) approve.get("approverComments"),
                         status))
-                .map(record -> ResponseEntity.ok().body(record))
+                .map(record -> ResponseEntity.ok()
+                        .headers(headers)
+                        .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
         return entityService.findById(id)
-                .map(record -> ResponseEntity.ok().body(record))
+                .map(record -> ResponseEntity.ok()
+                        .headers(headers)
+                        .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
     @CrossOrigin

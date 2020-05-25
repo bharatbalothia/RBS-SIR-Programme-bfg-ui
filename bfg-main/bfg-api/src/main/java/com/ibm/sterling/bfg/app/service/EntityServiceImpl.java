@@ -11,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
-import static com.ibm.sterling.bfg.app.change.model.ChangeControlStatus.ACCEPTED;
+import javax.validation.*;
+import java.util.*;
 
 @Service
 @Transactional
@@ -27,6 +26,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private Validator validator;
 
     @Override
     public boolean existsByMqQueueOut(String mqQueueOut) {
@@ -90,15 +92,15 @@ public class EntityServiceImpl implements EntityService {
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
         ChangeControl changeControl = changeControlService.findById(changeId)
                 .orElseThrow(EntityNotFoundException::new);
-        if(changeControl.getStatus() != ChangeControlStatus.PENDING){
+        if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
 
         Entity entity = new Entity();
         switch (status) {
-            case ACCEPTED :
-               entity = approve(changeControl, approverComments);
-               break;
+            case ACCEPTED:
+                entity = approve(changeControl, approverComments);
+                break;
             case FAILED:
 
             case REJECTED:
@@ -122,7 +124,7 @@ public class EntityServiceImpl implements EntityService {
         Operation operation = changeControl.getOperation();
 
         switch (operation) {
-            case CREATE :
+            case CREATE:
                 entity = saveEntityAfterApprove(changeControl, approverComments);
                 break;
             case UPDATE:
@@ -135,7 +137,12 @@ public class EntityServiceImpl implements EntityService {
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl, String approverComments) {
         LOG.debug("Approve the Entity create action");
-        Entity savedEntity = entityRepository.save(changeControl.convertEntityLogToEntity());
+        Entity entity = changeControl.convertEntityLogToEntity();
+        Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        Entity savedEntity = entityRepository.save(entity);
         LOG.debug("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());

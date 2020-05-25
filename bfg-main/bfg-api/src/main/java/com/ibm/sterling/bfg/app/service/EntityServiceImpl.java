@@ -99,7 +99,7 @@ public class EntityServiceImpl implements EntityService {
         Entity entity = new Entity();
         switch (status) {
             case ACCEPTED:
-                entity = approve(changeControl, approverComments);
+                entity = approve(changeControl);
                 break;
             case FAILED:
 
@@ -119,13 +119,13 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    private Entity approve(ChangeControl changeControl, String approverComments) {
+    private Entity approve(ChangeControl changeControl) {
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
 
         switch (operation) {
             case CREATE:
-                entity = saveEntityAfterApprove(changeControl, approverComments);
+                entity = saveEntityAfterApprove(changeControl);
                 break;
             case UPDATE:
             case DELETE:
@@ -135,7 +135,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
 
-    private Entity saveEntityAfterApprove(ChangeControl changeControl, String approverComments) {
+    private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.debug("Approve the Entity create action");
         Entity entity = changeControl.convertEntityLogToEntity();
         Set<ConstraintViolation<Entity>> violations = validator.validate(entity);

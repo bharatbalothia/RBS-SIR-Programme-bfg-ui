@@ -13,12 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.ServerRequest;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/entities")
@@ -87,11 +84,13 @@ public class EntityController {
                         .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
+
     @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
         return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
     }
+
     @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
@@ -99,6 +98,7 @@ public class EntityController {
                 .map(record -> ResponseEntity.ok().body(entityService.save(entity)))
                 .orElseThrow(EntityNotFoundException::new);
     }
+
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEntity(@PathVariable int id) {

@@ -5,6 +5,8 @@ export const ENTITY_VALIDATION_MESSAGES = {
     entity: [
         { type: 'required', message: 'Entity is required' },
         { type: 'entityExists', message: 'Entuty with this name already exists' },
+        { type: 'dontMatchGPL', message: 'Entity should be in BIC11 format' },
+        { type: 'dontMatchPattern', message: 'Entity should be in specific format' }
     ],
     inboundRequestorDN: [
         { type: 'required', message: 'Inbound Requestor DN is required' },

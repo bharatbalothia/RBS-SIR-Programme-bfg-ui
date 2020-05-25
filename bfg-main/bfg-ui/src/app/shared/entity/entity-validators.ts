@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AsyncValidator, AbstractControl, ValidationErrors, AsyncValidatorFn, FormControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import { EntityService } from './entity.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError, take } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { map, catchError, take } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class EntityValidators{
+export class EntityValidators {
 
   constructor(private entityService: EntityService) { }
 
@@ -19,6 +19,18 @@ export class EntityValidators{
           return exists ? { entityExists: true } : null;
         }), catchError(() => of(null))
       );
+    };
+  }
+
+  entityPatternByServiceValidator(service: AbstractControl): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const pattern = service.value === 'GPL' ?
+        '^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$' :
+        '^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]$';
+      const error = 'GPL' ? 'dontMatchGPL' : 'dontMatchPattern';
+      const regexp = new RegExp(pattern);
+      const match = regexp.test(control.value);
+      return match ? null : { [error]: true } ;
     };
   }
 

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.*;
 
@@ -48,10 +47,7 @@ public class EntityController {
     @GetMapping("pending")
     public ResponseEntity<List<ChangeControl>> getPendingEntities() {
         List<ChangeControl> list = changeControlService.findAllPending();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(list);
     }
 
@@ -60,15 +56,12 @@ public class EntityController {
     public ResponseEntity<Entity> PendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
         return Optional.ofNullable(
                 entityService.getEntityAfterApprove(
                         changeId,
                         (String) approve.get("approverComments"),
                         status))
                 .map(record -> ResponseEntity.ok()
-                        .headers(headers)
                         .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
@@ -76,11 +69,8 @@ public class EntityController {
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
         return entityService.findById(id)
                 .map(record -> ResponseEntity.ok()
-                        .headers(headers)
                         .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }

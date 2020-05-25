@@ -5,7 +5,9 @@ import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 export class InputLowercaseDirective {
 
   @HostListener('input', ['$event']) onInputChange($event) {
-    $event.target.value = $event.target.value.toLowerCase();
+    const targetElement: HTMLInputElement = $event.target;
+    targetElement.value = targetElement.value.toLowerCase();
+    targetElement.dispatchEvent(new Event('input'));
   }
 
 }

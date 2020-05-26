@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home.component';
-import { routingPaths } from 'src/app/core/constants/routing-paths';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 
 export const routes: Routes = [
-  { path: routingPaths.EMPTY, component: HomeComponent}
+  { path: ROUTING_PATHS.EMPTY, component: HomeComponent}
 ];
 
 @NgModule({

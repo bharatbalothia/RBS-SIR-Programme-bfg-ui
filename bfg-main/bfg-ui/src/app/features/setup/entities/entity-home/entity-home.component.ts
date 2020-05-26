@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ROUTING_PATHS } from '../../../../core/constants/routing-paths';
 
 @Component({
   selector: 'app-entity-home',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./entity-home.component.scss']
 })
 export class EntityHomeComponent implements OnInit {
+
+  readonly ROUTING_PATHS = ROUTING_PATHS;
 
   constructor() { }
 

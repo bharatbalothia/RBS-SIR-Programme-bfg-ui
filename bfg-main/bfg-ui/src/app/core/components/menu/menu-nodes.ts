@@ -1,4 +1,4 @@
-import { routingPaths } from '../../constants/routing-paths';
+import { ROUTING_PATHS } from '../../constants/routing-paths';
 
 export interface MenuNode {
     name: string;
@@ -9,18 +9,18 @@ export interface MenuNode {
 export  const MENU_DATA: MenuNode[] = [
     {
       name: 'Home',
-      route: routingPaths.HOME
+      route: ROUTING_PATHS.HOME
     },
     {
       name: 'Monitor',
       children: [
         {
           name: 'File Monitor',
-          route: routingPaths.FILE_MONITOR
+          route: ROUTING_PATHS.FILE_MONITOR
         },
         {
           name: 'Error Monitor',
-          route: routingPaths.ERROR_MONITOR
+          route: ROUTING_PATHS.ERROR_MONITOR
         },
       ]
     },
@@ -29,11 +29,11 @@ export  const MENU_DATA: MenuNode[] = [
       children: [
         {
           name: 'File Search',
-          route: routingPaths.FILE_SEARCH
+          route: ROUTING_PATHS.FILE_SEARCH
         },
         {
           name: 'SCT Transaction Search',
-          route: routingPaths.SCT_TRANSACTION_SEARCH
+          route: ROUTING_PATHS.SCT_TRANSACTION_SEARCH
         },
       ]
     },
@@ -42,11 +42,11 @@ export  const MENU_DATA: MenuNode[] = [
       children: [
         {
           name: 'Entities',
-          route: routingPaths.ENTITIES
+          route: ROUTING_PATHS.ENTITIES
         },
         {
           name: 'Trusted Certificates',
-          route: routingPaths.TRUSTED_CERTIFICATES
+          route: ROUTING_PATHS.TRUSTED_CERTIFICATES
         },
       ]
     },

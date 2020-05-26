@@ -1,0 +1,48 @@
+.entity-create-card {
+    margin: 15px 15px 15px 15px;
+
+    .top-error-message {
+        padding-left: 24px;
+    }
+
+    .mat-form-field {
+        width: 100%;
+
+        .error-message {
+            white-space: pre-wrap;
+        }
+    }
+
+    .radio-group-section {
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        .radio-group-label {
+            margin-right: 15px;
+        }
+
+        .mat-radio-button {
+            margin-right: 15px;
+        }
+
+    }
+
+    .mat-cell {
+
+        word-break: break-word;
+        
+        .error-table-cell {
+            white-space: pre-line;
+        }
+    }
+   
+
+    .stepper-actions {
+        margin-top: 15px;
+
+        .action-button {
+            margin-right: 15px;
+        }
+    }
+}

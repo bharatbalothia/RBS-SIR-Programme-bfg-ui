@@ -1,22 +1,32 @@
 package com.ibm.sterling.bfg.app.model;
 
-import org.apache.logging.log4j.*;
+import com.ibm.sterling.bfg.app.model.validation.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.EntityValid;
+import com.ibm.sterling.bfg.app.service.EntityService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
-import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
+@EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LogManager.getLogger(Entity.class);
-
     @Id
     @Column(name = "ENTITY_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
     @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
+    @NotBlank(message = "ENTITY has to be present")
     private String entity;
+    @NotBlank(message = "SERVICE has to be present")
     private String service;
     @Column(name = "REQUESTORDN")
     private String requestorDN;
@@ -27,9 +37,12 @@ public class Entity {
     @Column(name = "REQUESTTYPE")
     private String requestType;
     @Column(name = "SNF")
+    @NotNull(message = "SNF has to be present")
     private Boolean SnF = Boolean.FALSE;
+    @NotNull(message = "TRACE has to be present")
     private Boolean trace = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIF")
+    @NotNull(message = "DELIVERYNOTIF has to be present")
     private Boolean deliveryNotification = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIFDN")
     private String deliveryNotifDN;
@@ -46,27 +59,34 @@ public class Entity {
     @Column(name = "TRANSFERINFO")
     private String transferInfo;
     @Column(name = "COMPRESSION")
+    @NotNull(message = "COMPRESSION has to be present")
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
-    private String mailboxPathIn;
+    private String mailboxPathIn = "";
     @Column(name = "MAILBOXPATHOUT")
-    private String mailboxPathOut;
+    @EntityUnique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
+    private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
+    @EntityUnique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;
     @Column(name = "DIRECT_PARTICIPANT")
     private String directParticipant;
     @Column(name = "MAXTRANSPERBULK")
-    private Integer maxTransfersPerBulk;
+    @NotNull(message = "MAXTRANSPERBULK has to be present")
+    private Integer maxTransfersPerBulk = 0;
     @Column(name = "MAXBULKSPERFILE")
-    private Integer maxBulksPerFile;
+    @NotNull(message = "MAXBULKSPERFILE has to be present")
+    private Integer maxBulksPerFile = 0;
     @Column(name = "STARTOFDAY")
-    private Integer startOfDay;
+    @NotNull(message = "STARTOFDAY has to be present")
+    private Integer startOfDay = 0;
     @Column(name = "ENDOFDAY")
-    private Integer endOfDay;
+    @NotNull(message = "ENDOFDAY has to be present")
+    private Integer endOfDay = 0;
     @Transient
     private List schedules = new ArrayList();
     @Transient
@@ -144,10 +164,13 @@ public class Entity {
     @Transient
     private String[] inboundRequestType = new String[0];
     @Column(name = "NONREPUDIATION")
+    @NotNull(message = "NONREPUDIATION has to be present")
     private Boolean nonRepudiation = Boolean.FALSE;
     @Column(name = "PAUSE_INBOUND")
+    @NotNull(message = "PAUSE_INBOUND has to be present")
     private Boolean pauseInbound = Boolean.FALSE;
     @Column(name = "PAUSE_OUTBOUND")
+    @NotNull(message = "PAUSE_OUTBOUND has to be present")
     private Boolean pauseOutbound = Boolean.FALSE;
     @Column(name = "ISDELETED")
     private Boolean deleted = Boolean.FALSE;
@@ -160,6 +183,14 @@ public class Entity {
 
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
+
+    @PrePersist
+    public void init() {
+        if (StringUtils.isEmpty(mailboxPathIn))
+            mailboxPathIn = entity + "_GPL";
+        if (StringUtils.isEmpty(mailboxPathOut))
+            mailboxPathOut = entity + "_GPL";
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

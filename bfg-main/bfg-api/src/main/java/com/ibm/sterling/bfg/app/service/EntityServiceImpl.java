@@ -134,7 +134,6 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.debug("Approve the Entity create action");
         Entity entity = changeControl.convertEntityLogToEntity();

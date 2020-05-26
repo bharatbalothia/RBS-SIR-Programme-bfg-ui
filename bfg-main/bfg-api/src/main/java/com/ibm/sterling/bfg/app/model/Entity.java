@@ -29,8 +29,12 @@ public class Entity {
     @NotBlank(message = "SERVICE has to be present")
     private String service;
     @Column(name = "REQUESTORDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for RequestorDN")
     private String requestorDN;
     @Column(name = "RESPONDERDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for ResponderDN")
     private String responderDN;
     @Column(name = "SERVICENAME")
     private String serviceName;
@@ -154,8 +158,12 @@ public class Entity {
     private Boolean inboundRoutingRule = Boolean.FALSE;
 
     @Column(name = "ROUTE_REQUESTORDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound RequestorDN")
     private String inboundRequestorDN = "";
     @Column(name = "ROUTE_RESPONDERDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound ResponderDN")
     private String inboundResponderDN = "";
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";

@@ -1,10 +1,13 @@
 package com.ibm.sterling.bfg.app.model;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
 import com.ibm.sterling.bfg.app.change.model.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Entity;
+
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,9 +25,9 @@ public class EntityLog {
             name = "SCT_ENTITY_LOG_IDSEQ",
             strategy = "com.ibm.sterling.bfg.app.change.model.ChangeControlIdSequenceGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d") })
+                    @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String entityLogId;
 
     private Integer entityId;

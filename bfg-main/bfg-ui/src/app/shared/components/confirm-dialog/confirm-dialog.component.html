@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <p [innerHtml]="data.text"></p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button [color]="data.yesCaptionColor" [mat-dialog-close]="true" *ngIf="!data.shouldHideYesCaption">{{data.yesCaption}}</button>
+  <button mat-raised-button [color]="data.noCaptionColor" [mat-dialog-close]="false" cdkFocusInitial>{{data.noCaption}}</button>
+</mat-dialog-actions>

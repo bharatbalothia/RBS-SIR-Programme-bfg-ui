@@ -1,4 +1,5 @@
 export interface Entity {
+    entityLogId?: number;
     entityId?: number;
     entity: string;
     service: string;

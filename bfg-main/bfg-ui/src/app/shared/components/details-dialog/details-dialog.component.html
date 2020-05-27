@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+    <mat-table *ngFor="let dataSource of dataSources" [dataSource]="dataSource.sectionItems">
+
+        <ng-container matColumnDef="tableTitle">
+            <mat-header-cell *matHeaderCellDef colspan="2">
+                {{dataSource.sectionTitle}}
+            </mat-header-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="fieldName">
+            <mat-cell *matCellDef="let element">
+                {{element.fieldName}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="fieldValue">
+            <mat-cell *matCellDef="let element">
+                {{(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue}}
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+</mat-dialog-actions>

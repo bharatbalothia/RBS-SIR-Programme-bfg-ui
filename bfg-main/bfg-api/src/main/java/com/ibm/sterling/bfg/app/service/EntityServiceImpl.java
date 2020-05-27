@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
+
+import javax.validation.*;
+import java.util.*;
 
 @Service
 @Transactional
@@ -25,6 +26,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private Validator validator;
 
     @Override
     public boolean existsByMqQueueOut(String mqQueueOut) {
@@ -85,33 +89,60 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity getEntityAfterApprove(String changeId, String approverComments) throws Exception {
+    public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
         ChangeControl changeControl = changeControlService.findById(changeId)
                 .orElseThrow(EntityNotFoundException::new);
-        if(changeControl.getStatus() != ChangeControlStatus.PENDING){
+        if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
+
+        Entity entity = new Entity();
+        switch (status) {
+            case ACCEPTED:
+                entity = approve(changeControl);
+                break;
+            case FAILED:
+
+            case REJECTED:
+        }
+
+        try {
+            changeControlService.setApproveInfo(
+                    changeControl,
+                    "TEST_APPROVER",
+                    approverComments,
+                    status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    private Entity approve(ChangeControl changeControl) {
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
+
         switch (operation) {
-            case CREATE :
-                entity = saveEntityAfterApprove(changeControl, approverComments);
+            case CREATE:
+                entity = saveEntityAfterApprove(changeControl);
                 break;
             case UPDATE:
             case DELETE:
         }
+
         return entity;
     }
 
-    private Entity saveEntityAfterApprove(ChangeControl changeControl, String approverComments) {
+    private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.debug("Approve the Entity create action");
-        Entity savedEntity = entityRepository.save(changeControl.getEntityFromEntityLog());
+        Entity entity = changeControl.convertEntityLogToEntity();
+        Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        Entity savedEntity = entityRepository.save(entity);
         LOG.debug("Saved entity to DB {}", savedEntity);
-        changeControlService.setApproveInfo(
-                changeControl,
-                "TEST_APPROVER",
-                approverComments,
-                ChangeControlStatus.ACCEPTED);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);

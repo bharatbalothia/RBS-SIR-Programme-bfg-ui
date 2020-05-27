@@ -11,6 +11,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { get } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
 import { EntityValidators } from '../../../../shared/entity/entity-validators';
+import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
 
 @Component({
   selector: 'app-entity-create',
@@ -56,25 +57,49 @@ export class EntityCreateComponent implements OnInit {
     });
     this.entityPageFormGroup = this.formBuilder.group({
       entity: ['', {
-        validators: Validators.required,
+        validators: [
+          Validators.required,
+          this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+        ],
         asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
-        updateOn: 'blur'}],
+        updateOn: 'blur'
+      }],
       routeInbound: [true, Validators.required],
-      inboundRequestorDN: ['', Validators.required],
-      inboundResponderDN: ['', Validators.required],
+      inboundRequestorDN: ['', {
+        validators: [
+          Validators.required,
+          Validators.pattern(SWIFT_DN)
+        ]
+      }],
+      inboundResponderDN: ['', {
+        validators: [
+          Validators.required,
+          Validators.pattern(SWIFT_DN)
+        ]
+      }],
       inboundService: ['swift.corp.fa', Validators.required],
       inboundRequestType: [],
       inboundDir: [true, Validators.required],
       inboundRoutingRule: [true, Validators.required]
     });
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
-      requestorDN: ['', Validators.required],
-      responderDN: ['', Validators.required],
+      requestorDN: ['', {
+        validators: [
+          Validators.required,
+          Validators.pattern(SWIFT_DN)
+        ]
+      }],
+      responderDN: ['', {
+        validators: [
+          Validators.required,
+          Validators.pattern(SWIFT_DN)
+        ]
+      }],
       requestType: [],
-      trace: [],
-      snF: [],
-      deliveryNotification: [],
-      nonRepudiation: [],
+      trace: [false],
+      snF: [false],
+      deliveryNotification: [false],
+      nonRepudiation: [false],
       e2eSigning: ['None', Validators.required],
       deliveryNotifDN: [],
       deliveryNotifRT: [],

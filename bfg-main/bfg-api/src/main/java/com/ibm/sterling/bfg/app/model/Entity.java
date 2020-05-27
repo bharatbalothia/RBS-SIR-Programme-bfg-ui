@@ -8,10 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.*;
+import java.util.*;
 
 @EntityValid
 @javax.persistence.Entity
@@ -25,12 +23,18 @@ public class Entity {
     @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
     @NotBlank(message = "ENTITY has to be present")
+    @Column
+    @Pattern(regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$", message = "Entity should be in BIC11 format")
     private String entity;
     @NotBlank(message = "SERVICE has to be present")
     private String service;
     @Column(name = "REQUESTORDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for RequestorDN")
     private String requestorDN;
     @Column(name = "RESPONDERDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for ResponderDN")
     private String responderDN;
     @Column(name = "SERVICENAME")
     private String serviceName;
@@ -154,8 +158,12 @@ public class Entity {
     private Boolean inboundRoutingRule = Boolean.FALSE;
 
     @Column(name = "ROUTE_REQUESTORDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound RequestorDN")
     private String inboundRequestorDN = "";
     @Column(name = "ROUTE_RESPONDERDN")
+    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound ResponderDN")
     private String inboundResponderDN = "";
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";

@@ -20,15 +20,21 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatTableModule} from '@angular/material/table';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { InputLowercaseDirective } from './directives/input-lowercase/input-lowercase.directive';
 
 @NgModule({
   declarations: [
     // Components
     ConfirmDialogComponent,
+    DetailsDialogComponent,
+    // Directives
+    InputLowercaseDirective,
   ],
   imports: [
     CommonModule,
@@ -54,7 +60,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
-    MatTooltipModule
+    MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
   exports: [
     // Modules
@@ -79,10 +86,13 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatTooltipModule,
 
     // Components
     ConfirmDialogComponent,
+    // Directives
+    InputLowercaseDirective,
   ]
 })
 export class SharedModule { }

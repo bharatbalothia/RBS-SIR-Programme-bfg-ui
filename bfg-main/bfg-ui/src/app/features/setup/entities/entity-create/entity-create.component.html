@@ -58,7 +58,7 @@
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestorDN'] || 'inboundRequestorDN'}}</mat-label>
-                            <input matInput formControlName="inboundRequestorDN" required>
+                            <input matInput formControlName="inboundRequestorDN" appInputLowercase required>
                             <mat-error *ngFor="let validation of validationMessages.inboundRequestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)">
@@ -71,7 +71,7 @@
                     </section>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
-                        <input matInput formControlName="inboundResponderDN" required>
+                        <input matInput formControlName="inboundResponderDN" appInputLowercase required>
                         <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)">
@@ -149,7 +149,7 @@
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestorDN'] || 'requestorDN'}}</mat-label>
-                            <input matInput formControlName="requestorDN" required>
+                            <input matInput formControlName="requestorDN" appInputLowercase required>
                             <mat-error *ngFor="let validation of validationMessages.requestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
@@ -163,7 +163,7 @@
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['responderDN'] || 'responderDN'}}</mat-label>
-                            <input matInput formControlName="responderDN" required>
+                            <input matInput formControlName="responderDN" appInputLowercase required>
                             <mat-error *ngFor="let validation of validationMessages.responderDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
@@ -189,12 +189,6 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
-                        <button mat-icon-button color="primary"
-                            matTooltip="Reset {{entityDisplayNames['trace'] || 'trace'}} value"
-                            matTooltipPosition="after"
-                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'trace')">
-                            <mat-icon>cancel</mat-icon>
-                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('trace')">
                             {{getErrorByField('trace')}}
                         </mat-error>
@@ -205,12 +199,6 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
-                        <button mat-icon-button color="primary"
-                            matTooltip="Reset {{entityDisplayNames['snF'] || 'snF'}} value"
-                            matTooltipPosition="after"
-                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'snF')">
-                            <mat-icon>cancel</mat-icon>
-                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('snF')">
                             {{getErrorByField('snF')}}
                         </mat-error>
@@ -222,12 +210,6 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
-                        <button mat-icon-button color="primary"
-                            matTooltip="Reset {{entityDisplayNames['deliveryNotification'] || 'deliveryNotification'}} value"
-                            matTooltipPosition="after"
-                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'deliveryNotification')">
-                            <mat-icon>cancel</mat-icon>
-                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotification')">
                             {{getErrorByField('deliveryNotification')}}
                         </mat-error>
@@ -239,12 +221,6 @@
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
-                        <button mat-icon-button color="primary"
-                            matTooltip="Reset {{entityDisplayNames['nonRepudiation'] || 'nonRepudiation'}} value"
-                            matTooltipPosition="after"
-                            (click)="resetRadioButton(SWIFTDetailsFormGroup, 'nonRepudiation')">
-                            <mat-icon>cancel</mat-icon>
-                        </button>
                         <mat-error class="error-message" *ngIf="getErrorByField('nonRepudiation')">
                             {{getErrorByField('nonRepudiation')}}
                         </mat-error>

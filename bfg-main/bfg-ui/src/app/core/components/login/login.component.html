@@ -7,12 +7,13 @@
             <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
+            <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
+            </mat-error>
             <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
                 <section>
                     <mat-form-field>
-                        <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.username"
-                            name="username" #username="ngModel" required>
+                        <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.login" name="login"
+                            #username="ngModel" required>
                     </mat-form-field>
                 </section>
                 <section>
@@ -28,5 +29,8 @@
                 </section>
             </form>
         </mat-card-content>
+        <mat-card-footer>
+            <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+        </mat-card-footer>
     </mat-card>
 </div>

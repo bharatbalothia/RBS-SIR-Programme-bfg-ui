@@ -16,7 +16,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  private apiUrl: string = environment.apiUrl + 'authenticate/';
+  private apiUrl: string = environment.apiUrl + 'auth/';
 
   autoLogIn() {
     const userData: User = JSON.parse(localStorage.getItem(this.USER_STOARGE_NAME));
@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   logIn(credentials: Credentials): Observable<User> {
-    return this.http.post<User>(this.apiUrl, credentials)
+    return this.http.post<User>(this.apiUrl + 'signin', credentials)
       .pipe(
         tap(user => {
           user._createdAt = Date.now();

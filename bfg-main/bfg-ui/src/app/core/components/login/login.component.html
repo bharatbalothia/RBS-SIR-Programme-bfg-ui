@@ -14,16 +14,24 @@
                     <mat-form-field>
                         <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.login" name="login"
                             #username="ngModel" required>
+                        <mat-error *ngFor="let validation of validationMessages.login">
+                            <mat-error class="error-message" *ngIf="isFormFieldHasError('login', validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                     </mat-form-field>
                 </section>
                 <section>
                     <mat-form-field>
                         <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password"
                             name="password" #password="ngModel" required>
+                            <mat-error *ngFor="let validation of validationMessages.password">
+                                <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                     </mat-form-field>
                 </section>
                 <section>
-                    <button type="submit" mat-raised-button color="primary" [disabled]="isLoading">
+                    <button type="submit" class="login-button" mat-raised-button color="primary" [disabled]="isLoading">
                         Log in
                     </button>
                 </section>

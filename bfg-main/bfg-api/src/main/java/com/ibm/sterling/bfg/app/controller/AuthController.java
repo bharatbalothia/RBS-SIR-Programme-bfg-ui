@@ -31,7 +31,6 @@ public class AuthController {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
-    @CrossOrigin
     @PostMapping("/renew")
     public ResponseEntity renew(@RequestBody Map<String, String> userData) {
         String login = userData.get("login");
@@ -55,7 +54,6 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
-    @CrossOrigin
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody Map<String, String> userData) {
         String login = userData.get("login");

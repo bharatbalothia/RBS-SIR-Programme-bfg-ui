@@ -37,7 +37,7 @@ public class ChangeControlService {
         return controlRepository.findById(id);
     }
 
-    public ChangeControl save(ChangeControl changeControl) throws Exception {
+    public ChangeControl save(ChangeControl changeControl) {
           return controlRepository.save(changeControl);
     }
 
@@ -78,4 +78,5 @@ public class ChangeControlService {
                 .sorted()
                 .collect(Collectors.toList());
     }
+
 }

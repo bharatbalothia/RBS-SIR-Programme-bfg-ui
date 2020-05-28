@@ -61,17 +61,16 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Entity save(Entity entity) {
-        LOG.debug("Entity saving");
-        LOG.debug("Trying to save entity {}", entity);
+        LOG.info("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
         entity.setChangeID(changeControl.getChangeID());
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity {}", savedEntity);
+        LOG.info("Saved entity {}", savedEntity);
         return entity;
     }
 
     public Entity saveEntityToChangeControl(Entity entity) {
-        LOG.debug("Trying to save entity to change control:" + entity);
+        LOG.info("Trying to save entity to change control:" + entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(Operation.CREATE);
         changeControl.setChanger("TEST_USER");
@@ -79,13 +78,7 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
-        try {
-            entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        } catch (Exception e) {
-            LOG.error("Error persisting the Change Control record: " + e.getMessage());
-            LOG.error("The Entity could not be saved " + entity);
-            e.printStackTrace();
-        }
+        entity.setChangeID(changeControlService.save(changeControl).getChangeID());
         return entity;
     }
 
@@ -106,16 +99,12 @@ public class EntityServiceImpl implements EntityService {
             case REJECTED:
         }
 
-        try {
-            changeControlService.setApproveInfo(
-                    changeControl,
-                    "TEST_APPROVER",
-                    approverComments,
-                    status);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        changeControlService.setApproveInfo(
+                changeControl,
+                "TEST_APPROVER",
+                approverComments,
+                status
+        );
         return entity;
     }
 
@@ -135,22 +124,18 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
-        LOG.debug("Approve the Entity create action");
+        LOG.info("Approve the Entity create action");
         Entity entity = changeControl.convertEntityLogToEntity();
         Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity to DB {}", savedEntity);
+        LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);
-        try {
-            changeControlService.save(changeControl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changeControlService.save(changeControl);
         return savedEntity;
     }
 

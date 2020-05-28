@@ -7,6 +7,8 @@ import { User } from './user.model';
 import { tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { get } from 'lodash';
+import { Router } from '@angular/router';
+import { ROUTING_PATHS } from '../constants/routing-paths';
 
 
 @Injectable({
@@ -14,21 +16,24 @@ import { get } from 'lodash';
 })
 export class AuthService {
 
-  private USER_STOARGE_NAME = 'userData';
+  private USER_STORAGE_NAME = 'userData';
   user = new BehaviorSubject<User>(null);
 
-  private jwtHelper: JwtHelperService;
+  public jwtHelper: JwtHelperService = new JwtHelperService();
 
-  constructor(private http: HttpClient) {
-    this.jwtHelper = new JwtHelperService();
-  }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) { }
 
   private apiUrl: string = environment.apiUrl + 'auth/';
 
   autoLogIn() {
-    const userData: User = JSON.parse(localStorage.getItem(this.USER_STOARGE_NAME));
-    if (userData) {
-      this.user.next(userData);
+    if (!this.user.value) {
+      const userData: User = JSON.parse(localStorage.getItem(this.USER_STORAGE_NAME));
+      if (userData) {
+        this.user.next(userData);
+      }
     }
   }
 
@@ -38,17 +43,20 @@ export class AuthService {
         tap(user => {
           user._createdAt = Date.now();
           this.user.next(user);
-          localStorage.setItem(this.USER_STOARGE_NAME, JSON.stringify(user));
+          localStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
         })
       );
   }
 
   logOut() {
     this.user.next(null);
-    localStorage.removeItem(this.USER_STOARGE_NAME);
+    localStorage.removeItem(this.USER_STORAGE_NAME);
+    this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
   }
 
-  public isAuthenticated = (): boolean => get(this.user.value, 'accessToken')
-    && !this.jwtHelper.isTokenExpired(this.user.value.accessToken);
+  public isAuthenticated(): boolean {
+    this.autoLogIn();
+    return !this.jwtHelper.isTokenExpired(get(this.user.value, 'accessToken'));
+  }
 
 }

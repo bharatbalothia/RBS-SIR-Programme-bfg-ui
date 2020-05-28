@@ -17,9 +17,15 @@ export class LayoutComponent implements OnInit {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthService) { }
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private authService: AuthService
+  ) { }
+
   ngOnInit(): void {
-    this.authService.autoLogIn();
   }
 
+  logout() {
+    this.authService.logOut();
+  }
 }

@@ -45,6 +45,7 @@ export class AuthService {
 
   logOut() {
     this.user.next(null);
+    localStorage.removeItem(this.USER_STOARGE_NAME);
   }
 
   public isAuthenticated = (): boolean => get(this.user.value, 'accessToken')

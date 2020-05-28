@@ -1,0 +1,14 @@
+.login-layout {
+    display: flex;
+    height: 100%;
+    background-color: #e0e0e0;
+
+    .login-card {
+        width: fit-content;
+        margin: auto;
+
+        .mat-form-field {
+            width: 100%;
+        }
+    }
+}

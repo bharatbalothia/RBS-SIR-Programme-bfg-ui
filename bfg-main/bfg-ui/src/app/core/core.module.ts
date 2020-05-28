@@ -4,6 +4,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { MenuComponent } from './components/menu/menu.component';
+import { LoginComponent } from './components/login/login.component';
 
 
 
@@ -12,13 +13,15 @@ import { MenuComponent } from './components/menu/menu.component';
     LayoutComponent,
     PageNotFoundComponent,
     MenuComponent,
+    LoginComponent,
   ],
   imports: [
     RouterModule,
     SharedModule
   ],
   exports: [
-    LayoutComponent
+    LayoutComponent,
+    LoginComponent,
   ]
 })
 export class CoreModule { }

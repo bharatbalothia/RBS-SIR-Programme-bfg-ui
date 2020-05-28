@@ -1,0 +1,32 @@
+<div class="login-layout">
+    <mat-card class="login-card">
+        <mat-card-header>
+            <mat-card-title>
+                <h1>Log in</h1>
+            </mat-card-title>
+            <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
+            <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
+                <section>
+                    <mat-form-field>
+                        <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.username"
+                            name="username" #username="ngModel" required>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field>
+                        <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password"
+                            name="password" #password="ngModel" required>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <button type="submit" mat-raised-button color="primary" [disabled]="isLoading">
+                        Log in
+                    </button>
+                </section>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

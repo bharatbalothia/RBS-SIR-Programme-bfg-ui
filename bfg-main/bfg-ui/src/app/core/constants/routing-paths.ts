@@ -6,6 +6,9 @@ export const ROUTING_PATHS = {
   PENDING: 'pending',
   PAGE_NOT_FOUND: '**',
 
+  // login routes
+  LOGIN: 'login',
+
   // home routes
   HOME: 'home',
 

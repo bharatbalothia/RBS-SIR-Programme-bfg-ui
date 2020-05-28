@@ -4,6 +4,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { MenuComponent } from './components/menu/menu.component';
+import { LoginComponent } from './components/login/login.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth/auth.interceptor';
 
@@ -14,13 +15,15 @@ import { AuthInterceptor } from './auth/auth.interceptor';
     LayoutComponent,
     PageNotFoundComponent,
     MenuComponent,
+    LoginComponent,
   ],
   imports: [
     RouterModule,
     SharedModule
   ],
   exports: [
-    LayoutComponent
+    LayoutComponent,
+    LoginComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

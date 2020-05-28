@@ -7,10 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +31,7 @@ public class AuthController {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
+    @CrossOrigin
     @PostMapping("/renew")
     public ResponseEntity renew(@RequestBody Map<String, String> userData) {
         String login = userData.get("login");
@@ -57,6 +55,7 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
+    @CrossOrigin
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody Map<String, String> userData) {
         String login = userData.get("login");

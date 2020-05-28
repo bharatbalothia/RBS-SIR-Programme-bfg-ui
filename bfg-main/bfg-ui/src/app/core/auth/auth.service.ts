@@ -5,16 +5,23 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Credentials } from './credentials.model';
 import { User } from './user.model';
 import { tap } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { get } from 'lodash';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
   private USER_STOARGE_NAME = 'userData';
   user = new BehaviorSubject<User>(null);
 
-  constructor(private http: HttpClient) { }
+  private jwtHelper: JwtHelperService;
+
+  constructor(private http: HttpClient) {
+    this.jwtHelper = new JwtHelperService();
+  }
 
   private apiUrl: string = environment.apiUrl + 'auth/';
 
@@ -39,4 +46,8 @@ export class AuthService {
   logOut() {
     this.user.next(null);
   }
+
+  public isAuthenticated = (): boolean => get(this.user.value, 'accessToken')
+    && !this.jwtHelper.isTokenExpired(this.user.value.accessToken);
+
 }

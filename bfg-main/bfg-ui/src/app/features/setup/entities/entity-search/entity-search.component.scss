@@ -2,8 +2,29 @@
 
     margin: 15px 15px 15px 15px;
 
-    table {
+    .search-by-content {
+
+        .search-by-label {
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .search-by-field {
+            margin-right: 15px;
+        }
+
+        button {
+            vertical-align: text-bottom;
+        }
+
+    }
+
+    .mat-table {
         width: 100%;
+
+        .mat-footer-row[hidden] {
+            display: none !important;
+          }
     }
 
     .mat-spinner {

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +78,18 @@ public class ChangeControlService {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public Page<ChangeControl> findAllPending(Pageable pageable) {
+        List<ChangeControl> list = controlRepository
+                .findByStatus(ChangeControlStatus.PENDING)
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+        int pageSize = pageable.getPageSize();
+        long pageOffset = pageable.getOffset();
+        long total = pageOffset + list.size() + (list.size() == pageSize ? pageSize : 0);
+        Page<ChangeControl> page = new PageImpl<ChangeControl>(list, pageable, total);
+        return page;
     }
 }

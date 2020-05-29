@@ -43,12 +43,19 @@ public class EntityController {
                 );
     }
 
+//    @CrossOrigin
+//    @GetMapping("pending")
+//    public ResponseEntity<List<ChangeControl>> getPendingEntities() {
+//        List<ChangeControl> list = changeControlService.findAllPending();
+//        return ResponseEntity.ok()
+//                .body(list);
+//    }
+
     @CrossOrigin
     @GetMapping("pending")
-    public ResponseEntity<List<ChangeControl>> getPendingEntities() {
-        List<ChangeControl> list = changeControlService.findAllPending();
-        return ResponseEntity.ok()
-                .body(list);
+    public Page<ChangeControl> getPendingEntities(Pageable pageable) {
+        Page<ChangeControl> page = changeControlService.findAllPending(pageable);
+        return page;
     }
 
     @CrossOrigin

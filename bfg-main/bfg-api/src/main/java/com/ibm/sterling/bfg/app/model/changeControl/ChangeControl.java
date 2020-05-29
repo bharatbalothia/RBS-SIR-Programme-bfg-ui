@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.change.model;
+package com.ibm.sterling.bfg.app.model.changeControl;
 
 import com.ibm.sterling.bfg.app.model.EntityLog;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +23,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFG_CHANGE_CONTROL_IDSEQ")
     @GenericGenerator(
             name = "SFG_CHANGE_CONTROL_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.change.model.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),

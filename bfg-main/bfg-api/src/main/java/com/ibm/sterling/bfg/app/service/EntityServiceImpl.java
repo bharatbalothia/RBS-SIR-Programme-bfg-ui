@@ -1,19 +1,27 @@
 package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.change.model.*;
-import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
-import org.apache.logging.log4j.*;
+import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.*;
-import java.util.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -155,21 +163,28 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Page<Entity> findEntities(Pageable pageable) {
-        LOG.info("all existing entities");
-        return entityRepository.findByDeleted(false, pageable);
+    public Page<Object> findEntities(Pageable pageable) {
+        List<Object> entities = new ArrayList<>();
+        entities.addAll(entityRepository.findByDeleted(false));
+        entities.addAll(changeControlService.findAllPending());
+        return ListToPageConverter.convertListToPage(entities, pageable);
+    }
+
+    public Page<Object> findEntitiesByService(String service, Pageable pageable) {
+        LOG.info("existing and pending entities by service");
+        List<Object> entities = new ArrayList<>();
+        entities.addAll(entityRepository.findByServiceIgnoreCaseAndDeleted(service, false));
+        entities.addAll(changeControlService.findAllPendingEntities(service));
+        return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     @Override
-    public Page<Entity> findEntitiesByService(String service, Pageable pageable) {
-        LOG.info("existing entities by service");
-        return entityRepository.findByServiceIgnoreCaseAndDeleted(service, false, pageable);
-    }
-
-    @Override
-    public Page<Entity> findEntitiesByEntity(String entity, Pageable pageable) {
-        LOG.info("existing entities by name");
-        return entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false, pageable);
+    public Page<Object> findEntitiesByEntity(String entity, Pageable pageable) {
+        LOG.info("existing and pending entities by name");
+        List<Object> entities = new ArrayList<>();
+        entities.addAll(entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false));
+        entities.addAll(changeControlService.findAllPendingByEntity(entity));
+        return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
@@ -179,6 +194,4 @@ public class EntityServiceImpl implements EntityService {
             return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
     }
-
-
 }

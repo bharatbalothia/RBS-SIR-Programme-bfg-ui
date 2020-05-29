@@ -1,20 +1,23 @@
 package com.ibm.sterling.bfg.app.controller;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/entities")
@@ -31,9 +34,11 @@ public class EntityController {
 
     @CrossOrigin
     @GetMapping
-    public Page<Entity> getEntities(@RequestParam(value = "service", required = false) String serviceName,
+    public Page<Object> getEntities(@RequestParam(value = "service", required = false) String serviceName,
                                     @RequestParam(value = "entity", required = false) String entityName,
-                                    Pageable pageable) {
+                                    @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                    @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         return Optional.ofNullable(serviceName)
                 .map(service -> entityService.findEntitiesByService(service, pageable))
                 .orElse(
@@ -43,19 +48,14 @@ public class EntityController {
                 );
     }
 
-//    @CrossOrigin
-//    @GetMapping("pending")
-//    public ResponseEntity<List<ChangeControl>> getPendingEntities() {
-//        List<ChangeControl> list = changeControlService.findAllPending();
-//        return ResponseEntity.ok()
-//                .body(list);
-//    }
-
     @CrossOrigin
     @GetMapping("pending")
-    public Page<ChangeControl> getPendingEntities(Pageable pageable) {
-        Page<ChangeControl> page = changeControlService.findAllPending(pageable);
-        return page;
+    public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                                  @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<Object> list = new ArrayList<>();
+        list.addAll(changeControlService.findAllPending());
+        return ListToPageConverter.convertListToPage(list, pageable);
     }
 
     @CrossOrigin
@@ -111,5 +111,4 @@ public class EntityController {
     public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ResponseEntity.ok(entityService.existsByServiceAndEntity(service, entity));
     }
-
 }

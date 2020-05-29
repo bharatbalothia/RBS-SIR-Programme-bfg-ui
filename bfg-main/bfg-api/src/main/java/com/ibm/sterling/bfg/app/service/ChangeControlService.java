@@ -1,27 +1,22 @@
-package com.ibm.sterling.bfg.app.change.service;
+package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlConstants;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.change.repository.ChangeControlRepository;
-import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
 import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
-import com.ibm.sterling.bfg.app.service.EntityServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ChangeControlService {
-    private static final Logger LOGGER = LogManager.getLogger(EntityServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(ChangeControlService.class);
 
     @Autowired
     private ChangeControlRepository controlRepository;
@@ -38,7 +33,7 @@ public class ChangeControlService {
         return controlRepository.findById(id);
     }
 
-    public ChangeControl save(ChangeControl changeControl) throws Exception {
+    public ChangeControl save(ChangeControl changeControl) {
           return controlRepository.save(changeControl);
     }
 
@@ -73,23 +68,26 @@ public class ChangeControlService {
     }
 
     public List<ChangeControl> findAllPending() {
-        return controlRepository
+        return convertStreamToList(controlRepository
                 .findByStatus(ChangeControlStatus.PENDING)
-                .stream()
-                .sorted()
-                .collect(Collectors.toList());
+                .stream());
     }
 
-    public Page<ChangeControl> findAllPending(Pageable pageable) {
-        List<ChangeControl> list = controlRepository
-                .findByStatus(ChangeControlStatus.PENDING)
-                .stream()
+    public List<ChangeControl> findAllPendingEntities(String service) {
+        return convertStreamToList(controlRepository
+                .findByStatusAndResultMeta2(ChangeControlStatus.PENDING, service)
+                .stream());
+    }
+
+    public List<ChangeControl> findAllPendingByEntity(String entity) {
+        return convertStreamToList(controlRepository
+                .findByStatusAndResultMeta1(ChangeControlStatus.PENDING, entity)
+                .stream());
+    }
+
+    private List<ChangeControl> convertStreamToList(Stream<ChangeControl> stream) {
+        return stream
                 .sorted()
                 .collect(Collectors.toList());
-        int pageSize = pageable.getPageSize();
-        long pageOffset = pageable.getOffset();
-        long total = pageOffset + list.size() + (list.size() == pageSize ? pageSize : 0);
-        Page<ChangeControl> page = new PageImpl<ChangeControl>(list, pageable, total);
-        return page;
     }
 }

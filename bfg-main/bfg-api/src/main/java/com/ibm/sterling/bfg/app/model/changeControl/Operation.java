@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.change.model;
+package com.ibm.sterling.bfg.app.model.changeControl;
 
 public enum Operation {
     CREATE,

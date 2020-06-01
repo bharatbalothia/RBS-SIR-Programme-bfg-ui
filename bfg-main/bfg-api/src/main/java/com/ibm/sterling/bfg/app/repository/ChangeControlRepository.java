@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ChangeControlRepository extends JpaRepository<ChangeControl, String> {
     List<ChangeControl> findByStatus(ChangeControlStatus status);
-    List<ChangeControl> findByStatusAndResultMeta1(ChangeControlStatus status, String entity);
-    List<ChangeControl> findByStatusAndResultMeta2(ChangeControlStatus status, String service);
+    List<ChangeControl> findByStatusAndResultMeta1ContainingIgnoreCase(ChangeControlStatus status, String resultMeta1);
+    List<ChangeControl> findByStatusAndResultMeta2IgnoreCase(ChangeControlStatus status, String resultMeta1);
+    List<ChangeControl> findByStatusAndResultMeta1ContainingIgnoreCaseAndResultMeta2IgnoreCase(ChangeControlStatus status, String resultMeta1, String resultMeta2);
 }

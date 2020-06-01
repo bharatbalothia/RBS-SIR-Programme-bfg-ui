@@ -7,12 +7,14 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
+import net.bytebuddy.dynamic.DynamicType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +41,31 @@ public class EntityController {
                                     @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                     @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         Pageable pageable = PageRequest.of(page, size);
-        return Optional.ofNullable(serviceName)
-                .map(service -> entityService.findEntitiesByService(service, pageable))
-                .orElse(
-                        Optional.ofNullable(entityName)
-                                .map(entity -> entityService.findEntitiesByEntity(entity, pageable))
-                                .orElse(entityService.findEntities(pageable))
-                );
+        String entity = Optional.ofNullable(entityName).orElse("");
+        String service = Optional.ofNullable(serviceName).orElse("");
+        return entityService.findEntities(pageable, entity, service);
+
+
+//        if (serviceName == null || serviceName.equals("") ) {
+//            if (entityName == null || entityName.equals("")) {
+//                return entityService.findEntities(pageable);
+//            } else {
+//                return entityService.findEntitiesByEntity(entityName, pageable);
+//            }
+//        } else {
+//            if (entityName == null || entityName.equals("")) {
+//                return entityService.findEntitiesByService(serviceName, pageable);
+//            } else {
+//                return entityService.findEntitiesByEntityAndService(entityName, serviceName, pageable);
+//            }
+//        }
+//        return Optional.ofNullable(serviceName)
+//                .map(service -> entityService.findEntitiesByService(service, pageable))
+//                .orElse(
+//                        Optional.ofNullable(entityName)
+//                                .map(entity -> entityService.findEntitiesByEntity(entity, pageable))
+//                                .orElse(entityService.findEntities(pageable))
+//                );
     }
 
     @CrossOrigin

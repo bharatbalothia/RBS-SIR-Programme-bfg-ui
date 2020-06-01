@@ -69,6 +69,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     private String approverComments; //comments made by approver
 
     @Column(name = "RESULT_META1")
+    @OrderBy
     private String resultMeta1; //meta-data about the object when using CREATE action (searchable)
 
     @Column(name = "RESULT_META2")
@@ -327,7 +328,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     }
 
     @Override
-    public int compareTo(ChangeControl o) {
-        return changeID.compareTo(o.getChangeID());
+    public int compareTo(ChangeControl сс) {
+        return resultMeta1.toLowerCase().compareTo(сс.getResultMeta1().toLowerCase());
     }
 }

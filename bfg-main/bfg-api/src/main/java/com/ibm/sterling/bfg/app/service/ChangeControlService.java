@@ -8,9 +8,13 @@ import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,14 +78,18 @@ public class ChangeControlService {
     }
 
     public List<ChangeControl> findAllPendingEntities(String service) {
+//        return controlRepository
+//                .findByStatusAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, service);
         return convertStreamToList(controlRepository
-                .findByStatusAndResultMeta2(ChangeControlStatus.PENDING, service)
+                .findByStatusAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, service)
                 .stream());
     }
 
     public List<ChangeControl> findAllPendingByEntity(String entity) {
+//        return controlRepository
+//                .findByStatusAndResultMeta1ContainingIgnoreCase(ChangeControlStatus.PENDING, entity);
         return convertStreamToList(controlRepository
-                .findByStatusAndResultMeta1(ChangeControlStatus.PENDING, entity)
+                .findByStatusAndResultMeta1ContainingIgnoreCase(ChangeControlStatus.PENDING, entity)
                 .stream());
     }
 
@@ -90,4 +98,10 @@ public class ChangeControlService {
                 .sorted()
                 .collect(Collectors.toList());
     }
+
+    public List<ChangeControl> findAllPendingByEntityAndService(String entity, String service) {
+        return controlRepository.findByStatusAndResultMeta1ContainingIgnoreCaseAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, entity, service);
+    }
+
+
 }

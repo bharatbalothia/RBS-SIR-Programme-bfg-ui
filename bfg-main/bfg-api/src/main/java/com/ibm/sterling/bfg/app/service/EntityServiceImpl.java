@@ -13,15 +13,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -163,10 +161,22 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Page<Object> findEntities(Pageable pageable) {
+    public Page<Object> findEntities(Pageable pageable, String entity, String service) {
         List<Object> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPending());
-        entities.addAll(entityRepository.findByDeleted(false));
+//        entities.addAll(changeControlService.findAllPending());
+
+//        Specification<Entity> spec = Specification.where(new EntitySpecification("ko"));
+//        GenericSpecification<Entity> entitySpecification = new GenericSpecification<>();
+        Specification<Entity> specification = Specification
+                .where(
+                        GenericSpecification.<Entity>filter(entity, "entity"))
+                .and(
+                        GenericSpecification.filter(service, "service"));
+
+        entities.addAll(
+                entityRepository
+                        .findAll(specification));
+//        entities.addAll(entityRepository.findByDeleted(false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
@@ -184,6 +194,20 @@ public class EntityServiceImpl implements EntityService {
         List<Object> entities = new ArrayList<>();
         entities.addAll(changeControlService.findAllPendingByEntity(entity));
         entities.addAll(entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false));
+        return ListToPageConverter.convertListToPage(entities, pageable);
+    }
+
+    @Override
+    public Page<Object> findEntitiesByEntityAndService(String entity, String service, Pageable pageable) {
+        LOG.info("existing and pending entities by name and service");
+        List<Object> entities = new ArrayList<>();
+        entities.addAll(changeControlService.findAllPendingByEntityAndService(entity, service));
+        entities.addAll(
+                entityRepository.
+                    findByEntityContainingIgnoreCaseAndServiceContainingIgnoreCaseAndDeleted(
+                            entity,
+                            service,
+                            false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 

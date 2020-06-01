@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model.changeControl;
 
 import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.EntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.sql.Timestamp;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
-public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable {
+public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable, EntityType {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(com.ibm.sterling.bfg.app.model.Entity.class);
 
@@ -330,5 +331,10 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     @Override
     public int compareTo(ChangeControl сс) {
         return resultMeta1.toLowerCase().compareTo(сс.getResultMeta1().toLowerCase());
+    }
+
+    @Override
+    public String nameForSorting() {
+        return resultMeta1;
     }
 }

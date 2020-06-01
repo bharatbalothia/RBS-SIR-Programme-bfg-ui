@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
@@ -160,8 +161,8 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Page<Object> findEntities(Pageable pageable, String entity, String service) {
-        List<Object> entities = new ArrayList<>();
+    public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
+        List<EntityType> entities = new ArrayList<>();
         entities.addAll(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
@@ -174,7 +175,15 @@ public class EntityServiceImpl implements EntityService {
         entities.addAll(
                 entityRepository
                         .findAll(specification));
-        return ListToPageConverter.convertListToPage(entities, pageable);
+        entities.sort(new Comparator<EntityType>() {
+            @Override
+            public int compare(EntityType o1, EntityType o2) {
+                return o1.nameForSorting().toLowerCase()
+                        .compareTo(
+                                o2.nameForSorting().toLowerCase());
+            }
+        });
+        return ListToPageConverter.<EntityType>convertListToPage(entities, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {

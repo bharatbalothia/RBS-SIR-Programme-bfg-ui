@@ -8,18 +8,18 @@ import java.util.List;
 
 import static java.lang.Math.toIntExact;
 
-public class ListToPageConverter {
-    public static Page<Object> convertListToPage(List<Object> list, Pageable pageable) {
+public class ListToPageConverter<T> {
+    public static <T> Page<T> convertListToPage(List<T> list, Pageable pageable) {
         int total = list.size();
         int start = toIntExact(pageable.getOffset());
         int end = Math.min((start + pageable.getPageSize()), total);
 
-        List<Object> output = new ArrayList<>();
+        List<T> output = new ArrayList<>();
 
         if (start <= end) {
             output = list.subList(start, end);
         }
-        Page<Object> page = new PageImpl<Object>(output, pageable, total);
+        Page<T> page = new PageImpl<T>(output, pageable, total);
         return page;
     }
 }

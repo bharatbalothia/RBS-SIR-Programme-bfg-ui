@@ -13,7 +13,7 @@ import java.util.*;
 @EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
-public class Entity {
+public class Entity implements EntityType{
     private static final long serialVersionUID = 1L;
     private static final Logger log = LogManager.getLogger(Entity.class);
     @Id
@@ -789,5 +789,10 @@ public class Entity {
 
     public void setE2eSigning(String e2eSigning) {
         this.e2eSigning = e2eSigning;
+    }
+
+    @Override
+    public String nameForSorting() {
+        return entity;
     }
 }

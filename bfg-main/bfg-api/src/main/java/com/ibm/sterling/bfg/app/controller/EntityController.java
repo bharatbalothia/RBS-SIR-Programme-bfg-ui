@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
@@ -34,10 +35,10 @@ public class EntityController {
 
     @CrossOrigin
     @GetMapping
-    public Page<Object> getEntities(@RequestParam(value = "service", required = false) String serviceName,
-                                    @RequestParam(value = "entity", required = false) String entityName,
-                                    @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                    @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+    public Page<EntityType> getEntities(@RequestParam(value = "service", required = false) String serviceName,
+                                               @RequestParam(value = "entity", required = false) String entityName,
+                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         Pageable pageable = PageRequest.of(page, size);
         String entity = Optional.ofNullable(entityName).orElse("");
         String service = Optional.ofNullable(serviceName).orElse("");

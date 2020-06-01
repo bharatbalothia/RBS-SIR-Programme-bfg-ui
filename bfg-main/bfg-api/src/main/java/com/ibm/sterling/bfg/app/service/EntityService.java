@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
@@ -26,6 +27,6 @@ public interface EntityService extends FieldValueExists {
 
     Entity saveEntityToChangeControl(Entity entity);
 
-    Page<Object> findEntities(Pageable pageable, String entity, String service);
+    Page<EntityType> findEntities(Pageable pageable, String entity, String service);
 
 }

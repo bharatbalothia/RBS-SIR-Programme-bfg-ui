@@ -5,16 +5,17 @@
     <mat-card-content class="card-content">
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
-            <!-- <mat-form-field class="search-by-field">
+            <mat-form-field class="search-by-field">
                 <mat-label>Searching parameter</mat-label>
                 <mat-select (selectionChange)="onSearchByItemSelect($event.value)" [(value)]="selectedSearchByItem">
                     <mat-option *ngFor="let item of searchByItems" [value]="item">{{getEntityDisplayName(item)}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field> -->
+            </mat-form-field>
             <mat-form-field class="search-by-field" *ngIf="selectedSearchByItem === 'service'">
                 <mat-label>{{getEntityDisplayName(selectedSearchByItem)}}</mat-label>
                 <mat-select [(ngModel)]="searchingValue">
+                    <mat-option value="">ALL</mat-option>
                     <mat-option value="GPL">GPL</mat-option>
                     <mat-option value="SCT">SCT</mat-option>
                 </mat-select>

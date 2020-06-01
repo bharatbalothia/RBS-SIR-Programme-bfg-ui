@@ -27,8 +27,8 @@ export class EntitySearchComponent implements OnInit {
   ROUTING_PATHS = ROUTING_PATHS;
 
   searchByItems: string[] = ['entity', 'service'];
-  selectedSearchByItem = 'entity';
-  searchingValue;
+  selectedSearchByItem: string;
+  searchingValue = '';
 
   isLoading = true;
   entities: EntitiesWithPagination;
@@ -51,7 +51,7 @@ export class EntitySearchComponent implements OnInit {
   getEntityList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
     this.entityService.getEntityList(removeEmpties({
-      entity: this.searchingValue !== '' ? this.searchingValue : null,
+      [this.selectedSearchByItem]: this.searchingValue !== '' ? this.searchingValue : null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
@@ -100,6 +100,9 @@ export class EntitySearchComponent implements OnInit {
     });
   }
 
-  onSearchByItemSelect = (searchByItem: string) => this.selectedSearchByItem = searchByItem;
+  onSearchByItemSelect(searchByItem: string) {
+    this.selectedSearchByItem = searchByItem;
+    this.searchingValue = '';
+  }
 
 }

@@ -28,9 +28,4 @@ public interface EntityService extends FieldValueExists {
 
     Page<Object> findEntities(Pageable pageable, String entity, String service);
 
-    Page<Object> findEntitiesByService(String service, Pageable pageable);
-
-    Page<Object> findEntitiesByEntity(String entity, Pageable pageable);
-
-    Page<Object> findEntitiesByEntityAndService(String entityName, String serviceName, Pageable pageable);
 }

@@ -136,7 +136,6 @@ public class EntityServiceImpl implements EntityService {
             case UPDATE:
             case DELETE:
         }
-
         return entity;
     }
 
@@ -163,51 +162,18 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Page<Object> findEntities(Pageable pageable, String entity, String service) {
         List<Object> entities = new ArrayList<>();
-//        entities.addAll(changeControlService.findAllPending());
-
-//        Specification<Entity> spec = Specification.where(new EntitySpecification("ko"));
-//        GenericSpecification<Entity> entitySpecification = new GenericSpecification<>();
+        entities.addAll(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
                 .and(
-                        GenericSpecification.filter(service, "service"));
-
+                        GenericSpecification.filter(service, "service"))
+                .and(
+                        GenericSpecification.filter("false", "deleted")
+                );
         entities.addAll(
                 entityRepository
                         .findAll(specification));
-//        entities.addAll(entityRepository.findByDeleted(false));
-        return ListToPageConverter.convertListToPage(entities, pageable);
-    }
-
-    public Page<Object> findEntitiesByService(String service, Pageable pageable) {
-        LOG.info("existing and pending entities by service");
-        List<Object> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPendingEntities(service));
-        entities.addAll(entityRepository.findByServiceIgnoreCaseAndDeleted(service, false));
-        return ListToPageConverter.convertListToPage(entities, pageable);
-    }
-
-    @Override
-    public Page<Object> findEntitiesByEntity(String entity, Pageable pageable) {
-        LOG.info("existing and pending entities by name");
-        List<Object> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPendingByEntity(entity));
-        entities.addAll(entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false));
-        return ListToPageConverter.convertListToPage(entities, pageable);
-    }
-
-    @Override
-    public Page<Object> findEntitiesByEntityAndService(String entity, String service, Pageable pageable) {
-        LOG.info("existing and pending entities by name and service");
-        List<Object> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPendingByEntityAndService(entity, service));
-        entities.addAll(
-                entityRepository.
-                    findByEntityContainingIgnoreCaseAndServiceContainingIgnoreCaseAndDeleted(
-                            entity,
-                            service,
-                            false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 

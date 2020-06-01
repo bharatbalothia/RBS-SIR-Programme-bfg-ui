@@ -10,11 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -77,31 +74,23 @@ public class ChangeControlService {
                 .stream());
     }
 
-    public List<ChangeControl> findAllPendingEntities(String service) {
-//        return controlRepository
-//                .findByStatusAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, service);
-        return convertStreamToList(controlRepository
-                .findByStatusAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, service)
-                .stream());
-    }
-
-    public List<ChangeControl> findAllPendingByEntity(String entity) {
-//        return controlRepository
-//                .findByStatusAndResultMeta1ContainingIgnoreCase(ChangeControlStatus.PENDING, entity);
-        return convertStreamToList(controlRepository
-                .findByStatusAndResultMeta1ContainingIgnoreCase(ChangeControlStatus.PENDING, entity)
-                .stream());
-    }
-
     private List<ChangeControl> convertStreamToList(Stream<ChangeControl> stream) {
         return stream
                 .sorted()
                 .collect(Collectors.toList());
     }
 
-    public List<ChangeControl> findAllPendingByEntityAndService(String entity, String service) {
-        return controlRepository.findByStatusAndResultMeta1ContainingIgnoreCaseAndResultMeta2IgnoreCase(ChangeControlStatus.PENDING, entity, service);
+    public List<ChangeControl> findAllPending(String entity, String service) {
+        Specification<ChangeControl> specification = Specification
+                .where(
+                        GenericSpecification.<ChangeControl>filter(entity, "resultMeta1"))
+                .and(
+                        GenericSpecification.filter(service, "resultMeta2"))
+                .and(
+                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText() , "status")
+                );
+        return convertStreamToList(controlRepository
+                .findAll(specification)
+                .stream());
     }
-
-
 }

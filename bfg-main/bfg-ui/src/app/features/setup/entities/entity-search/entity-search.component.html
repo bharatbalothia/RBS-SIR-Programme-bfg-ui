@@ -35,13 +35,19 @@
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                         <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
+                        <a mat-icon-button *ngIf="!element.entityLog" [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]">
+                            <mat-icon inline>edit</mat-icon>
+                        </a>
+                        <button mat-icon-button *ngIf="!element.entityLog">
+                            <mat-icon>clear</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="changes">
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button *ngIf="element.changeID" (click)="openInfoDialog(element)">
+                        <button mat-button *ngIf="element.entityLog" (click)="openInfoDialog(element)">
                         <mat-icon inline>info</mat-icon> Changes
                         </button>
                     </mat-cell>

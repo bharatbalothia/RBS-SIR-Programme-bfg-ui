@@ -10,6 +10,7 @@ import { EntitySearchComponent } from './entity-search/entity-search.component';
 export const routes: Routes = [
     { path: ROUTING_PATHS.EMPTY, component: EntityHomeComponent },
     { path: ROUTING_PATHS.CREATE, component: EntityCreateComponent },
+    { path: ROUTING_PATHS.EDIT + '/:entityId', component: EntityCreateComponent },
     { path: ROUTING_PATHS.SEARCH, component: EntitySearchComponent },
     { path: ROUTING_PATHS.PENDING, component: EntityPendingComponent }
 ];

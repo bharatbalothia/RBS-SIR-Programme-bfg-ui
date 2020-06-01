@@ -14,6 +14,7 @@ import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entit
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { get } from 'lodash';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 
 @Component({
   selector: 'app-entity-search',
@@ -23,6 +24,7 @@ import { get } from 'lodash';
 export class EntitySearchComponent implements OnInit {
 
   getEntityDisplayName = getEntityDisplayName;
+  ROUTING_PATHS = ROUTING_PATHS;
 
   searchByItems: string[] = ['entity', 'service'];
   selectedSearchByItem = 'entity';

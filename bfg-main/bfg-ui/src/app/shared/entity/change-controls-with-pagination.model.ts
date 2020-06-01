@@ -1,9 +1,8 @@
-import { Entity } from './entity.model';
 import { ChangeControl } from './change-control.model';
 
-export interface EntitiesWithPagination {
+export interface ChangeControlsWithPagination {
     content: [
-        Entity | ChangeControl
+        ChangeControl
     ];
     pageable: {
         pageSize: number;

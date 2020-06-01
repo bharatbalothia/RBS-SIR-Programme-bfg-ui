@@ -5,6 +5,7 @@ import { Entity } from './entity.model';
 import { Observable } from 'rxjs';
 import { ChangeControl } from './change-control.model';
 import { EntitiesWithPagination } from './entities-with-pagination.model';
+import { ChangeControlsWithPagination } from './change-controls-with-pagination.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +25,8 @@ export class EntityService {
     return this.http.get<EntitiesWithPagination>(this.apiUrl, { params });
   }
 
-  getPendingChanges(): Observable<ChangeControl[]> {
-    return this.http.get<ChangeControl[]>(this.apiUrl + 'pending');
+  getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {
+    return this.http.get<ChangeControlsWithPagination>(this.apiUrl + 'pending', { params });
   }
 
   resolveChange(resolution: { changeID: string, status: string, approverComments: string }) {

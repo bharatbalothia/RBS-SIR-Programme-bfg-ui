@@ -165,16 +165,16 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Page<Object> findEntities(Pageable pageable) {
         List<Object> entities = new ArrayList<>();
-        entities.addAll(entityRepository.findByDeleted(false));
         entities.addAll(changeControlService.findAllPending());
+        entities.addAll(entityRepository.findByDeleted(false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     public Page<Object> findEntitiesByService(String service, Pageable pageable) {
         LOG.info("existing and pending entities by service");
         List<Object> entities = new ArrayList<>();
-        entities.addAll(entityRepository.findByServiceIgnoreCaseAndDeleted(service, false));
         entities.addAll(changeControlService.findAllPendingEntities(service));
+        entities.addAll(entityRepository.findByServiceIgnoreCaseAndDeleted(service, false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
@@ -182,8 +182,8 @@ public class EntityServiceImpl implements EntityService {
     public Page<Object> findEntitiesByEntity(String entity, Pageable pageable) {
         LOG.info("existing and pending entities by name");
         List<Object> entities = new ArrayList<>();
-        entities.addAll(entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false));
         entities.addAll(changeControlService.findAllPendingByEntity(entity));
+        entities.addAll(entityRepository.findByEntityContainingIgnoreCaseAndDeleted(entity, false));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 

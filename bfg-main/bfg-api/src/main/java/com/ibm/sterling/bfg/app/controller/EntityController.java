@@ -37,8 +37,8 @@ public class EntityController {
     public Page<Object> getEntities(@RequestParam(value = "service", required = false) String serviceName,
                                     @RequestParam(value = "entity", required = false) String entityName,
                                     @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                    @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+                                    @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        Pageable pageable = PageRequest.of(page, size);
         return Optional.ofNullable(serviceName)
                 .map(service -> entityService.findEntitiesByService(service, pageable))
                 .orElse(
@@ -51,8 +51,8 @@ public class EntityController {
     @CrossOrigin
     @GetMapping("pending")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                  @RequestParam(value = "page", defaultValue = "1", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        Pageable pageable = PageRequest.of(page, size);
         List<Object> list = new ArrayList<>();
         list.addAll(changeControlService.findAllPending());
         return ListToPageConverter.convertListToPage(list, pageable);

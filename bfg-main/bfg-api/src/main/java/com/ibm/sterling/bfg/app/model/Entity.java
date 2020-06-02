@@ -1,7 +1,9 @@
 package com.ibm.sterling.bfg.app.model;
 
+import com.ibm.sterling.bfg.app.controller.EntityController;
 import com.ibm.sterling.bfg.app.model.validation.EntityUnique;
 import com.ibm.sterling.bfg.app.model.validation.EntityValid;
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,9 @@ import java.util.*;
 public class Entity implements EntityType{
     private static final long serialVersionUID = 1L;
     private static final Logger log = LogManager.getLogger(Entity.class);
+
+
+
     @Id
     @Column(name = "ENTITY_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
@@ -67,12 +72,20 @@ public class Entity implements EntityType{
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
     @Column(name = "MAILBOXPATHOUT")
-    @EntityUnique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MAILBOXPATHOUT",
+            message = "MAILBOXPATHOUT has to be unique",
+            groups = {PostValidation.class})
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
-    @EntityUnique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MQQUEUEOUT",
+            message = "MQQUEUEOUT has to be unique",
+            groups = {PostValidation.class})
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;

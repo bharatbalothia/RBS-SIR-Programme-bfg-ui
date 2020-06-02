@@ -6,6 +6,7 @@ import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -80,13 +82,13 @@ public class EntityController {
 
     @CrossOrigin
     @PostMapping
-    public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
+    public ResponseEntity<Entity> createEntity(@Validated(PostValidation.class) @RequestBody Entity entity) {
         return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 
     @CrossOrigin
     @PutMapping("/{id}")
-    public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
+    public ResponseEntity<Entity> updateEntity(@Valid @RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
                 .orElseThrow(EntityNotFoundException::new);

@@ -21,8 +21,16 @@ export class EntityService {
     return this.http.post<Entity>(this.apiUrl, entity);
   }
 
+  editEntity(entity: Entity) {
+    return this.http.put<Entity>(this.apiUrl + entity.entityId, entity);
+  }
+
   getEntityList(params?: { entity?: string; service?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<EntitiesWithPagination>(this.apiUrl, { params });
+  }
+
+  getEntityById(entityId: string) {
+    return this.http.get<Entity>(this.apiUrl + '/' + entityId);
   }
 
   getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {

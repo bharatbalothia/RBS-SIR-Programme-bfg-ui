@@ -45,6 +45,10 @@ export class EntitySearchComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (window.history.state.pageIndex && window.history.state.pageSize) {
+      this.pageIndex = window.history.state.pageIndex;
+      this.pageSize = window.history.state.pageSize;
+    }
     this.getEntityList(this.pageIndex, this.pageSize);
   }
 

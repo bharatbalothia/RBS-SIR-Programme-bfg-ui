@@ -34,9 +34,11 @@
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
-                        <mat-icon inline>format_list_numbered</mat-icon> Version manager
+                            <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
-                        <a mat-icon-button *ngIf="!element.entityLog" [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]">
+                        <a mat-icon-button *ngIf="!element.entityLog"
+                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
+                            [state]="{ pageIndex: pageIndex, pageSize: pageSize }">
                             <mat-icon inline>edit</mat-icon>
                         </a>
                         <button mat-icon-button *ngIf="!element.entityLog">
@@ -49,7 +51,7 @@
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <button mat-button *ngIf="element.entityLog" (click)="openInfoDialog(element)">
-                        <mat-icon inline>info</mat-icon> Changes
+                            <mat-icon inline>info</mat-icon> Changes
                         </button>
                     </mat-cell>
                 </ng-container>

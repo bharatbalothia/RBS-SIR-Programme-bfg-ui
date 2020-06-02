@@ -1,6 +1,6 @@
 <mat-card class="entity-create-card">
     <mat-card-header>
-        <mat-card-title>Create Entity</mat-card-title>
+        <mat-card-title>{{editableEntity ? 'Edit ' + editableEntity.entity + ' entity' : 'Create Entity'}}</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
         <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
@@ -138,7 +138,7 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>
@@ -301,7 +301,7 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>
@@ -344,8 +344,8 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button class="action-button" color='primary'
-                            (click)="createEntity()">Create</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                            (click)="sendEntity(isEditing())">{{isEditing() ? 'Edit' : 'Create'}}</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>

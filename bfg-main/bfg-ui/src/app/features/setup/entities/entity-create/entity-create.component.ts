@@ -8,10 +8,14 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
 import { EntityValidators } from '../../../../shared/entity/entity-validators';
 import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Entity } from 'src/app/shared/entity/entity.model';
+import { Observable } from 'rxjs';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 
 @Component({
   selector: 'app-entity-create',
@@ -21,6 +25,7 @@ import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
 export class EntityCreateComponent implements OnInit {
 
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
+
   isLinear = true;
 
   @ViewChild('stepper') stepper;
@@ -40,80 +45,110 @@ export class EntityCreateComponent implements OnInit {
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
 
+  editableEntity: Entity;
+
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private entityService: EntityService,
-    private entityValidators: EntityValidators
+    private entityValidators: EntityValidators,
+    private activatedRouter: ActivatedRoute,
+    private router: Router,
   ) { }
 
   ngOnInit() {
-    this.initializeFormGroups();
+    this.initializeFormGroups(this.getEntityDefaultValue());
+    this.activatedRouter.params.subscribe(params => {
+      if (params.entityId) {
+        this.entityService.getEntityById(params.entityId).subscribe(data => {
+          this.editableEntity = data;
+          this.initializeFormGroups(this.editableEntity);
+        });
+      }
+    });
   }
 
-  initializeFormGroups() {
+  initializeFormGroups(entity: Entity) {
     this.entityTypeFormGroup = this.formBuilder.group({
-      service: ['', Validators.required]
+      service: [entity.service, Validators.required]
     });
     this.entityPageFormGroup = this.formBuilder.group({
-      entity: ['', {
+      entity: [entity.entity, {
         validators: [
           Validators.required,
           this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
         ],
-        asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+        asyncValidators: !this.isEditing && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
         updateOn: 'blur'
       }],
-      routeInbound: [true, Validators.required],
-      inboundRequestorDN: ['', {
+      routeInbound: [entity.routeInbound, Validators.required],
+      inboundRequestorDN: [entity.inboundRequestorDN, {
         validators: [
           Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
-      inboundResponderDN: ['', {
+      inboundResponderDN: [entity.inboundResponderDN, {
         validators: [
           Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
-      inboundService: ['swift.corp.fa', Validators.required],
-      inboundRequestType: [],
-      inboundDir: [true, Validators.required],
-      inboundRoutingRule: [true, Validators.required]
+      inboundService: [entity.inboundService, Validators.required],
+      inboundRequestType: [entity.inboundRequestType],
+      inboundDir: [entity.inboundDir, Validators.required],
+      inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
     });
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
-      requestorDN: ['', {
+      requestorDN: [entity.requestorDN, {
         validators: [
           Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
-      responderDN: ['', {
+      responderDN: [entity.responderDN, {
         validators: [
           Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
-      requestType: [],
-      trace: [false],
-      snF: [false],
-      deliveryNotification: [false],
-      nonRepudiation: [false],
-      e2eSigning: ['None', Validators.required],
-      deliveryNotifDN: [],
-      deliveryNotifRT: [],
-      requestRef: [],
-      fileInfo: [],
-      fileDesc: [],
-      transferInfo: [],
-      transferDesc: []
+      requestType: [entity.requestType],
+      trace: [entity.trace || false],
+      snF: [entity.snF || false],
+      deliveryNotification: [entity.deliveryNotification || false],
+      nonRepudiation: [entity.nonRepudiation || false],
+      e2eSigning: [entity.e2eSigning, Validators.required],
+      deliveryNotifDN: [entity.deliveryNotifDN],
+      deliveryNotifRT: [entity.deliveryNotifRT],
+      requestRef: [entity.requestRef],
+      fileInfo: [entity.fileInfo],
+      fileDesc: [entity.fileDesc],
+      transferInfo: [entity.transferInfo],
+      transferDesc: [entity.transferDesc]
     });
 
     this.summaryPageFormGroup = this.formBuilder.group({
-      changerComments: [, Validators.nullValidator]
+      changerComments: [entity.changerComments, Validators.nullValidator]
     });
   }
+
+  getEntityDefaultValue = (): Entity => ({
+    service: '',
+    entity: '',
+    routeInbound: true,
+    inboundRequestorDN: '',
+    inboundResponderDN: '',
+    inboundService: 'swift.corp.fa',
+    inboundDir: true,
+    inboundRoutingRule: true,
+    requestorDN: '',
+    responderDN: '',
+    trace: false,
+    snF: false,
+    deliveryNotification: false,
+    nonRepudiation: false,
+    e2eSigning: 'None',
+  })
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
     const inboundRequestTypeList = this.entityPageFormGroup.get('inboundRequestType').value as string[];
@@ -128,12 +163,12 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  createEntity() {
+  sendEntity(isEditing: boolean) {
     const entityName = this.entityTypeFormGroup.get('service').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Create ${entityName} entity`,
-      text: `Are you sure to create ${entityName} entity?`,
-      yesCaption: 'Create',
+      title: `${isEditing ? 'Edit' : 'Create'} ${entityName} entity`,
+      text: `Are you sure to ${isEditing ? 'edit' : 'create'} ${entityName} entity?`,
+      yesCaption: isEditing ? 'Edit' : 'Create',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
@@ -144,18 +179,32 @@ export class EntityCreateComponent implements OnInit {
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value
         });
-        this.entityService.createEntity(entity).pipe(data => this.setLoading(data)).subscribe(
+        let entityAction: Observable<Entity>;
+        const edi = this.editableEntity;
+        if (isEditing) {
+          const editableEntity = this.editableEntity;
+          entityAction = this.entityService.editEntity({ ...editableEntity, ...entity });
+        }
+        else {
+          entityAction = this.entityService.createEntity(entity);
+        }
+        entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Entity created`,
-              text: `Entity ${entityName} has been created`,
+              title: `Entity ${isEditing ? 'edited' : 'created'}`,
+              text: `Entity ${entityName} has been ${isEditing ? 'edited' : 'created'}`,
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {
-              this.stepper.reset();
-              this.initializeFormGroups();
-              this.resetAllForms();
+              if (isEditing) {
+                this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+              }
+              else {
+                this.stepper.reset();
+                this.initializeFormGroups(this.getEntityDefaultValue());
+                this.resetAllForms();
+              }
             });
           },
           (error) => {
@@ -174,21 +223,26 @@ export class EntityCreateComponent implements OnInit {
     return data;
   }
 
-  cancelCreationEntity() {
+  cancelEntity() {
     const entityName = this.entityTypeFormGroup.get('service').value || 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Cancel creation of the ${entityName} entity`,
-      text: `Are you sure to cancel the creation of the ${entityName} entity?`,
-      yesCaption: 'Cancel creation',
+      title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
+      text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
+      yesCaption: `Cancel ${this.isEditing() ? 'editing' : 'creation'}`,
       yesCaptionColor: 'warn',
       noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.errorMessage = null;
-        this.stepper.reset();
-        this.initializeFormGroups();
-        this.resetAllForms();
+        if (this.isEditing()) {
+          this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+        }
+        else {
+          this.errorMessage = null;
+          this.stepper.reset();
+          this.initializeFormGroups(this.getEntityDefaultValue());
+          this.resetAllForms();
+        }
       }
     });
   }
@@ -226,4 +280,6 @@ export class EntityCreateComponent implements OnInit {
   resetAllForms() {
     this.formGroups.forEach(formGroup => formGroup.resetForm());
   }
+
+  isEditing = (): boolean => !isEmpty(this.editableEntity);
 }

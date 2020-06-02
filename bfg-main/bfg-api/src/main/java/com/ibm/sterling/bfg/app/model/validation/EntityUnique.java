@@ -21,5 +21,4 @@ public @interface EntityUnique {
     Class<? extends FieldValueExists> service();
 
     String fieldName();
-
 }

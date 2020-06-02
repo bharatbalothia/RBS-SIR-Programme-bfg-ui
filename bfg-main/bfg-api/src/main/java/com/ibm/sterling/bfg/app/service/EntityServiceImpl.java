@@ -7,6 +7,8 @@ import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
+import com.ibm.sterling.bfg.app.model.validation.PutValidation;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,19 @@ public class EntityServiceImpl implements EntityService {
     public boolean existsByMqQueueOut(String mqQueueOut) {
         LOG.info("exists by mqQueueOut {}", mqQueueOut);
         return entityRepository.existsByMqQueueOut(mqQueueOut);
+    }
+
+    @Override
+    public boolean existsByMqQueueOutAndMailboxPathOut(Entity entity) {
+        String mqQueueOut = entity.getMqQueueOut();
+        String mailboxPathOut = entity.getMailboxPathOut();
+        LOG.info("exists by mqQueueOut {}, mailboxPathOut{}", mqQueueOut, mailboxPathOut);
+        List<Entity> entities = entityRepository.findByDeleted(false);
+        entities.remove(entity.getEntityId());
+        return entities
+                .stream()
+                .anyMatch(ent -> ent.getMailboxPathOut().equals(mqQueueOut) ||
+                        ent.getMailboxPathOut().equals(mailboxPathOut));
     }
 
     @Override
@@ -141,11 +156,19 @@ public class EntityServiceImpl implements EntityService {
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.debug("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
-        if (changeControl.getOperation().equals(Operation.CREATE)) {
-            Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
-            if (!violations.isEmpty()) {
-                throw new ConstraintViolationException(violations);
-            }
+        Set<ConstraintViolation<Entity>> violations = null;
+        Operation operation = changeControl.getOperation();
+        switch (operation) {
+            case CREATE:
+                violations = validator.validate(entity, PostValidation.class);
+                break;
+            case UPDATE:
+                violations = validator.validate(entity, PutValidation.class);
+                break;
+            case DELETE:
+        }
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
         }
         Entity savedEntity = entityRepository.save(entity);
         LOG.debug("Saved entity to DB {}", savedEntity);

@@ -14,6 +14,8 @@ public interface EntityService extends FieldValueExists {
 
     boolean existsByMqQueueOut(String mqQueueOut);
 
+    boolean existsByMqQueueOutAndMailboxPathOut(Entity entity);
+
     boolean existsByServiceAndEntity(String service, String entity);
 
     List<Entity> listAll();

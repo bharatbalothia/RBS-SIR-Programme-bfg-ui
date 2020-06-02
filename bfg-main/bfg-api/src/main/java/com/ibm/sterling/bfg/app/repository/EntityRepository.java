@@ -17,4 +17,6 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
     boolean existsByServiceAndEntityAllIgnoreCase(String service, String entity);
 
     List<Entity> findAll(Specification<Entity> specification);
+
+    List<Entity> findByDeleted(boolean deleted);
 }

@@ -77,10 +77,10 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity saveEntityToChangeControl(Entity entity) {
-        LOG.debug("Trying to save entity to change control:" + entity);
+    public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
+        LOG.debug("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
-        changeControl.setOperation(Operation.CREATE);
+        changeControl.setOperation(operation);
         changeControl.setChanger("TEST_USER");
         changeControl.setChangerComments(entity.getChangerComments());
         changeControl.setResultMeta1(entity.getEntity());
@@ -89,8 +89,8 @@ public class EntityServiceImpl implements EntityService {
         try {
             entity.setChangeID(changeControlService.save(changeControl).getChangeID());
         } catch (Exception e) {
-            LOG.error("Error persisting the Change Control record: " + e.getMessage());
-            LOG.error("The Entity could not be saved " + entity);
+            LOG.error("Error persisting the Change Control record: {}", e.getMessage());
+            LOG.error("The Entity {} could not be saved", entity);
             e.printStackTrace();
         }
         return entity;
@@ -102,7 +102,6 @@ public class EntityServiceImpl implements EntityService {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
-
         Entity entity = new Entity();
         switch (status) {
             case ACCEPTED:
@@ -112,7 +111,6 @@ public class EntityServiceImpl implements EntityService {
 
             case REJECTED:
         }
-
         try {
             changeControlService.setApproveInfo(
                     changeControl,
@@ -122,30 +120,32 @@ public class EntityServiceImpl implements EntityService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return entity;
     }
 
     private Entity approve(ChangeControl changeControl) {
+        LOG.debug("Entity {} action", changeControl.getOperation());
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
-
         switch (operation) {
             case CREATE:
+            case UPDATE:
                 entity = saveEntityAfterApprove(changeControl);
                 break;
-            case UPDATE:
             case DELETE:
         }
+        LOG.debug("Entity after {} action: {}", changeControl.getOperation(), entity);
         return entity;
     }
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
-        LOG.debug("Approve the Entity create action");
+        LOG.debug("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
-        Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
+        if (changeControl.getOperation().equals(Operation.CREATE)) {
+            Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
+            if (!violations.isEmpty()) {
+                throw new ConstraintViolationException(violations);
+            }
         }
         Entity savedEntity = entityRepository.save(entity);
         LOG.debug("Saved entity to DB {}", savedEntity);
@@ -162,6 +162,7 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
+        LOG.debug("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entities = new ArrayList<>();
         entities.addAll(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification

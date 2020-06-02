@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -35,14 +36,12 @@ public class EntityController {
 
     @CrossOrigin
     @GetMapping
-    public Page<EntityType> getEntities(@RequestParam(value = "service", required = false) String serviceName,
-                                               @RequestParam(value = "entity", required = false) String entityName,
+    public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                               @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
                                                @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         Pageable pageable = PageRequest.of(page, size);
-        String entity = Optional.ofNullable(entityName).orElse("");
-        String service = Optional.ofNullable(serviceName).orElse("");
-        return entityService.findEntities(pageable, entity, service);
+        return entityService.findEntities(pageable, entityName, serviceName);
     }
 
     @CrossOrigin
@@ -82,14 +81,14 @@ public class EntityController {
     @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
-        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
+        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 
     @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
-                .map(record -> ResponseEntity.ok().body(entityService.save(entity)))
+                .map(record -> ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
                 .orElseThrow(EntityNotFoundException::new);
     }
 

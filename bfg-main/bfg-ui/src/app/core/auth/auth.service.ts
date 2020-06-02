@@ -41,7 +41,6 @@ export class AuthService {
     return this.http.post<User>(this.apiUrl + 'signin', credentials)
       .pipe(
         tap(user => {
-          user._createdAt = Date.now();
           this.user.next(user);
           localStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
         })
@@ -57,6 +56,13 @@ export class AuthService {
   public isAuthenticated(): boolean {
     this.autoLogIn();
     return !this.jwtHelper.isTokenExpired(get(this.user.value, 'accessToken'));
+  }
+
+  getUserName(): string {
+    if (this.isAuthenticated()) {
+      return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).sub;
+    }
+    return null;
   }
 
 }

@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class EntityUniqueValidator implements ConstraintValidator<EntityUniquePut, Object> {
+public class EntityUniqueValidator implements ConstraintValidator<EntityUnique, Object> {
 
     private static final Logger LOG = LogManager.getLogger(EntityUniqueValidator.class);
 
@@ -17,7 +17,7 @@ public class EntityUniqueValidator implements ConstraintValidator<EntityUniquePu
     private String fieldName;
 
     @Override
-    public void initialize(EntityUniquePut unique) {
+    public void initialize(EntityUnique unique) {
         fieldName = unique.fieldName();
     }
 

@@ -10,20 +10,20 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class EntityUniqueValidationMailboxPathOutAndMqQueueOut implements ConstraintValidator<MailboxMqQueueOutValid, Entity> {
+public class EntityUniqueValidationByServiceAndEntityPut implements ConstraintValidator<EntityValidPut, Entity> {
 
-    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidationMailboxPathOutAndMqQueueOut.class);
+    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidationByServiceAndEntityPut.class);
 
     @Autowired
     private EntityService entityService;
 
     @Override
     public boolean isValid(Entity entity, ConstraintValidatorContext context) {
-        LOG.info("Validation by mailboxPathOut and mqQueueOut of entityService {}", entityService);
+        LOG.info("Validation by entity and service of entityService {}", entityService);
         Boolean isUniqueFields = Optional.ofNullable(entityService)
                 .map(validService -> !validService.existsByServiceAndEntityPut(entity))
                 .orElse(false);
-        LOG.info("Are mailboxPathOut and mqQueueOut unique {}", isUniqueFields);
+        LOG.info("Are entity and service unique {}", isUniqueFields);
         return isUniqueFields;
     }
 }

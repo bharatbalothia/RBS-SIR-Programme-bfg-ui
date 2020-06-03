@@ -47,12 +47,12 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public boolean existsByServiceAndEntityPut(Entity entity) {
-        String mqQueueOut = entity.getMqQueueOut();
-        String mailboxPathOut = entity.getMailboxPathOut();
-        LOG.info("exists by mqQueueOut {}, mailboxPathOut{}", mqQueueOut, mailboxPathOut);
-        return getEntitiesExceptCurrent(entity).stream()
-                .anyMatch(ent -> ent.getMailboxPathOut().equals(mqQueueOut) ||
-                        ent.getMailboxPathOut().equals(mailboxPathOut));
+        LOG.info("Checking uniqueness entity and service for {}", entity);
+        boolean isUnique = getEntitiesExceptCurrent(entity).stream()
+                .anyMatch(ent -> ent.getService().equals(entity.getService()) &
+                        ent.getEntity().equals(entity.getEntity()));
+        LOG.info(isUnique);
+        return isUnique;
     }
 
     @Override
@@ -216,21 +216,13 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public boolean fieldValueExistsPut(Entity entity, String fieldName) throws UnsupportedOperationException {
-        if (fieldName.equals("MQQUEUEOUT")) {
-            return getEntitiesExceptCurrent(entity)
-                    .stream()
-                    .anyMatch(ent -> ent.getMqQueueOut().equals(entity.getMqQueueOut()));
-        }
-        if (fieldName.equals("MAILBOXPATHOUT")) {
-            return getEntitiesExceptCurrent(entity)
-                    .stream()
-                    .anyMatch(ent -> ent.getMailboxPathOut().equals(entity.getMailboxPathOut()));
-        }
-        return false;
+    public boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException {
+        return getEntitiesExceptCurrent(entity)
+                .stream()
+                .anyMatch(ent ->
+                    Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
+                    );
     }
-
-
 
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {
         List<Entity> entities = entityRepository.findByDeleted(false);

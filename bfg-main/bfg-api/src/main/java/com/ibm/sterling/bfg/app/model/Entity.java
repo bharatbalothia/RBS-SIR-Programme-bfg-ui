@@ -10,7 +10,8 @@ import javax.validation.constraints.*;
 import java.util.*;
 
 @EntityValid(groups = {PostValidation.class})
-@MailboxMqQueueOutValid(groups = {PutValidation.class})
+@EntityValidPut(groups = {PutValidation.class})
+@MqQueueUniquePut(groups = {PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType{

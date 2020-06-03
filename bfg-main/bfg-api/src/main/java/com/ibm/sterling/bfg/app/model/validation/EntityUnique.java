@@ -2,7 +2,6 @@ package com.ibm.sterling.bfg.app.model.validation;
 
 import java.lang.annotation.*;
 import javax.validation.*;
-
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

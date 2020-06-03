@@ -21,7 +21,7 @@ public class EntityUniqueValidationMailboxPathOutAndMqQueueOut implements Constr
     public boolean isValid(Entity entity, ConstraintValidatorContext context) {
         LOG.info("Validation by mailboxPathOut and mqQueueOut of entityService {}", entityService);
         Boolean isUniqueFields = Optional.ofNullable(entityService)
-                .map(validService -> !validService.existsByMqQueueOutAndMailboxPathOut(entity))
+                .map(validService -> !validService.existsByServiceAndEntityPut(entity))
                 .orElse(false);
         LOG.info("Are mailboxPathOut and mqQueueOut unique {}", isUniqueFields);
         return isUniqueFields;

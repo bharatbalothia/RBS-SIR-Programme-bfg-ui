@@ -21,7 +21,7 @@ public class EntityUniqueValidationByServiceAndEntity implements ConstraintValid
                            ConstraintValidatorContext constraintValidatorContext) {
         LOG.info("Validation by service and entity of entityService {}", entityService);
         Boolean isUniqueFields = Optional.ofNullable(entityService)
-                .map(validService -> !validService.existsByServiceAndEntity(entity.getService(),
+                .map(validService -> !validService.existsByServiceAndEntityPut(entity.getService(),
                         entity.getEntity()))
                 .orElse(false);
         LOG.info("Are service and entity unique {}", isUniqueFields);

@@ -46,14 +46,11 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public boolean existsByMqQueueOutAndMailboxPathOut(Entity entity) {
+    public boolean existsByServiceAndEntityPut(Entity entity) {
         String mqQueueOut = entity.getMqQueueOut();
         String mailboxPathOut = entity.getMailboxPathOut();
         LOG.info("exists by mqQueueOut {}, mailboxPathOut{}", mqQueueOut, mailboxPathOut);
-        List<Entity> entities = entityRepository.findByDeleted(false);
-        entities.remove(entity.getEntityId());
-        return entities
-                .stream()
+        return getEntitiesExceptCurrent(entity).stream()
                 .anyMatch(ent -> ent.getMailboxPathOut().equals(mqQueueOut) ||
                         ent.getMailboxPathOut().equals(mailboxPathOut));
     }
@@ -216,5 +213,28 @@ public class EntityServiceImpl implements EntityService {
         if (fieldName.equals("MAILBOXPATHOUT"))
             return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
+    }
+
+    @Override
+    public boolean fieldValueExistsPut(Entity entity, String fieldName) throws UnsupportedOperationException {
+        if (fieldName.equals("MQQUEUEOUT")) {
+            return getEntitiesExceptCurrent(entity)
+                    .stream()
+                    .anyMatch(ent -> ent.getMqQueueOut().equals(entity.getMqQueueOut()));
+        }
+        if (fieldName.equals("MAILBOXPATHOUT")) {
+            return getEntitiesExceptCurrent(entity)
+                    .stream()
+                    .anyMatch(ent -> ent.getMailboxPathOut().equals(entity.getMailboxPathOut()));
+        }
+        return false;
+    }
+
+
+
+    private List<Entity> getEntitiesExceptCurrent(Entity entity) {
+        List<Entity> entities = entityRepository.findByDeleted(false);
+        entities.remove(entity.getEntityId());
+        return entities;
     }
 }

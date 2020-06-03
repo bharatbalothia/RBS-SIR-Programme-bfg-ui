@@ -1,16 +1,18 @@
 package com.ibm.sterling.bfg.app.model.validation;
 
+import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class EntityUniqueValidator implements ConstraintValidator<EntityUniquePut, Object> {
+public class EntityUniqueValidatorPut implements ConstraintValidator<EntityUniquePut, Entity> {
 
-    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidator.class);
+    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidatorPut.class);
 
     @Autowired
     private EntityService entityService;
@@ -22,13 +24,12 @@ public class EntityUniqueValidator implements ConstraintValidator<EntityUniquePu
     }
 
     @Override
-    public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Entity entity, ConstraintValidatorContext context) {
         LOG.info("Validation field {} of service {}", fieldName, entityService);
         Boolean isUniqueField = Optional.ofNullable(entityService)
-                .map(validService -> !validService.fieldValueExists(value, fieldName))
+                .map(validService -> !validService.fieldValueExistsPut(entity, fieldName))
                 .orElse(false);
-        LOG.info("Is {} unique for {}: {}", value, fieldName, isUniqueField);
+        LOG.info("Is {} unique for {}: {}", entity, fieldName, isUniqueField);
         return isUniqueField;
     }
-
 }

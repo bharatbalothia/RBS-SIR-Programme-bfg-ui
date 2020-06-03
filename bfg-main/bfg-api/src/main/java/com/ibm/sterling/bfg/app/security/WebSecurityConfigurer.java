@@ -1,8 +1,6 @@
 package com.ibm.sterling.bfg.app.security;
 
-import com.ibm.sterling.bfg.app.config.BfgCorsFilter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -12,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -46,17 +46,29 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/signin").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new BfgCorsFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(buildJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web){
         web.ignoring()
-                .antMatchers("/api/auth/signin")
-                .and()
-                .ignoring()
-                .antMatchers(HttpMethod.OPTIONS, "/**");
+                .antMatchers("/api/auth/signin");
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedHeaders("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowCredentials(true)
+                        .maxAge(36000L);
+            }
+        };
     }
 
 }

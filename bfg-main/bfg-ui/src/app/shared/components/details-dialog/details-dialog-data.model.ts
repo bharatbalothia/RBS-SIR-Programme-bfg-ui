@@ -1,12 +1,17 @@
 export interface DetailsDialogData {
     title: string;
-    sections: Section[];
+    tabs: Tab[];
     yesCaption?: string;
     actionData?: any;
 }
 
+export interface Tab {
+    tabTitle: string;
+    tabSections: Section[];
+}
+
 export interface Section {
-    sectionTitle: string;
+    sectionTitle?: string;
     sectionItems: SectionItem[];
 }
 

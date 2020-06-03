@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Section, DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
@@ -19,20 +19,23 @@ export class EntityApprovingDialogComponent implements OnInit {
   errorMessage: ErrorMessage;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
-  dataSources = [];
+  tabs = [];
 
   changeId: string;
   approverComments: string;
+
+  isApprovingActions: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityApprovingDialogComponent>,
     private entityService: EntityService,
   ) {
-    this.data.sections = this.data.sections || [];
+    this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.changeId = get(this.data, 'actionData.changeID', '');
+    this.isApprovingActions = get(this.data, 'actionData.isApprovingActions', false);
   }
 
   ngOnInit() {
@@ -40,7 +43,7 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   updateSections() {
-    this.data.sections.forEach((section: Section, index) => (this.dataSources[index] = section));
+    this.data.tabs.forEach((tab: Tab, index) => (this.tabs[index] = tab));
   }
 
   entityApprovingAction(status) {
@@ -57,6 +60,6 @@ export class EntityApprovingDialogComponent implements OnInit {
         });
   }
 
-  getErrorsMessage = (error: ErrorsField) => Object.values(error);
+  getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
 
 }

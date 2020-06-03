@@ -74,22 +74,22 @@ export class EntitySearchComponent implements OnInit {
   openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
-      sections: getEntityDetailsFields(entity),
+      tabs: getEntityDetailsFields(entity),
     }));
   }
 
   openInfoDialog(changeControl: ChangeControl) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `Change Record: Pending`,
-      sections: getPendingChangesFields(changeControl),
+      tabs: getPendingChangesFields(changeControl),
     }));
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
     this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
       title: 'Approve Change',
-      sections: getPendingChangesFields(changeControl),
-      actionData: { changeID: changeControl.changeID }
+      tabs: getPendingChangesFields(changeControl),
+      actionData: { changeID: changeControl.changeID, isApprovingActions: true }
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

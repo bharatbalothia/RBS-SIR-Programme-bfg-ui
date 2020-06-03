@@ -44,7 +44,6 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/auth/signin").permitAll()
-                .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new BfgCorsFilter(), UsernamePasswordAuthenticationFilter.class)

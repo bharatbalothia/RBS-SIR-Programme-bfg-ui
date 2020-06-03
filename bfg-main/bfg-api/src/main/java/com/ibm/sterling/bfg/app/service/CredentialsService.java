@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class CredentialsService {
 
-    private static final Logger LOG = LogManager.getLogger(CredentialsService.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public UserCredentials getSBIAuthResponse(LoginRequest loginRequest) throws JsonProcessingException {
@@ -46,17 +45,18 @@ public class CredentialsService {
         );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
-        return Optional.ofNullable(user.get("authenticated")).map(JsonNode::asBoolean).map(auth -> {
-                    List<String> groups = objectMapper.convertValue(user.get("groups"), ArrayList.class);
-                    return new UserCredentials(
-                            user.get("name").asText(),
-                            null,
-                            groups.stream()
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList())
-                    );
-                }
-        ).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
+        return Optional.ofNullable(user.get("authenticated"))
+                .filter(JsonNode::asBoolean).map(auth -> {
+                            List<String> groups = objectMapper.convertValue(user.get("groups"), ArrayList.class);
+                            return new UserCredentials(
+                                    user.get("name").asText(),
+                                    null,
+                                    groups.stream()
+                                            .map(SimpleGrantedAuthority::new)
+                                            .collect(Collectors.toList())
+                            );
+                        }
+                ).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
     }
 
 }

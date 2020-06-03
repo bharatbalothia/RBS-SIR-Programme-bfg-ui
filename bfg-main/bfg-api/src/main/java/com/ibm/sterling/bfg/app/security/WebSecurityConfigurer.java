@@ -1,10 +1,11 @@
 package com.ibm.sterling.bfg.app.security;
 
 import com.ibm.sterling.bfg.app.config.BfgCorsFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,13 +16,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    private JwtAuthenticationFilter buildJwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter
+                = new JwtAuthenticationFilter();
+        filter.setAuthenticationSuccessHandler(new JwtAuthenticationSuccessHandler());
+        filter.setAuthenticationManager(authenticationManagerBean());
+        return filter;
     }
 
     @Bean
@@ -37,12 +43,21 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/auth/signin").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new BfgCorsFilter(), UsernamePasswordAuthenticationFilter.class)
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                .addFilterBefore(buildJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/api/auth/signin")
+                .and()
+                .ignoring()
+                .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
 }

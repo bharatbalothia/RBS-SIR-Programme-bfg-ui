@@ -2,21 +2,23 @@ package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.validation.*;
 import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.util.StringUtils;
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 @EntityValid(groups = {PostValidation.class})
 @EntityValidPut(groups = {PutValidation.class})
-@MqQueueUniquePut(groups = {PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType{
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LogManager.getLogger(Entity.class);
+    private static final Logger LOG = LogManager.getLogger(Entity.class);
 
     @Id
     @Column(name = "ENTITY_ID")
@@ -193,9 +195,8 @@ public class Entity implements EntityType{
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
     @Column(name = "ROUTE_REQUESTTYPE")
-    private String inboundType = "";
-    @Transient
-    private String[] inboundRequestType = new String[0];
+    @Convert(converter = StringToListConverter.class)
+    private List<String> inboundRequestType = new ArrayList<>();
     @Column(name = "NONREPUDIATION")
     @NotNull(message = "NONREPUDIATION has to be present",
             groups = {PostValidation.class, PutValidation.class})
@@ -216,16 +217,17 @@ public class Entity implements EntityType{
     private String changerComments = "";
     @Transient
     private Boolean irishStep2 = Boolean.FALSE;
-
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
 
     @PrePersist
+    @PreUpdate
     public void init() {
-        if (StringUtils.isEmpty(mailboxPathIn))
-            mailboxPathIn = entity + "_GPL";
-        if (StringUtils.isEmpty(mailboxPathOut))
-            mailboxPathOut = entity + "_GPL";
+        LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
+        mailboxPathIn = entity + "_" + service;
+        mailboxPathOut = entity + "_" + service;
+        mqQueueIn = entity + "_" + service;
+        mqQueueOut = entity + "_" + service;
     }
 
     public static long getSerialVersionUID() {
@@ -233,7 +235,7 @@ public class Entity implements EntityType{
     }
 
     public static Logger getLog() {
-        return log;
+        return LOG;
     }
 
     public Integer getEntityId() {
@@ -740,19 +742,11 @@ public class Entity implements EntityType{
         this.inboundService = inboundService;
     }
 
-    public String getInboundType() {
-        return inboundType;
-    }
-
-    public void setInboundType(String inboundType) {
-        this.inboundType = inboundType;
-    }
-
-    public String[] getInboundRequestType() {
+    public List<String> getInboundRequestType() {
         return inboundRequestType;
     }
 
-    public void setInboundRequestType(String[] inboundRequestType) {
+    public void setInboundRequestType(List<String> inboundRequestType) {
         this.inboundRequestType = inboundRequestType;
     }
 

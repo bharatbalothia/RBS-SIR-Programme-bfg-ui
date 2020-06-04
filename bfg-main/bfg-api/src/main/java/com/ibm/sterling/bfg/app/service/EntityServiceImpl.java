@@ -105,7 +105,7 @@ public class EntityServiceImpl implements EntityService {
             LOG.error("The Entity {} could not be saved", entity);
             e.printStackTrace();
         }
-        return entity;
+        return changeControl.convertEntityLogToEntity();
     }
 
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {

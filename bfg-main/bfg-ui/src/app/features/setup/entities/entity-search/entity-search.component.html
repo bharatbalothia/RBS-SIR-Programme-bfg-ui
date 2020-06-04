@@ -6,25 +6,18 @@
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
             <mat-form-field class="search-by-field">
-                <mat-label>Searching parameter</mat-label>
-                <mat-select (selectionChange)="onSearchByItemSelect($event.value)" [(value)]="selectedSearchByItem">
-                    <mat-option *ngFor="let item of searchByItems" [value]="item">{{getEntityDisplayName(item)}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field class="search-by-field" *ngIf="selectedSearchByItem === 'service'">
-                <mat-label>{{getEntityDisplayName(selectedSearchByItem)}}</mat-label>
-                <mat-select [(ngModel)]="searchingValue">
+                <mat-label>Search by service</mat-label>
+                <mat-select [(ngModel)]="serviceSearchingValue">
                     <mat-option value="">ALL</mat-option>
                     <mat-option value="GPL">GPL</mat-option>
                     <mat-option value="SCT">SCT</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field class="search-by-field" *ngIf="selectedSearchByItem === 'entity'">
-                <mat-label>{{getEntityDisplayName(selectedSearchByItem)}}</mat-label>
-                <input matInput [(ngModel)]="searchingValue">
+            <mat-form-field class="search-by-field">
+                <mat-label>Search by entity name</mat-label>
+                <input matInput [(ngModel)]="entityNameSearchingValue">
             </mat-form-field>
-            <button *ngIf="selectedSearchByItem" color="primary" mat-raised-button
+            <button color="primary" mat-raised-button
                 (click)="getEntityList(pageIndex, pageSize)">Search</button>
         </div>
         <div class="mat-elevation-z8">

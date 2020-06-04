@@ -7,6 +7,9 @@ export const ROUTING_PATHS = {
   EDIT: 'edit',
   PAGE_NOT_FOUND: '**',
 
+  // login routes
+  LOGIN: 'login',
+
   // home routes
   HOME: 'home',
 

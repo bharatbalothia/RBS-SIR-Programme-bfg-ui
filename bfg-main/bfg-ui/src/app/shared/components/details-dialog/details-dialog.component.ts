@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, Pipe } from '@angular/core';
 import { DetailsDialogData, Section, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
+import { isNull, isUndefined } from 'lodash';
 
 @Component({
   selector: 'app-details-dialog',
@@ -25,7 +25,11 @@ export class DetailsDialogComponent implements OnInit {
   }
 
   updateSections() {
-    this.data.tabs.forEach((tab: Tab, index) => (this.tabs[index] = tab));
+    this.data.tabs.forEach((tab: Tab, index) => {
+      tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
+        .filter(item => !(isNull(item.fieldValue) || isUndefined(item.fieldValue))));
+      this.tabs[index] = tab;
+    });
   }
 
 }

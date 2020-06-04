@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
-<mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
+<mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} {{errorMessage.code ? '('+errorMessage.code+')' : ''}}
     <ul *ngIf="errorMessage.errors">
         <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
     </ul>
@@ -23,7 +23,7 @@
                         {{(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue}}
                     </mat-cell>
                 </ng-container>
-                <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true" [hidden]="!dataSource.sectionTitle">
+                <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true" [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
                 </mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
@@ -31,12 +31,12 @@
     </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <div *ngIf="isApprovingActions" class="approve-actions">
+    <div class="approve-actions">
         <mat-form-field>
             <mat-label>Approver Comments</mat-label>
             <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
         </mat-form-field>
-        <button mat-raised-button color='primary' (click)="entityApprovingAction(changeStatus.ACCEPTED)">Accept</button>
+        <button mat-raised-button color='primary' (click)="entityApprovingAction(changeStatus.ACCEPTED)" [disabled]="isTheSameUser()">Accept</button>
         <button mat-raised-button color="warn" (click)="entityApprovingAction(changeStatus.REJECTED)">Reject</button>
     </div>
     <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>

@@ -19,12 +19,14 @@ export class EntityApprovingDialogComponent implements OnInit {
   isLoading = false;
   errorMessage: ErrorMessage;
 
-  displayedColumns: string[] = ['fieldName', 'fieldValue'];
-  tabs = [];
+  displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
+  tabs: Tab[] = [];
 
   changeId: string;
   changer: string;
   approverComments: string;
+
+  isApproveActions: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -35,6 +37,7 @@ export class EntityApprovingDialogComponent implements OnInit {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
+    this.isApproveActions = get(this.data, 'actionData.isApproveActions', false);
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
     this.errorMessage = this.isTheSameUser() ? { code: null, message: 'Changes should be approved by another user' } : null;
@@ -70,6 +73,12 @@ export class EntityApprovingDialogComponent implements OnInit {
 
   isTheSameUser() {
     return this.authService.getUserName() === this.changer;
+  }
+
+  getEntityBeforeValue = (tabTitle: string, tabSectionTitle: string, fieldName: string) => {
+    const tabSections = get(this.tabs.find(el => el.tabTitle === tabTitle), 'tabSections', []);
+    const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
+    return get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
   }
 
 }

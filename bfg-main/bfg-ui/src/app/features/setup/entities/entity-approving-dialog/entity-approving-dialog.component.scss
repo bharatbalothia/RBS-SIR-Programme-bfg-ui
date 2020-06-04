@@ -11,6 +11,10 @@
 
 .mat-table {
 
+    .section-title {
+        justify-content: center;
+    }
+
     .mat-header-row[hidden] {
         display: none !important;
     }

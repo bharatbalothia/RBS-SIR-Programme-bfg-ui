@@ -106,8 +106,8 @@ export class EntitySearchComponent implements OnInit {
       })).afterClosed().subscribe(data => {
         if (get(data, 'refreshList')) {
           this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-            title: `Entity saved`,
-            text: `Entity ${changeControl.entityLog.entity} has been saved`,
+            title: `Entity ${get(data, 'status').toLowerCase()}`,
+            text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
             shouldHideYesCaption: true,
             noCaption: 'Back'
           })).afterClosed().subscribe(() => {

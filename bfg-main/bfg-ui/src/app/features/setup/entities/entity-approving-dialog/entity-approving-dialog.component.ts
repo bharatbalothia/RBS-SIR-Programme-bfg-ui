@@ -53,7 +53,7 @@ export class EntityApprovingDialogComponent implements OnInit {
     this.entityService.resolveChange({ changeID: this.changeId, status, approverComments: this.approverComments })
       .subscribe(() => {
         this.isLoading = false;
-        this.dialog.close({ refreshList: true });
+        this.dialog.close({ refreshList: true, status });
       },
         (error) => {
           this.isLoading = false;

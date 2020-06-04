@@ -49,10 +49,11 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public boolean existsByServiceAndEntityPut(Entity entity) {
         LOG.info("Checking uniqueness entity and service for {}", entity);
+        List<Entity> entities = entityRepository.findByDeleted(false);
         boolean isUnique = getEntitiesExceptCurrent(entity).stream()
                 .anyMatch(ent -> ent.getService().equals(entity.getService()) &
                         ent.getEntity().equals(entity.getEntity()));
-        LOG.info(isUnique);
+        LOG.info("Uniqueness entity and service is {}", isUnique);
         return isUnique;
     }
 
@@ -214,7 +215,8 @@ public class EntityServiceImpl implements EntityService {
 
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {
         List<Entity> entities = entityRepository.findByDeleted(false);
-        entities.remove(entity.getEntityId());
+        Entity editedEntity = entityRepository.findById(entity.getEntityId()).orElse(entity);
+        entities.remove(editedEntity);
         return entities;
     }
 }

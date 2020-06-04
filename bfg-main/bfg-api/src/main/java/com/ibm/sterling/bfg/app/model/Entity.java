@@ -818,4 +818,13 @@ public class Entity implements EntityType{
     public String nameForSorting() {
         return entity;
     }
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "entityId=" + entityId +
+                ", entity='" + entity + '\'' +
+                ", service='" + service + '\'' +
+                '}';
+    }
 }

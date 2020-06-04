@@ -5,6 +5,7 @@ import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
 import { get, isNull, isUndefined } from 'lodash';
+import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -22,17 +23,21 @@ export class EntityApprovingDialogComponent implements OnInit {
   tabs = [];
 
   changeId: string;
+  changer: string;
   approverComments: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityApprovingDialogComponent>,
     private entityService: EntityService,
+    private authService: AuthService
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.changeId = get(this.data, 'actionData.changeID', '');
+    this.changer = get(this.data, 'actionData.changer');
+    this.errorMessage = this.isTheSameUser() ? { code: null, message: 'Changes should be approved by another user' } : null;
   }
 
   ngOnInit() {
@@ -62,5 +67,9 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
+
+  isTheSameUser() {
+    return this.authService.getUserName() === this.changer;
+  }
 
 }

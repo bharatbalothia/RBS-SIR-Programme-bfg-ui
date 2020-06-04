@@ -102,7 +102,10 @@ export class EntitySearchComponent implements OnInit {
       this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
         tabs: getPendingChangesFields(changeCtrl),
-        actionData: { changeID: changeControl.changeID }
+        actionData: {
+          changeID: changeControl.changeID,
+          changer: changeControl.changer
+        }
       })).afterClosed().subscribe(data => {
         if (get(data, 'refreshList')) {
           this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

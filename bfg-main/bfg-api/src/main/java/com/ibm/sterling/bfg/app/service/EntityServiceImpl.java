@@ -80,12 +80,11 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Entity save(Entity entity) {
-        LOG.debug("Entity saving");
-        LOG.debug("Trying to save entity {}", entity);
+        LOG.info("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
         entity.setChangeID(changeControl.getChangeID());
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity {}", savedEntity);
+        LOG.info("Saved entity {}", savedEntity);
         return entity;
     }
 
@@ -168,15 +167,11 @@ public class EntityServiceImpl implements EntityService {
             throw new ConstraintViolationException(violations);
         }
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity to DB {}", savedEntity);
+        LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);
-        try {
-            changeControlService.save(changeControl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changeControlService.save(changeControl);
         return savedEntity;
     }
 

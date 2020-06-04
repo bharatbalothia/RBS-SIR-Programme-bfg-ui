@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 
 @Configuration
-@PropertySource({"classpath:response.properties", "classpath:entityresponse.properties"})
+@PropertySource({"classpath:response.properties", "classpath:entityresponse.properties", "classpath:authresponse.properties"})
 public class ErrorConfig {
 
     @Autowired

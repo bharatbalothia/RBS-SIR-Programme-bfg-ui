@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Entity } from 'src/app/shared/entity/entity.model';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -57,37 +57,53 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
+  addEntityBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+    const entityId = get(changeControl.entityLog, 'entityId');
+    if (entityId) {
+      return this.entityService.getEntityById(entityId.toString()).toPromise()
+        .then(data => ({ ...changeControl, entityBefore: data }));
+    }
+    else {
+      return new Promise((res) => res(changeControl));
+    }
+  }
+
   openInfoDialog(changeControl: ChangeControl) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `Change Record: Pending`,
-      sections: getPendingChangesFields(changeControl),
-    }));
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Change Record: Pending`,
+        tabs: getPendingChangesFields(changeCtrl),
+      })));
   }
 
   openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
-      sections: getEntityDetailsFields(entity),
+      tabs: getEntityDetailsFields(entity),
     }));
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
-      title: 'Approve Change',
-      sections: getPendingChangesFields(changeControl),
-      actionData: { changeID: changeControl.changeID }
-    })).afterClosed().subscribe(data => {
-      if (get(data, 'refreshList')) {
-        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-          title: `Entity saved`,
-          text: `Entity ${changeControl.entityLog.entity} has been saved`,
-          shouldHideYesCaption: true,
-          noCaption: 'Back'
-        })).afterClosed().subscribe(() => {
-          this.getPendingChanges(this.pageIndex, this.pageSize);
-        });
-      }
-    });
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        tabs: getPendingChangesFields(changeCtrl),
+        actionData: {
+          changeID: changeControl.changeID,
+          changer: changeControl.changer
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+            title: `Entity ${get(data, 'status').toLowerCase()}`,
+            text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+            shouldHideYesCaption: true,
+            noCaption: 'Back'
+          })).afterClosed().subscribe(() => {
+            this.getPendingChanges(this.pageIndex, this.pageSize);
+          });
+        }
+      }));
   }
 
 }

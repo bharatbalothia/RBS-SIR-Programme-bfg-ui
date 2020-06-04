@@ -14,13 +14,11 @@ import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,27 +35,21 @@ public class EntityController {
     @Autowired
     private ChangeControlService changeControlService;
 
-    @CrossOrigin
     @GetMapping
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
-                                               @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
-                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        return entityService.findEntities(pageable, entityName, serviceName);
+                                        @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName);
     }
 
-    @CrossOrigin
     @GetMapping("pending")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<Object> list = new ArrayList<>();
-        list.addAll(changeControlService.findAllPending());
-        return ListToPageConverter.convertListToPage(list, pageable);
+                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return ListToPageConverter.convertListToPage(
+                new ArrayList<>(changeControlService.findAllPending()), PageRequest.of(page, size));
     }
 
-    @CrossOrigin
     @PostMapping("pending")
     public ResponseEntity<Entity> PendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
@@ -72,7 +64,6 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
         return entityService.findById(id)
@@ -81,13 +72,11 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
     @PostMapping
     public ResponseEntity<Entity> createEntity(@Validated({PostValidation.class}) @RequestBody Entity entity) {
         return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 
-    @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity<Entity> updateEntity(@Validated({PutValidation.class}) @RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
@@ -95,7 +84,6 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEntity(@PathVariable int id) {
         return entityService.findById(id)
@@ -105,7 +93,6 @@ public class EntityController {
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
     @GetMapping("/existence")
     public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ResponseEntity.ok(entityService.existsByServiceAndEntity(service, entity));

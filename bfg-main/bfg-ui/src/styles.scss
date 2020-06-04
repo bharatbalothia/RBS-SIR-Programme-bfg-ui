@@ -10,6 +10,11 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.mat-tab-body-wrapper {
+    max-height: 50vh;
+}
+
+
 mat-form-field {
     &.ng-valid {
         .mat-form-field-wrapper {

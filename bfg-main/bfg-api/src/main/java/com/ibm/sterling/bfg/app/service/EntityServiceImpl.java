@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
@@ -80,12 +81,11 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Entity save(Entity entity) {
-        LOG.debug("Entity saving");
-        LOG.debug("Trying to save entity {}", entity);
+        LOG.info("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
         entity.setChangeID(changeControl.getChangeID());
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity {}", savedEntity);
+        LOG.info("Saved entity {}", savedEntity);
         return entity;
     }
 
@@ -93,7 +93,7 @@ public class EntityServiceImpl implements EntityService {
         LOG.debug("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
-        changeControl.setChanger("TEST_USER");
+        changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
         changeControl.setChangerComments(entity.getChangerComments());
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
@@ -126,7 +126,7 @@ public class EntityServiceImpl implements EntityService {
         try {
             changeControlService.setApproveInfo(
                     changeControl,
-                    "TEST_APPROVER",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
                     approverComments,
                     status);
         } catch (Exception e) {
@@ -168,23 +168,18 @@ public class EntityServiceImpl implements EntityService {
             throw new ConstraintViolationException(violations);
         }
         Entity savedEntity = entityRepository.save(entity);
-        LOG.debug("Saved entity to DB {}", savedEntity);
+        LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);
-        try {
-            changeControlService.save(changeControl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changeControlService.save(changeControl);
         return savedEntity;
     }
 
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
         LOG.debug("Search entities by entity name {} and service {}", entity, service);
-        List<EntityType> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPending(entity, service));
+        List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
@@ -196,15 +191,8 @@ public class EntityServiceImpl implements EntityService {
         entities.addAll(
                 entityRepository
                         .findAll(specification));
-        entities.sort(new Comparator<EntityType>() {
-            @Override
-            public int compare(EntityType o1, EntityType o2) {
-                return o1.nameForSorting().toLowerCase()
-                        .compareTo(
-                                o2.nameForSorting().toLowerCase());
-            }
-        });
-        return ListToPageConverter.<EntityType>convertListToPage(entities, pageable);
+        entities.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+        return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
@@ -220,8 +208,8 @@ public class EntityServiceImpl implements EntityService {
         return getEntitiesExceptCurrent(entity)
                 .stream()
                 .anyMatch(ent ->
-                    Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
-                    );
+                        Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
+                );
     }
 
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {

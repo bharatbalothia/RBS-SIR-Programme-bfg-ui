@@ -37,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if (Arrays.stream(GlobalErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
             errorMessage = errorConfig.getErrorMessage(GlobalErrorCode.valueOf(errorName));
         else {
-            errorMessage = errorConfig.getErrorMessage(GlobalErrorCode.FAIL, Optional.ofNullable(ex.getCause()).map(Throwable::getLocalizedMessage).orElse(ex.getLocalizedMessage()));
+            errorMessage = errorConfig.getErrorMessage(GlobalErrorCode.FAIL, Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()));
         }
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }

@@ -14,13 +14,11 @@ import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,21 +38,18 @@ public class EntityController {
     @CrossOrigin
     @GetMapping
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
-                                               @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
-                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        return entityService.findEntities(pageable, entityName, serviceName);
+                                        @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName);
     }
 
     @CrossOrigin
     @GetMapping("pending")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<Object> list = new ArrayList<>();
-        list.addAll(changeControlService.findAllPending());
-        return ListToPageConverter.convertListToPage(list, pageable);
+                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return ListToPageConverter.convertListToPage(
+                new ArrayList<>(changeControlService.findAllPending()), PageRequest.of(page, size));
     }
 
     @CrossOrigin

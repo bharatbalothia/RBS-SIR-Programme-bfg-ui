@@ -183,8 +183,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
         LOG.debug("Search entities by entity name {} and service {}", entity, service);
-        List<EntityType> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPending(entity, service));
+        List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
@@ -196,15 +195,8 @@ public class EntityServiceImpl implements EntityService {
         entities.addAll(
                 entityRepository
                         .findAll(specification));
-        entities.sort(new Comparator<EntityType>() {
-            @Override
-            public int compare(EntityType o1, EntityType o2) {
-                return o1.nameForSorting().toLowerCase()
-                        .compareTo(
-                                o2.nameForSorting().toLowerCase());
-            }
-        });
-        return ListToPageConverter.<EntityType>convertListToPage(entities, pageable);
+        entities.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+        return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
@@ -220,8 +212,8 @@ public class EntityServiceImpl implements EntityService {
         return getEntitiesExceptCurrent(entity)
                 .stream()
                 .anyMatch(ent ->
-                    Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
-                    );
+                        Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
+                );
     }
 
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {

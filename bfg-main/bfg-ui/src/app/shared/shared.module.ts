@@ -27,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { InputLowercaseDirective } from './directives/input-lowercase/input-lowercase.directive';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { InputLowercaseDirective } from './directives/input-lowercase/input-lowe
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatPaginatorModule,
   ],
   exports: [
     // Modules
@@ -88,6 +90,7 @@ import { InputLowercaseDirective } from './directives/input-lowercase/input-lowe
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatPaginatorModule,
 
     // Components
     ConfirmDialogComponent,

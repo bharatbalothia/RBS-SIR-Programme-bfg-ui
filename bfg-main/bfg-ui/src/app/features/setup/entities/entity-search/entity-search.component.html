@@ -1,0 +1,90 @@
+<mat-card class="search-entities-card">
+    <mat-card-header>
+        <mat-card-title>Entities</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <div class="search-by-content">
+            <h3 class="search-by-label">Search by</h3>
+            <mat-form-field class="search-by-field">
+                <mat-label>Searching parameter</mat-label>
+                <mat-select (selectionChange)="onSearchByItemSelect($event.value)" [(value)]="selectedSearchByItem">
+                    <mat-option *ngFor="let item of searchByItems" [value]="item">{{getEntityDisplayName(item)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="search-by-field" *ngIf="selectedSearchByItem === 'service'">
+                <mat-label>{{getEntityDisplayName(selectedSearchByItem)}}</mat-label>
+                <mat-select [(ngModel)]="searchingValue">
+                    <mat-option value="">ALL</mat-option>
+                    <mat-option value="GPL">GPL</mat-option>
+                    <mat-option value="SCT">SCT</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="search-by-field" *ngIf="selectedSearchByItem === 'entity'">
+                <mat-label>{{getEntityDisplayName(selectedSearchByItem)}}</mat-label>
+                <input matInput [(ngModel)]="searchingValue">
+            </mat-form-field>
+            <button *ngIf="selectedSearchByItem" color="primary" mat-raised-button
+                (click)="getEntityList(pageIndex, pageSize)">Search</button>
+        </div>
+        <div class="mat-elevation-z8">
+            <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
+                        <mat-icon inline>format_list_numbered</mat-icon> Version manager
+                        </button>
+                        <a mat-icon-button *ngIf="!element.entityLog" [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]">
+                            <mat-icon inline>edit</mat-icon>
+                        </a>
+                        <button mat-icon-button *ngIf="!element.entityLog">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="changes">
+                    <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button *ngIf="element.entityLog" (click)="openInfoDialog(element)">
+                        <mat-icon inline>info</mat-icon> Changes
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="entity">openEntityDetailsDialog
+                    <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button (click)="openEntityDetailsDialog(element.entityLog || element)">
+                            {{element.entity || element.resultMeta1}}
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="service">
+                    <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.service || element.resultMeta2}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="noData">
+                    <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                        No records found.
+                    </mat-footer-cell>
+                </ng-container>
+
+                <mat-footer-row *matFooterRowDef="['noData']" [hidden]="dataSource && dataSource.data.length > 0">
+                </mat-footer-row>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator *ngIf="!isLoading" [length]="entities.totalElements"
+                [pageIndex]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize"
+                [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+                (page)="getEntityList($event.pageIndex, $event.pageSize)">
+            </mat-paginator>
+        </div>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </mat-card-content>
+</mat-card>

@@ -4,6 +4,7 @@ export const ROUTING_PATHS = {
   CREATE: 'create',
   SEARCH: 'search',
   PENDING: 'pending',
+  EDIT: 'edit',
   PAGE_NOT_FOUND: '**',
 
   // login routes

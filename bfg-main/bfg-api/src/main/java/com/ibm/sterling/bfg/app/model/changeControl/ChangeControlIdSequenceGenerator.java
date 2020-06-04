@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.change.model;
+package com.ibm.sterling.bfg.app.model.changeControl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;

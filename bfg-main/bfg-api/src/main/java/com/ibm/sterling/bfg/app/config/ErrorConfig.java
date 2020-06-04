@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-
 import java.util.List;
 
 @Configuration
@@ -36,5 +35,4 @@ public class ErrorConfig {
     public ErrorMessage getErrorMessage(ErrorCode errorCode, List<Object> data) {
         return new ErrorMessage(environment, errorCode, data);
     }
-
 }

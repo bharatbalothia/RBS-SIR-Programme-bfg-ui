@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.change.model;
+package com.ibm.sterling.bfg.app.model.changeControl;
 
 public interface ChangeControlConstants {
     public final static String STATUS_PENDING_TEXT="Pending";
@@ -11,5 +11,5 @@ public interface ChangeControlConstants {
     public final static String OPERATION_UPDATE="UPDATE";
     public final static String OPERATION_DELETE="DELETE";
 
-    public final static String OBJECT_TYPE="com.ibm.sterling.bfg.app.change.model.EntityViewer";
+    public final static String OBJECT_TYPE="com.ibm.sterling.bfg.app.model.changeControl.EntityViewer";
 }

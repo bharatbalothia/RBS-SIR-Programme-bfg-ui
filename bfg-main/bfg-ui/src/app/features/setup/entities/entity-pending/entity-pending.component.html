@@ -40,6 +40,11 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+    <mat-paginator *ngIf="!isLoading" [length]="changeControls.totalElements"
+                [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
+                [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+                (page)="getPendingChanges($event.pageIndex, $event.pageSize)">
+            </mat-paginator>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
   </mat-card-content>
 </mat-card>

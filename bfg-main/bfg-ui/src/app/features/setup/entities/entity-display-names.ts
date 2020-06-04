@@ -1,6 +1,8 @@
 import { Entity } from 'src/app/shared/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/entity/change-control.model';
+import { isEmpty } from 'lodash';
+import { difference } from 'src/app/shared/utils/utils';
 
 export const ENTITY_DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -35,7 +37,7 @@ export const ENTITY_DISPLAY_NAMES = {
 
 export const getEntityDisplayName = (key: string) => ENTITY_DISPLAY_NAMES[key] || key;
 
-const getEntityDetailsSectionItems = (entity: Entity) => ({
+const getEntityDetailsSectionItems = (entity) => ({
   'Entity Details': [
     { fieldName: getEntityDisplayName('entityId'), fieldValue: entity.entityId },
     { fieldName: getEntityDisplayName('entity'), fieldValue: entity.entity },
@@ -104,7 +106,14 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
     },
     {
       tabTitle: 'Before Changes',
-      tabSections: []
+      tabSections: changeControl.entityBefore ? [
+        { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Entity Details'] },
+        { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['SWIFT Details'] },
+        {
+          sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
+          sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Routing Details']
+        }
+      ] : []
     },
     {
       tabTitle: 'After Changes',
@@ -119,8 +128,21 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
     },
     {
       tabTitle: 'Differences',
-      tabSections: []
+      tabSections: changeControl.entityBefore ? [
+        {
+          sectionTitle: 'Entity Details',
+          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Entity Details']
+        },
+        {
+          sectionTitle: 'SWIFT Details',
+          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['SWIFT Details']
+        },
+        {
+          sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
+          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Routing Details']
+        }
+      ] : []
     }
-  ];
+  ].filter(el => !isEmpty(el.tabSections));
 };
 

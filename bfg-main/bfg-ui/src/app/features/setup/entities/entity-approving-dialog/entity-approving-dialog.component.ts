@@ -4,7 +4,7 @@ import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
-import { get } from 'lodash';
+import { get, isNull, isUndefined } from 'lodash';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -24,8 +24,6 @@ export class EntityApprovingDialogComponent implements OnInit {
   changeId: string;
   approverComments: string;
 
-  isApprovingActions: boolean;
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityApprovingDialogComponent>,
@@ -35,7 +33,6 @@ export class EntityApprovingDialogComponent implements OnInit {
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.changeId = get(this.data, 'actionData.changeID', '');
-    this.isApprovingActions = get(this.data, 'actionData.isApprovingActions', false);
   }
 
   ngOnInit() {
@@ -43,7 +40,11 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   updateSections() {
-    this.data.tabs.forEach((tab: Tab, index) => (this.tabs[index] = tab));
+    this.data.tabs.forEach((tab: Tab, index) => {
+      tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
+        .filter(item => !(isNull(item.fieldValue) || isUndefined(item.fieldValue))));
+      this.tabs[index] = tab;
+    });
   }
 
   entityApprovingAction(status) {

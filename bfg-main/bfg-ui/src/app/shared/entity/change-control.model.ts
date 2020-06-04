@@ -16,6 +16,7 @@ export interface ChangeControl {
     resultMeta2: string;
     resultMeta3: null;
     entityLog: Entity;
+    entityBefore?: Entity;
     pending: boolean;
     statusText: string;
     shortType: string;

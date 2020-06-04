@@ -71,6 +71,25 @@ export class EntitySearchComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.entities.content);
   }
 
+  addEntityBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+    const entityId = get(changeControl.entityLog, 'entityId');
+    if (entityId) {
+      return this.entityService.getEntityById(entityId.toString()).toPromise()
+        .then(data => ({ ...changeControl, entityBefore: data }));
+    }
+    else {
+      return new Promise((res) => res(changeControl));
+    }
+  }
+
+  openInfoDialog(changeControl: ChangeControl) {
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Change Record: Pending`,
+        tabs: getPendingChangesFields(changeCtrl),
+      })));
+  }
+
   openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
@@ -78,30 +97,24 @@ export class EntitySearchComponent implements OnInit {
     }));
   }
 
-  openInfoDialog(changeControl: ChangeControl) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `Change Record: Pending`,
-      tabs: getPendingChangesFields(changeControl),
-    }));
-  }
-
   openApprovingDialog(changeControl: ChangeControl) {
-    this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
-      title: 'Approve Change',
-      tabs: getPendingChangesFields(changeControl),
-      actionData: { changeID: changeControl.changeID, isApprovingActions: true }
-    })).afterClosed().subscribe(data => {
-      if (get(data, 'refreshList')) {
-        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-          title: `Entity saved`,
-          text: `Entity ${changeControl.entityLog.entity} has been saved`,
-          shouldHideYesCaption: true,
-          noCaption: 'Back'
-        })).afterClosed().subscribe(() => {
-          this.getEntityList(this.pageIndex, this.pageSize);
-        });
-      }
-    });
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        tabs: getPendingChangesFields(changeCtrl),
+        actionData: { changeID: changeControl.changeID }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+            title: `Entity saved`,
+            text: `Entity ${changeControl.entityLog.entity} has been saved`,
+            shouldHideYesCaption: true,
+            noCaption: 'Back'
+          })).afterClosed().subscribe(() => {
+            this.getEntityList(this.pageIndex, this.pageSize);
+          });
+        }
+      }));
   }
 
   onSearchByItemSelect(searchByItem: string) {

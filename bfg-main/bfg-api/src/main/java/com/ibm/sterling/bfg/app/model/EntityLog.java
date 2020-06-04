@@ -2,22 +2,22 @@ package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.Entity;
-
 import org.hibernate.annotations.Parameter;
-
+import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
 @Table(name = "SCT_ENTITY_LOG")
 public class EntityLog {
+    private static final Logger LOG = LogManager.getLogger(EntityLog.class);
+
     @Id
     @Column(name = "ENTITY_LOG_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_LOG_IDSEQ")
@@ -168,8 +168,6 @@ public class EntityLog {
     private String inboundResponderDN = "";
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
-    @Column(name = "ROUTE_REQUESTTYPE")
-    private String inboundType = "";
     @Column(name = "NONREPUDIATION")
     @NotNull(message = "NONREPUDIATION has to be present")
     private Boolean nonRepudiation;
@@ -247,7 +245,6 @@ public class EntityLog {
         this.inboundRequestorDN = entity.getInboundRequestorDN();
         this.inboundResponderDN = entity.getInboundResponderDN();
         this.inboundService = entity.getInboundService();
-        this.inboundType = entity.getInboundType();
         this.nonRepudiation = entity.getNonRepudiation();
         this.pauseInbound = entity.getPauseInbound();
         this.pauseOutbound = entity.getPauseOutbound();
@@ -260,9 +257,19 @@ public class EntityLog {
         this.inboundDir = entity.getInboundDir();
         this.inboundRoutingRule = entity.getInboundRoutingRule();
         this.deleted = entity.getDeleted();
-        this.inboundRequestType = Arrays.asList(entity.getInboundRequestType());
+        this.inboundRequestType = entity.getInboundRequestType();
         this.irishStep2 = entity.getIrishStep2();
 
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void init() {
+        LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
+        mailboxPathIn = entity + "_" + service;
+        mailboxPathOut = entity + "_" + service;
+        mqQueueIn = entity + "_" + service;
+        mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {
@@ -368,14 +375,6 @@ public class EntityLog {
     public void setInboundRequestType(List<String> inboundRequestType) {
         this.inboundRequestType = inboundRequestType;
     }
-
-//    public ChangeControl getChangeID() {
-//        return changeID;
-//    }
-//
-//    public void setChangeID(ChangeControl changeID) {
-//        this.changeID = changeID;
-//    }
 
     public Boolean getIrishStep2() {
         return irishStep2;
@@ -807,14 +806,6 @@ public class EntityLog {
 
     public void setInboundService(String inboundService) {
         this.inboundService = inboundService;
-    }
-
-    public String getInboundType() {
-        return inboundType;
-    }
-
-    public void setInboundType(String inboundType) {
-        this.inboundType = inboundType;
     }
 
     public Boolean getNonRepudiation() {

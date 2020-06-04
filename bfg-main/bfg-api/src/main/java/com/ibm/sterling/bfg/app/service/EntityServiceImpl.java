@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
@@ -92,7 +93,7 @@ public class EntityServiceImpl implements EntityService {
         LOG.debug("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
-        changeControl.setChanger("TEST_USER");
+        changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
         changeControl.setChangerComments(entity.getChangerComments());
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
@@ -104,7 +105,7 @@ public class EntityServiceImpl implements EntityService {
             LOG.error("The Entity {} could not be saved", entity);
             e.printStackTrace();
         }
-        return entity;
+        return changeControl.convertEntityLogToEntity();
     }
 
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
@@ -125,7 +126,7 @@ public class EntityServiceImpl implements EntityService {
         try {
             changeControlService.setApproveInfo(
                     changeControl,
-                    "TEST_APPROVER",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
                     approverComments,
                     status);
         } catch (Exception e) {

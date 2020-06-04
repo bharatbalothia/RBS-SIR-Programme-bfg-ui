@@ -30,7 +30,7 @@ export class EntityService {
   }
 
   getEntityById(entityId: string) {
-    return this.http.get<Entity>(this.apiUrl + '/' + entityId);
+    return this.http.get<Entity>(this.apiUrl + entityId);
   }
 
   getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {

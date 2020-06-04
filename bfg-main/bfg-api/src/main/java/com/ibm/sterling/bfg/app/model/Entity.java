@@ -6,7 +6,6 @@ import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.*;
@@ -14,7 +13,7 @@ import java.util.*;
 @EntityValid
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
-public class Entity {
+public class Entity implements EntityType{
     private static final long serialVersionUID = 1L;
     private static final Logger log = LogManager.getLogger(Entity.class);
     @Id
@@ -790,5 +789,10 @@ public class Entity {
 
     public void setE2eSigning(String e2eSigning) {
         this.e2eSigning = e2eSigning;
+    }
+
+    @Override
+    public String nameForSorting() {
+        return entity;
     }
 }

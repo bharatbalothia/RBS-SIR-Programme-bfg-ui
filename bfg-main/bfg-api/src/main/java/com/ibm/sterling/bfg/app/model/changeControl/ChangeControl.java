@@ -1,6 +1,7 @@
-package com.ibm.sterling.bfg.app.change.model;
+package com.ibm.sterling.bfg.app.model.changeControl;
 
 import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.EntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.sql.Timestamp;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
-public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable {
+public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable, EntityType {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(com.ibm.sterling.bfg.app.model.Entity.class);
 
@@ -23,7 +24,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFG_CHANGE_CONTROL_IDSEQ")
     @GenericGenerator(
             name = "SFG_CHANGE_CONTROL_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.change.model.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),
@@ -69,6 +70,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     private String approverComments; //comments made by approver
 
     @Column(name = "RESULT_META1")
+    @OrderBy
     private String resultMeta1; //meta-data about the object when using CREATE action (searchable)
 
     @Column(name = "RESULT_META2")
@@ -327,7 +329,12 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     }
 
     @Override
-    public int compareTo(ChangeControl o) {
-        return changeID.compareTo(o.getChangeID());
+    public int compareTo(ChangeControl сс) {
+        return resultMeta1.toLowerCase().compareTo(сс.getResultMeta1().toLowerCase());
+    }
+
+    @Override
+    public String nameForSorting() {
+        return resultMeta1;
     }
 }

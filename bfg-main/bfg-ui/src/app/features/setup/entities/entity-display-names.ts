@@ -1,5 +1,6 @@
 import { Entity } from 'src/app/shared/entity/entity.model';
 import { Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { ChangeControl } from 'src/app/shared/entity/change-control.model';
 
 export const ENTITY_DISPLAY_NAMES = {
     entityId: 'Entity ID',
@@ -74,3 +75,22 @@ export const getEntityDetailsFields = (entity: Entity): Section[] => [
         ]
       }
 ];
+
+export const getPendingChangesFields = (changeControl: ChangeControl): Section[] => {
+  return [
+    {
+      sectionTitle: 'Change Details',
+      sectionItems: [
+        { fieldName: 'Change ID', fieldValue: changeControl.changeID },
+        { fieldName: 'Object type', fieldValue: changeControl.objectType },
+        { fieldName: 'Operation', fieldValue: changeControl.operation },
+        { fieldName: 'Status', fieldValue: changeControl.status },
+        { fieldName: 'Changer', fieldValue: changeControl.changer },
+        { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
+        { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
+        { fieldName: 'Approver', fieldValue: changeControl.approver },
+        { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
+      ],
+    }
+  ];
+}

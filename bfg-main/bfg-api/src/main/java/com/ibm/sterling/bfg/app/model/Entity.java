@@ -37,13 +37,13 @@ public class Entity implements EntityType{
     private String service;
     @Column(name = "REQUESTORDN")
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for RequestorDN",
             groups = {PostValidation.class, PutValidation.class})
     private String requestorDN;
     @Column(name = "RESPONDERDN")
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for ResponderDN",
             groups = {PostValidation.class, PutValidation.class})
     private String responderDN;
@@ -182,13 +182,13 @@ public class Entity implements EntityType{
 
     @Column(name = "ROUTE_REQUESTORDN")
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound RequestorDN",
             groups = {PostValidation.class, PutValidation.class})
     private String inboundRequestorDN = "";
     @Column(name = "ROUTE_RESPONDERDN")
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound ResponderDN",
             groups = {PostValidation.class, PutValidation.class})
     private String inboundResponderDN = "";

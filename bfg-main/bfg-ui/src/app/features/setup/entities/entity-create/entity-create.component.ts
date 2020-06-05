@@ -264,7 +264,7 @@ export class EntityCreateComponent implements OnInit {
         field: key,
         value: entity[key],
         error: this.getErrorByField(key)
-      }));
+      })).filter(el => el.field !== 'changerComments');
   }
 
   markAllFieldsTouched() {

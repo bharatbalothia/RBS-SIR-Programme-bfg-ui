@@ -63,6 +63,7 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).subscribe(data => {
           this.editableEntity = data;
           this.initializeFormGroups(this.editableEntity);
+          this.markAllFieldsTouched();
         });
       }
     });

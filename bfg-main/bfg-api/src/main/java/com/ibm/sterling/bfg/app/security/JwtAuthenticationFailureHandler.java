@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.model.exception.AuthErrorCode;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;

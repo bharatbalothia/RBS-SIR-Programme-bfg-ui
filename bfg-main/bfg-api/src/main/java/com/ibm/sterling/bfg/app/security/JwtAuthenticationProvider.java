@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+
     @Autowired
     private JwtTokenValidator jwtTokenValidator;
 
@@ -19,7 +20,8 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
     }
 
     @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+                                                  UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
     }
 
     @Override

@@ -1,15 +1,16 @@
 package com.ibm.sterling.bfg.app.security;
 
 import com.ibm.sterling.bfg.app.model.security.JwtAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -32,18 +33,18 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
         super.successfulAuthentication(request, response, chain, authResult);
         chain.doFilter(request, response);
     }
 
     private static String extractToken(HttpServletRequest request) {
-        String header = request.getHeader(AUTHENTICATION_HEADER_NAME);
-        if (!StringUtils.isEmpty(header) && header.length() > HEADER_PREFIX.length()) {
-            return header.substring(HEADER_PREFIX.length());
-        }
-        return null;
+        return Optional.ofNullable(request.getHeader(AUTHENTICATION_HEADER_NAME))
+                .filter(head -> head.length() > HEADER_PREFIX.length())
+                .map(head -> head.substring(HEADER_PREFIX.length()))
+                .orElseThrow(() -> new BadCredentialsException("Token corrupted"));
     }
 
 }

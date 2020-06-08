@@ -141,4 +141,4 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
       }
     ] : []
   }
-];
+].filter(el => !isEmpty(el.tabSections));

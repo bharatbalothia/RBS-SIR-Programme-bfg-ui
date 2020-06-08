@@ -22,10 +22,11 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="fieldValueBefore">
-                    <mat-header-cell *matHeaderCellDef [style.display]="tab.tabTitle !=='Differences' && 'none'">Value
-                        Before</mat-header-cell>
-                    <mat-cell *matCellDef="let element" [style.display]="tab.tabTitle !=='Differences' && 'none'">
-                        {{getEntityBeforeValue("Before Changes", dataSource.sectionTitle, element.fieldName)}}
+                    <mat-header-cell *matHeaderCellDef [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+                        Value Before
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+                        {{getEntityBeforeValue(dataSource.sectionTitle, element.fieldName)}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="fieldValue">

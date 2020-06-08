@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, Pipe } from '@angular/core';
 import { DetailsDialogData, Section, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { isNull, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 
 @Component({
   selector: 'app-details-dialog',
@@ -11,7 +11,7 @@ import { isNull, isUndefined } from 'lodash';
 export class DetailsDialogComponent implements OnInit {
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
-  tabs = [];
+  tabs: Tab[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData
@@ -25,9 +25,9 @@ export class DetailsDialogComponent implements OnInit {
   }
 
   updateSections() {
-    this.data.tabs.forEach((tab: Tab, index) => {
+    this.data.tabs.forEach((tab, index) => {
       tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
-        .filter(item => !(isNull(item.fieldValue) || isUndefined(item.fieldValue))));
+        .filter(item => !isUndefined(item.fieldValue)));
       this.tabs[index] = tab;
     });
   }

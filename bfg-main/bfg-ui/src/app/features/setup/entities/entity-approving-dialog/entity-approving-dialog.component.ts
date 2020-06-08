@@ -4,8 +4,9 @@ import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
-import { get, isNull, isUndefined } from 'lodash';
+import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -14,13 +15,14 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 })
 export class EntityApprovingDialogComponent implements OnInit {
 
+  entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
 
   isLoading = false;
   errorMessage: ErrorMessage;
 
   displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
-  tabs: Tab[] = [];
+  tabs: Tab[];
 
   changeId: string;
   changer: string;
@@ -34,7 +36,7 @@ export class EntityApprovingDialogComponent implements OnInit {
     private entityService: EntityService,
     private authService: AuthService
   ) {
-    this.data.tabs = this.data.tabs || [];
+    this.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.isApproveActions = get(this.data, 'actionData.isApproveActions', false);
@@ -44,15 +46,8 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateSections();
-  }
-
-  updateSections() {
-    this.data.tabs.forEach((tab: Tab, index) => {
-      tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
-        .filter(item => !(isNull(item.fieldValue) || isUndefined(item.fieldValue))));
-      this.tabs[index] = tab;
-    });
+    this.tabs.forEach((tab: Tab) => tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
+      .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue))));
   }
 
   entityApprovingAction(status) {
@@ -71,12 +66,15 @@ export class EntityApprovingDialogComponent implements OnInit {
 
   getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
 
+
   isTheSameUser() {
     return this.authService.getUserName() === this.changer;
   }
 
-  getEntityBeforeValue = (tabTitle: string, tabSectionTitle: string, fieldName: string) => {
-    const tabSections = get(this.tabs.find(el => el.tabTitle === tabTitle), 'tabSections', []);
+  isDifferencesTab = (tabTitle: string) => tabTitle === ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES;
+
+  getEntityBeforeValue = (tabSectionTitle: string, fieldName: string) => {
+    const tabSections = get(this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES), 'tabSections', []);
     const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
     return get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
   }

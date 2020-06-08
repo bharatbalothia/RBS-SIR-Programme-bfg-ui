@@ -3,6 +3,7 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 import { ChangeControl } from 'src/app/shared/entity/change-control.model';
 import { isEmpty } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
+import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
 
 export const ENTITY_DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -84,65 +85,60 @@ export const getEntityDetailsFields = (entity: Entity): Tab[] => [
   }
 ];
 
-export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => {
-  return [
-    {
-      tabTitle: 'Change Details',
-      tabSections: [
-        {
-          sectionItems: [
-            { fieldName: 'Change ID', fieldValue: changeControl.changeID },
-            { fieldName: 'Object type', fieldValue: changeControl.objectType },
-            { fieldName: 'Operation', fieldValue: changeControl.operation },
-            { fieldName: 'Status', fieldValue: changeControl.status },
-            { fieldName: 'Changer', fieldValue: changeControl.changer },
-            { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
-            { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
-            { fieldName: 'Approver', fieldValue: changeControl.approver },
-            { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
-          ],
-        },
-      ]
-    },
-    {
-      tabTitle: 'Before Changes',
-      tabSections: changeControl.entityBefore ? [
-        { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Entity Details'] },
-        { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['SWIFT Details'] },
-        {
-          sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
-          sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Routing Details']
-        }
-      ] : []
-    },
-    {
-      tabTitle: 'After Changes',
-      tabSections: [
-        { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Entity Details'] },
-        { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['SWIFT Details'] },
-        {
-          sectionTitle: `${changeControl.entityLog.service} Routing Details`,
-          sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Routing Details']
-        }
-      ]
-    },
-    {
-      tabTitle: 'Differences',
-      tabSections: changeControl.entityBefore ? [
-        {
-          sectionTitle: 'Entity Details',
-          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Entity Details']
-        },
-        {
-          sectionTitle: 'SWIFT Details',
-          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['SWIFT Details']
-        },
-        {
-          sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
-          sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Routing Details']
-        }
-      ] : []
-    }
-  ].filter(el => !isEmpty(el.tabSections));
-};
-
+export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => [
+  {
+    tabTitle: ENTITY_APPROVING_DIALOG_TABS.CHANGE_DETAILS,
+    tabSections: [{
+      sectionItems: [
+        { fieldName: 'Change ID', fieldValue: changeControl.changeID },
+        { fieldName: 'Object type', fieldValue: changeControl.objectType },
+        { fieldName: 'Operation', fieldValue: changeControl.operation },
+        { fieldName: 'Status', fieldValue: changeControl.status },
+        { fieldName: 'Changer', fieldValue: changeControl.changer },
+        { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
+        { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
+        { fieldName: 'Approver', fieldValue: changeControl.approver },
+        { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
+      ],
+    }]
+  },
+  {
+    tabTitle: ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES,
+    tabSections: changeControl.entityBefore ? [
+      { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Entity Details'] },
+      { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['SWIFT Details'] },
+      {
+        sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
+        sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Routing Details']
+      }
+    ] : []
+  },
+  {
+    tabTitle: ENTITY_APPROVING_DIALOG_TABS.AFTER_CHANGES,
+    tabSections: [
+      { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Entity Details'] },
+      { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['SWIFT Details'] },
+      {
+        sectionTitle: `${changeControl.entityLog.service} Routing Details`,
+        sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Routing Details']
+      }
+    ]
+  },
+  {
+    tabTitle: ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES,
+    tabSections: changeControl.entityBefore ? [
+      {
+        sectionTitle: 'Entity Details',
+        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Entity Details']
+      },
+      {
+        sectionTitle: 'SWIFT Details',
+        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['SWIFT Details']
+      },
+      {
+        sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
+        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Routing Details']
+      }
+    ] : []
+  }
+];

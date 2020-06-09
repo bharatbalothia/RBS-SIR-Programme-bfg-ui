@@ -269,10 +269,10 @@ public class EntityLog {
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        mailboxPathIn = entity + "_" + service;
-        mailboxPathOut = entity + "_" + service;
-        mqQueueIn = entity + "_" + service;
-        mqQueueOut = entity + "_" + service;
+        if (mailboxPathIn == null) mailboxPathIn = entity + "_" + service;
+        if (mailboxPathOut == null) mailboxPathOut = entity + "_" + service;
+        if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
+        if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {

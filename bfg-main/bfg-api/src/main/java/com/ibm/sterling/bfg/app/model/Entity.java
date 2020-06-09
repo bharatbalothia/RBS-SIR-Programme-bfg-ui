@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.validation.*;
 import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,11 +110,22 @@ public class Entity implements EntityType{
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present",
             groups = {PostValidation.class, PutValidation.class})
-    private Integer startOfDay = 0;
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "Start of day should be in hh:mm format",
+            groups = {PostValidation.class, PutValidation.class})
+    @Convert(converter = StringToIntegerConverter.class)
+    private String startOfDay = "00:00";
+
     @Column(name = "ENDOFDAY")
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "End of day should be in hh:mm format",
+            groups = {PostValidation.class, PutValidation.class})
     @NotNull(message = "ENDOFDAY has to be present",
             groups = {PostValidation.class, PutValidation.class})
-    private Integer endOfDay = 0;
+    @Convert(converter = StringToIntegerConverter.class)
+    private String endOfDay = "00:00";
     @Transient
     private List schedules = new ArrayList();
     @Transient
@@ -224,10 +236,10 @@ public class Entity implements EntityType{
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        mailboxPathIn = entity + "_" + service;
-        mailboxPathOut = entity + "_" + service;
-        mqQueueIn = entity + "_" + service;
-        mqQueueOut = entity + "_" + service;
+        if (mailboxPathIn == null) mailboxPathIn = entity + "_" + service;
+        if (mailboxPathOut == null) mailboxPathOut = entity + "_" + service;
+        if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
+        if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
     }
 
     public static long getSerialVersionUID() {
@@ -446,19 +458,19 @@ public class Entity implements EntityType{
         this.maxBulksPerFile = maxBulksPerFile;
     }
 
-    public Integer getStartOfDay() {
+    public String getStartOfDay() {
         return startOfDay;
     }
 
-    public void setStartOfDay(Integer startOfDay) {
+    public void setStartOfDay(String startOfDay) {
         this.startOfDay = startOfDay;
     }
 
-    public Integer getEndOfDay() {
+    public String getEndOfDay() {
         return endOfDay;
     }
 
-    public void setEndOfDay(Integer endOfDay) {
+    public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
     }
 

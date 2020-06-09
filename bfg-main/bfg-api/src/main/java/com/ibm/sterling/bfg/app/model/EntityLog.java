@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,10 +107,12 @@ public class EntityLog {
     private Integer maxBulksPerFile;
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present")
-    private Integer startOfDay;
+    @Convert(converter = StringToIntegerConverter.class)
+    private String startOfDay;
     @Column(name = "ENDOFDAY")
     @NotNull(message = "ENDOFDAY has to be present")
-    private Integer endOfDay;
+    @Convert(converter = StringToIntegerConverter.class)
+    private String endOfDay;
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -266,10 +269,10 @@ public class EntityLog {
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        mailboxPathIn = entity + "_" + service;
-        mailboxPathOut = entity + "_" + service;
-        mqQueueIn = entity + "_" + service;
-        mqQueueOut = entity + "_" + service;
+        if (mailboxPathIn == null) mailboxPathIn = entity + "_" + service;
+        if (mailboxPathOut == null) mailboxPathOut = entity + "_" + service;
+        if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
+        if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {
@@ -560,19 +563,19 @@ public class EntityLog {
         this.maxBulksPerFile = maxBulksPerFile;
     }
 
-    public Integer getStartOfDay() {
+    public String getStartOfDay() {
         return startOfDay;
     }
 
-    public void setStartOfDay(Integer startOfDay) {
+    public void setStartOfDay(String startOfDay) {
         this.startOfDay = startOfDay;
     }
 
-    public Integer getEndOfDay() {
+    public String getEndOfDay() {
         return endOfDay;
     }
 
-    public void setEndOfDay(Integer endOfDay) {
+    public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
     }
 

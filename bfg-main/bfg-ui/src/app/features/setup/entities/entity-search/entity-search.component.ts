@@ -26,9 +26,8 @@ export class EntitySearchComponent implements OnInit {
   getEntityDisplayName = getEntityDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
 
-  searchByItems: string[] = ['entity', 'service'];
-  selectedSearchByItem: string;
-  searchingValue = '';
+  entityNameSearchingValue = '';
+  serviceSearchingValue = '';
 
   isLoading = true;
   entities: EntitiesWithPagination;
@@ -45,13 +44,18 @@ export class EntitySearchComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (window.history.state.pageIndex && window.history.state.pageSize) {
+      this.pageIndex = window.history.state.pageIndex;
+      this.pageSize = window.history.state.pageSize;
+    }
     this.getEntityList(this.pageIndex, this.pageSize);
   }
 
   getEntityList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
     this.entityService.getEntityList(removeEmpties({
-      [this.selectedSearchByItem]: this.searchingValue !== '' ? this.searchingValue : null,
+      entity: this.entityNameSearchingValue || null,
+      service: this.serviceSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
@@ -67,42 +71,54 @@ export class EntitySearchComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.entities.content);
   }
 
-  openEntityDetailsDialog(entity: Entity) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `${entity.service}: ${entity.entity}`,
-      sections: getEntityDetailsFields(entity),
-    }));
+  addEntityBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+    const entityId = get(changeControl.entityLog, 'entityId');
+    if (entityId) {
+      return this.entityService.getEntityById(entityId.toString()).toPromise()
+        .then(data => ({ ...changeControl, entityBefore: data }));
+    }
+    else {
+      return new Promise((res) => res(changeControl));
+    }
   }
 
   openInfoDialog(changeControl: ChangeControl) {
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+        title: `Change Record: Pending`,
+        tabs: getPendingChangesFields(changeCtrl),
+      })));
+  }
+
+  openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `Change Record: Pending`,
-      sections: getPendingChangesFields(changeControl),
+      title: `${entity.service}: ${entity.entity}`,
+      tabs: getEntityDetailsFields(entity),
     }));
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
-      title: 'Approve Change',
-      sections: getPendingChangesFields(changeControl),
-      actionData: { changeID: changeControl.changeID }
-    })).afterClosed().subscribe(data => {
-      if (get(data, 'refreshList')) {
-        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-          title: `Entity saved`,
-          text: `Entity ${changeControl.entityLog.entity} has been saved`,
-          shouldHideYesCaption: true,
-          noCaption: 'Back'
-        })).afterClosed().subscribe(() => {
-          this.getEntityList(this.pageIndex, this.pageSize);
-        });
-      }
-    });
-  }
-
-  onSearchByItemSelect(searchByItem: string) {
-    this.selectedSearchByItem = searchByItem;
-    this.searchingValue = '';
+    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        tabs: getPendingChangesFields(changeCtrl),
+        actionData: {
+          changeID: changeControl.changeID,
+          changer: changeControl.changer,
+          isApproveActions: true
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+            title: `Entity ${get(data, 'status').toLowerCase()}`,
+            text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+            shouldHideYesCaption: true,
+            noCaption: 'Back'
+          })).afterClosed().subscribe(() => {
+            this.getEntityList(this.pageIndex, this.pageSize);
+          });
+        }
+      }));
   }
 
 }

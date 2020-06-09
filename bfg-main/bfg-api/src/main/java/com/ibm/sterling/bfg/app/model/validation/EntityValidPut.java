@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.model.validation;
 
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
@@ -13,10 +12,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = EntityUniqueValidationByServiceAndEntity.class)
-public @interface EntityValid {
-
-    String message() default "Entity or Service has to be unique";
+@Constraint(validatedBy = {EntityUniqueValidationByServiceAndEntityPut.class})
+public @interface EntityValidPut {
+    String message() default "Entity and Service have to be unique";
 
     Class<?>[] groups() default {};
 

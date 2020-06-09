@@ -7,6 +7,8 @@ import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
+import com.ibm.sterling.bfg.app.model.validation.PutValidation;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
@@ -41,6 +44,17 @@ public class EntityServiceImpl implements EntityService {
     public boolean existsByMqQueueOut(String mqQueueOut) {
         LOG.info("exists by mqQueueOut {}", mqQueueOut);
         return entityRepository.existsByMqQueueOut(mqQueueOut);
+    }
+
+    @Override
+    public boolean existsByServiceAndEntityPut(Entity entity) {
+        LOG.info("Checking uniqueness entity and service for {}", entity);
+        List<Entity> entities = entityRepository.findByDeleted(false);
+        boolean isUnique = getEntitiesExceptCurrent(entity).stream()
+                .anyMatch(ent -> ent.getService().equals(entity.getService()) &
+                        ent.getEntity().equals(entity.getEntity()));
+        LOG.info("Uniqueness entity and service is {}", isUnique);
+        return isUnique;
     }
 
     @Override
@@ -76,17 +90,23 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity saveEntityToChangeControl(Entity entity) {
-        LOG.info("Trying to save entity to change control:" + entity);
+    public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
+        LOG.debug("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
-        changeControl.setOperation(Operation.CREATE);
-        changeControl.setChanger("TEST_USER");
+        changeControl.setOperation(operation);
+        changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
         changeControl.setChangerComments(entity.getChangerComments());
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
-        entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        return entity;
+        try {
+            entity.setChangeID(changeControlService.save(changeControl).getChangeID());
+        } catch (Exception e) {
+            LOG.error("Error persisting the Change Control record: {}", e.getMessage());
+            LOG.error("The Entity {} could not be saved", entity);
+            e.printStackTrace();
+        }
+        return changeControl.convertEntityLogToEntity();
     }
 
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
@@ -95,7 +115,6 @@ public class EntityServiceImpl implements EntityService {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
-
         Entity entity = new Entity();
         switch (status) {
             case ACCEPTED:
@@ -105,34 +124,47 @@ public class EntityServiceImpl implements EntityService {
 
             case REJECTED:
         }
-
-        changeControlService.setApproveInfo(
-                changeControl,
-                "TEST_APPROVER",
-                approverComments,
-                status
-        );
-        return entity;
-    }
-
-    private Entity approve(ChangeControl changeControl) {
-        Entity entity = new Entity();
-        Operation operation = changeControl.getOperation();
-
-        switch (operation) {
-            case CREATE:
-                entity = saveEntityAfterApprove(changeControl);
-                break;
-            case UPDATE:
-            case DELETE:
+        try {
+            changeControlService.setApproveInfo(
+                    changeControl,
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    approverComments,
+                    status);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return entity;
     }
 
+    private Entity approve(ChangeControl changeControl) {
+        LOG.debug("Entity {} action", changeControl.getOperation());
+        Entity entity = new Entity();
+        Operation operation = changeControl.getOperation();
+        switch (operation) {
+            case CREATE:
+            case UPDATE:
+                entity = saveEntityAfterApprove(changeControl);
+                break;
+            case DELETE:
+        }
+        LOG.debug("Entity after {} action: {}", changeControl.getOperation(), entity);
+        return entity;
+    }
+
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
-        LOG.info("Approve the Entity create action");
+        LOG.debug("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
-        Set<ConstraintViolation<Entity>> violations = validator.validate(entity);
+        Set<ConstraintViolation<Entity>> violations = null;
+        Operation operation = changeControl.getOperation();
+        switch (operation) {
+            case CREATE:
+                violations = validator.validate(entity, PostValidation.class);
+                break;
+            case UPDATE:
+                violations = validator.validate(entity, PutValidation.class);
+                break;
+            case DELETE:
+        }
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
@@ -147,8 +179,8 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
-        List<EntityType> entities = new ArrayList<>();
-        entities.addAll(changeControlService.findAllPending(entity, service));
+        LOG.debug("Search entities by entity name {} and service {}", entity, service);
+        List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
@@ -160,15 +192,8 @@ public class EntityServiceImpl implements EntityService {
         entities.addAll(
                 entityRepository
                         .findAll(specification));
-        entities.sort(new Comparator<EntityType>() {
-            @Override
-            public int compare(EntityType o1, EntityType o2) {
-                return o1.nameForSorting().toLowerCase()
-                        .compareTo(
-                                o2.nameForSorting().toLowerCase());
-            }
-        });
-        return ListToPageConverter.<EntityType>convertListToPage(entities, pageable);
+        entities.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+        return ListToPageConverter.convertListToPage(entities, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
@@ -177,5 +202,21 @@ public class EntityServiceImpl implements EntityService {
         if (fieldName.equals("MAILBOXPATHOUT"))
             return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
+    }
+
+    @Override
+    public boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException {
+        return getEntitiesExceptCurrent(entity)
+                .stream()
+                .anyMatch(ent ->
+                        Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
+                );
+    }
+
+    private List<Entity> getEntitiesExceptCurrent(Entity entity) {
+        List<Entity> entities = entityRepository.findByDeleted(false);
+        Entity editedEntity = entityRepository.findById(entity.getEntityId()).orElse(entity);
+        entities.remove(editedEntity);
+        return entities;
     }
 }

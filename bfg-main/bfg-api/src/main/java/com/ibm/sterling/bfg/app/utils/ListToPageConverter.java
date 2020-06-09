@@ -8,7 +8,7 @@ import java.util.List;
 
 import static java.lang.Math.toIntExact;
 
-public class ListToPageConverter<T> {
+public class ListToPageConverter {
     public static <T> Page<T> convertListToPage(List<T> list, Pageable pageable) {
         int total = list.size();
         int start = toIntExact(pageable.getOffset());
@@ -19,7 +19,6 @@ public class ListToPageConverter<T> {
         if (start <= end) {
             output = list.subList(start, end);
         }
-        Page<T> page = new PageImpl<T>(output, pageable, total);
-        return page;
+        return new PageImpl<>(output, pageable, total);
     }
 }

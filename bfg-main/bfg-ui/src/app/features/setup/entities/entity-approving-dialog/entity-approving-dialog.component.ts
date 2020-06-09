@@ -1,10 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Section, DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
 import { EntityService } from 'src/app/shared/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -13,34 +15,39 @@ import { get } from 'lodash';
 })
 export class EntityApprovingDialogComponent implements OnInit {
 
+  entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
 
   isLoading = false;
   errorMessage: ErrorMessage;
 
-  displayedColumns: string[] = ['fieldName', 'fieldValue'];
-  dataSources = [];
+  displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
+  tabs: Tab[];
 
   changeId: string;
+  changer: string;
   approverComments: string;
+
+  isApproveActions: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityApprovingDialogComponent>,
     private entityService: EntityService,
+    private authService: AuthService
   ) {
-    this.data.sections = this.data.sections || [];
+    this.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
+    this.isApproveActions = get(this.data, 'actionData.isApproveActions', false);
     this.changeId = get(this.data, 'actionData.changeID', '');
+    this.changer = get(this.data, 'actionData.changer');
+    this.errorMessage = this.isTheSameUser() ? { code: null, message: 'Changes should be approved by another user' } : null;
   }
 
   ngOnInit() {
-    this.updateSections();
-  }
-
-  updateSections() {
-    this.data.sections.forEach((section: Section, index) => (this.dataSources[index] = section));
+    this.tabs.forEach((tab: Tab) => tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
+      .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue))));
   }
 
   entityApprovingAction(status) {
@@ -49,7 +56,7 @@ export class EntityApprovingDialogComponent implements OnInit {
     this.entityService.resolveChange({ changeID: this.changeId, status, approverComments: this.approverComments })
       .subscribe(() => {
         this.isLoading = false;
-        this.dialog.close({ refreshList: true });
+        this.dialog.close({ refreshList: true, status });
       },
         (error) => {
           this.isLoading = false;
@@ -57,6 +64,19 @@ export class EntityApprovingDialogComponent implements OnInit {
         });
   }
 
-  getErrorsMessage = (error: ErrorsField) => Object.values(error);
+  getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
+
+
+  isTheSameUser() {
+    return this.authService.getUserName() === this.changer;
+  }
+
+  isDifferencesTab = (tabTitle: string) => tabTitle === ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES;
+
+  getEntityBeforeValue = (tabSectionTitle: string, fieldName: string) => {
+    const tabSections = get(this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES), 'tabSections', []);
+    const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
+    return get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
+  }
 
 }

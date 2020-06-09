@@ -1,51 +1,63 @@
 package com.ibm.sterling.bfg.app.model;
 
-import com.ibm.sterling.bfg.app.model.validation.EntityUnique;
-import com.ibm.sterling.bfg.app.model.validation.EntityValid;
+import com.ibm.sterling.bfg.app.model.validation.*;
 import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.util.StringUtils;
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
-@EntityValid
+@EntityValid(groups = {PostValidation.class})
+@EntityValidPut(groups = {PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType{
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LogManager.getLogger(Entity.class);
+    private static final Logger LOG = LogManager.getLogger(Entity.class);
+
     @Id
     @Column(name = "ENTITY_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
     @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
-    @NotBlank(message = "ENTITY has to be present")
+    @NotBlank(message = "ENTITY has to be present", groups = {PostValidation.class, PutValidation.class})
     @Column
-    @Pattern(regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$", message = "Entity should be in BIC11 format")
+    @Pattern(
+            regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$",
+            message = "Entity should be in BIC11 format",
+            groups = {PostValidation.class, PutValidation.class}
+    )
     private String entity;
-    @NotBlank(message = "SERVICE has to be present")
+    @NotBlank(message = "SERVICE has to be present", groups = {PostValidation.class, PutValidation.class})
     private String service;
     @Column(name = "REQUESTORDN")
-    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for RequestorDN")
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for RequestorDN",
+            groups = {PostValidation.class, PutValidation.class})
     private String requestorDN;
     @Column(name = "RESPONDERDN")
-    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for ResponderDN")
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for ResponderDN",
+            groups = {PostValidation.class, PutValidation.class})
     private String responderDN;
     @Column(name = "SERVICENAME")
     private String serviceName;
     @Column(name = "REQUESTTYPE")
     private String requestType;
     @Column(name = "SNF")
-    @NotNull(message = "SNF has to be present")
+    @NotNull(message = "SNF has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean SnF = Boolean.FALSE;
-    @NotNull(message = "TRACE has to be present")
+    @NotNull(message = "TRACE has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean trace = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIF")
-    @NotNull(message = "DELIVERYNOTIF has to be present")
+    @NotNull(message = "DELIVERYNOTIF has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean deliveryNotification = Boolean.FALSE;
     @Column(name = "DELIVERYNOTIFDN")
     private String deliveryNotifDN;
@@ -62,33 +74,45 @@ public class Entity implements EntityType{
     @Column(name = "TRANSFERINFO")
     private String transferInfo;
     @Column(name = "COMPRESSION")
-    @NotNull(message = "COMPRESSION has to be present")
+    @NotNull(message = "COMPRESSION has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
     @Column(name = "MAILBOXPATHOUT")
-    @EntityUnique(service = EntityService.class, fieldName = "MAILBOXPATHOUT", message = "MAILBOXPATHOUT has to be unique")
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MAILBOXPATHOUT",
+            message = "MAILBOXPATHOUT has to be unique",
+            groups = {PostValidation.class})
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
     @Column(name = "MQQUEUEOUT")
-    @EntityUnique(service = EntityService.class, fieldName = "MQQUEUEOUT", message = "MQQUEUEOUT has to be unique")
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MQQUEUEOUT",
+            message = "MQQUEUEOUT has to be unique",
+            groups = {PostValidation.class})
     private String mqQueueOut;
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;
     @Column(name = "DIRECT_PARTICIPANT")
     private String directParticipant;
     @Column(name = "MAXTRANSPERBULK")
-    @NotNull(message = "MAXTRANSPERBULK has to be present")
+    @NotNull(message = "MAXTRANSPERBULK has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Integer maxTransfersPerBulk = 0;
     @Column(name = "MAXBULKSPERFILE")
-    @NotNull(message = "MAXBULKSPERFILE has to be present")
+    @NotNull(message = "MAXBULKSPERFILE has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Integer maxBulksPerFile = 0;
     @Column(name = "STARTOFDAY")
-    @NotNull(message = "STARTOFDAY has to be present")
+    @NotNull(message = "STARTOFDAY has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Integer startOfDay = 0;
     @Column(name = "ENDOFDAY")
-    @NotNull(message = "ENDOFDAY has to be present")
+    @NotNull(message = "ENDOFDAY has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Integer endOfDay = 0;
     @Transient
     private List schedules = new ArrayList();
@@ -157,27 +181,33 @@ public class Entity implements EntityType{
     private Boolean inboundRoutingRule = Boolean.FALSE;
 
     @Column(name = "ROUTE_REQUESTORDN")
-    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for Inbound RequestorDN")
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound RequestorDN",
+            groups = {PostValidation.class, PutValidation.class})
     private String inboundRequestorDN = "";
     @Column(name = "ROUTE_RESPONDERDN")
-    @Pattern(regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)+(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for Inbound ResponderDN")
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound ResponderDN",
+            groups = {PostValidation.class, PutValidation.class})
     private String inboundResponderDN = "";
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
     @Column(name = "ROUTE_REQUESTTYPE")
-    private String inboundType = "";
-    @Transient
-    private String[] inboundRequestType = new String[0];
+    @Convert(converter = StringToListConverter.class)
+    private List<String> inboundRequestType = new ArrayList<>();
     @Column(name = "NONREPUDIATION")
-    @NotNull(message = "NONREPUDIATION has to be present")
+    @NotNull(message = "NONREPUDIATION has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Boolean nonRepudiation = Boolean.FALSE;
     @Column(name = "PAUSE_INBOUND")
-    @NotNull(message = "PAUSE_INBOUND has to be present")
+    @NotNull(message = "PAUSE_INBOUND has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Boolean pauseInbound = Boolean.FALSE;
     @Column(name = "PAUSE_OUTBOUND")
-    @NotNull(message = "PAUSE_OUTBOUND has to be present")
+    @NotNull(message = "PAUSE_OUTBOUND has to be present",
+            groups = {PostValidation.class, PutValidation.class})
     private Boolean pauseOutbound = Boolean.FALSE;
     @Column(name = "ISDELETED")
     private Boolean deleted = Boolean.FALSE;
@@ -187,16 +217,17 @@ public class Entity implements EntityType{
     private String changerComments = "";
     @Transient
     private Boolean irishStep2 = Boolean.FALSE;
-
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
 
     @PrePersist
+    @PreUpdate
     public void init() {
-        if (StringUtils.isEmpty(mailboxPathIn))
-            mailboxPathIn = entity + "_GPL";
-        if (StringUtils.isEmpty(mailboxPathOut))
-            mailboxPathOut = entity + "_GPL";
+        LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
+        mailboxPathIn = entity + "_" + service;
+        mailboxPathOut = entity + "_" + service;
+        mqQueueIn = entity + "_" + service;
+        mqQueueOut = entity + "_" + service;
     }
 
     public static long getSerialVersionUID() {
@@ -204,7 +235,7 @@ public class Entity implements EntityType{
     }
 
     public static Logger getLog() {
-        return log;
+        return LOG;
     }
 
     public Integer getEntityId() {
@@ -711,19 +742,11 @@ public class Entity implements EntityType{
         this.inboundService = inboundService;
     }
 
-    public String getInboundType() {
-        return inboundType;
-    }
-
-    public void setInboundType(String inboundType) {
-        this.inboundType = inboundType;
-    }
-
-    public String[] getInboundRequestType() {
+    public List<String> getInboundRequestType() {
         return inboundRequestType;
     }
 
-    public void setInboundRequestType(String[] inboundRequestType) {
+    public void setInboundRequestType(List<String> inboundRequestType) {
         this.inboundRequestType = inboundRequestType;
     }
 
@@ -794,5 +817,14 @@ public class Entity implements EntityType{
     @Override
     public String nameForSorting() {
         return entity;
+    }
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "entityId=" + entityId +
+                ", entity='" + entity + '\'' +
+                ", service='" + service + '\'' +
+                '}';
     }
 }

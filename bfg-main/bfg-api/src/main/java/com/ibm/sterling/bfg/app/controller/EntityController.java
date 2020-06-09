@@ -5,18 +5,19 @@ import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.validation.PutValidation;
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,23 +35,18 @@ public class EntityController {
     private ChangeControlService changeControlService;
 
     @GetMapping
-    public Page<EntityType> getEntities(@RequestParam(value = "service", required = false) String serviceName,
-                                               @RequestParam(value = "entity", required = false) String entityName,
-                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        String entity = Optional.ofNullable(entityName).orElse("");
-        String service = Optional.ofNullable(serviceName).orElse("");
-        return entityService.findEntities(pageable, entity, service);
+    public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                        @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName);
     }
 
     @GetMapping("pending")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<Object> list = new ArrayList<>();
-        list.addAll(changeControlService.findAllPending());
-        return ListToPageConverter.convertListToPage(list, pageable);
+                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return ListToPageConverter.convertListToPage(
+                new ArrayList<>(changeControlService.findAllPending()), PageRequest.of(page, size));
     }
 
     @PostMapping("pending")
@@ -76,14 +72,14 @@ public class EntityController {
     }
 
     @PostMapping
-    public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
-        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
+    public ResponseEntity<Entity> createEntity(@Validated({PostValidation.class}) @RequestBody Entity entity) {
+        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
+    public ResponseEntity<Entity> updateEntity(@Validated({PutValidation.class}) @RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
-                .map(record -> ResponseEntity.ok().body(entityService.save(entity)))
+                .map(record -> ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
                 .orElseThrow(EntityNotFoundException::new);
     }
 

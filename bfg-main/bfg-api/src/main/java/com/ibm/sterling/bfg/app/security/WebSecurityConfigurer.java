@@ -65,7 +65,11 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/api/auth/signin");
+                .antMatchers(
+                        "/api/auth/signin",
+                        "/index.html",
+                        "/error"
+                );
     }
 
     @Bean

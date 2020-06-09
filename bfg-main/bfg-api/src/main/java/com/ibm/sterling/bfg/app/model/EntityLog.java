@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,10 +107,12 @@ public class EntityLog {
     private Integer maxBulksPerFile;
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present")
-    private Integer startOfDay;
+    @Convert(converter = StringToIntegerConverter.class)
+    private String startOfDay;
     @Column(name = "ENDOFDAY")
     @NotNull(message = "ENDOFDAY has to be present")
-    private Integer endOfDay;
+    @Convert(converter = StringToIntegerConverter.class)
+    private String endOfDay;
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -560,19 +563,19 @@ public class EntityLog {
         this.maxBulksPerFile = maxBulksPerFile;
     }
 
-    public Integer getStartOfDay() {
+    public String getStartOfDay() {
         return startOfDay;
     }
 
-    public void setStartOfDay(Integer startOfDay) {
+    public void setStartOfDay(String startOfDay) {
         this.startOfDay = startOfDay;
     }
 
-    public Integer getEndOfDay() {
+    public String getEndOfDay() {
         return endOfDay;
     }
 
-    public void setEndOfDay(Integer endOfDay) {
+    public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
     }
 

@@ -6,6 +6,7 @@ import { EntityCreateComponent } from './entity-create/entity-create.component';
 import { EntityPendingComponent } from './entity-pending/entity-pending.component';
 import { EntityApprovingDialogComponent } from './entity-approving-dialog/entity-approving-dialog.component';
 import { EntitySearchComponent } from './entity-search/entity-search.component';
+import { EntityScheduleDialogComponent } from './entity-schedule-dialog/entity-schedule-dialog.component';
 
 
 
@@ -15,7 +16,8 @@ import { EntitySearchComponent } from './entity-search/entity-search.component';
     EntityCreateComponent,
     EntityPendingComponent,
     EntityApprovingDialogComponent,
-    EntitySearchComponent
+    EntitySearchComponent,
+    EntityScheduleDialogComponent
   ],
   imports: [
     SharedModule,

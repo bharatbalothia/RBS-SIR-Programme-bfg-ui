@@ -1,11 +1,11 @@
-import { Entity } from 'src/app/shared/entity/entity.model';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { ChangeControl } from 'src/app/shared/entity/change-control.model';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { isEmpty } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
 
-export const ENTITY_DISPLAY_NAMES = {
+export const DISPLAY_NAMES = {
   entityId: 'Entity ID',
   service: 'Service',
   entity: 'Entity',
@@ -34,39 +34,44 @@ export const ENTITY_DISPLAY_NAMES = {
   changerComments: 'Changer comments',
   changeID: 'Changer ID',
   serviceName: 'Service Name',
+  isWindow: 'Type',
+  timeStart: 'Time Start',
+  windowEnd: 'Time End',
+  windowInterval: 'Time Interval'
+
 };
 
-export const getEntityDisplayName = (key: string) => ENTITY_DISPLAY_NAMES[key] || key;
+export const getDisplayName = (key: string) => DISPLAY_NAMES[key] || key;
 
 const getEntityDetailsSectionItems = (entity) => ({
   'Entity Details': [
-    { fieldName: getEntityDisplayName('entityId'), fieldValue: entity.entityId },
-    { fieldName: getEntityDisplayName('entity'), fieldValue: entity.entity },
-    { fieldName: getEntityDisplayName('service'), fieldValue: entity.service, shouldDisplayValueUpperCase: true },
+    { fieldName: getDisplayName('entityId'), fieldValue: entity.entityId },
+    { fieldName: getDisplayName('entity'), fieldValue: entity.entity },
+    { fieldName: getDisplayName('service'), fieldValue: entity.service, shouldDisplayValueUpperCase: true },
   ],
   'SWIFT Details': [
-    { fieldName: getEntityDisplayName('requestorDN'), fieldValue: entity.requestorDN },
-    { fieldName: getEntityDisplayName('responderDN'), fieldValue: entity.responderDN },
-    { fieldName: getEntityDisplayName('serviceName'), fieldValue: entity.serviceName },
-    { fieldName: getEntityDisplayName('requestType'), fieldValue: entity.requestType },
-    { fieldName: getEntityDisplayName('snF'), fieldValue: entity.snF },
-    { fieldName: getEntityDisplayName('trace'), fieldValue: entity.trace },
-    { fieldName: getEntityDisplayName('deliveryNotification'), fieldValue: entity.deliveryNotification },
-    { fieldName: getEntityDisplayName('nonRepudiation'), fieldValue: entity.nonRepudiation },
-    { fieldName: getEntityDisplayName('e2eSigning'), fieldValue: entity.e2eSigning },
-    { fieldName: getEntityDisplayName('deliveryNotifDN'), fieldValue: entity.deliveryNotifDN },
-    { fieldName: getEntityDisplayName('deliveryNotifRT'), fieldValue: entity.deliveryNotifRT },
-    { fieldName: getEntityDisplayName('requestRef'), fieldValue: entity.requestRef },
-    { fieldName: getEntityDisplayName('fileDesc'), fieldValue: entity.fileDesc },
-    { fieldName: getEntityDisplayName('fileInfo'), fieldValue: entity.fileInfo },
-    { fieldName: getEntityDisplayName('transferInfo'), fieldValue: entity.transferInfo },
-    { fieldName: getEntityDisplayName('transferDesc'), fieldValue: entity.transferDesc },
+    { fieldName: getDisplayName('requestorDN'), fieldValue: entity.requestorDN },
+    { fieldName: getDisplayName('responderDN'), fieldValue: entity.responderDN },
+    { fieldName: getDisplayName('serviceName'), fieldValue: entity.serviceName },
+    { fieldName: getDisplayName('requestType'), fieldValue: entity.requestType },
+    { fieldName: getDisplayName('snF'), fieldValue: entity.snF },
+    { fieldName: getDisplayName('trace'), fieldValue: entity.trace },
+    { fieldName: getDisplayName('deliveryNotification'), fieldValue: entity.deliveryNotification },
+    { fieldName: getDisplayName('nonRepudiation'), fieldValue: entity.nonRepudiation },
+    { fieldName: getDisplayName('e2eSigning'), fieldValue: entity.e2eSigning },
+    { fieldName: getDisplayName('deliveryNotifDN'), fieldValue: entity.deliveryNotifDN },
+    { fieldName: getDisplayName('deliveryNotifRT'), fieldValue: entity.deliveryNotifRT },
+    { fieldName: getDisplayName('requestRef'), fieldValue: entity.requestRef },
+    { fieldName: getDisplayName('fileDesc'), fieldValue: entity.fileDesc },
+    { fieldName: getDisplayName('fileInfo'), fieldValue: entity.fileInfo },
+    { fieldName: getDisplayName('transferInfo'), fieldValue: entity.transferInfo },
+    { fieldName: getDisplayName('transferDesc'), fieldValue: entity.transferDesc },
   ],
   'Routing Details': [
-    { fieldName: getEntityDisplayName('inboundRequestorDN'), fieldValue: entity.inboundRequestorDN },
-    { fieldName: getEntityDisplayName('inboundResponderDN'), fieldValue: entity.inboundResponderDN },
-    { fieldName: getEntityDisplayName('inboundService'), fieldValue: entity.inboundService },
-    { fieldName: getEntityDisplayName('inboundRequestType'), fieldValue: entity.inboundRequestType },
+    { fieldName: getDisplayName('inboundRequestorDN'), fieldValue: entity.inboundRequestorDN },
+    { fieldName: getDisplayName('inboundResponderDN'), fieldValue: entity.inboundResponderDN },
+    { fieldName: getDisplayName('inboundService'), fieldValue: entity.inboundService },
+    { fieldName: getDisplayName('inboundRequestType'), fieldValue: entity.inboundRequestType },
   ]
 });
 

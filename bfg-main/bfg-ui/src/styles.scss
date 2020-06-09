@@ -14,6 +14,9 @@ body {
     max-height: 50vh;
 }
 
+.mat-footer-row[hidden] {
+    display: none !important;
+}
 
 mat-form-field {
     &.ng-valid {

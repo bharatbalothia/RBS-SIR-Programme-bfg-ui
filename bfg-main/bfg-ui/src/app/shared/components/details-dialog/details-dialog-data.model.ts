@@ -1,6 +1,6 @@
 export interface DetailsDialogData {
     title: string;
-    tabs: Tab[];
+    tabs?: Tab[];
     yesCaption?: string;
     actionData?: any;
 }

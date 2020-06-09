@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { CHANGE_STATUS } from 'src/app/shared/entity/change-status';
-import { EntityService } from 'src/app/shared/entity/entity.service';
+import { CHANGE_STATUS } from 'src/app/shared/models/changeControl/change-status';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';

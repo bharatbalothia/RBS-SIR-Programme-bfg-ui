@@ -1,21 +1,26 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
-import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
+import { ENTITY_VALIDATION_MESSAGES } from '../validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { EntityService } from 'src/app/shared/entity/entity.service';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
-import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
-import { EntityValidators } from '../../../../shared/entity/entity-validators';
+import { DISPLAY_NAMES } from '../display-names';
+import { EntityValidators } from '../../../../shared/models/entity/entity-validators';
 import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Entity } from 'src/app/shared/entity/entity.model';
-import { Observable } from 'rxjs';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
+import { Observable, scheduled } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
+import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
+import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
+import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
 
 @Component({
   selector: 'app-entity-create',
@@ -24,7 +29,8 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 })
 export class EntityCreateComponent implements OnInit {
 
-  entityDisplayNames = ENTITY_DISPLAY_NAMES;
+  entityDisplayNames = DISPLAY_NAMES;
+  scheduleType = SCHEDULE_TYPE;
 
   isLinear = true;
 
@@ -32,7 +38,7 @@ export class EntityCreateComponent implements OnInit {
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
-  validationMessages = ENTITY_VALIDATION_MESSAGES;
+  entityValidationMessages = ENTITY_VALIDATION_MESSAGES;
   errorMessage: ErrorMessage;
 
   isLoading = false;
@@ -40,10 +46,14 @@ export class EntityCreateComponent implements OnInit {
   summaryDisplayedColumns = ['field', 'value', 'error'];
   summaryPageDataSource;
 
+  scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
+
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
+  scheduleListFormGroup: FormGroup;
+  mqDetailsFormGroup: FormGroup;
 
   editableEntity: Entity;
 
@@ -127,7 +137,6 @@ export class EntityCreateComponent implements OnInit {
       transferInfo: [entity.transferInfo],
       transferDesc: [entity.transferDesc]
     });
-
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
@@ -150,6 +159,34 @@ export class EntityCreateComponent implements OnInit {
     nonRepudiation: false,
     e2eSigning: 'None',
   })
+
+  onServiceSelect(value) {
+    switch (value) {
+      case ENTITY_SERVICE_TYPE.SCT:
+        this.scheduleListFormGroup = this.formBuilder.group({
+          scheduleList: [[
+            {
+              isWindow: true,
+              timeStart: 10,
+              windowEnd: 10,
+              windowInterval: 5,
+            },
+            {
+              isWindow: false,
+              timeStart: 10,
+            }
+          ]]
+        });
+        this.mqDetailsFormGroup = this.formBuilder.group({
+
+        });
+        break;
+      case ENTITY_SERVICE_TYPE.GPL:
+        this.scheduleListFormGroup = null;
+        this.mqDetailsFormGroup = null;
+        break;
+    }
+  }
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
     const inboundRequestTypeList = this.entityPageFormGroup.get('inboundRequestType').value as string[];
@@ -283,4 +320,15 @@ export class EntityCreateComponent implements OnInit {
   }
 
   isEditing = (): boolean => !isEmpty(this.editableEntity);
+
+  getEntityServicesArray = () => Object.keys(ENTITY_SERVICE_TYPE).map(e => ENTITY_SERVICE_TYPE[e]);
+
+  getFormattedSchedule = (schedule: Schedule) =>
+    `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd + ' (every ' + schedule.windowInterval + ' minutes)' : ''}`
+
+  openScheduleDialog = (schedule?: Schedule) => this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
+    title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(schedule, 'scheduleID') || 'Add'}`,
+    actionData: { schedule }
+  }))
+
 }

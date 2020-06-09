@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Entity } from './entity.model';
 import { Observable } from 'rxjs';
-import { ChangeControl } from './change-control.model';
+import { ChangeControl } from '../changeControl/change-control.model';
 import { EntitiesWithPagination } from './entities-with-pagination.model';
-import { ChangeControlsWithPagination } from './change-controls-with-pagination.model';
-import { ChangeResolution } from './change-resolution.model';
+import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
+import { ChangeResolution } from '../changeControl/change-resolution.model';
 
 @Injectable({
   providedIn: 'root'

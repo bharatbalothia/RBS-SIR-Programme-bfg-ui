@@ -1,6 +1,7 @@
 <mat-card class="entity-create-card">
     <mat-card-header>
-        <mat-card-title>{{editableEntity ? 'Edit ' + editableEntity.entity + ' entity' : 'Create Entity'}}</mat-card-title>
+        <mat-card-title>{{editableEntity ? 'Edit ' + editableEntity.entity + ' entity' : 'Create Entity'}}
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
         <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
@@ -11,11 +12,12 @@
                     <ng-template matStepLabel>Choose entity type</ng-template>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
-                        <mat-select formControlName="service" required>
-                            <mat-option value="GPL">GPL</mat-option>
-                            <mat-option value="SCT">SCT</mat-option>
+                        <mat-select formControlName="service" (selectionChange)="onServiceSelect($event.value)"
+                            required>
+                            <mat-option *ngFor="let service of getEntityServicesArray()" [value]="service">{{service}}
+                            </mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of validationMessages.service">
+                        <mat-error *ngFor="let validation of entityValidationMessages.service">
                             <mat-error class="error-message"
                                 *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
@@ -35,7 +37,7 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
                         <input matInput formControlName="entity" required>
-                        <mat-error *ngFor="let validation of validationMessages.entity">
+                        <mat-error *ngFor="let validation of entityValidationMessages.entity">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
@@ -59,7 +61,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestorDN'] || 'inboundRequestorDN'}}</mat-label>
                             <input matInput formControlName="inboundRequestorDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.inboundRequestorDN">
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -72,7 +74,7 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
                         <input matInput formControlName="inboundResponderDN" appInputLowercase required>
-                        <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
+                        <mat-error *ngFor="let validation of entityValidationMessages.inboundResponderDN">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
@@ -84,7 +86,7 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['inboundService'] || 'inboundService'}}</mat-label>
                         <input matInput formControlName="inboundService" required>
-                        <mat-error *ngFor="let validation of validationMessages.inboundService">
+                        <mat-error *ngFor="let validation of entityValidationMessages.inboundService">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
@@ -143,6 +145,53 @@
                     </div>
                 </form>
             </mat-step>
+            <mat-step *ngIf="scheduleListFormGroup" [stepControl]="scheduleListFormGroup">
+                <form [formGroup]="scheduleListFormGroup">
+                    <ng-template matStepLabel>Complete Schedule details</ng-template>
+                    <mat-table [dataSource]="scheduleListFormGroup.get('scheduleList').value">
+                        <ng-container matColumnDef="action">
+                            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <button mat-icon-button (click)="openScheduleDialog(element)">
+                                    <mat-icon inline>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button *ngIf="!element.entityLog">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="schedule">
+                            <mat-header-cell *matHeaderCellDef> Schedule </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{getFormattedSchedule(element)}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="scheduleType">
+                            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{element.isWindow ? scheduleType.WINDOW : scheduleType.DAILY}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="addSchedule">
+                            <mat-footer-cell *matFooterCellDef [attr.colspan]="scheduleDisplayedColumns.length">
+                                <button mat-raised-button color="primary" (click)="openScheduleDialog()">
+                                    <mat-icon>add</mat-icon> Create a new schedule
+                                </button>
+                            </mat-footer-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="scheduleDisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: scheduleDisplayedColumns;"></mat-row>
+                        <mat-footer-row *matFooterRowDef="['addSchedule']">
+                        </mat-footer-row>
+                    </mat-table>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
+                    </div>
+                </form>
+            </mat-step>
             <mat-step [stepControl]="SWIFTDetailsFormGroup">
                 <form [formGroup]="SWIFTDetailsFormGroup">
                     <ng-template matStepLabel>Complete SWIFT details</ng-template>
@@ -150,7 +199,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestorDN'] || 'requestorDN'}}</mat-label>
                             <input matInput formControlName="requestorDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.requestorDN">
+                            <mat-error *ngFor="let validation of entityValidationMessages.requestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -164,7 +213,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['responderDN'] || 'responderDN'}}</mat-label>
                             <input matInput formControlName="responderDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.responderDN">
+                            <mat-error *ngFor="let validation of entityValidationMessages.responderDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -312,7 +361,8 @@
                     <mat-table [dataSource]="summaryPageDataSource">
                         <ng-container matColumnDef="field">
                             <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{entityDisplayNames[element.field] || element.field}} </mat-cell>
+                            <mat-cell *matCellDef="let element"> {{entityDisplayNames[element.field] || element.field}}
+                            </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="value">
                             <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>

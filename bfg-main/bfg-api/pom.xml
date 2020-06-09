@@ -98,6 +98,7 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.2.1</version>
                 <configuration>
+                    <libertyRuntimeVersion>20.0.0.5</libertyRuntimeVersion>
                     <serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
                     <bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
                 </configuration>

@@ -11,33 +11,39 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Converter
 public class StringToScheduleListConverter implements AttributeConverter<List<Schedule>, String> {
 
     @Override
     public String convertToDatabaseColumn(List<Schedule> list) {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            new ObjectMapper().writeValue(out, list);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new String(out.toByteArray());
+        return Optional.ofNullable(list).map(schedules -> {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                new ObjectMapper().writeValue(out, schedules);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new String(out.toByteArray());
+        }).orElse(null);
     }
 
     @Override
     public List<Schedule> convertToEntityAttribute(String schedules) {
-        List<Schedule> schedulesList = new ArrayList<>();
-        try {
-            schedulesList = new ObjectMapper().readValue(
-                    schedules, new TypeReference<List<Schedule>>() {
+        return Optional.ofNullable(schedules).map(schedulesStr -> {
+                    List<Schedule> schedulesList = new ArrayList<>();
+                    try {
+                        schedulesList = new ObjectMapper().readValue(
+                                schedulesStr, new TypeReference<List<Schedule>>() {
+                                }
+                        );
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
                     }
-            );
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return schedulesList;
+                    return schedulesList;
+                }
+        ).orElse(null);
     }
 
 }

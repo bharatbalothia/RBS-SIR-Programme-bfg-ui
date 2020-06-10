@@ -3,10 +3,12 @@ package com.ibm.sterling.bfg.app.model;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
+import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -30,7 +32,7 @@ public class EntityLog {
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String entityLogId;
-
+    @Column(name = "ENTITY_ID")
     private Integer entityId;
     @NotBlank(message = "ENTITY has to be present")
     private String entity;
@@ -41,12 +43,6 @@ public class EntityLog {
     private String mailboxPathOut;
     @Column(name = "MQQUEUEOUT")
     private String mqQueueOut;
-
-    @Transient
-    private List schedules = new ArrayList();
-    @Transient
-    private List deletedSchedules = new ArrayList();
-
     @Column(name = "ROUTE_INBOUND")
     private Boolean routeInbound;
     @Column(name = "ROUTE_OUTBOUND")
@@ -190,6 +186,12 @@ public class EntityLog {
     @Column(name = "IRISH_STEP2")
     private Boolean irishStep2;
 
+    @Convert(converter = StringToScheduleListConverter.class)
+    @Column(name = "SCHEDULES", columnDefinition = "varchar2(4000)")
+    private List<Schedule> schedules;
+    @Transient
+    private List deletedSchedules = new ArrayList();
+
     public EntityLog() {
     }
 
@@ -262,7 +264,7 @@ public class EntityLog {
         this.deleted = entity.getDeleted();
         this.inboundRequestType = entity.getInboundRequestType();
         this.irishStep2 = entity.getIrishStep2();
-
+        this.schedules = entity.getSchedules();
     }
 
     @PrePersist
@@ -307,11 +309,11 @@ public class EntityLog {
         this.service = service;
     }
 
-    public List getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }
 

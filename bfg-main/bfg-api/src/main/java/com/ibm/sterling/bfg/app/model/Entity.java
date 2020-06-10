@@ -1,11 +1,13 @@
 package com.ibm.sterling.bfg.app.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ibm.sterling.bfg.app.model.validation.*;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,7 +19,7 @@ import java.util.List;
 @EntityValidPut(groups = {PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
-public class Entity implements EntityType{
+public class Entity implements EntityType {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger(Entity.class);
 
@@ -116,7 +118,6 @@ public class Entity implements EntityType{
             groups = {PostValidation.class, PutValidation.class})
     @Convert(converter = StringToIntegerConverter.class)
     private String startOfDay = "00:00";
-
     @Column(name = "ENDOFDAY")
     @Pattern(
             regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
@@ -126,10 +127,6 @@ public class Entity implements EntityType{
             groups = {PostValidation.class, PutValidation.class})
     @Convert(converter = StringToIntegerConverter.class)
     private String endOfDay = "00:00";
-    @Transient
-    private List schedules = new ArrayList();
-    @Transient
-    private List deletedSchedules = new ArrayList();
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -191,7 +188,6 @@ public class Entity implements EntityType{
     private Boolean inboundDir = Boolean.FALSE;
     @Transient
     private Boolean inboundRoutingRule = Boolean.FALSE;
-
     @Column(name = "ROUTE_REQUESTORDN")
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
@@ -231,6 +227,11 @@ public class Entity implements EntityType{
     private Boolean irishStep2 = Boolean.FALSE;
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "entity", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Schedule> schedules;
+    @Transient
+    private List<Schedule> deletedSchedules = new ArrayList();
 
     @PrePersist
     @PreUpdate
@@ -474,19 +475,19 @@ public class Entity implements EntityType{
         this.endOfDay = endOfDay;
     }
 
-    public List getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }
 
-    public List getDeletedSchedules() {
+    public List<Schedule> getDeletedSchedules() {
         return deletedSchedules;
     }
 
-    public void setDeletedSchedules(List deletedSchedules) {
+    public void setDeletedSchedules(List<Schedule> deletedSchedules) {
         this.deletedSchedules = deletedSchedules;
     }
 

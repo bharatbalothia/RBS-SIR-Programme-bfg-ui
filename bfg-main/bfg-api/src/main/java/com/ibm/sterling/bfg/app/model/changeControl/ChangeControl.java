@@ -275,6 +275,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);
         entityFromLog.setIrishStep2(entityLog.getIrishStep2());
+        entityFromLog.setSchedules(entityLog.getSchedules());
         return entityFromLog;
     }
 

@@ -20,10 +20,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -91,7 +93,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
-        LOG.debug("Trying to save entity {} to change control", entity);
+        LOG.info("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
         changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -99,13 +101,7 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
-        try {
-            entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        } catch (Exception e) {
-            LOG.error("Error persisting the Change Control record: {}", e.getMessage());
-            LOG.error("The Entity {} could not be saved", entity);
-            e.printStackTrace();
-        }
+        entity.setChangeID(changeControlService.save(changeControl).getChangeID());
         return changeControl.convertEntityLogToEntity();
     }
 
@@ -121,23 +117,18 @@ public class EntityServiceImpl implements EntityService {
                 entity = approve(changeControl);
                 break;
             case FAILED:
-
             case REJECTED:
         }
-        try {
-            changeControlService.setApproveInfo(
-                    changeControl,
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    approverComments,
-                    status);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changeControlService.setApproveInfo(
+                changeControl,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                approverComments,
+                status);
         return entity;
     }
 
     private Entity approve(ChangeControl changeControl) {
-        LOG.debug("Entity {} action", changeControl.getOperation());
+        LOG.info("Entity {} action", changeControl.getOperation());
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
         switch (operation) {
@@ -147,13 +138,22 @@ public class EntityServiceImpl implements EntityService {
                 break;
             case DELETE:
         }
-        LOG.debug("Entity after {} action: {}", changeControl.getOperation(), entity);
+        LOG.info("Entity after {} action: {}", changeControl.getOperation(), entity);
         return entity;
     }
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
-        LOG.debug("Approve the Entity " + changeControl.getOperation() + " action");
+        LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
+        entity.setSchedules(
+                changeControl.getEntityLog()
+                        .getSchedules()
+                        .stream()
+                        .peek(schedule ->
+                                schedule.setEntity(entity))
+                        .collect(Collectors.toList())
+
+        );
         Set<ConstraintViolation<Entity>> violations = null;
         Operation operation = changeControl.getOperation();
         switch (operation) {
@@ -179,7 +179,7 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
-        LOG.debug("Search entities by entity name {} and service {}", entity, service);
+        LOG.info("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(

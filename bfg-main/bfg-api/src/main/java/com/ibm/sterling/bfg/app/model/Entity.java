@@ -832,8 +832,6 @@ public class Entity implements EntityType {
         return "Entity{" +
                 "entityId=" + entityId +
                 ", entity='" + entity + '\'' +
-                ", service='" + service + '\'' +
-                ", schedules=" + schedules +
-                '}';
+                ", service='" + service + '\'' + '}';
     }
 }

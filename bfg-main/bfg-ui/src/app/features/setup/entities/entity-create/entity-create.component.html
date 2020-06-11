@@ -155,7 +155,7 @@
                                 <button mat-icon-button (click)="openScheduleDialog({ schedule: element, index: i })">
                                     <mat-icon inline>edit</mat-icon>
                                 </button>
-                                <button mat-icon-button *ngIf="!element.entityLog">
+                                <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteSchedule(element, i)">
                                     <mat-icon>clear</mat-icon>
                                 </button>
                             </mat-cell>

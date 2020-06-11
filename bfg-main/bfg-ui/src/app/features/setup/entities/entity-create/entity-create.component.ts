@@ -347,6 +347,19 @@ export class EntityCreateComponent implements OnInit {
       }
     })
 
+  deleteSchedule = (schedule: Schedule, index: number) => this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+    title: `Deleting ${this.getFormattedSchedule(schedule)} schedule`,
+    text: `Are you sure to delete ${this.getFormattedSchedule(schedule)} schedule?`,
+    yesCaption: `Delete`,
+    yesCaptionColor: 'warn',
+    noCaption: 'Back'
+  })).afterClosed().subscribe(result => {
+    if (result) {
+      this.schedulesFormGroup.get('schedules').value.splice(index, 1);
+      this.updateSchedulesDataSource();
+    }
+  })
+
   convertScheduleListToUnix = (scheduleList: Schedule[] = []) => ({
     schedules: scheduleList.map((schedule: Schedule) => ({
       ...schedule,

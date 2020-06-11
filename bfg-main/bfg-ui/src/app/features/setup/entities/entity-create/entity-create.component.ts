@@ -21,6 +21,8 @@ import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
 import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
+import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-entity-create',
@@ -32,7 +34,7 @@ export class EntityCreateComponent implements OnInit {
   entityDisplayNames = DISPLAY_NAMES;
   scheduleType = SCHEDULE_TYPE;
 
-  isLinear = true;
+  isLinear = false;
 
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
@@ -47,12 +49,13 @@ export class EntityCreateComponent implements OnInit {
   summaryPageDataSource;
 
   scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
+  schedulesDataSource;
 
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
-  scheduleListFormGroup: FormGroup;
+  schedulesFormGroup: FormGroup;
   mqDetailsFormGroup: FormGroup;
 
   editableEntity: Entity;
@@ -73,6 +76,7 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).subscribe(data => {
           this.editableEntity = data;
           this.initializeFormGroups(this.editableEntity);
+          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity.schedules);
           this.markAllFieldsTouched();
         });
       }
@@ -160,29 +164,20 @@ export class EntityCreateComponent implements OnInit {
     e2eSigning: 'None',
   })
 
-  onServiceSelect(value) {
+  onServiceSelect(value, schedules?) {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
-        this.scheduleListFormGroup = this.formBuilder.group({
-          scheduleList: [[
-            {
-              isWindow: true,
-              timeStart: 10,
-              windowEnd: 10,
-              windowInterval: 5,
-            },
-            {
-              isWindow: false,
-              timeStart: 10,
-            }
-          ]]
+        this.schedulesFormGroup = this.formBuilder.group({
+          schedules: [schedules || []]
         });
+        this.updateSchedulesDataSource();
+
         this.mqDetailsFormGroup = this.formBuilder.group({
 
         });
         break;
       case ENTITY_SERVICE_TYPE.GPL:
-        this.scheduleListFormGroup = null;
+        this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         break;
     }
@@ -215,7 +210,8 @@ export class EntityCreateComponent implements OnInit {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
-          ...this.summaryPageFormGroup.value
+          ...this.summaryPageFormGroup.value,
+          ...this.schedulesFormGroup && this.convertScheduleListToUnix(this.schedulesFormGroup.get('schedules').value),
         });
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
@@ -293,6 +289,7 @@ export class EntityCreateComponent implements OnInit {
     const entity = removeEmpties({
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
+      ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
     });
@@ -302,6 +299,12 @@ export class EntityCreateComponent implements OnInit {
         value: entity[key],
         error: this.getErrorByField(key)
       })).filter(el => el.field !== 'changerComments');
+  }
+
+  getSchedulesForSummaryPage = (schedules: Schedule[]) => schedules &&
+  {
+    windowSchedules: schedules.filter((el: Schedule) => el.isWindow).map((el: Schedule) => `${el.timeStart}-${el.windowEnd}(${el.windowInterval})`).join(', '),
+    dailySchedules: schedules.filter((el: Schedule) => !el.isWindow).map((el: Schedule) => el.timeStart).join(', ')
   }
 
   markAllFieldsTouched() {
@@ -323,12 +326,42 @@ export class EntityCreateComponent implements OnInit {
 
   getEntityServicesArray = () => Object.keys(ENTITY_SERVICE_TYPE).map(e => ENTITY_SERVICE_TYPE[e]);
 
+  updateSchedulesDataSource = () =>
+    this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value);
+
   getFormattedSchedule = (schedule: Schedule) =>
     `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd + ' (every ' + schedule.windowInterval + ' minutes)' : ''}`
 
-  openScheduleDialog = (schedule?: Schedule) => this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
-    title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(schedule, 'scheduleID') || 'Add'}`,
-    actionData: { schedule }
-  }))
+  openScheduleDialog = (scheduleRow?: { schedule: Schedule, index: number }) =>
+    this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
+      title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(scheduleRow, 'schedule') ? 'Edit' : 'Add'}`,
+      actionData: { editSchedule: get(scheduleRow, 'schedule') }
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'editedSchedule')) {
+        this.schedulesFormGroup.get('schedules').value[scheduleRow.index] = data.editedSchedule;
+        this.updateSchedulesDataSource();
+      }
+      if (get(data, 'newSchedule')) {
+        this.schedulesFormGroup.get('schedules').value.push(data.newSchedule);
+        this.updateSchedulesDataSource();
+      }
+    })
+
+  convertScheduleListToUnix = (scheduleList: Schedule[] = []) => ({
+    schedules: scheduleList.map((schedule: Schedule) => ({
+      ...schedule,
+      timeStart: moment(schedule.timeStart, 'HH:mm').valueOf(),
+      windowEnd: schedule.windowEnd && moment(schedule.windowEnd, 'HH:mm').valueOf(),
+    }))
+  })
+
+  convertScheduleListToString = (scheduleList: Schedule[] = []) => ({
+    schedules: scheduleList.map((schedule: Schedule) => ({
+      ...schedule,
+      timeStart: moment(schedule.timeStart).format('HH:mm'),
+      windowEnd: schedule.windowEnd && moment(schedule.windowEnd).format('HH:mm'),
+    }))
+  })
+
 
 }

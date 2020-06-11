@@ -37,8 +37,9 @@ export const DISPLAY_NAMES = {
   isWindow: 'Type',
   timeStart: 'Time Start',
   windowEnd: 'Time End',
-  windowInterval: 'Time Interval'
-
+  windowInterval: 'Time Interval',
+  windowSchedules: 'Window Schedules',
+  dailySchedules: 'Daily Schedules'
 };
 
 export const getDisplayName = (key: string) => DISPLAY_NAMES[key] || key;

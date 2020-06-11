@@ -145,14 +145,14 @@
                     </div>
                 </form>
             </mat-step>
-            <mat-step *ngIf="scheduleListFormGroup" [stepControl]="scheduleListFormGroup">
-                <form [formGroup]="scheduleListFormGroup">
+            <mat-step *ngIf="schedulesFormGroup" [stepControl]="schedulesFormGroup">
+                <form [formGroup]="schedulesFormGroup">
                     <ng-template matStepLabel>Complete Schedule details</ng-template>
-                    <mat-table [dataSource]="scheduleListFormGroup.get('scheduleList').value">
+                    <mat-table [dataSource]="schedulesDataSource">
                         <ng-container matColumnDef="action">
                             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <button mat-icon-button (click)="openScheduleDialog(element)">
+                            <mat-cell *matCellDef="let element; let i = index">
+                                <button mat-icon-button (click)="openScheduleDialog({ schedule: element, index: i })">
                                     <mat-icon inline>edit</mat-icon>
                                 </button>
                                 <button mat-icon-button *ngIf="!element.entityLog">

@@ -10,8 +10,7 @@
                     </mat-option>
                 </mat-select>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.isWindow">
-                    <mat-error class="error-message"
-                        *ngIf="scheduleFormGroup.get('isWindow').hasError(validation.type)">
+                    <mat-error class="error-message" *ngIf="ifFieldHasError('isWindow',validation.type)">
                         {{validation.message}}</mat-error>
                 </mat-error>
             </mat-form-field>
@@ -19,10 +18,9 @@
         <section>
             <mat-form-field>
                 <mat-label>{{getDisplayName('timeStart')}}</mat-label>
-                <input matInput formControlName="timeStart" required>
+                <input matInput type="time" formControlName="timeStart" required>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.timeStart">
-                    <mat-error class="error-message"
-                        *ngIf="scheduleFormGroup.get('timeStart').hasError(validation.type)">
+                    <mat-error class="error-message" *ngIf="ifFieldHasError('timeStart',validation.type)">
                         {{validation.message}}</mat-error>
                 </mat-error>
             </mat-form-field>
@@ -31,10 +29,9 @@
             <section>
                 <mat-form-field>
                     <mat-label>{{getDisplayName('windowEnd')}}</mat-label>
-                    <input matInput formControlName="windowEnd" required>
+                    <input matInput type="time" formControlName="windowEnd" required>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowEnd">
-                        <mat-error class="error-message"
-                            *ngIf="scheduleFormGroup.get('windowEnd').hasError(validation.type)">
+                        <mat-error class="error-message" *ngIf="ifFieldHasError('windowEnd',validation.type)">
                             {{validation.message}}</mat-error>
                     </mat-error>
                 </mat-form-field>
@@ -42,10 +39,9 @@
             <section>
                 <mat-form-field>
                     <mat-label>{{getDisplayName('windowInterval')}}</mat-label>
-                    <input matInput formControlName="windowInterval" required>
+                    <input matInput type="number" formControlName="windowInterval" required>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowInterval">
-                        <mat-error class="error-message"
-                            *ngIf="scheduleFormGroup.get('windowInterval').hasError(validation.type)">
+                        <mat-error class="error-message" *ngIf="ifFieldHasError('windowInterval',validation.type)">
                             {{validation.message}}</mat-error>
                     </mat-error>
                 </mat-form-field>
@@ -53,7 +49,7 @@
         </div>
         <section>
             <button type="submit" mat-raised-button color="primary">
-                Add
+                {{isEditStatus() ? 'Edit' : 'Add'}}
             </button>
         </section>
     </form>

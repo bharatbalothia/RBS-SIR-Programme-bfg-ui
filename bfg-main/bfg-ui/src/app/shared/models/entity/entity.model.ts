@@ -1,3 +1,5 @@
+import { Schedule } from '../schedule/schedule.model';
+
 export interface Entity {
     entityLogId?: number;
     entityId?: number;
@@ -71,4 +73,5 @@ export interface Entity {
     irishStep2?: boolean;
     e2eSigning: string;
     snF?: boolean;
+    schedules?: Schedule[];
 }

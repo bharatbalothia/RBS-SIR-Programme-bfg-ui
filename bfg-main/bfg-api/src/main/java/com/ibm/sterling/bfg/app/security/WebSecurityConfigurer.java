@@ -55,21 +55,11 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .antMatcher("/api/**")
                 .authorizeRequests()
-                .antMatchers("/api/auth/signin").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(buildJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers(
-                        "/api/auth/signin",
-                        "/index.html",
-                        "/error"
-                );
     }
 
     @Bean

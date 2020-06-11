@@ -1,45 +1,68 @@
+import { getDisplayName } from './display-names';
+
 export const ENTITY_VALIDATION_MESSAGES = {
     service: [
-        { type: 'required', message: 'Entity type is required' },
+        { type: 'required', message: `${getDisplayName('service')} is required` },
     ],
     entity: [
-        { type: 'required', message: 'Entity is required' },
-        { type: 'entityExists', message: 'Entuty with this name already exists' },
-        { type: 'patternBIC11', message: 'Entity should be in BIC11 format' },
-        { type: 'patternBIC8', message: 'Entity should be in BIC8 format' }
+        { type: 'required', message: `${getDisplayName('entity')} is required` },
+        { type: 'entityExists', message: `${getDisplayName('entity')} with this name already exists` },
+        { type: 'patternBIC11', message: `${getDisplayName('entity')} should be in BIC11 format` },
+        { type: 'patternBIC8', message: `${getDisplayName('entity')} should be in BIC8 format` }
     ],
     inboundRequestorDN: [
-        { type: 'required', message: 'Inbound Requestor DN is required' },
-        { type: 'pattern', message: 'Inbound Requestor DN should be [ou={ou}]o={BIC8},o=swift format' }
+        { type: 'required', message: `${getDisplayName('inboundRequestorDN')} is required` },
+        { type: 'pattern', message: `${getDisplayName('inboundRequestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
     inboundResponderDN: [
-        { type: 'required', message: 'Inbound Responder DN is required' },
-        { type: 'pattern', message: 'Inbound Responder DN should be [ou={ou}]o={BIC8},o=swift format' }
+        { type: 'required', message: `${getDisplayName('inboundResponderDN')} is required` },
+        { type: 'pattern', message: `${getDisplayName('inboundResponderDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
     inboundService: [
-        { type: 'required', message: 'Inbound Service is required' },
+        { type: 'required', message: `${getDisplayName('inboundService')} is required` },
     ],
     requestorDN: [
-        { type: 'required', message: 'Requestor DN is required' },
-        { type: 'pattern', message: 'Requestor DN  should be [ou={ou}]o={BIC8},o=swift format' }
+        { type: 'required', message: `${getDisplayName('requestorDN')} is required` },
+        { type: 'pattern', message: `${getDisplayName('requestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
     responderDN: [
-        { type: 'required', message: 'Responder DN is required' },
-        { type: 'pattern', message: 'Responder DN should be [ou={ou}]o={BIC8},o=swift format' }
+        { type: 'required', message: `${getDisplayName('responderDN')} is required` },
+        { type: 'pattern', message: `${getDisplayName('responderDN')} should be [ou={ou}]o={BIC8},o=swift format` }
+    ],
+    maxBulksPerFile: [
+        { type: 'required', message: `${getDisplayName('maxBulksPerFile')} is required` },
+    ],
+    maxTransfersPerBulk: [
+        { type: 'required', message: `${getDisplayName('maxTransfersPerBulk')} is required` },
+    ],
+    startOfDay: [
+        { type: 'required', message: `${getDisplayName('startOfDay')} is required` },
+    ],
+    endOfDay: [
+        { type: 'required', message: `${getDisplayName('endOfDay')} is required` },
+    ],
+    mailboxPathIn: [
+        { type: 'required', message: `${getDisplayName('mailboxPathIn')} is required` },
+    ],
+    mailboxPathOut: [
+        { type: 'required', message: `${getDisplayName('mailboxPathOut')} is required` },
     ]
 };
 
 export const SCHEDULE_VALIDATION_MESSAGES = {
     isWindow: [
-        { type: 'required', message: 'Schedule type is required' },
+        { type: 'required', message: `${getDisplayName('isWindow')} is required` },
     ],
     timeStart: [
-        { type: 'required', message: 'Time Start is required' },
+        { type: 'required', message: `${getDisplayName('timeStart')} is required` },
     ],
     windowEnd: [
-        { type: 'required', message: 'Time End is required' },
+        { type: 'required', message: `${getDisplayName('windowEnd')} is required` },
     ],
     windowInterval: [
-        { type: 'required', message: 'Time Interval is required' },
+        { type: 'required', message: `${getDisplayName('windowInterval')} is required` },
     ],
+    fileType: [
+        { type: 'required', message: `${getDisplayName('fileType')} is required` },
+    ]
 };

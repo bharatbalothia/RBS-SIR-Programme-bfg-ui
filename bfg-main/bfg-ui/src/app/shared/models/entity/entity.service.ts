@@ -51,4 +51,12 @@ export class EntityService {
     });
   }
 
+  getScheduleFileTypes() {
+    return this.http.get<string[]>(this.apiUrl + 'file-type');
+  }
+
+  getInboundRequestTypes() {
+    return this.http.get<string[]>(this.apiUrl + 'inbound-request-type');
+  }
+
 }

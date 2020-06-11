@@ -48,6 +48,18 @@
             </section>
         </div>
         <section>
+            <mat-form-field>
+                <mat-label>{{getDisplayName('fileType')}}</mat-label>
+                <mat-select formControlName="fileType" required>
+                    <mat-option *ngFor="let fileType of fileTypes" [value]="fileType">{{fileType}}</mat-option>
+                </mat-select>
+                <mat-error *ngFor="let validation of scheduleValidationMessages.fileType">
+                    <mat-error class="error-message" *ngIf="ifFieldHasError('fileType',validation.type)">
+                        {{validation.message}}</mat-error>
+                </mat-error>
+            </mat-form-field>
+        </section>
+        <section>
             <button type="submit" mat-raised-button color="primary">
                 {{isEditStatus() ? 'Edit' : 'Add'}}
             </button>

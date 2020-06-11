@@ -31,10 +31,10 @@
                     </div>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="entityPageFormGroup">
+            <mat-step *ngIf="entityPageFormGroup" [stepControl]="entityPageFormGroup">
                 <form [formGroup]="entityPageFormGroup">
                     <ng-template matStepLabel>Complete entity page</ng-template>
-                    <mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('entity')">
                         <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
                         <input matInput formControlName="entity" required>
                         <mat-error *ngFor="let validation of entityValidationMessages.entity">
@@ -46,7 +46,7 @@
                             {{getErrorByField('entity')}}
                         </mat-error>
                     </mat-form-field>
-                    <section class='radio-group-section'>
+                    <section *ngIf="entityPageFormGroup.get('routeInbound')" class='radio-group-section'>
                         <label
                             class='radio-group-label'>{{entityDisplayNames['routeInbound'] || 'routeInbound'}}:*</label>
                         <mat-radio-group formControlName='routeInbound'>
@@ -57,7 +57,7 @@
                             {{getErrorByField('routeInbound')}}
                         </mat-error>
                     </section>
-                    <section>
+                    <section *ngIf="entityPageFormGroup.get('inboundRequestorDN')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestorDN'] || 'inboundRequestorDN'}}</mat-label>
                             <input matInput formControlName="inboundRequestorDN" appInputLowercase required>
@@ -71,7 +71,7 @@
                             </mat-error>
                         </mat-form-field>
                     </section>
-                    <mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('inboundResponderDN')">
                         <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
                         <input matInput formControlName="inboundResponderDN" appInputLowercase required>
                         <mat-error *ngFor="let validation of entityValidationMessages.inboundResponderDN">
@@ -83,7 +83,7 @@
                             {{getErrorByField('inboundResponderDN')}}
                         </mat-error>
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('inboundService')">
                         <mat-label>{{entityDisplayNames['inboundService'] || 'inboundService'}}</mat-label>
                         <input matInput formControlName="inboundService" required>
                         <mat-error *ngFor="let validation of entityValidationMessages.inboundService">
@@ -95,7 +95,7 @@
                             {{getErrorByField('inboundService')}}
                         </mat-error>
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('inboundRequestType')">
                         <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
                         <mat-select formControlName="inboundRequestType" multiple>
                             <mat-select-trigger>
@@ -116,7 +116,7 @@
                             {{getErrorByField('inboundRequestType')}}
                         </mat-error>
                     </mat-form-field>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundDir')">
                         <label class='radio-group-label'>{{entityDisplayNames['inboundDir'] || 'inboundDir'}}:*</label>
                         <mat-radio-group formControlName='inboundDir'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
@@ -126,7 +126,7 @@
                             {{getErrorByField('inboundDir')}}
                         </mat-error>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundRoutingRule')">
                         <label
                             class='radio-group-label'>{{entityDisplayNames['inboundRoutingRule'] || 'inboundRoutingRule'}}:*</label>
                         <mat-radio-group formControlName='inboundRoutingRule'>
@@ -137,6 +137,108 @@
                             {{getErrorByField('inboundRoutingRule')}}
                         </mat-error>
                     </section>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
+                        <mat-label>{{entityDisplayNames['maxBulksPerFile'] || 'maxBulksPerFile'}}</mat-label>
+                        <input matInput type="number" formControlName="maxBulksPerFile" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.maxBulksPerFile">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('maxBulksPerFile').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('maxBulksPerFile')">
+                            {{getErrorByField('maxBulksPerFile')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')">
+                        <mat-label>{{entityDisplayNames['maxTransfersPerBulk'] || 'maxTransfersPerBulk'}}</mat-label>
+                        <input matInput type="number" formControlName="maxTransfersPerBulk" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.maxTransfersPerBulk">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('maxTransfersPerBulk').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('maxTransfersPerBulk')">
+                            {{getErrorByField('maxTransfersPerBulk')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('startOfDay')">
+                        <mat-label>{{entityDisplayNames['startOfDay'] || 'startOfDay'}}</mat-label>
+                        <input matInput type="time" formControlName="startOfDay" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.startOfDay">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('startOfDay').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('startOfDay')">
+                            {{getErrorByField('startOfDay')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathIn')">
+                        <mat-label>{{entityDisplayNames['mailboxPathIn'] || 'mailboxPathIn'}}</mat-label>
+                        <input matInput formControlName="mailboxPathIn" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathIn">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('mailboxPathIn').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mailboxPathIn')">
+                            {{getErrorByField('mailboxPathIn')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                        <mat-label>{{entityDisplayNames['mailboxPathOut'] || 'mailboxPathOut'}}</mat-label>
+                        <input matInput formControlName="mailboxPathOut" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathOut">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('mailboxPathOut').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mailboxPathOut')">
+                            {{getErrorByField('mailboxPathOut')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueIn')">
+                        <mat-label>{{entityDisplayNames['mqQueueIn'] || 'mqQueueIn'}}</mat-label>
+                        <input matInput formControlName="mqQueueIn">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQueueIn')">
+                            {{getErrorByField('mqQueueIn')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                        <mat-label>{{entityDisplayNames['mqQueueOut'] || 'mqQueueOut'}}</mat-label>
+                        <input matInput formControlName="mqQueueOut">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQueueOut')">
+                            {{getErrorByField('mqQueueOut')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('compression')">
+                        <label class='radio-group-label'>{{entityDisplayNames['compression'] || 'compression'}}:</label>
+                        <mat-radio-group formControlName='compression'>
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error class="error-message" *ngIf="getErrorByField('compression')">
+                            {{getErrorByField('compression')}}
+                        </mat-error>
+                    </section>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
+                        <mat-label>{{entityDisplayNames['entityParticipantType'] || 'entityParticipantType'}}
+                        </mat-label>
+                        <mat-select formControlName="entityParticipantType">
+                            <mat-option value='INDIRECT'>INDIRECT</mat-option>
+                            <mat-option value='DIRECT'>DIRECT</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('entityParticipantType')">
+                            {{getErrorByField('entityParticipantType')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('directParticipant')">
+                        <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
+                        <input matInput formControlName="directParticipant">
+                        <mat-error class="error-message" *ngIf="getErrorByField('directParticipant')">
+                            {{getErrorByField('directParticipant')}}
+                        </mat-error>
+                    </mat-form-field>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>

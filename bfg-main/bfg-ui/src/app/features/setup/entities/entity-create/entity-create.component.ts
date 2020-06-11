@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
-import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -39,7 +38,7 @@ export class EntityCreateComponent implements OnInit {
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
-  inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
+  inboundRequestTypeList: string[] = [];
   entityValidationMessages = ENTITY_VALIDATION_MESSAGES;
   errorMessage: ErrorMessage;
 
@@ -50,6 +49,8 @@ export class EntityCreateComponent implements OnInit {
 
   scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
   schedulesDataSource;
+  scheduleFileTypes: string[] = [];
+
 
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
@@ -76,7 +77,7 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).subscribe(data => {
           this.editableEntity = data;
           this.initializeFormGroups(this.editableEntity);
-          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity.schedules);
+          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         });
       }
@@ -87,33 +88,7 @@ export class EntityCreateComponent implements OnInit {
     this.entityTypeFormGroup = this.formBuilder.group({
       service: [entity.service, Validators.required]
     });
-    this.entityPageFormGroup = this.formBuilder.group({
-      entity: [entity.entity, {
-        validators: [
-          Validators.required,
-          this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
-        ],
-        asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
-        updateOn: 'blur'
-      }],
-      routeInbound: [entity.routeInbound, Validators.required],
-      inboundRequestorDN: [entity.inboundRequestorDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundResponderDN: [entity.inboundResponderDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundService: [entity.inboundService, Validators.required],
-      inboundRequestType: [entity.inboundRequestType],
-      inboundDir: [entity.inboundDir, Validators.required],
-      inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
-    });
+    this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
         validators: [
@@ -162,21 +137,77 @@ export class EntityCreateComponent implements OnInit {
     deliveryNotification: false,
     nonRepudiation: false,
     e2eSigning: 'None',
+    mailboxPathIn: '',
+    mailboxPathOut: '',
+    maxBulksPerFile: null,
+    maxTransfersPerBulk: null,
+    endOfDay: null,
+    startOfDay: null,
+    compression: false,
+    entityParticipantType: 'INDIRECT'
   })
 
-  onServiceSelect(value, schedules?) {
+  onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          maxBulksPerFile: [entity.maxBulksPerFile, Validators.required],
+          maxTransfersPerBulk: [entity.maxTransfersPerBulk, Validators.required],
+          startOfDay: [entity.startOfDay, Validators.required],
+          endOfDay: [entity.endOfDay, Validators.required],
+          mailboxPathIn: [entity.mailboxPathIn, Validators.required],
+          mailboxPathOut: [entity.mailboxPathOut, Validators.required],
+          mqQueueIn: [entity.mqQueueIn],
+          mqQueueOut: [entity.mqQueueOut],
+          compression: [entity.compression],
+          entityParticipantType: [entity.entityParticipantType],
+          directParticipant: [entity.directParticipant]
+        });
         this.schedulesFormGroup = this.formBuilder.group({
-          schedules: [schedules || []]
+          schedules: [entity.schedules || []]
         });
         this.updateSchedulesDataSource();
-
+        this.entityService.getScheduleFileTypes().subscribe(data => this.scheduleFileTypes = data);
         this.mqDetailsFormGroup = this.formBuilder.group({
-
         });
         break;
       case ENTITY_SERVICE_TYPE.GPL:
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          routeInbound: [entity.routeInbound, Validators.required],
+          inboundRequestorDN: [entity.inboundRequestorDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundResponderDN: [entity.inboundResponderDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundService: [entity.inboundService, Validators.required],
+          inboundRequestType: [entity.inboundRequestType],
+          inboundDir: [entity.inboundDir, Validators.required],
+          inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
+        });
+        this.entityService.getInboundRequestTypes().subscribe(data => this.inboundRequestTypeList = data);
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         break;
@@ -335,7 +366,7 @@ export class EntityCreateComponent implements OnInit {
   openScheduleDialog = (scheduleRow?: { schedule: Schedule, index: number }) =>
     this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
       title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(scheduleRow, 'schedule') ? 'Edit' : 'Add'}`,
-      actionData: { editSchedule: get(scheduleRow, 'schedule') }
+      actionData: { editSchedule: get(scheduleRow, 'schedule'), fileTypes: this.scheduleFileTypes }
     })).afterClosed().subscribe(data => {
       if (get(data, 'editedSchedule')) {
         this.schedulesFormGroup.get('schedules').value[scheduleRow.index] = data.editedSchedule;

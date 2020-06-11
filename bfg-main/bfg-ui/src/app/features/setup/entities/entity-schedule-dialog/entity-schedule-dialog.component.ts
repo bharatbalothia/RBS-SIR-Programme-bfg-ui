@@ -23,6 +23,8 @@ export class EntityScheduleDialogComponent implements OnInit {
 
   editSchedule: Schedule;
 
+  fileTypes: string[];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<EntityScheduleDialogComponent>,
@@ -31,6 +33,7 @@ export class EntityScheduleDialogComponent implements OnInit {
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.editSchedule = get(this.data, 'actionData.editSchedule');
+    this.fileTypes = get(this.data, 'actionData.fileTypes', []);
   }
 
   ngOnInit(): void {
@@ -53,12 +56,14 @@ export class EntityScheduleDialogComponent implements OnInit {
         timeStart: [get(defaultValue, 'timeStart') || '', Validators.required],
         windowEnd: [get(defaultValue, 'windowEnd') || '', Validators.required],
         windowInterval: [get(defaultValue, 'windowInterval') || '', Validators.required],
+        fileType: [get(defaultValue, 'fileType') || this.fileTypes[0], Validators.required],
       });
     }
     else {
       this.scheduleFormGroup = this.formBuilder.group({
         isWindow: [false, Validators.required],
         timeStart: [get(defaultValue, 'timeStart') || '', Validators.required],
+        fileType: [get(defaultValue, 'fileType') || this.fileTypes[0], Validators.required],
       });
     }
   }

@@ -38,8 +38,20 @@ export const DISPLAY_NAMES = {
   timeStart: 'Time Start',
   windowEnd: 'Time End',
   windowInterval: 'Time Interval',
+  fileType: 'FileType',
   windowSchedules: 'Window Schedules',
-  dailySchedules: 'Daily Schedules'
+  dailySchedules: 'Daily Schedules',
+  maxBulksPerFile: 'Max bulks per file',
+  maxTransfersPerBulk: 'Max transactions per bulk',
+  startOfDay: 'Start of Day',
+  endOfDay: 'End of Day',
+  mailboxPathIn: 'Inbound Mailbox',
+  mailboxPathOut: 'Outbound Mailbox',
+  mqQueueIn: 'Inbound MQ Queue',
+  mqQueueOut: 'Outbound MQ Queue',
+  compression: 'Outbound Compression',
+  entityParticipantType: 'Entity Participant Type',
+  directParticipant: 'Direct Participant'
 };
 
 export const getDisplayName = (key: string) => DISPLAY_NAMES[key] || key;

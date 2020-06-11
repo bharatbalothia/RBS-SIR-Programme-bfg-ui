@@ -33,7 +33,7 @@ export class EntityCreateComponent implements OnInit {
   entityDisplayNames = DISPLAY_NAMES;
   scheduleType = SCHEDULE_TYPE;
 
-  isLinear = false;
+  isLinear = true;
 
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;

@@ -81,9 +81,7 @@ public class EntityController {
         return entityService.findById(id)
                 .map(record -> ResponseEntity.ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
                 .orElseThrow(EntityNotFoundException::new);
-    }
-
-    @DeleteMapping("/{id}")
+    }  @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEntity(@PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> {

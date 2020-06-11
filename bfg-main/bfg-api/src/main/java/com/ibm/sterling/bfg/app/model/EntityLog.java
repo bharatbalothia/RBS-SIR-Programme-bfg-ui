@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -189,8 +188,6 @@ public class EntityLog {
     @Convert(converter = StringToScheduleListConverter.class)
     @Column(name = "SCHEDULES", columnDefinition = "varchar2(4000)")
     private List<Schedule> schedules;
-    @Transient
-    private List deletedSchedules = new ArrayList();
 
     public EntityLog() {
     }
@@ -271,8 +268,8 @@ public class EntityLog {
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        if (mailboxPathIn == null) mailboxPathIn = entity + "_" + service;
-        if (mailboxPathOut == null) mailboxPathOut = entity + "_" + service;
+        if (mailboxPathIn == null | mailboxPathIn.equals("")) mailboxPathIn = entity + "_" + service;
+        if (mailboxPathOut == null | mailboxPathOut.equals("")) mailboxPathOut = entity + "_" + service;
         if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
         if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
     }
@@ -315,14 +312,6 @@ public class EntityLog {
 
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
-    }
-
-    public List getDeletedSchedules() {
-        return deletedSchedules;
-    }
-
-    public void setDeletedSchedules(List deletedSchedules) {
-        this.deletedSchedules = deletedSchedules;
     }
 
     public String getMailboxPathOut() {

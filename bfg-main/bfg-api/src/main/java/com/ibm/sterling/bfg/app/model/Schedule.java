@@ -127,4 +127,20 @@ public class Schedule {
         this.fileType = fileType;
     }
 
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "scheduleId=" + scheduleId +
+                ", entity=" + entity +
+                ", isWindow=" + isWindow +
+                ", timeStart=" + timeStart +
+                ", windowEnd=" + windowEnd +
+                ", windowInterval=" + windowInterval +
+                ", transThreshold=" + transThreshold +
+                ", active=" + active +
+                ", nextRun=" + nextRun +
+                ", lastRun=" + lastRun +
+                ", fileType='" + fileType + '\'' +
+                '}';
+    }
 }

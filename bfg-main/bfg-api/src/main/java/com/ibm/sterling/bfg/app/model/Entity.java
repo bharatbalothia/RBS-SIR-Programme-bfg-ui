@@ -7,7 +7,8 @@ import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -227,11 +228,13 @@ public class Entity implements EntityType {
     private Boolean irishStep2 = Boolean.FALSE;
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "entity", cascade = CascadeType.ALL)
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "entity",
+            cascade = CascadeType.ALL) //, orphanRemoval = true
     @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Schedule> schedules;
-    @Transient
-    private List<Schedule> deletedSchedules = new ArrayList();
 
     @PrePersist
     @PreUpdate
@@ -481,14 +484,6 @@ public class Entity implements EntityType {
 
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
-    }
-
-    public List<Schedule> getDeletedSchedules() {
-        return deletedSchedules;
-    }
-
-    public void setDeletedSchedules(List<Schedule> deletedSchedules) {
-        this.deletedSchedules = deletedSchedules;
     }
 
     public String getCdNode() {
@@ -838,6 +833,7 @@ public class Entity implements EntityType {
                 "entityId=" + entityId +
                 ", entity='" + entity + '\'' +
                 ", service='" + service + '\'' +
+                ", schedules=" + schedules +
                 '}';
     }
 }

@@ -4,6 +4,7 @@ import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
@@ -20,7 +21,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -38,6 +38,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
     @Autowired
     private Validator validator;
@@ -73,7 +76,8 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Optional<Entity> findById(int id) {
         LOG.info("entity by id {}", id);
-        return entityRepository.findById(id);
+        Optional<Entity> optionalEntity = entityRepository.findById(id);
+        return optionalEntity;
     }
 
     @Override
@@ -145,6 +149,11 @@ public class EntityServiceImpl implements EntityService {
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
+        if (entity.getEntityId() != null) {
+            List<Long> deletedScheduleId = getAbsentSchedules(scheduleService.findActualSchedulesByEntityId(entity.getEntityId()), entity.getSchedules());
+            deletedScheduleId.forEach(id -> scheduleService.deleteById(id));
+        }
+
         entity.setSchedules(
                 changeControl.getEntityLog()
                         .getSchedules()
@@ -175,6 +184,21 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setEntityLog(entityLog);
         changeControlService.save(changeControl);
         return savedEntity;
+    }
+
+    private List<Long> getAbsentSchedules(List<Schedule> actualSchedules, List<Schedule> newSchedules) {
+        List<Long> actualSchedulesId = convertListOfSchedulesToListOfScheduleId(actualSchedules);
+        List<Long> newSchedulesId = convertListOfSchedulesToListOfScheduleId(newSchedules);
+        actualSchedulesId.removeAll(newSchedulesId);
+        return actualSchedulesId;
+    }
+
+    private List<Long> convertListOfSchedulesToListOfScheduleId(List<Schedule> scheduleList) {
+        return scheduleList
+                .stream()
+                .map(Schedule::getScheduleId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

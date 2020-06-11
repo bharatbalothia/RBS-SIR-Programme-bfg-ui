@@ -62,6 +62,12 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(buildJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/api/auth/signin");
+    }
+
     @Bean
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

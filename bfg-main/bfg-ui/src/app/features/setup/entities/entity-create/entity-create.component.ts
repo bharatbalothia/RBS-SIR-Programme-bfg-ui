@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
-import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
 import { ENTITY_VALIDATION_MESSAGES } from '../validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -21,6 +20,8 @@ import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
 import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
+import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-entity-create',
@@ -37,7 +38,7 @@ export class EntityCreateComponent implements OnInit {
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
-  inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
+  inboundRequestTypeList: string[] = [];
   entityValidationMessages = ENTITY_VALIDATION_MESSAGES;
   errorMessage: ErrorMessage;
 
@@ -47,12 +48,15 @@ export class EntityCreateComponent implements OnInit {
   summaryPageDataSource;
 
   scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
+  schedulesDataSource;
+  scheduleFileTypes: string[] = [];
+
 
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
-  scheduleListFormGroup: FormGroup;
+  schedulesFormGroup: FormGroup;
   mqDetailsFormGroup: FormGroup;
 
   editableEntity: Entity;
@@ -73,6 +77,7 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).subscribe(data => {
           this.editableEntity = data;
           this.initializeFormGroups(this.editableEntity);
+          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         });
       }
@@ -83,33 +88,7 @@ export class EntityCreateComponent implements OnInit {
     this.entityTypeFormGroup = this.formBuilder.group({
       service: [entity.service, Validators.required]
     });
-    this.entityPageFormGroup = this.formBuilder.group({
-      entity: [entity.entity, {
-        validators: [
-          Validators.required,
-          this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
-        ],
-        asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
-        updateOn: 'blur'
-      }],
-      routeInbound: [entity.routeInbound, Validators.required],
-      inboundRequestorDN: [entity.inboundRequestorDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundResponderDN: [entity.inboundResponderDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundService: [entity.inboundService, Validators.required],
-      inboundRequestType: [entity.inboundRequestType],
-      inboundDir: [entity.inboundDir, Validators.required],
-      inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
-    });
+    this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
         validators: [
@@ -158,31 +137,78 @@ export class EntityCreateComponent implements OnInit {
     deliveryNotification: false,
     nonRepudiation: false,
     e2eSigning: 'None',
+    mailboxPathIn: '',
+    mailboxPathOut: '',
+    maxBulksPerFile: null,
+    maxTransfersPerBulk: null,
+    endOfDay: null,
+    startOfDay: null,
+    compression: false,
+    entityParticipantType: 'INDIRECT'
   })
 
-  onServiceSelect(value) {
+  onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
-        this.scheduleListFormGroup = this.formBuilder.group({
-          scheduleList: [[
-            {
-              isWindow: true,
-              timeStart: 10,
-              windowEnd: 10,
-              windowInterval: 5,
-            },
-            {
-              isWindow: false,
-              timeStart: 10,
-            }
-          ]]
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          maxBulksPerFile: [entity.maxBulksPerFile, Validators.required],
+          maxTransfersPerBulk: [entity.maxTransfersPerBulk, Validators.required],
+          startOfDay: [entity.startOfDay, Validators.required],
+          endOfDay: [entity.endOfDay, Validators.required],
+          mailboxPathIn: [entity.mailboxPathIn, Validators.required],
+          mailboxPathOut: [entity.mailboxPathOut, Validators.required],
+          mqQueueIn: [entity.mqQueueIn],
+          mqQueueOut: [entity.mqQueueOut],
+          compression: [entity.compression],
+          entityParticipantType: [entity.entityParticipantType],
+          directParticipant: [entity.directParticipant]
         });
+        this.schedulesFormGroup = this.formBuilder.group({
+          schedules: [entity.schedules || []]
+        });
+        this.updateSchedulesDataSource();
+        this.entityService.getScheduleFileTypes().subscribe(data => this.scheduleFileTypes = data);
         this.mqDetailsFormGroup = this.formBuilder.group({
-
         });
         break;
       case ENTITY_SERVICE_TYPE.GPL:
-        this.scheduleListFormGroup = null;
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          routeInbound: [entity.routeInbound, Validators.required],
+          inboundRequestorDN: [entity.inboundRequestorDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundResponderDN: [entity.inboundResponderDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundService: [entity.inboundService, Validators.required],
+          inboundRequestType: [entity.inboundRequestType],
+          inboundDir: [entity.inboundDir, Validators.required],
+          inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
+        });
+        this.entityService.getInboundRequestTypes().subscribe(data => this.inboundRequestTypeList = data);
+        this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         break;
     }
@@ -215,7 +241,8 @@ export class EntityCreateComponent implements OnInit {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
-          ...this.summaryPageFormGroup.value
+          ...this.summaryPageFormGroup.value,
+          ...this.schedulesFormGroup && this.convertScheduleListToUnix(this.schedulesFormGroup.get('schedules').value),
         });
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
@@ -293,6 +320,7 @@ export class EntityCreateComponent implements OnInit {
     const entity = removeEmpties({
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
+      ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
     });
@@ -302,6 +330,12 @@ export class EntityCreateComponent implements OnInit {
         value: entity[key],
         error: this.getErrorByField(key)
       })).filter(el => el.field !== 'changerComments');
+  }
+
+  getSchedulesForSummaryPage = (schedules: Schedule[]) => schedules &&
+  {
+    windowSchedules: schedules.filter((el: Schedule) => el.isWindow).map((el: Schedule) => `${el.timeStart}-${el.windowEnd}(${el.windowInterval})`).join(', '),
+    dailySchedules: schedules.filter((el: Schedule) => !el.isWindow).map((el: Schedule) => el.timeStart).join(', ')
   }
 
   markAllFieldsTouched() {
@@ -323,12 +357,55 @@ export class EntityCreateComponent implements OnInit {
 
   getEntityServicesArray = () => Object.keys(ENTITY_SERVICE_TYPE).map(e => ENTITY_SERVICE_TYPE[e]);
 
+  updateSchedulesDataSource = () =>
+    this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value);
+
   getFormattedSchedule = (schedule: Schedule) =>
     `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd + ' (every ' + schedule.windowInterval + ' minutes)' : ''}`
 
-  openScheduleDialog = (schedule?: Schedule) => this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
-    title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(schedule, 'scheduleID') || 'Add'}`,
-    actionData: { schedule }
-  }))
+  openScheduleDialog = (scheduleRow?: { schedule: Schedule, index: number }) =>
+    this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
+      title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(scheduleRow, 'schedule') ? 'Edit' : 'Add'}`,
+      actionData: { editSchedule: get(scheduleRow, 'schedule'), fileTypes: this.scheduleFileTypes }
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'editedSchedule')) {
+        this.schedulesFormGroup.get('schedules').value[scheduleRow.index] = data.editedSchedule;
+        this.updateSchedulesDataSource();
+      }
+      if (get(data, 'newSchedule')) {
+        this.schedulesFormGroup.get('schedules').value.push(data.newSchedule);
+        this.updateSchedulesDataSource();
+      }
+    })
+
+  deleteSchedule = (schedule: Schedule, index: number) => this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+    title: `Deleting ${this.getFormattedSchedule(schedule)} schedule`,
+    text: `Are you sure to delete ${this.getFormattedSchedule(schedule)} schedule?`,
+    yesCaption: `Delete`,
+    yesCaptionColor: 'warn',
+    noCaption: 'Back'
+  })).afterClosed().subscribe(result => {
+    if (result) {
+      this.schedulesFormGroup.get('schedules').value.splice(index, 1);
+      this.updateSchedulesDataSource();
+    }
+  })
+
+  convertScheduleListToUnix = (scheduleList: Schedule[] = []) => ({
+    schedules: scheduleList.map((schedule: Schedule) => ({
+      ...schedule,
+      timeStart: moment(schedule.timeStart, 'HH:mm').valueOf(),
+      windowEnd: schedule.windowEnd && moment(schedule.windowEnd, 'HH:mm').valueOf(),
+    }))
+  })
+
+  convertScheduleListToString = (scheduleList: Schedule[] = []) => ({
+    schedules: scheduleList.map((schedule: Schedule) => ({
+      ...schedule,
+      timeStart: moment(schedule.timeStart).format('HH:mm'),
+      windowEnd: schedule.windowEnd && moment(schedule.windowEnd).format('HH:mm'),
+    }))
+  })
+
 
 }

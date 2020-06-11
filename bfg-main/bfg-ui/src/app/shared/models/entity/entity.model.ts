@@ -1,3 +1,5 @@
+import { Schedule } from '../schedule/schedule.model';
+
 export interface Entity {
     entityLogId?: number;
     entityId?: number;
@@ -17,16 +19,16 @@ export interface Entity {
     transferDesc?: string;
     transferInfo?: string;
     compression?: boolean;
-    mailboxPathIn?: string;
-    mailboxPathOut?: string;
+    mailboxPathIn: string;
+    mailboxPathOut: string;
     mqQueueIn?: string;
     mqQueueOut?: string;
     entityParticipantType?: string;
     directParticipant?: string;
-    maxTransfersPerBulk?: number;
-    maxBulksPerFile?: number;
-    startOfDay?: number;
-    endOfDay?: number;
+    maxTransfersPerBulk: number;
+    maxBulksPerFile: number;
+    startOfDay: number;
+    endOfDay: number;
     cdNode?: string;
     idfWTOMsgId?: string;
     cdfWTOMsgId?: string;
@@ -71,4 +73,5 @@ export interface Entity {
     irishStep2?: boolean;
     e2eSigning: string;
     snF?: boolean;
+    schedules?: Schedule[];
 }

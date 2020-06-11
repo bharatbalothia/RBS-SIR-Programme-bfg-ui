@@ -83,6 +83,7 @@
                 <active.profile>test</active.profile>
                 <server.host>*</server.host>
                 <server.port>25001</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>
     </profiles>
@@ -98,6 +99,7 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.2.1</version>
                 <configuration>
+                    <libertyRuntimeVersion>${liberty.runtime.version}</libertyRuntimeVersion>
                     <serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
                     <bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
                 </configuration>

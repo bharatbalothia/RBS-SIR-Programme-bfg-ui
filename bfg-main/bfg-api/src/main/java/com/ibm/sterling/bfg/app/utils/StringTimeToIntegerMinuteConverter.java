@@ -5,19 +5,19 @@ import javax.persistence.Converter;
 import java.util.Optional;
 
 @Converter
-public class StringToIntegerConverter implements AttributeConverter<String, Integer> {
+public class StringTimeToIntegerMinuteConverter implements AttributeConverter<String, Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(String attribute) {
         return Optional.ofNullable(attribute)
-                .map(Integer::valueOf)
+                .map(TimeUtil::convertTimeToMinutes)
                 .orElse(0);
     }
 
     @Override
     public String convertToEntityAttribute(Integer dbData) {
         return Optional.ofNullable(dbData)
-                .map(String::valueOf)
-                .orElse("0");
+                .map(TimeUtil::convertMinutesToTime)
+                .orElse("00:00");
     }
 }

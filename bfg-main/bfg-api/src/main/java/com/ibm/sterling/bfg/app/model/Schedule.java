@@ -1,9 +1,13 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.ibm.sterling.bfg.app.model.validation.PostValidation;
+import com.ibm.sterling.bfg.app.model.validation.PutValidation;
+import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
+import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @javax.persistence.Entity
@@ -15,27 +19,49 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_SCHEDULE_IDSEQ")
     @SequenceGenerator(sequenceName = "SCT_SCHEDULE_IDSEQ", name = "SCT_SCHEDULE_IDSEQ", allocationSize = 1)
     private Long scheduleId;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ENTITY_ID")
     @JsonBackReference
     private Entity entity;
+
     @Column(name = "ISWINDOW")
-    @NotNull(message = "ISWINDOW has to be present")
+    @NotNull(message = "Type has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean isWindow = Boolean.TRUE;
+
     @Column(name = "TIMESTART")
-    private Integer timeStart = 0;
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "Time Start should be in HH:mm format (24HR)",
+            groups = {PostValidation.class, PutValidation.class})
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    private String timeStart = "00:00";
+
     @Column(name = "WINDOWEND")
-    private Integer windowEnd;
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "Time End should be in HH:mm format (24HR)",
+            groups = {PostValidation.class, PutValidation.class})
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    private String windowEnd;
+
     @Column(name = "WINDOWINTERVAL")
-    private Integer windowInterval;
+    @Pattern(regexp = "^\\d+$", groups = {PostValidation.class, PutValidation.class})
+    @Convert(converter = StringToIntegerConverter.class)
+    private String windowInterval;
+
     @Column(name = "TRANSTHRESHOLD")
     private Integer transThreshold;
+
     @NotNull(message = "ACTIVE has to be present")
     private Boolean active = Boolean.TRUE;
+
     @Column(name = "NEXTRUN")
     private Date nextRun;
+
     @Column(name = "LASTRUN")
     private Date lastRun;
+
     @Column(name = "FILETYPE")
     private String fileType;
 
@@ -63,27 +89,27 @@ public class Schedule {
         isWindow = window;
     }
 
-    public Integer getTimeStart() {
+    public String getTimeStart() {
         return timeStart;
     }
 
-    public void setTimeStart(Integer timeStart) {
+    public void setTimeStart(String timeStart) {
         this.timeStart = timeStart;
     }
 
-    public Integer getWindowEnd() {
+    public String getWindowEnd() {
         return windowEnd;
     }
 
-    public void setWindowEnd(Integer windowEnd) {
+    public void setWindowEnd(String windowEnd) {
         this.windowEnd = windowEnd;
     }
 
-    public Integer getWindowInterval() {
+    public String getWindowInterval() {
         return windowInterval;
     }
 
-    public void setWindowInterval(Integer windowInterval) {
+    public void setWindowInterval(String windowInterval) {
         this.windowInterval = windowInterval;
     }
 

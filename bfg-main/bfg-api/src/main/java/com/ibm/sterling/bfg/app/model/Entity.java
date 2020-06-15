@@ -3,7 +3,7 @@ package com.ibm.sterling.bfg.app.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ibm.sterling.bfg.app.model.validation.*;
 import com.ibm.sterling.bfg.app.service.EntityService;
-import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
+import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,7 +120,7 @@ public class Entity implements EntityType {
             regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
             message = "Start of day should be in hh:mm format",
             groups = {PostValidation.class, PutValidation.class})
-    @Convert(converter = StringToIntegerConverter.class)
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String startOfDay = "00:00";
     @Column(name = "ENDOFDAY")
     @Pattern(
@@ -129,7 +129,7 @@ public class Entity implements EntityType {
             groups = {PostValidation.class, PutValidation.class})
     @NotNull(message = "ENDOFDAY has to be present",
             groups = {PostValidation.class, PutValidation.class})
-    @Convert(converter = StringToIntegerConverter.class)
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String endOfDay = "00:00";
     @Column(name = "CDNODE")
     private String cdNode;

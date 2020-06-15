@@ -1,22 +1,19 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
-import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
+import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.springframework.util.StringUtils;
-
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
@@ -107,11 +104,11 @@ public class EntityLog {
     private Integer maxBulksPerFile;
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present")
-    @Convert(converter = StringToIntegerConverter.class)
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String startOfDay;
     @Column(name = "ENDOFDAY")
     @NotNull(message = "ENDOFDAY has to be present")
-    @Convert(converter = StringToIntegerConverter.class)
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String endOfDay;
     @Column(name = "CDNODE")
     private String cdNode;

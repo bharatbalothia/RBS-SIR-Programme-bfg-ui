@@ -1,9 +1,10 @@
 package com.ibm.sterling.bfg.app.service;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,75 +16,87 @@ import java.util.stream.Collectors;
 @Service
 public class PropertyService {
 
-    @Value("${property.userName}")
-    private String userName;
-
-    @Value("${property.password}")
-    private String password;
-
-    @Value("${property.reqTypePrefixKey}")
-    private String propertyPrefixKey;
-
-    @Value("${property.fileTypeKey}")
-    private String fileTypeKey;
-
     private static final String PROPERTY_KEY = "propertyKey";
     private static final String PROPERTY_VALUE = "propertyValue";
     private static final String HEADER_PREFIX = "Basic ";
+    private static final String SYSTEM_DIGITAL_CERTIFICATES = "SystemDigitalCertificates";
+    private static final String CA_DIGITAL_CERTIFICATES = "CaDigitalCertificates";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    private PropertySettings settings;
+
     public List<String> getInboundRequestType() throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        String userCredentials = userName + ":" + password;
-        headers.set(HttpHeaders.AUTHORIZATION,
-                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity request = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity =
-                restTemplate.exchange(
-                        "http://b2bi-int1.fyre.ibm.com:25074/B2BAPIs/svc/propertyfiles/GPL/property/",
-                        HttpMethod.GET,
-                        request,
-                        String.class
-                );
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
-        List<Map<String, String>> propertyList = objectMapper.convertValue(root, List.class);
-        return propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).startsWith(propertyPrefixKey))
+        String reqTypePrefixKey = settings.getReqTypePrefixKey();
+        return getPropertyList(settings.getGplUrl()).stream()
+                .filter(property -> property.get(PROPERTY_KEY).startsWith(reqTypePrefixKey))
                 .map(property -> {
                             String propertyKey = property.get(PROPERTY_KEY);
                             return property.get(PROPERTY_VALUE) +
-                                    " (" + propertyKey.substring(propertyKey.indexOf(propertyPrefixKey) +
-                                    propertyPrefixKey.length()) + ")";
+                                    " (" + propertyKey.substring(propertyKey.indexOf(reqTypePrefixKey) +
+                                    reqTypePrefixKey.length()) + ")";
                         }
                 ).collect(Collectors.toList());
     }
 
     public List<String> getFileType() throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
+        return getPropertyList(settings.getBfgUiUrl()).stream()
+                .filter(property -> property.get(PROPERTY_KEY).equals(settings.getFileTypeKey()))
+                .flatMap(property -> Arrays.stream(property.get(PROPERTY_VALUE).split(",")))
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, List<String>> getMQDetails() throws JsonProcessingException {
+        String mqPrefixKey = settings.getMqPrefixKey();
+        Map<String, List<String>> mqDetailsMap = getPropertyList(settings.getBfgUiUrl()).stream()
+                .filter(property -> property.get(PROPERTY_KEY).startsWith(mqPrefixKey))
+                .flatMap(property -> {
+                            String propertyKey = property.get(PROPERTY_KEY);
+                            return Collections.singletonMap(
+                                    propertyKey.substring(propertyKey.indexOf(mqPrefixKey) + mqPrefixKey.length()),
+                                    Arrays.asList(property.get(PROPERTY_VALUE).split(","))
+                            ).entrySet().stream();
+                        }
+                ).collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue
+                        )
+                );
+        mqDetailsMap.putAll(
+                Collections.singletonMap(CA_DIGITAL_CERTIFICATES, getPropertyList(settings.getCaCertUrl())
+                        .stream()
+                        .map(property -> property.get(settings.getCertIdKey()))
+                        .collect(Collectors.toList())
+                )
+        );
+        mqDetailsMap.putAll(
+                Collections.singletonMap(SYSTEM_DIGITAL_CERTIFICATES, getPropertyList(settings.getSysCertUrl())
+                        .stream()
+                        .map(property -> property.get(settings.getCertIdKey()))
+                        .collect(Collectors.toList())
+                )
+        );
+        return mqDetailsMap;
+    }
+
+    private List<Map<String, String>> getPropertyList(String propertyUrl) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
-        String userCredentials = userName + ":" + password;
+        String userCredentials = settings.getUserName() + ":" + settings.getPassword();
         headers.set(HttpHeaders.AUTHORIZATION,
                 HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity request = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity =
-                restTemplate.exchange(
-                        "http://b2bi-int1.fyre.ibm.com:25074/B2BAPIs/svc/propertyfiles/bfgui/property/",
+                new RestTemplate().exchange(
+                        propertyUrl,
                         HttpMethod.GET,
                         request,
                         String.class
                 );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
-        List<Map<String, String>> propertyList = objectMapper.convertValue(root, List.class);
-        return propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).equals(fileTypeKey))
-                .map(property -> Arrays.asList(property.get(PROPERTY_VALUE).split(",")))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return objectMapper.convertValue(root, List.class);
     }
 
 }

@@ -12,13 +12,13 @@ public class StringToIntegerConverter implements AttributeConverter<String, Inte
     public Integer convertToDatabaseColumn(String attribute) {
         return Optional.ofNullable(attribute)
                 .map(TimeUtil::convertTimeToMinutes)
-                .orElse(null);
+                .orElse(0);
     }
 
     @Override
     public String convertToEntityAttribute(Integer dbData) {
         return Optional.ofNullable(dbData)
                 .map(TimeUtil::convertMinutesToTime)
-                .orElse(null);
+                .orElse("00:00");
     }
 }

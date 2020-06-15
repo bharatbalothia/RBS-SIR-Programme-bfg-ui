@@ -234,7 +234,7 @@ public class Entity implements EntityType {
             cascade = CascadeType.ALL) //, orphanRemoval = true
     @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Schedule> schedules;
+    private List<Schedule> schedules = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

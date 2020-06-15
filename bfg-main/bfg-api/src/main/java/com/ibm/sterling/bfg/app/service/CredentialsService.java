@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import com.ibm.sterling.bfg.app.model.security.UserCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
 @Service
 public class CredentialsService {
 
+    @Value("${authentication.url}")
+    private String authenticationUrl;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public UserCredentials getSBIAuthResponse(LoginRequest loginRequest) throws JsonProcessingException {
@@ -37,7 +41,7 @@ public class CredentialsService {
             }
         };
         String userCredentials = restTemplate.postForObject(
-                "https://b2bi-int1.fyre.ibm.com:25060/restwar/restapi/v1.0/authenticate/",
+                authenticationUrl,
                 new HttpEntity<>(loginMap, headers),
                 String.class
         );

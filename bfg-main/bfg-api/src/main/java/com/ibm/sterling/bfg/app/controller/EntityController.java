@@ -114,4 +114,9 @@ public class EntityController {
         return ok(propertyService.getFileType());
     }
 
+    @GetMapping("mq-details")
+    public ResponseEntity<Map<String, List<String>>> getMqDetails() throws JsonProcessingException {
+        return ok(propertyService.getMQDetails());
+    }
+
 }

@@ -139,7 +139,7 @@
                     </section>
                     <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
                         <mat-label>{{entityDisplayNames['maxBulksPerFile'] || 'maxBulksPerFile'}}</mat-label>
-                        <input matInput type="number" formControlName="maxBulksPerFile" required>
+                        <input matInput type="number" min="0" formControlName="maxBulksPerFile" required>
                         <mat-error *ngFor="let validation of entityValidationMessages.maxBulksPerFile">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('maxBulksPerFile').hasError(validation.type)">
@@ -151,7 +151,7 @@
                     </mat-form-field>
                     <mat-form-field *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')">
                         <mat-label>{{entityDisplayNames['maxTransfersPerBulk'] || 'maxTransfersPerBulk'}}</mat-label>
-                        <input matInput type="number" formControlName="maxTransfersPerBulk" required>
+                        <input matInput type="number" min="0" formControlName="maxTransfersPerBulk" required>
                         <mat-error *ngFor="let validation of entityValidationMessages.maxTransfersPerBulk">
                             <mat-error class="error-message"
                                 *ngIf="entityPageFormGroup.get('maxTransfersPerBulk').hasError(validation.type)">
@@ -171,6 +171,18 @@
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('startOfDay')">
                             {{getErrorByField('startOfDay')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="entityPageFormGroup.get('endOfDay')">
+                        <mat-label>{{entityDisplayNames['endOfDay'] || 'endOfDay'}}</mat-label>
+                        <input matInput type="time" formControlName="endOfDay" required>
+                        <mat-error *ngFor="let validation of entityValidationMessages.endOfDay">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('endOfDay').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('endOfDay')">
+                            {{getErrorByField('endOfDay')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathIn')">

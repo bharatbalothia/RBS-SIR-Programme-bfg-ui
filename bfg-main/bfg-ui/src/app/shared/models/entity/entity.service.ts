@@ -7,6 +7,7 @@ import { ChangeControl } from '../changeControl/change-control.model';
 import { EntitiesWithPagination } from './entities-with-pagination.model';
 import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
 import { ChangeResolution } from '../changeControl/change-resolution.model';
+import { MQDetails } from './mq-details.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,4 +60,7 @@ export class EntityService {
     return this.http.get<string[]>(this.apiUrl + 'inbound-request-type');
   }
 
+  getMQDetails() {
+    return this.http.get<MQDetails>(this.apiUrl + 'mq-details');
+  }
 }

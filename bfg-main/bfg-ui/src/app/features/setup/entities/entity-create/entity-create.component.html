@@ -306,6 +306,144 @@
                     </div>
                 </form>
             </mat-step>
+            <mat-step *ngIf="mqDetailsFormGroup" [stepControl]="mqDetailsFormGroup">
+                <form [formGroup]="mqDetailsFormGroup">
+                    <ng-template matStepLabel>MQ Details</ng-template>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqHost'] || 'mqHost'}}</mat-label>
+                        <input matInput formControlName="mqHost">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqHost')">
+                            {{getErrorByField('mqHost')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqPort'] || 'mqPort'}}</mat-label>
+                        <input matInput type="number" min="0" formControlName="mqPort">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqPort')">
+                            {{getErrorByField('mqPort')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqQManager'] || 'mqQManager'}}</mat-label>
+                        <input matInput formControlName="mqQManager">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQManager')">
+                            {{getErrorByField('mqQManager')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqChannel'] || 'mqChannel'}}</mat-label>
+                        <input matInput formControlName="mqChannel">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqChannel')">
+                            {{getErrorByField('mqChannel')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqQueueName'] || 'mqQueueName'}}</mat-label>
+                        <input matInput formControlName="mqQueueName">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQueueName')">
+                            {{getErrorByField('mqQueueName')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqQueueBinding'] || 'mqQueueBinding'}}
+                        </mat-label>
+                        <mat-select formControlName="mqQueueBinding">
+                            <mat-option *ngFor="let mqQueueBinding of mqDetails.QueueBinding" [value]="mqQueueBinding">
+                                {{mqQueueBinding}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQueueBinding')">
+                            {{getErrorByField('mqQueueBinding')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqQueueContext'] || 'mqQueueContext'}}
+                        </mat-label>
+                        <mat-select formControlName="mqQueueContext">
+                            <mat-option *ngFor="let mqQueueContext of mqDetails.QueueContext" [value]="mqQueueContext">
+                                {{mqQueueContext}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqQueueContext')">
+                            {{getErrorByField('mqQueueContext')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqDebug'] || 'mqDebug'}}
+                        </mat-label>
+                        <mat-select formControlName="mqDebug">
+                            <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug">
+                                {{mqDebug}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqDebug')">
+                            {{getErrorByField('mqDebug')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqSSLoptions'] || 'mqSSLoptions'}}
+                        </mat-label>
+                        <mat-select formControlName="mqSSLoptions">
+                            <mat-option *ngFor="let mqSSLoptions of mqDetails.SSLOptions" [value]="mqSSLoptions">
+                                {{mqSSLoptions}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLoptions')">
+                            {{getErrorByField('mqSSLoptions')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqSSLciphers'] || 'mqSSLciphers'}}
+                        </mat-label>
+                        <mat-select formControlName="mqSSLciphers">
+                            <mat-option *ngFor="let mqSSLciphers of mqDetails.SSLCiphers" [value]="mqSSLciphers">
+                                {{mqSSLciphers}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLciphers')">
+                            {{getErrorByField('mqSSLciphers')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqSSLkey'] || 'mqSSLkey'}}
+                        </mat-label>
+                        <mat-select formControlName="mqSSLkey">
+                            <mat-option *ngFor="let mqSSLkey of mqDetails.SystemDigitalCertificates" [value]="mqSSLkey">
+                                {{mqSSLkey}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLkey')">
+                            {{getErrorByField('mqSSLkey')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqSSLcaCert'] || 'mqSSLcaCert'}}
+                        </mat-label>
+                        <mat-select formControlName="mqSSLcaCert">
+                            <mat-option *ngFor="let mqSSLcaCert of mqDetails.CaDigitalCertificates"
+                                [value]="mqSSLcaCert">
+                                {{mqSSLcaCert}}</mat-option>
+                        </mat-select>
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLcaCert')">
+                            {{getErrorByField('mqSSLcaCert')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqHeader'] || 'mqHeader'}}</mat-label>
+                        <input matInput formControlName="mqHeader">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqHeader')">
+                            {{getErrorByField('mqHeader')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>{{entityDisplayNames['mqSessionTimeout'] || 'mqSessionTimeout'}}</mat-label>
+                        <input matInput formControlName="mqSessionTimeout" type="number" min="0">
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSessionTimeout')">
+                            {{getErrorByField('mqSessionTimeout')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
+                    </div>
+                </form>
+            </mat-step>
             <mat-step [stepControl]="SWIFTDetailsFormGroup">
                 <form [formGroup]="SWIFTDetailsFormGroup">
                     <ng-template matStepLabel>Complete SWIFT details</ng-template>

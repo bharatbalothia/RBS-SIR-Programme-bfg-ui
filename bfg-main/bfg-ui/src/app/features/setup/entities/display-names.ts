@@ -51,7 +51,21 @@ export const DISPLAY_NAMES = {
   mqQueueOut: 'Outbound MQ Queue',
   compression: 'Outbound Compression',
   entityParticipantType: 'Entity Participant Type',
-  directParticipant: 'Direct Participant'
+  directParticipant: 'Direct Participant',
+  mqHost: 'MQ Host',
+  mqPort: 'MQ Port',
+  mqQManager: 'MQ Queue Manager',
+  mqChannel: 'MQ Channel',
+  mqQueueName: 'MQ Queue Name',
+  mqQueueBinding: 'MQ Queue Binding',
+  mqQueueContext: 'MQ Queue Context',
+  mqDebug: 'MQ Debug',
+  mqSSLoptions: 'MQ SSL Options',
+  mqSSLciphers: 'MQ SSL Ciphers',
+  mqSSLkey: 'MQ SSL Key Certificate',
+  mqSSLcaCert: 'MQ SSL CA Certificate',
+  mqHeader: 'MQ Header',
+  mqSessionTimeout: 'MQ Session Timeout',
 };
 
 export const getDisplayName = (key: string) => DISPLAY_NAMES[key] || key;

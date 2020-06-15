@@ -22,6 +22,7 @@ import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-
 import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
+import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 
 @Component({
   selector: 'app-entity-create',
@@ -51,6 +52,15 @@ export class EntityCreateComponent implements OnInit {
   schedulesDataSource;
   scheduleFileTypes: string[] = [];
 
+  mqDetails: MQDetails = {
+    CaDigitalCertificates: [],
+    Debug: [],
+    QueueBinding: [],
+    QueueContext: [],
+    SSLCiphers: [],
+    SSLOptions: [],
+    SystemDigitalCertificates: []
+  };
 
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
@@ -77,7 +87,6 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
           this.isLoading = false;
           this.editableEntity = data;
-          this.initializeFormGroups(this.editableEntity);
           this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         },
@@ -153,6 +162,8 @@ export class EntityCreateComponent implements OnInit {
   })
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
+    this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
+    this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -188,6 +199,27 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
+          mqHost: [entity.mqHost],
+          mqPort: [entity.mqPort],
+          mqQManager: [entity.mqQManager],
+          mqChannel: [entity.mqChannel],
+          mqQueueName: [entity.mqQueueName],
+          mqQueueBinding: [entity.mqQueueBinding],
+          mqQueueContext: [entity.mqQueueContext],
+          mqDebug: [entity.mqDebug],
+          mqSSLoptions: [entity.mqSSLoptions],
+          mqSSLciphers: [entity.mqSSLciphers],
+          mqSSLkey: [entity.mqSSLkey],
+          mqSSLcaCert: [entity.mqSSLcaCert],
+          mqHeader: [entity.mqHeader],
+          mqSessionTimeout: [entity.mqSessionTimeout]
+        });
+        this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
+          this.isLoading = false;
+          this.mqDetails = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
         });
         break;
       case ENTITY_SERVICE_TYPE.GPL:
@@ -284,7 +316,6 @@ export class EntityCreateComponent implements OnInit {
               }
               else {
                 this.stepper.reset();
-                this.initializeFormGroups(this.getEntityDefaultValue());
                 this.resetAllForms();
               }
             });
@@ -322,7 +353,6 @@ export class EntityCreateComponent implements OnInit {
         else {
           this.errorMessage = null;
           this.stepper.reset();
-          this.initializeFormGroups(this.getEntityDefaultValue());
           this.resetAllForms();
         }
       }
@@ -338,6 +368,7 @@ export class EntityCreateComponent implements OnInit {
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
+      ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
     });
@@ -378,7 +409,8 @@ export class EntityCreateComponent implements OnInit {
     this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value);
 
   getFormattedSchedule = (schedule: Schedule) =>
-    `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd + ' (every ' + schedule.windowInterval + ' minutes)' : ''}`
+    `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd +
+      (schedule.windowInterval > 0 ? ' (every ' + schedule.windowInterval + ' minutes)' : '') : ''}`
 
   openScheduleDialog = (scheduleRow?: { schedule: Schedule, index: number }) =>
     this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({

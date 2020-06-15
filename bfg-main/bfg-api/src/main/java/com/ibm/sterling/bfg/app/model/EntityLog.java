@@ -8,12 +8,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.util.StringUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
 @Entity
 @Table(name = "SCT_ENTITY_LOG")
@@ -268,10 +273,10 @@ public class EntityLog {
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        if (mailboxPathIn == null | mailboxPathIn.equals("")) mailboxPathIn = entity + "_" + service;
-        if (mailboxPathOut == null | mailboxPathOut.equals("")) mailboxPathOut = entity + "_" + service;
-        if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
-        if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {

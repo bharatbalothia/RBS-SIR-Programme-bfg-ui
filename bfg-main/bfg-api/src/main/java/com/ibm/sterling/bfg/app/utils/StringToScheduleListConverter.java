@@ -26,7 +26,7 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
                 e.printStackTrace();
             }
             return new String(out.toByteArray());
-        }).orElse(null);
+        }).orElse("");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
                     }
                     return schedulesList;
                 }
-        ).orElse(null);
+        ).orElse(new ArrayList<>());
     }
 
 }

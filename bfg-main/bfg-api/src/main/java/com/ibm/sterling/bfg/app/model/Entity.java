@@ -10,11 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
 @EntityValid(groups = {PostValidation.class})
 @EntityValidPut(groups = {PutValidation.class})
@@ -231,19 +234,20 @@ public class Entity implements EntityType {
     @OneToMany(
             fetch = FetchType.LAZY,
             mappedBy = "entity",
-            cascade = CascadeType.ALL) //, orphanRemoval = true
+            cascade = CascadeType.ALL)
     @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Valid
     private List<Schedule> schedules = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        if (mailboxPathIn == null) mailboxPathIn = entity + "_" + service;
-        if (mailboxPathOut == null) mailboxPathOut = entity + "_" + service;
-        if (mqQueueIn == null) mqQueueIn = entity + "_" + service;
-        if (mqQueueOut == null) mqQueueOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
     public static long getSerialVersionUID() {

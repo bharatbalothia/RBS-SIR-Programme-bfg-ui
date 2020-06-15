@@ -13,13 +13,13 @@ public class StringToListConverter implements AttributeConverter<List<String>, S
     public String convertToDatabaseColumn(List<String> list) {
         return Optional.ofNullable(list)
                 .map(strList -> String.join(";", strList))
-                .orElse(null);
+                .orElse("");
     }
 
     @Override
     public List<String> convertToEntityAttribute(String dbData) {
         return Optional.ofNullable(dbData)
                 .map(data -> Arrays.asList(data.split(";")))
-                .orElse(null);
+                .orElse(new ArrayList<>());
     }
 }

@@ -74,12 +74,17 @@ export class EntityCreateComponent implements OnInit {
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
       if (params.entityId) {
-        this.entityService.getEntityById(params.entityId).subscribe(data => {
+        this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
+          this.isLoading = false;
           this.editableEntity = data;
           this.initializeFormGroups(this.editableEntity);
           this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
-        });
+        },
+          error => {
+            this.isLoading = false;
+            this.errorMessage = getApiErrorMessage(error);
+          });
       }
     });
   }
@@ -175,7 +180,13 @@ export class EntityCreateComponent implements OnInit {
           schedules: [entity.schedules || []]
         });
         this.updateSchedulesDataSource();
-        this.entityService.getScheduleFileTypes().subscribe(data => this.scheduleFileTypes = data);
+        this.entityService.getScheduleFileTypes().pipe(data => this.setLoading(data)).subscribe((data: string[]) => {
+          this.isLoading = false;
+          this.scheduleFileTypes = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
         this.mqDetailsFormGroup = this.formBuilder.group({
         });
         break;
@@ -207,7 +218,13 @@ export class EntityCreateComponent implements OnInit {
           inboundDir: [entity.inboundDir, Validators.required],
           inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
         });
-        this.entityService.getInboundRequestTypes().subscribe(data => this.inboundRequestTypeList = data);
+        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe((data: string[]) => {
+          this.isLoading = false;
+          this.inboundRequestTypeList = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         break;

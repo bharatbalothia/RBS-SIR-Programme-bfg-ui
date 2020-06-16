@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.Schedule;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +31,7 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
     @Override
     public List<Schedule> convertToEntityAttribute(String schedules) {
         return Optional.ofNullable(schedules).map(schedulesStr -> {
-                    List<Schedule> schedulesList = new ArrayList<>();
+                     List<Schedule> schedulesList = new ArrayList<>();
                     try {
                         schedulesList = new ObjectMapper().readValue(
                                 schedulesStr, new TypeReference<List<Schedule>>() {

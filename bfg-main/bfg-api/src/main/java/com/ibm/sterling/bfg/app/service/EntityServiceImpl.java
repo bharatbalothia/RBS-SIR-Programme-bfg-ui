@@ -106,7 +106,7 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
         entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        return changeControl.convertEntityLogToEntity();
+        return entity;
     }
 
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
@@ -177,6 +177,7 @@ public class EntityServiceImpl implements EntityService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();

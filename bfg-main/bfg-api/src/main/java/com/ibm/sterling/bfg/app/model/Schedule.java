@@ -106,12 +106,12 @@ public class Schedule implements Serializable {
         this.entity = entity;
     }
 
-    public Boolean getWindow() {
+    public Boolean getIsWindow() {
         return isWindow;
     }
 
-    public void setWindow(Boolean window) {
-        isWindow = window;
+    public void setIsWindow(Boolean isWindow) {
+        this.isWindow = isWindow;
     }
 
     public String getTimeStart() {

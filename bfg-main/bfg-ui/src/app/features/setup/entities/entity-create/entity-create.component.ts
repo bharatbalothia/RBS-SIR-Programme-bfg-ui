@@ -300,7 +300,7 @@ export class EntityCreateComponent implements OnInit {
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
-          ...this.schedulesFormGroup && this.summaryPageFormGroup.value,
+          ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
         });
         let entityAction: Observable<Entity>;

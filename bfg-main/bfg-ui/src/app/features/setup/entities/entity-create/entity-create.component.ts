@@ -13,7 +13,7 @@ import { EntityValidators } from '../../../../shared/models/entity/entity-valida
 import { SWIFT_DN, TIME_24 } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
-import { Observable, scheduled } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
@@ -21,7 +21,6 @@ import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
 import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
-import * as moment from 'moment';
 import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 
 @Component({
@@ -170,7 +169,7 @@ export class EntityCreateComponent implements OnInit {
           entity: [entity.entity, {
             validators: [
               Validators.required,
-              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+              // this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
             ],
             asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
             updateOn: 'blur'
@@ -196,7 +195,7 @@ export class EntityCreateComponent implements OnInit {
           compression: [entity.compression],
           entityParticipantType: [entity.entityParticipantType],
           directParticipant: [entity.directParticipant]
-        }, {validators: this.entityValidators.directParticipantValidator()});
+        }, { validators: this.entityValidators.directParticipantValidator() });
         this.schedulesFormGroup = this.formBuilder.group({
           schedules: [entity.schedules || []]
         });
@@ -301,7 +300,8 @@ export class EntityCreateComponent implements OnInit {
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
-          ...this.schedulesFormGroup && this.convertScheduleListToUnix(this.schedulesFormGroup.get('schedules').value),
+          ...this.schedulesFormGroup && this.summaryPageFormGroup.value,
+          ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
         });
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
@@ -449,22 +449,5 @@ export class EntityCreateComponent implements OnInit {
       this.updateSchedulesDataSource();
     }
   })
-
-  convertScheduleListToUnix = (scheduleList: Schedule[] = []) => ({
-    schedules: scheduleList.map((schedule: Schedule) => ({
-      ...schedule,
-      timeStart: moment(schedule.timeStart, 'HH:mm').valueOf(),
-      windowEnd: schedule.windowEnd && moment(schedule.windowEnd, 'HH:mm').valueOf(),
-    }))
-  })
-
-  convertScheduleListToString = (scheduleList: Schedule[] = []) => ({
-    schedules: scheduleList.map((schedule: Schedule) => ({
-      ...schedule,
-      timeStart: moment(schedule.timeStart).format('HH:mm'),
-      windowEnd: schedule.windowEnd && moment(schedule.windowEnd).format('HH:mm'),
-    }))
-  })
-
 
 }

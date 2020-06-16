@@ -7,6 +7,7 @@ import { get, isUndefined } from 'lodash';
 import { getDisplayName } from '../display-names';
 import { SCHEDULE_VALIDATION_MESSAGES } from '../validation-messages';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
+import { TIME_24 } from 'src/app/core/constants/validation-regexes';
 
 @Component({
   selector: 'app-entity-schedule-dialog',
@@ -53,8 +54,18 @@ export class EntityScheduleDialogComponent implements OnInit {
     if (value) {
       this.scheduleFormGroup = this.formBuilder.group({
         isWindow: [true, Validators.required],
-        timeStart: [get(defaultValue, 'timeStart') || '', Validators.required],
-        windowEnd: [get(defaultValue, 'windowEnd') || '', Validators.required],
+        timeStart: [get(defaultValue, 'timeStart') || '', {
+          validators: [
+            Validators.required,
+            Validators.pattern(TIME_24)
+          ]
+        }],
+        windowEnd: [get(defaultValue, 'windowEnd') || '', {
+          validators: [
+            Validators.required,
+            Validators.pattern(TIME_24)
+          ]
+        }],
         windowInterval: [get(defaultValue, 'windowInterval') || '', Validators.required],
         fileType: [get(defaultValue, 'fileType') || this.fileTypes[0], Validators.required],
       });
@@ -62,7 +73,12 @@ export class EntityScheduleDialogComponent implements OnInit {
     else {
       this.scheduleFormGroup = this.formBuilder.group({
         isWindow: [false, Validators.required],
-        timeStart: [get(defaultValue, 'timeStart') || '', Validators.required],
+        timeStart: [get(defaultValue, 'timeStart') || '', {
+          validators: [
+            Validators.required,
+            Validators.pattern(TIME_24)
+          ]
+        }],
         fileType: [get(defaultValue, 'fileType') || this.fileTypes[0], Validators.required],
       });
     }

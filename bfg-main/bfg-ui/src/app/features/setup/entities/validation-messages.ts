@@ -37,9 +37,11 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     startOfDay: [
         { type: 'required', message: `${getDisplayName('startOfDay')} is required` },
+        { type: 'pattern', message: `${getDisplayName('startOfDay')} must be in the HH:mm format (24HR)` },
     ],
     endOfDay: [
         { type: 'required', message: `${getDisplayName('endOfDay')} is required` },
+        { type: 'pattern', message: `${getDisplayName('endOfDay')} must be in the HH:mm format (24HR)` },
     ],
     mailboxPathIn: [
         { type: 'required', message: `${getDisplayName('mailboxPathIn')} is required` },
@@ -58,9 +60,11 @@ export const SCHEDULE_VALIDATION_MESSAGES = {
     ],
     timeStart: [
         { type: 'required', message: `${getDisplayName('timeStart')} is required` },
+        { type: 'pattern', message: `${getDisplayName('timeStart')} must be in the HH:mm format (24HR)` },
     ],
     windowEnd: [
         { type: 'required', message: `${getDisplayName('windowEnd')} is required` },
+        { type: 'pattern', message: `${getDisplayName('windowEnd')} must be in the HH:mm format (24HR)` },
     ],
     windowInterval: [
         { type: 'required', message: `${getDisplayName('windowInterval')} is required` },

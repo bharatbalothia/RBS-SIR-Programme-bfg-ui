@@ -10,7 +10,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { get, isEmpty } from 'lodash';
 import { DISPLAY_NAMES } from '../display-names';
 import { EntityValidators } from '../../../../shared/models/entity/entity-validators';
-import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
+import { SWIFT_DN, TIME_24 } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable, scheduled } from 'rxjs';
@@ -177,8 +177,18 @@ export class EntityCreateComponent implements OnInit {
           }],
           maxBulksPerFile: [entity.maxBulksPerFile, Validators.required],
           maxTransfersPerBulk: [entity.maxTransfersPerBulk, Validators.required],
-          startOfDay: [entity.startOfDay, Validators.required],
-          endOfDay: [entity.endOfDay, Validators.required],
+          startOfDay: [entity.startOfDay, {
+            validators: [
+              Validators.required,
+              Validators.pattern(TIME_24)
+            ]
+          }],
+          endOfDay: [entity.endOfDay, {
+            validators: [
+              Validators.required,
+              Validators.pattern(TIME_24)
+            ]
+          }],
           mailboxPathIn: [entity.mailboxPathIn, Validators.required],
           mailboxPathOut: [entity.mailboxPathOut, Validators.required],
           mqQueueIn: [entity.mqQueueIn],

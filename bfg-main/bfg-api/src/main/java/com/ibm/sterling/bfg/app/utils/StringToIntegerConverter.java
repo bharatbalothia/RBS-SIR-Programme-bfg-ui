@@ -18,6 +18,6 @@ public class StringToIntegerConverter implements AttributeConverter<String, Inte
     public String convertToEntityAttribute(Integer dbData) {
         return Optional.ofNullable(dbData)
                 .map(String::valueOf)
-                .orElse("");
+                .orElse(null);
     }
 }

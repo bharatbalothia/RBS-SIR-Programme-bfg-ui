@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, ValidationErrors, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, AsyncValidatorFn, ValidatorFn, FormGroup, Validators } from '@angular/forms';
 import { EntityService } from './entity.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError, take } from 'rxjs/operators';
@@ -31,6 +31,22 @@ export class EntityValidators {
       const regexp = new RegExp(pattern);
       const match = regexp.test(control.value);
       return match ? null : { [error]: true } ;
+    };
+  }
+
+  directParticipantValidator(): ValidatorFn {
+    return (control: FormGroup): null => {
+      const participantType = control.get('entityParticipantType');
+      const directParticipant = control.get('directParticipant');
+
+      if (participantType.value === 'INDIRECT' && directParticipant.validator == null){
+        directParticipant.setValidators(Validators.required);
+        directParticipant.updateValueAndValidity();
+      } else if ( participantType.value !== 'INDIRECT' && directParticipant.validator != null) {
+        directParticipant.clearValidators();
+        directParticipant.updateValueAndValidity();
+      }
+      return null;
     };
   }
 

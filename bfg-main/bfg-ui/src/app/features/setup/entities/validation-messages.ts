@@ -46,6 +46,9 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     mailboxPathOut: [
         { type: 'required', message: `${getDisplayName('mailboxPathOut')} is required` },
+    ],
+    directParticipant: [
+        { type: 'required', message: `${getDisplayName('directParticipant')} is required if ${getDisplayName('entityParticipantType')} is INDIRECT` },
     ]
 };
 

@@ -186,7 +186,7 @@ export class EntityCreateComponent implements OnInit {
           compression: [entity.compression],
           entityParticipantType: [entity.entityParticipantType],
           directParticipant: [entity.directParticipant]
-        });
+        }, {validators: this.entityValidators.directParticipantValidator()});
         this.schedulesFormGroup = this.formBuilder.group({
           schedules: [entity.schedules || []]
         });

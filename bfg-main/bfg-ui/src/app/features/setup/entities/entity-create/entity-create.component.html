@@ -247,6 +247,11 @@
                     <mat-form-field *ngIf="entityPageFormGroup.get('directParticipant')">
                         <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
                         <input matInput formControlName="directParticipant">
+                        <mat-error *ngFor="let validation of entityValidationMessages.directParticipant">
+                            <mat-error class="error-message"
+                                *ngIf="entityPageFormGroup.get('directParticipant').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('directParticipant')">
                             {{getErrorByField('directParticipant')}}
                         </mat-error>

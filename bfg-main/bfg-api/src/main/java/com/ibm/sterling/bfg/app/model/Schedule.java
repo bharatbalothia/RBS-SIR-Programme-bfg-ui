@@ -1,18 +1,30 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.ibm.sterling.bfg.app.model.validation.PostValidation;
 import com.ibm.sterling.bfg.app.model.validation.PutValidation;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
+import com.ibm.sterling.bfg.app.utils.TimeUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import static com.ibm.sterling.bfg.app.utils.TimeUtil.DEFAULT_DATE_FORMAT;
 
 @javax.persistence.Entity
 @Table(name = "SCT_SCHEDULE")
-public class Schedule {
+public class Schedule implements Serializable {
+    private static final Logger LOG = LogManager.getLogger(Schedule.class);
 
     @Id
     @Column(name = "SCHEDULE_ID")
@@ -57,13 +69,26 @@ public class Schedule {
     private Boolean active = Boolean.TRUE;
 
     @Column(name = "NEXTRUN")
-    private Date nextRun;
+    @JsonFormat(pattern = DEFAULT_DATE_FORMAT)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime nextRun;
 
     @Column(name = "LASTRUN")
-    private Date lastRun;
+    @JsonFormat(pattern = DEFAULT_DATE_FORMAT)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime lastRun;
 
     @Column(name = "FILETYPE")
     private String fileType;
+
+    @PrePersist
+    @PreUpdate
+    public void init() {
+        nextRun = TimeUtil.convertTimeToLocalDateTime(timeStart);
+        LOG.debug("Setting transaction next runtime to : {}", nextRun);
+    }
 
     public Long getScheduleId() {
         return scheduleId;
@@ -129,19 +154,23 @@ public class Schedule {
         this.active = active;
     }
 
-    public Date getNextRun() {
+    public static Logger getLOG() {
+        return LOG;
+    }
+
+    public LocalDateTime getNextRun() {
         return nextRun;
     }
 
-    public void setNextRun(Date nextRun) {
+    public void setNextRun(LocalDateTime nextRun) {
         this.nextRun = nextRun;
     }
 
-    public Date getLastRun() {
+    public LocalDateTime getLastRun() {
         return lastRun;
     }
 
-    public void setLastRun(Date lastRun) {
+    public void setLastRun(LocalDateTime lastRun) {
         this.lastRun = lastRun;
     }
 

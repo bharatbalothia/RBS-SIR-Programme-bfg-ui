@@ -4,6 +4,7 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGener
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
+import com.ibm.sterling.bfg.app.utils.TimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
@@ -264,6 +265,10 @@ public class EntityLog {
         this.inboundRequestType = entity.getInboundRequestType();
         this.irishStep2 = entity.getIrishStep2();
         this.schedules = entity.getSchedules();
+        this.schedules
+                .forEach(
+                        schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTime(schedule.getTimeStart()))
+                );
     }
 
     @PrePersist

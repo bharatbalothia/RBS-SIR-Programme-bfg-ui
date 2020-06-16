@@ -11,13 +11,13 @@ public class StringToIntegerConverter implements AttributeConverter<String, Inte
     public Integer convertToDatabaseColumn(String attribute) {
         return Optional.ofNullable(attribute)
                 .map(Integer::valueOf)
-                .orElse(0);
+                .orElse(null);
     }
 
     @Override
     public String convertToEntityAttribute(Integer dbData) {
         return Optional.ofNullable(dbData)
                 .map(String::valueOf)
-                .orElse("0");
+                .orElse("");
     }
 }

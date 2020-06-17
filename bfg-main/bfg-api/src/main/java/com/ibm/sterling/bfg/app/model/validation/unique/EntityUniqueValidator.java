@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model.validation;
+package com.ibm.sterling.bfg.app.model.validation.unique;
 
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;

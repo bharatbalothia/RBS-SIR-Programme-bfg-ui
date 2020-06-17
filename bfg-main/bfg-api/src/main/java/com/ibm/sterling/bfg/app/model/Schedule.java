@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.ibm.sterling.bfg.app.model.validation.PostValidation;
-import com.ibm.sterling.bfg.app.model.validation.PutValidation;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.ScheduleValid;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
@@ -23,6 +23,7 @@ import static com.ibm.sterling.bfg.app.utils.TimeUtil.DEFAULT_DATE_FORMAT;
 
 @javax.persistence.Entity
 @Table(name = "SCT_SCHEDULE")
+@ScheduleValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
 public class Schedule implements Serializable {
     private static final Logger LOG = LogManager.getLogger(Schedule.class);
 
@@ -38,14 +39,15 @@ public class Schedule implements Serializable {
     private Entity entity;
 
     @Column(name = "ISWINDOW")
-    @NotNull(message = "Type has to be present", groups = {PostValidation.class, PutValidation.class})
+    @NotNull(message = "Type has to be present",
+            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean isWindow = Boolean.TRUE;
 
     @Column(name = "TIMESTART")
     @Pattern(
             regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
             message = "Time Start should be in HH:mm format (24HR)",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String timeStart = "00:00";
 
@@ -53,12 +55,13 @@ public class Schedule implements Serializable {
     @Pattern(
             regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
             message = "Time End should be in HH:mm format (24HR)",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     private String windowEnd;
 
     @Column(name = "WINDOWINTERVAL")
-    @Pattern(regexp = "^\\d+$", groups = {PostValidation.class, PutValidation.class})
+    @Pattern(regexp = "^\\d+$",
+            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Convert(converter = StringToIntegerConverter.class)
     private String windowInterval;
 
@@ -198,4 +201,5 @@ public class Schedule implements Serializable {
                 ", fileType='" + fileType + '\'' +
                 '}';
     }
+
 }

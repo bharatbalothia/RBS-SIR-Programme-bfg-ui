@@ -8,8 +8,8 @@ import com.ibm.sterling.bfg.app.model.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
-import com.ibm.sterling.bfg.app.model.validation.PostValidation;
-import com.ibm.sterling.bfg.app.model.validation.PutValidation;
+import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +21,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
 
 @Service
 @Transactional
@@ -76,8 +80,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Optional<Entity> findById(int id) {
         LOG.info("entity by id {}", id);
-        Optional<Entity> optionalEntity = entityRepository.findById(id);
-        return optionalEntity;
+        return entityRepository.findById(id);
     }
 
     @Override
@@ -96,7 +99,39 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
+    private Class getEntityValidationGroup(Entity entity, Operation operation) {
+        Map<String, Map<Operation, Class>> entityOperationMap = new HashMap<String, Map<Operation, Class>>() {
+            {
+                put("GPL", new HashMap<Operation, Class>() {
+                            {
+                                put(CREATE, GplValidation.PostValidation.class);
+                                put(UPDATE, GplValidation.PutValidation.class);
+
+                            }
+                        }
+                );
+                put("SCT", new HashMap<Operation, Class>() {
+                            {
+                                put(CREATE, SctValidation.PostValidation.class);
+                                put(UPDATE, SctValidation.PutValidation.class);
+                            }
+                        }
+                );
+            }
+        };
+        return entityOperationMap.get(entity.getService()).get(operation);
+    }
+
+    private void validateEntity(Entity entity, Operation operation) {
+        Set<ConstraintViolation<Entity>> violations;
+        violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
+        validateEntity(entity, operation);
         LOG.info("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
@@ -149,11 +184,12 @@ public class EntityServiceImpl implements EntityService {
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
         LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
-        if (entity.getEntityId() != null) {
-            List<Long> deletedScheduleId = getAbsentSchedules(scheduleService.findActualSchedulesByEntityId(entity.getEntityId()), entity.getSchedules());
-            deletedScheduleId.forEach(id -> scheduleService.deleteById(id));
-        }
-
+        Optional.ofNullable(entity.getEntityId()).ifPresent(entityId -> {
+                    List<Long> deletedScheduleId = getAbsentSchedules(
+                            scheduleService.findActualSchedulesByEntityId(entityId), entity.getSchedules());
+                    deletedScheduleId.forEach(id -> scheduleService.deleteById(id));
+                }
+        );
         entity.setSchedules(
                 changeControl.getEntityLog()
                         .getSchedules()
@@ -161,23 +197,9 @@ public class EntityServiceImpl implements EntityService {
                         .peek(schedule ->
                                 schedule.setEntity(entity))
                         .collect(Collectors.toList())
-
         );
-        Set<ConstraintViolation<Entity>> violations = null;
         Operation operation = changeControl.getOperation();
-        switch (operation) {
-            case CREATE:
-                violations = validator.validate(entity, PostValidation.class);
-                break;
-            case UPDATE:
-                violations = validator.validate(entity, PutValidation.class);
-                break;
-            case DELETE:
-        }
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-
+        validateEntity(entity, operation);
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
@@ -244,4 +266,5 @@ public class EntityServiceImpl implements EntityService {
         entities.remove(editedEntity);
         return entities;
     }
+
 }

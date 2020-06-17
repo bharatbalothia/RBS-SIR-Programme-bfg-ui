@@ -3,21 +3,22 @@ package com.ibm.sterling.bfg.app.model.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.List;
 
 public class UserCredentials implements UserDetails {
 
     private String userName;
     private String token;
-    private List<GrantedAuthority> groups;
+    private List<GrantedAuthority> permissions;
 
     public UserCredentials(
             String userName,
             String token,
-            List<GrantedAuthority> groups) {
+            List<GrantedAuthority> permissions) {
         this.userName = userName;
         this.token = token;
-        this.groups = groups;
+        this.permissions = permissions;
     }
 
     @JsonIgnore
@@ -54,13 +55,9 @@ public class UserCredentials implements UserDetails {
         return true;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     @Override
     public List<GrantedAuthority> getAuthorities() {
-        return groups;
+        return permissions;
     }
 
     @Override
@@ -73,12 +70,16 @@ public class UserCredentials implements UserDetails {
         this.userName = userName;
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public void setToken(String token) {
         this.token = token;
     }
 
-    public void setGroups(List<GrantedAuthority> groups) {
-        this.groups = groups;
+    public void setPermissions(List<GrantedAuthority> permissions) {
+        this.permissions = permissions;
     }
 
 }

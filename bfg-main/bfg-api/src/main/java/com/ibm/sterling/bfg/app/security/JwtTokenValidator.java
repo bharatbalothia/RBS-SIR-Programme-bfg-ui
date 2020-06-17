@@ -19,12 +19,11 @@ public class JwtTokenValidator {
 
     public UserCredentials parseToken(String token) {
         Claims body = parseClaims(token).getBody();
-        List<HashMap<String, String>> groups = body.get("groups", List.class);
-        List<GrantedAuthority> groupList = groups.stream()
-                .flatMap(groupMap -> groupMap.values().stream())
+        List<String> permissions = body.get("permissions", List.class);
+        List<GrantedAuthority> grantedAuthorityList = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        return new UserCredentials(body.getSubject(), token, groupList);
+        return new UserCredentials(body.getSubject(), token, grantedAuthorityList);
     }
 
     private Jws<Claims> parseClaims(String token) {

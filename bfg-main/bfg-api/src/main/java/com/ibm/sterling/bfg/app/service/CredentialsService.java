@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,9 +25,6 @@ public class CredentialsService {
 
     @Value("${authentication.url}")
     private String authenticationUrl;
-
-    @Value("${permissions.url}")
-    private String permissionsUrl;
 
     @Autowired
     private PermissionsService permissionsService;
@@ -51,19 +49,16 @@ public class CredentialsService {
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
 
-        List<Map<String, String>> permissionList = permissionsService.getPermissionList(permissionsUrl, loginRequest);
+        List<String> permissionList = permissionsService.getPermissionList(loginRequest);
 
         return Optional.ofNullable(user.get("authenticated"))
-                .filter(JsonNode::asBoolean).map(auth -> {
-                            List<String> groups = objectMapper.convertValue(user.get("groups"), ArrayList.class);
-                            return new UserCredentials(
-                                    user.get("name").asText(),
-                                    null,
-                                    groups.stream()
-                                            .map(SimpleGrantedAuthority::new)
-                                            .collect(Collectors.toList())
-                            );
-                        }
-                ).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
+                .filter(JsonNode::asBoolean).map(auth -> new UserCredentials(
+                        user.get("name").asText(),
+                        null,
+                        permissionList.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList())
+                )).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
     }
+
 }

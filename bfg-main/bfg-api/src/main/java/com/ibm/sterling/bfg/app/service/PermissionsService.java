@@ -8,13 +8,11 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.*;
-
+import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
 public class PermissionsService {
-    private static final String HEADER_PREFIX = "Basic ";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Map<String, String>> getPermissionList(String permissionUrl,
@@ -45,6 +43,7 @@ public class PermissionsService {
                         String.class
                 );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
-        return objectMapper.convertValue(root, List.class);
+        List<Map<String, String>> list = objectMapper.convertValue(root, List.class);
+        return list;
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +51,7 @@ public class CredentialsService {
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
 
-        List<Map<String, String>> permissionsList = permissionsService.getPermissionList(permissionsUrl, loginRequest);
+        List<Map<String, String>> permissionList = permissionsService.getPermissionList(permissionsUrl, loginRequest);
 
         return Optional.ofNullable(user.get("authenticated"))
                 .filter(JsonNode::asBoolean).map(auth -> {
@@ -67,5 +66,4 @@ public class CredentialsService {
                         }
                 ).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
     }
-
 }

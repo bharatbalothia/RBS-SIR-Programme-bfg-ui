@@ -4,7 +4,6 @@ import com.ibm.sterling.bfg.app.model.security.JwtAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,10 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.AUTHENTICATION_HEADER_NAME;
+import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX_TOKEN;
 
-    private static final String AUTHENTICATION_HEADER_NAME = "Authorization";
-    private static final String HEADER_PREFIX = "Bearer ";
+public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public JwtAuthenticationFilter() {
         super("/**");
@@ -42,8 +41,8 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     private static String extractToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(AUTHENTICATION_HEADER_NAME))
-                .filter(head -> head.length() > HEADER_PREFIX.length())
-                .map(head -> head.substring(HEADER_PREFIX.length()))
+                .filter(head -> head.length() > HEADER_PREFIX_TOKEN.length())
+                .map(head -> head.substring(HEADER_PREFIX_TOKEN.length()))
                 .orElseThrow(() -> new BadCredentialsException("Token corrupted"));
     }
 

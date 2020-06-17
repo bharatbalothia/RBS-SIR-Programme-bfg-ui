@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.service;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,20 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
+import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 
 @Service
 public class PropertyService {
 
-    private static final String PROPERTY_KEY = "propertyKey";
-    private static final String PROPERTY_VALUE = "propertyValue";
-    private static final String HEADER_PREFIX = "Basic ";
-    private static final String SYSTEM_DIGITAL_CERTIFICATES = "SystemDigitalCertificates";
-    private static final String CA_DIGITAL_CERTIFICATES = "CaDigitalCertificates";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private PropertySettings settings;
@@ -98,5 +91,4 @@ public class PropertyService {
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
         return objectMapper.convertValue(root, List.class);
     }
-
 }

@@ -10,7 +10,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { get, isEmpty } from 'lodash';
 import { DISPLAY_NAMES } from '../display-names';
 import { EntityValidators } from '../../../../shared/models/entity/entity-validators';
-import { SWIFT_DN, TIME_24 } from 'src/app/core/constants/validation-regexes';
+import { SWIFT_DN, TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable } from 'rxjs';
@@ -174,8 +174,18 @@ export class EntityCreateComponent implements OnInit {
             asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
             updateOn: 'blur'
           }],
-          maxBulksPerFile: [entity.maxBulksPerFile, Validators.required],
-          maxTransfersPerBulk: [entity.maxTransfersPerBulk, Validators.required],
+          maxBulksPerFile: [entity.maxBulksPerFile, {
+            validators: [
+              Validators.required,
+              Validators.pattern(NON_NEGATIVE_INT)
+            ]
+          }],
+          maxTransfersPerBulk: [entity.maxTransfersPerBulk, {
+            validators: [
+              Validators.required,
+              Validators.pattern(NON_NEGATIVE_INT)
+            ]
+          }],
           startOfDay: [entity.startOfDay, {
             validators: [
               Validators.required,
@@ -209,7 +219,7 @@ export class EntityCreateComponent implements OnInit {
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
           mqHost: [entity.mqHost],
-          mqPort: [entity.mqPort],
+          mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
           mqQManager: [entity.mqQManager],
           mqChannel: [entity.mqChannel],
           mqQueueName: [entity.mqQueueName],
@@ -221,7 +231,7 @@ export class EntityCreateComponent implements OnInit {
           mqSSLkey: [entity.mqSSLkey],
           mqSSLcaCert: [entity.mqSSLcaCert],
           mqHeader: [entity.mqHeader],
-          mqSessionTimeout: [entity.mqSessionTimeout]
+          mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
         });
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;

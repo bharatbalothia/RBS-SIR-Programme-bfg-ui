@@ -3,6 +3,7 @@ import { AbstractControl, ValidationErrors, AsyncValidatorFn, ValidatorFn, FormG
 import { EntityService } from './entity.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError, take } from 'rxjs/operators';
+import { BIC11, BIC8 } from 'src/app/core/constants/validation-regexes';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +25,9 @@ export class EntityValidators {
 
   entityPatternByServiceValidator(service: AbstractControl): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const pattern = service.value === 'GPL' ?
-        '^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$' :
-        '^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]$';
+      const pattern = service.value === 'GPL' ? BIC11 : BIC8;
       const error = service.value === 'GPL' ? 'patternBIC11' : 'patternBIC8';
-      const regexp = new RegExp(pattern);
-      const match = regexp.test(control.value);
+      const match = pattern.test(control.value);
       return match ? null : { [error]: true } ;
     };
   }

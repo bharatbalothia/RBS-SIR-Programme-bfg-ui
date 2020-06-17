@@ -324,6 +324,11 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqPort'] || 'mqPort'}}</mat-label>
                         <input matInput type="number" min="0" formControlName="mqPort">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqPort">
+                            <mat-error class="error-message"
+                                *ngIf="mqDetailsFormGroup.get('mqPort').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqPort')">
                             {{getErrorByField('mqPort')}}
                         </mat-error>
@@ -437,6 +442,11 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSessionTimeout'] || 'mqSessionTimeout'}}</mat-label>
                         <input matInput formControlName="mqSessionTimeout" type="number" min="0">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqSessionTimeout">
+                            <mat-error class="error-message"
+                                *ngIf="mqDetailsFormGroup.get('mqSessionTimeout').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqSessionTimeout')">
                             {{getErrorByField('mqSessionTimeout')}}
                         </mat-error>

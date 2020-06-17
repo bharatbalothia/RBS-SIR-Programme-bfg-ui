@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, Pipe } from '@angular/core';
 import { DetailsDialogData, Section, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined } from 'lodash';
+import { getDisplayName } from 'src/app/features/setup/entities/display-names';
 
 @Component({
   selector: 'app-details-dialog',
@@ -9,6 +10,8 @@ import { isUndefined } from 'lodash';
   styleUrls: ['./details-dialog.component.scss']
 })
 export class DetailsDialogComponent implements OnInit {
+
+  getDisplayName = getDisplayName;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];
@@ -26,8 +29,10 @@ export class DetailsDialogComponent implements OnInit {
 
   updateSections() {
     this.data.tabs.forEach((tab, index) => {
-      tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
-        .filter(item => !isUndefined(item.fieldValue)));
+      if (tab.tabSections) {
+        tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
+          .filter(item => !isUndefined(item.fieldValue)));
+      }
       this.tabs[index] = tab;
     });
   }

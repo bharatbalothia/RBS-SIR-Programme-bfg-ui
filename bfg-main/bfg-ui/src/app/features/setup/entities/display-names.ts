@@ -4,6 +4,9 @@ import { ChangeControl } from 'src/app/shared/models/changeControl/change-contro
 import { isEmpty } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
+import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
+import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 
 export const DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -39,6 +42,8 @@ export const DISPLAY_NAMES = {
   windowEnd: 'Time End',
   windowInterval: 'Time Interval',
   fileType: 'FileType',
+  lastRun: 'Last Run',
+  nextRun: 'Next Run',
   windowSchedules: 'Window Schedules',
   dailySchedules: 'Daily Schedules',
   maxBulksPerFile: 'Max bulks per file',
@@ -75,6 +80,29 @@ const getEntityDetailsSectionItems = (entity) => ({
     { fieldName: getDisplayName('entityId'), fieldValue: entity.entityId },
     { fieldName: getDisplayName('entity'), fieldValue: entity.entity },
     { fieldName: getDisplayName('service'), fieldValue: entity.service, shouldDisplayValueUpperCase: true },
+    ...entity.service === ENTITY_SERVICE_TYPE.SCT && [{ fieldName: getDisplayName('maxBulksPerFile'), fieldValue: entity.maxBulksPerFile },
+    { fieldName: getDisplayName('maxTransfersPerBulk'), fieldValue: entity.maxTransfersPerBulk },
+    { fieldName: getDisplayName('compression'), fieldValue: entity.compression },
+    { fieldName: getDisplayName('startOfDay'), fieldValue: entity.startOfDay },
+    { fieldName: getDisplayName('endOfDay'), fieldValue: entity.endOfDay },
+    { fieldName: getDisplayName('entityParticipantType'), fieldValue: entity.entityParticipantType },
+    { fieldName: getDisplayName('directParticipant'), fieldValue: entity.directParticipant }],
+  ],
+  'MQ Details': [
+    { fieldName: getDisplayName('mqHost'), fieldValue: entity.mqHost },
+    { fieldName: getDisplayName('mqPort'), fieldValue: entity.mqPort },
+    { fieldName: getDisplayName('mqQManager'), fieldValue: entity.mqQManager },
+    { fieldName: getDisplayName('mqChannel'), fieldValue: entity.mqChannel },
+    { fieldName: getDisplayName('mqQueueName'), fieldValue: entity.mqQueueName },
+    { fieldName: getDisplayName('mqQueueBinding'), fieldValue: entity.mqQueueBinding },
+    { fieldName: getDisplayName('mqQueueContext'), fieldValue: entity.mqQueueContext },
+    { fieldName: getDisplayName('mqDebug'), fieldValue: entity.mqDebug },
+    { fieldName: getDisplayName('mqSSLoptions'), fieldValue: entity.mqSSLoptions },
+    { fieldName: getDisplayName('mqSSLciphers'), fieldValue: entity.mqSSLciphers },
+    { fieldName: getDisplayName('mqSSLkey'), fieldValue: entity.mqSSLkey },
+    { fieldName: getDisplayName('mqSSLcaCert'), fieldValue: entity.mqSSLcaCert },
+    { fieldName: getDisplayName('mqHeader'), fieldValue: entity.mqHeader },
+    { fieldName: getDisplayName('mqSessionTimeout'), fieldValue: entity.mqSessionTimeout },
   ],
   'SWIFT Details': [
     { fieldName: getDisplayName('requestorDN'), fieldValue: entity.requestorDN },
@@ -107,11 +135,27 @@ export const getEntityDetailsFields = (entity: Entity): Tab[] => [
     tabTitle: 'Entity Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
   },
+  entity.service === ENTITY_SERVICE_TYPE.SCT && {
+    tabTitle: 'MQ Details',
+    tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['MQ Details'] }]
+  },
+  entity.service === ENTITY_SERVICE_TYPE.SCT && {
+    tabTitle: 'Schedules',
+    tabSections: [],
+    tableObject: {
+      tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
+      tableDataSource: entity.schedules.map((schedule: Schedule) =>
+        ({
+          ...schedule,
+          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+        }))
+    }
+  },
   {
     tabTitle: 'SWIFT Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['SWIFT Details'] }]
   },
-  {
+  entity.service === ENTITY_SERVICE_TYPE.GPL && {
     tabTitle: `${entity.service} Routing Details`,
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Routing Details'] }]
   }

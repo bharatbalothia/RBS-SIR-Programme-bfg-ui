@@ -253,10 +253,10 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setMqQueueBinding(entityLog.getMqQueueBinding());
         entityFromLog.setMqQueueContext(entityLog.getMqQueueContext());
         entityFromLog.setMqDebug(entityLog.getMqDebug());
-        entityFromLog.setMqSSLoptions(entityLog.getMqSSLoptions());
-        entityFromLog.setMqSSLciphers(entityLog.getMqSSLciphers());
-        entityFromLog.setMqSSLkey(entityLog.getMqSSLkey());
-        entityFromLog.setMqSSLcaCert(entityLog.getMqSSLcaCert());
+        entityFromLog.setMqSSLOptions(entityLog.getMqSSLOptions());
+        entityFromLog.setMqSSLCiphers(entityLog.getMqSSLCiphers());
+        entityFromLog.setMqSSLKeyCert(entityLog.getMqSSLKeyCert());
+        entityFromLog.setMqSSLCaCert(entityLog.getMqSSLCaCert());
         entityFromLog.setMqHeader(entityLog.getMqHeader());
         entityFromLog.setMqSessionTimeout(entityLog.getMqSessionTimeout());
         entityFromLog.setInboundRequestorDN(entityLog.getInboundRequestorDN());

@@ -1,4 +1,6 @@
-package com.ibm.sterling.bfg.app.model.validation;
+package com.ibm.sterling.bfg.app.model.validation.unique;
+
+import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 
 import java.lang.annotation.*;
 import javax.validation.*;

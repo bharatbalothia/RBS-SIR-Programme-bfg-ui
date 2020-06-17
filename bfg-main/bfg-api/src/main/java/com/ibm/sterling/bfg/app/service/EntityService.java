@@ -22,8 +22,6 @@ public interface EntityService extends FieldValueExists {
 
     Optional<Entity> findById(int id);
 
-    void deleteById(int id);
-
     Entity save(Entity entity);
 
     public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception;

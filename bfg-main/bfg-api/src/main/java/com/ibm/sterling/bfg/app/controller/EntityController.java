@@ -15,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -61,7 +61,7 @@ public class EntityController {
         String changeId = (String) approve.get("changeID");
         return Optional.ofNullable(
                 entityService.getEntityAfterApprove(
-                        changeId,
+                        changeControlService.findById(changeId).orElseThrow(EntityNotFoundException::new),
                         (String) approve.get("approverComments"),
                         status))
                 .map(record -> ok()
@@ -78,16 +78,7 @@ public class EntityController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasPermission('SFG_UI_SCT_CREATE_ENTITY_' + #entity.service)")
     public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
-        String service = Optional.ofNullable(entity.getService()).orElseThrow(EntityNotFoundException::new);
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        boolean present = authorities
-                .stream()
-                .map(authority -> authority.getAuthority())
-                .filter(permission -> permission
-                        .equals("SFG_UI_SCT_CREATE_ENTITY_" + service.toUpperCase()))
-                .findAny().isPresent();
         return ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 

@@ -7,7 +7,7 @@ import { get, isUndefined } from 'lodash';
 import { getDisplayName } from '../display-names';
 import { SCHEDULE_VALIDATION_MESSAGES } from '../validation-messages';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
-import { TIME_24 } from 'src/app/core/constants/validation-regexes';
+import { TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 
 @Component({
   selector: 'app-entity-schedule-dialog',
@@ -66,7 +66,12 @@ export class EntityScheduleDialogComponent implements OnInit {
             Validators.pattern(TIME_24)
           ]
         }],
-        windowInterval: [get(defaultValue, 'windowInterval') || '', Validators.required],
+        windowInterval: [get(defaultValue, 'windowInterval') || '', {
+          validators: [
+            Validators.required,
+            Validators.pattern(NON_NEGATIVE_INT)
+          ]
+        }],
         fileType: [get(defaultValue, 'fileType') || this.fileTypes[0], Validators.required],
       });
     }

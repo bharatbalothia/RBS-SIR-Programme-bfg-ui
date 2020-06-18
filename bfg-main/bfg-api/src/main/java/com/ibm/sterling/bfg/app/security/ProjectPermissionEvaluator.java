@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProjectPermissionEvaluator implements PermissionEvaluator {
+
     @Autowired
     private EntityService entityService;
+
     @Autowired
     private ChangeControlService controlService;
 
@@ -35,10 +37,9 @@ public class ProjectPermissionEvaluator implements PermissionEvaluator {
         if ((authentication == null) || (type == null) || !(operation instanceof String)) {
             return false;
         }
-        switch (type) {
-            case "Entity":
-                Entity entity = entityService.findById((Integer) id).orElseThrow(EntityNotFoundException::new);
-                return isAllowed(getPermission(entity, (String) operation));
+        if ("Entity".equals(type)) {
+            Entity entity = entityService.findById((Integer) id).orElseThrow(EntityNotFoundException::new);
+            return isAllowed(getPermission(entity, (String) operation));
         }
         return false;
     }
@@ -50,20 +51,20 @@ public class ProjectPermissionEvaluator implements PermissionEvaluator {
             service = entity.getService();
         } else {
             Map<String, String> map = (Map) object;
-            String changeId = (String) map.get("changeID");
+            String changeId = map.get("changeID");
             ChangeControl cc = controlService.findById(changeId).orElseThrow(EntityNotFoundException::new);
             service = cc.getResultMeta2();
         }
-        String permission = "SFG_UI_SCT_" + operation + "_ENTITY_" + service;
-        return permission;
+        return "SFG_UI_SCT_" + operation + "_ENTITY_" + service;
     }
 
     private boolean isAllowed(String permission) {
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        List<String> listOfPermissions = authorities
-                .stream()
-                .map(authority -> authority.getAuthority())
+        Collection<? extends GrantedAuthority> authorities =
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        List<String> listOfPermissions = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         return listOfPermissions.contains(permission);
     }
+
 }

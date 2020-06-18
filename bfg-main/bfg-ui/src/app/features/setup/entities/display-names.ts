@@ -1,7 +1,7 @@
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { isEmpty, merge } from 'lodash';
+import { isEmpty, merge, isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
@@ -242,7 +242,9 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
       changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
       {
         sectionTitle: 'Schedules',
-        sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Schedules']
+        sectionItems:
+          getEntityDetailsSectionItems(isSchedulesDifferent(changeControl.entityBefore.schedules, changeControl.entityLog.schedules)
+            && changeControl.entityLog)['Schedules']
       },
       {
         sectionTitle: 'SWIFT Details',
@@ -257,7 +259,14 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
   }
 ].filter(el => el);
 
-const getScheduleRowFormat = (schedule: Schedule) => `${schedule.isWindow ?
-  `${SCHEDULE_TYPE.WINDOW} ${schedule.timeStart}-${schedule.windowEnd}(${schedule.windowInterval})`
-  : `${SCHEDULE_TYPE.DAILY} ${schedule.timeStart}`}
-     ${schedule.fileType} (${schedule.lastRun ? `Last Run: ${schedule.lastRun}, ` : ''}${schedule.nextRun ? `Next Run: ${schedule.nextRun}` : ''})`;
+const getScheduleRowFormat = (schedule) => {
+  const windowType = typeof schedule.isWindow === 'string' ?
+    SCHEDULE_TYPE[schedule.isWindow.toUpperCase()] : (schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY);
+  return `${windowType} ${schedule.timeStart}${windowType === SCHEDULE_TYPE.WINDOW
+    ? `-${schedule.windowEnd}(${schedule.windowInterval})` : ''} ${schedule.fileType} (${schedule.lastRun
+      ? `Last Run: ${schedule.lastRun}, ` : ''}${schedule.nextRun ? `Next Run: ${schedule.nextRun}` : ''})`;
+};
+
+const isSchedulesDifferent = (schedulesBefore, schedulesAfter) =>
+  !isEqual(schedulesBefore.map((el) => getScheduleRowFormat(el)), schedulesAfter.map((el) => getScheduleRowFormat(el)));
+

@@ -133,7 +133,7 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
   ]
 });
 
-export const getEntityDetailsFields = (entity: Entity): Tab[] => [
+export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
   {
     tabTitle: 'Entity Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
@@ -164,7 +164,7 @@ export const getEntityDetailsFields = (entity: Entity): Tab[] => [
   }
 ].filter(el => el);
 
-export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => [
+export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.CHANGE_DETAILS,
     tabSections: [{

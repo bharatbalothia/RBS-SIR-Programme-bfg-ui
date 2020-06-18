@@ -30,6 +30,7 @@ import { InputLowercaseDirective } from './directives/input-lowercase/input-lowe
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DisplayTableCellComponent } from './components/display-table-cell/display-table-cell.component';
+import { TabContentComponent } from './components/tab-content/tab-content.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { DisplayTableCellComponent } from './components/display-table-cell/displ
     ConfirmDialogComponent,
     DetailsDialogComponent,
     DisplayTableCellComponent,
+    TabContentComponent,
     // Directives
     InputLowercaseDirective,
   ],
@@ -100,6 +102,7 @@ import { DisplayTableCellComponent } from './components/display-table-cell/displ
     // Components
     ConfirmDialogComponent,
     DisplayTableCellComponent,
+    TabContentComponent,
     // Directives
     InputLowercaseDirective,
   ]

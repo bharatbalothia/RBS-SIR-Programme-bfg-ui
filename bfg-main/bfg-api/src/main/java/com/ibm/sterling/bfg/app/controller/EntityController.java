@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class EntityController {
     }
 
     @PostMapping("pending")
+    @PreAuthorize("hasAnyAuthority('SFG_UI_SCT_APPROVE_ENTITY_GPL', 'SFG_UI_SCT_APPROVE_ENTITY_SCT')")
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
@@ -78,6 +80,7 @@ public class EntityController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SFG_UI_SCT_CREATE_ENTITY_SCT', 'SFG_UI_SCT_CREATE_ENTITY_GPL')")
     public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
         return ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }

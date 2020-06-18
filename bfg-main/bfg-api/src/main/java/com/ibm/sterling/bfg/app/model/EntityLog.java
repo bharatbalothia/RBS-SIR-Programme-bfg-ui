@@ -1,17 +1,24 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
+import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
+import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
+import com.ibm.sterling.bfg.app.utils.TimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
 @Entity
 @Table(name = "SCT_ENTITY_LOG")
@@ -29,7 +36,7 @@ public class EntityLog {
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String entityLogId;
-
+    @Column(name = "ENTITY_ID")
     private Integer entityId;
     @NotBlank(message = "ENTITY has to be present")
     private String entity;
@@ -40,12 +47,6 @@ public class EntityLog {
     private String mailboxPathOut;
     @Column(name = "MQQUEUEOUT")
     private String mqQueueOut;
-
-    @Transient
-    private List schedules = new ArrayList();
-    @Transient
-    private List deletedSchedules = new ArrayList();
-
     @Column(name = "ROUTE_INBOUND")
     private Boolean routeInbound;
     @Column(name = "ROUTE_OUTBOUND")
@@ -106,10 +107,12 @@ public class EntityLog {
     private Integer maxBulksPerFile;
     @Column(name = "STARTOFDAY")
     @NotNull(message = "STARTOFDAY has to be present")
-    private Integer startOfDay;
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    private String startOfDay;
     @Column(name = "ENDOFDAY")
     @NotNull(message = "ENDOFDAY has to be present")
-    private Integer endOfDay;
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    private String endOfDay;
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -148,16 +151,17 @@ public class EntityLog {
     private String mqQueueBinding;
     @Column(name = "MQ_QCONTEXT")
     private String mqQueueContext;
+    @Convert(converter = DebugStringToIntegerConverter.class)
     @Column(name = "MQ_DEBUG")
-    private Integer mqDebug;
+    private String mqDebug;
     @Column(name = "MQ_SSLOPTION")
-    private String mqSSLoptions;
+    private String mqSSLOptions;
     @Column(name = "MQ_SSLCIPHERS")
-    private String mqSSLciphers;
+    private String mqSSLCiphers;
     @Column(name = "MQ_SSLSYSTEMCERTID")
-    private String mqSSLkey;
+    private String mqSSLKeyCert;
     @Column(name = "MQ_SSLCACERTID")
-    private String mqSSLcaCert;
+    private String mqSSLCaCert;
     @Column(name = "MQ_HEADER")
     private String mqHeader;
     @Column(name = "MQ_SESSIONTIMEOUT")
@@ -186,6 +190,10 @@ public class EntityLog {
 
     @Column(name = "IRISH_STEP2")
     private Boolean irishStep2;
+
+    @Convert(converter = StringToScheduleListConverter.class)
+    @Column(name = "SCHEDULES", columnDefinition = "varchar2(4000)")
+    private List<Schedule> schedules;
 
     public EntityLog() {
     }
@@ -236,10 +244,10 @@ public class EntityLog {
         this.mqQueueBinding = entity.getMqQueueBinding();
         this.mqQueueContext = entity.getMqQueueContext();
         this.mqDebug = entity.getMqDebug();
-        this.mqSSLoptions = entity.getMqSSLoptions();
-        this.mqSSLciphers = entity.getMqSSLciphers();
-        this.mqSSLkey = entity.getMqSSLkey();
-        this.mqSSLcaCert = entity.getMqSSLcaCert();
+        this.mqSSLOptions = entity.getMqSSLOptions();
+        this.mqSSLCiphers = entity.getMqSSLCiphers();
+        this.mqSSLKeyCert = entity.getMqSSLKeyCert();
+        this.mqSSLCaCert = entity.getMqSSLCaCert();
         this.mqHeader = entity.getMqHeader();
         this.mqSessionTimeout = entity.getMqSessionTimeout();
         this.inboundRequestorDN = entity.getInboundRequestorDN();
@@ -259,17 +267,19 @@ public class EntityLog {
         this.deleted = entity.getDeleted();
         this.inboundRequestType = entity.getInboundRequestType();
         this.irishStep2 = entity.getIrishStep2();
-
+        this.schedules = entity.getSchedules();
+        this.schedules.forEach(
+                schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTime(schedule.getTimeStart())));
     }
 
     @PrePersist
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        mailboxPathIn = entity + "_" + service;
-        mailboxPathOut = entity + "_" + service;
-        mqQueueIn = entity + "_" + service;
-        mqQueueOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {
@@ -304,20 +314,12 @@ public class EntityLog {
         this.service = service;
     }
 
-    public List getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
-    }
-
-    public List getDeletedSchedules() {
-        return deletedSchedules;
-    }
-
-    public void setDeletedSchedules(List deletedSchedules) {
-        this.deletedSchedules = deletedSchedules;
     }
 
     public String getMailboxPathOut() {
@@ -560,19 +562,19 @@ public class EntityLog {
         this.maxBulksPerFile = maxBulksPerFile;
     }
 
-    public Integer getStartOfDay() {
+    public String getStartOfDay() {
         return startOfDay;
     }
 
-    public void setStartOfDay(Integer startOfDay) {
+    public void setStartOfDay(String startOfDay) {
         this.startOfDay = startOfDay;
     }
 
-    public Integer getEndOfDay() {
+    public String getEndOfDay() {
         return endOfDay;
     }
 
-    public void setEndOfDay(Integer endOfDay) {
+    public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
     }
 
@@ -728,44 +730,44 @@ public class EntityLog {
         this.mqQueueContext = mqQueueContext;
     }
 
-    public Integer getMqDebug() {
+    public String getMqDebug() {
         return mqDebug;
     }
 
-    public void setMqDebug(Integer mqDebug) {
+    public void setMqDebug(String mqDebug) {
         this.mqDebug = mqDebug;
     }
 
-    public String getMqSSLoptions() {
-        return mqSSLoptions;
+    public String getMqSSLOptions() {
+        return mqSSLOptions;
     }
 
-    public void setMqSSLoptions(String mqSSLoptions) {
-        this.mqSSLoptions = mqSSLoptions;
+    public void setMqSSLOptions(String mqSSLOptions) {
+        this.mqSSLOptions = mqSSLOptions;
     }
 
-    public String getMqSSLciphers() {
-        return mqSSLciphers;
+    public String getMqSSLCiphers() {
+        return mqSSLCiphers;
     }
 
-    public void setMqSSLciphers(String mqSSLciphers) {
-        this.mqSSLciphers = mqSSLciphers;
+    public void setMqSSLCiphers(String mqSSLCiphers) {
+        this.mqSSLCiphers = mqSSLCiphers;
     }
 
-    public String getMqSSLkey() {
-        return mqSSLkey;
+    public String getMqSSLKeyCert() {
+        return mqSSLKeyCert;
     }
 
-    public void setMqSSLkey(String mqSSLkey) {
-        this.mqSSLkey = mqSSLkey;
+    public void setMqSSLKeyCert(String mqSSLKeyCert) {
+        this.mqSSLKeyCert = mqSSLKeyCert;
     }
 
-    public String getMqSSLcaCert() {
-        return mqSSLcaCert;
+    public String getMqSSLCaCert() {
+        return mqSSLCaCert;
     }
 
-    public void setMqSSLcaCert(String mqSSLcaCert) {
-        this.mqSSLcaCert = mqSSLcaCert;
+    public void setMqSSLCaCert(String mqSSLCaCert) {
+        this.mqSSLCaCert = mqSSLCaCert;
     }
 
     public String getMqHeader() {
@@ -839,4 +841,5 @@ public class EntityLog {
     public void setE2eSigning(String e2eSigning) {
         this.e2eSigning = e2eSigning;
     }
+
 }

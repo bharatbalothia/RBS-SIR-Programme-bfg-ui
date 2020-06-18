@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityService } from 'src/app/shared/entity/entity.service';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { EntitiesWithPagination } from 'src/app/shared/entity/entities-with-pagination.model';
-import { getEntityDetailsFields, getEntityDisplayName, getPendingChangesFields } from '../entity-display-names';
+import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
+import { getEntityDetailsFields, getDisplayName, getPendingChangesFields } from '../display-names';
 import { MatDialog } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
-import { Entity } from 'src/app/shared/entity/entity.model';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
-import { ChangeControl } from 'src/app/shared/entity/change-control.model';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -23,7 +23,7 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 })
 export class EntitySearchComponent implements OnInit {
 
-  getEntityDisplayName = getEntityDisplayName;
+  getDisplayName = getDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
 
   entityNameSearchingValue = '';

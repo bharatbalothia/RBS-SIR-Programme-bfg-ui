@@ -1,22 +1,37 @@
 package com.ibm.sterling.bfg.app.model;
 
-import com.ibm.sterling.bfg.app.model.validation.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityValid;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityValidPut;
 import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
+import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityValid(groups = {PostValidation.class})
-@EntityValidPut(groups = {PutValidation.class})
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
+
+@EntityValid(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+@EntityValidPut(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
+@MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
-public class Entity implements EntityType{
+public class Entity implements EntityType {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger(Entity.class);
 
@@ -25,40 +40,64 @@ public class Entity implements EntityType{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
     @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
-    @NotBlank(message = "ENTITY has to be present", groups = {PostValidation.class, PutValidation.class})
+
+    @NotBlank(message = "ENTITY has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Pattern.List({
+            @Pattern(regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$",
+                    message = "Entity should be in BIC11 format",
+                    groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class}),
+            @Pattern(regexp = "^[A-Z]{6}[A-Z2-9][A-NP-Z0-9]$",
+                    message = "Entity should be in BIC8 format",
+                    groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})})
     @Column
-    @Pattern(
-            regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$",
-            message = "Entity should be in BIC11 format",
-            groups = {PostValidation.class, PutValidation.class}
-    )
     private String entity;
-    @NotBlank(message = "SERVICE has to be present", groups = {PostValidation.class, PutValidation.class})
+
+    @NotBlank(message = "SERVICE has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column
     private String service;
-    @Column(name = "REQUESTORDN")
+
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for RequestorDN",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "REQUESTORDN")
     private String requestorDN;
-    @Column(name = "RESPONDERDN")
+
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for ResponderDN",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "RESPONDERDN")
     private String responderDN;
+
     @Column(name = "SERVICENAME")
     private String serviceName;
     @Column(name = "REQUESTTYPE")
     private String requestType;
+
     @Column(name = "SNF")
-    @NotNull(message = "SNF has to be present", groups = {PostValidation.class, PutValidation.class})
+    @NotNull(message = "SNF has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean SnF = Boolean.FALSE;
-    @NotNull(message = "TRACE has to be present", groups = {PostValidation.class, PutValidation.class})
+
+    @NotNull(message = "TRACE has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean trace = Boolean.FALSE;
+
+    @NotNull(message = "DELIVERYNOTIF has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "DELIVERYNOTIF")
-    @NotNull(message = "DELIVERYNOTIF has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean deliveryNotification = Boolean.FALSE;
+
     @Column(name = "DELIVERYNOTIFDN")
     private String deliveryNotifDN;
     @Column(name = "DELIVERYNOTIFRT")
@@ -73,51 +112,70 @@ public class Entity implements EntityType{
     private String transferDesc;
     @Column(name = "TRANSFERINFO")
     private String transferInfo;
+    @NotNull(message = "COMPRESSION has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "COMPRESSION")
-    @NotNull(message = "COMPRESSION has to be present", groups = {PostValidation.class, PutValidation.class})
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
-    @Column(name = "MAILBOXPATHOUT")
     @EntityUnique(
             service = EntityService.class,
             fieldName = "MAILBOXPATHOUT",
             message = "MAILBOXPATHOUT has to be unique",
-            groups = {PostValidation.class})
+            groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+    @Column(name = "MAILBOXPATHOUT")
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
-    @Column(name = "MQQUEUEOUT")
     @EntityUnique(
             service = EntityService.class,
             fieldName = "MQQUEUEOUT",
             message = "MQQUEUEOUT has to be unique",
-            groups = {PostValidation.class})
+            groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+    @Column(name = "MQQUEUEOUT")
     private String mqQueueOut;
+
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;
     @Column(name = "DIRECT_PARTICIPANT")
     private String directParticipant;
-    @Column(name = "MAXTRANSPERBULK")
+
     @NotNull(message = "MAXTRANSPERBULK has to be present",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "MAXTRANSPERBULK")
     private Integer maxTransfersPerBulk = 0;
-    @Column(name = "MAXBULKSPERFILE")
     @NotNull(message = "MAXBULKSPERFILE has to be present",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "MAXBULKSPERFILE")
     private Integer maxBulksPerFile = 0;
-    @Column(name = "STARTOFDAY")
+
     @NotNull(message = "STARTOFDAY has to be present",
-            groups = {PostValidation.class, PutValidation.class})
-    private Integer startOfDay = 0;
-    @Column(name = "ENDOFDAY")
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "Start of day should be in hh:mm format",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    @Column(name = "STARTOFDAY")
+    private String startOfDay = "00:00";
+
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "End of day should be in hh:mm format",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @NotNull(message = "ENDOFDAY has to be present",
-            groups = {PostValidation.class, PutValidation.class})
-    private Integer endOfDay = 0;
-    @Transient
-    private List schedules = new ArrayList();
-    @Transient
-    private List deletedSchedules = new ArrayList();
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
+    @Column(name = "ENDOFDAY")
+    private String endOfDay = "00:00";
+
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -157,20 +215,22 @@ public class Entity implements EntityType{
     private String mqQueueBinding;
     @Column(name = "MQ_QCONTEXT")
     private String mqQueueContext;
+    @Convert(converter = DebugStringToIntegerConverter.class)
     @Column(name = "MQ_DEBUG")
-    private Integer mqDebug;
+    private String mqDebug;
     @Column(name = "MQ_SSLOPTION")
-    private String mqSSLoptions;
+    private String mqSSLOptions;
     @Column(name = "MQ_SSLCIPHERS")
-    private String mqSSLciphers;
+    private String mqSSLCiphers;
     @Column(name = "MQ_SSLSYSTEMCERTID")
-    private String mqSSLkey;
+    private String mqSSLKeyCert;
     @Column(name = "MQ_SSLCACERTID")
-    private String mqSSLcaCert;
+    private String mqSSLCaCert;
     @Column(name = "MQ_HEADER")
     private String mqHeader;
     @Column(name = "MQ_SESSIONTIMEOUT")
     private Integer mqSessionTimeout;
+
     @Transient
     private Boolean routeInbound = Boolean.TRUE;
     @Transient
@@ -180,34 +240,39 @@ public class Entity implements EntityType{
     @Transient
     private Boolean inboundRoutingRule = Boolean.FALSE;
 
-    @Column(name = "ROUTE_REQUESTORDN")
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound RequestorDN",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
+    @Column(name = "ROUTE_REQUESTORDN")
     private String inboundRequestorDN = "";
-    @Column(name = "ROUTE_RESPONDERDN")
+
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound ResponderDN",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
+    @Column(name = "ROUTE_RESPONDERDN")
     private String inboundResponderDN = "";
+
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
-    @Column(name = "ROUTE_REQUESTTYPE")
     @Convert(converter = StringToListConverter.class)
+    @Column(name = "ROUTE_REQUESTTYPE")
     private List<String> inboundRequestType = new ArrayList<>();
-    @Column(name = "NONREPUDIATION")
     @NotNull(message = "NONREPUDIATION has to be present",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "NONREPUDIATION")
     private Boolean nonRepudiation = Boolean.FALSE;
-    @Column(name = "PAUSE_INBOUND")
     @NotNull(message = "PAUSE_INBOUND has to be present",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "PAUSE_INBOUND")
     private Boolean pauseInbound = Boolean.FALSE;
-    @Column(name = "PAUSE_OUTBOUND")
     @NotNull(message = "PAUSE_OUTBOUND has to be present",
-            groups = {PostValidation.class, PutValidation.class})
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column(name = "PAUSE_OUTBOUND")
     private Boolean pauseOutbound = Boolean.FALSE;
     @Column(name = "ISDELETED")
     private Boolean deleted = Boolean.FALSE;
@@ -219,15 +284,23 @@ public class Entity implements EntityType{
     private Boolean irishStep2 = Boolean.FALSE;
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "entity",
+            cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Valid
+    private List<Schedule> schedules = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
     public void init() {
         LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        mailboxPathIn = entity + "_" + service;
-        mailboxPathOut = entity + "_" + service;
-        mqQueueIn = entity + "_" + service;
-        mqQueueOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
+        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
     public static long getSerialVersionUID() {
@@ -446,36 +519,28 @@ public class Entity implements EntityType{
         this.maxBulksPerFile = maxBulksPerFile;
     }
 
-    public Integer getStartOfDay() {
+    public String getStartOfDay() {
         return startOfDay;
     }
 
-    public void setStartOfDay(Integer startOfDay) {
+    public void setStartOfDay(String startOfDay) {
         this.startOfDay = startOfDay;
     }
 
-    public Integer getEndOfDay() {
+    public String getEndOfDay() {
         return endOfDay;
     }
 
-    public void setEndOfDay(Integer endOfDay) {
+    public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
     }
 
-    public List getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
-    }
-
-    public List getDeletedSchedules() {
-        return deletedSchedules;
-    }
-
-    public void setDeletedSchedules(List deletedSchedules) {
-        this.deletedSchedules = deletedSchedules;
     }
 
     public String getCdNode() {
@@ -630,44 +695,44 @@ public class Entity implements EntityType{
         this.mqQueueContext = mqQueueContext;
     }
 
-    public Integer getMqDebug() {
+    public String getMqDebug() {
         return mqDebug;
     }
 
-    public void setMqDebug(Integer mqDebug) {
+    public void setMqDebug(String mqDebug) {
         this.mqDebug = mqDebug;
     }
 
-    public String getMqSSLoptions() {
-        return mqSSLoptions;
+    public String getMqSSLOptions() {
+        return mqSSLOptions;
     }
 
-    public void setMqSSLoptions(String mqSSLoptions) {
-        this.mqSSLoptions = mqSSLoptions;
+    public void setMqSSLOptions(String mqSSLOptions) {
+        this.mqSSLOptions = mqSSLOptions;
     }
 
-    public String getMqSSLciphers() {
-        return mqSSLciphers;
+    public String getMqSSLCiphers() {
+        return mqSSLCiphers;
     }
 
-    public void setMqSSLciphers(String mqSSLciphers) {
-        this.mqSSLciphers = mqSSLciphers;
+    public void setMqSSLCiphers(String mqSSLCiphers) {
+        this.mqSSLCiphers = mqSSLCiphers;
     }
 
-    public String getMqSSLkey() {
-        return mqSSLkey;
+    public String getMqSSLKeyCert() {
+        return mqSSLKeyCert;
     }
 
-    public void setMqSSLkey(String mqSSLkey) {
-        this.mqSSLkey = mqSSLkey;
+    public void setMqSSLKeyCert(String mqSSLKeyCert) {
+        this.mqSSLKeyCert = mqSSLKeyCert;
     }
 
-    public String getMqSSLcaCert() {
-        return mqSSLcaCert;
+    public String getMqSSLCaCert() {
+        return mqSSLCaCert;
     }
 
-    public void setMqSSLcaCert(String mqSSLcaCert) {
-        this.mqSSLcaCert = mqSSLcaCert;
+    public void setMqSSLCaCert(String mqSSLCaCert) {
+        this.mqSSLCaCert = mqSSLCaCert;
     }
 
     public String getMqHeader() {
@@ -824,7 +889,7 @@ public class Entity implements EntityType{
         return "Entity{" +
                 "entityId=" + entityId +
                 ", entity='" + entity + '\'' +
-                ", service='" + service + '\'' +
-                '}';
+                ", service='" + service + '\'' + '}';
     }
+
 }

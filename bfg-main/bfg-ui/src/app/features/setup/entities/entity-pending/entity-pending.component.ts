@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Entity } from 'src/app/shared/entity/entity.model';
-import { EntityService } from 'src/app/shared/entity/entity.service';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { ENTITY_DISPLAY_NAMES, getEntityDetailsFields, getPendingChangesFields } from '../entity-display-names';
+import { DISPLAY_NAMES, getEntityDetailsFields, getPendingChangesFields } from '../display-names';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
-import { ChangeControl } from 'src/app/shared/entity/change-control.model';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
-import { ChangeControlsWithPagination } from 'src/app/shared/entity/change-controls-with-pagination.model';
+import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 
 @Component({
   selector: 'app-entity-pending',
@@ -21,7 +21,7 @@ import { ChangeControlsWithPagination } from 'src/app/shared/entity/change-contr
 })
 export class EntityPendingComponent implements OnInit {
 
-  entityDisplayNames = ENTITY_DISPLAY_NAMES;
+  entityDisplayNames = DISPLAY_NAMES;
 
   isLoading = true;
   changeControls: ChangeControlsWithPagination;

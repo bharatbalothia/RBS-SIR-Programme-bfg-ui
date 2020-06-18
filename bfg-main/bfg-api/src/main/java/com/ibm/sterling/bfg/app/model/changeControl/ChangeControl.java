@@ -70,7 +70,6 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     private String approverComments; //comments made by approver
 
     @Column(name = "RESULT_META1")
-//    @OrderBy
     private String resultMeta1; //meta-data about the object when using CREATE action (searchable)
 
     @Column(name = "RESULT_META2")
@@ -254,16 +253,15 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setMqQueueBinding(entityLog.getMqQueueBinding());
         entityFromLog.setMqQueueContext(entityLog.getMqQueueContext());
         entityFromLog.setMqDebug(entityLog.getMqDebug());
-        entityFromLog.setMqSSLoptions(entityLog.getMqSSLoptions());
-        entityFromLog.setMqSSLciphers(entityLog.getMqSSLciphers());
-        entityFromLog.setMqSSLkey(entityLog.getMqSSLkey());
-        entityFromLog.setMqSSLcaCert(entityLog.getMqSSLcaCert());
+        entityFromLog.setMqSSLOptions(entityLog.getMqSSLOptions());
+        entityFromLog.setMqSSLCiphers(entityLog.getMqSSLCiphers());
+        entityFromLog.setMqSSLKeyCert(entityLog.getMqSSLKeyCert());
+        entityFromLog.setMqSSLCaCert(entityLog.getMqSSLCaCert());
         entityFromLog.setMqHeader(entityLog.getMqHeader());
         entityFromLog.setMqSessionTimeout(entityLog.getMqSessionTimeout());
         entityFromLog.setInboundRequestorDN(entityLog.getInboundRequestorDN());
         entityFromLog.setInboundResponderDN(entityLog.getInboundResponderDN());
         entityFromLog.setInboundService(entityLog.getInboundService());
-//        entityFromLog.setInboundType(entityLog.getInboundType());
         entityFromLog.setNonRepudiation(entityLog.getNonRepudiation());
         entityFromLog.setPauseInbound(entityLog.getPauseInbound());
         entityFromLog.setPauseOutbound(entityLog.getPauseOutbound());
@@ -275,6 +273,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);
         entityFromLog.setIrishStep2(entityLog.getIrishStep2());
+        entityFromLog.setSchedules(entityLog.getSchedules());
         return entityFromLog;
     }
 

@@ -1,21 +1,27 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
-import { INBOUND_REQUEST_TYPES } from '../inbound-request-types';
-import { ENTITY_VALIDATION_MESSAGES } from '../entity-validation-messages';
+import { ENTITY_VALIDATION_MESSAGES } from '../validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { EntityService } from 'src/app/shared/entity/entity.service';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
-import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
-import { EntityValidators } from '../../../../shared/entity/entity-validators';
-import { SWIFT_DN } from 'src/app/core/constants/validation-regexes';
+import { DISPLAY_NAMES } from '../display-names';
+import { EntityValidators } from '../../../../shared/models/entity/entity-validators';
+import { SWIFT_DN, TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Entity } from 'src/app/shared/entity/entity.model';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
+import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
+import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
+import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 
 @Component({
   selector: 'app-entity-create',
@@ -24,15 +30,16 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 })
 export class EntityCreateComponent implements OnInit {
 
-  entityDisplayNames = ENTITY_DISPLAY_NAMES;
+  entityDisplayNames = DISPLAY_NAMES;
+  scheduleType = SCHEDULE_TYPE;
 
   isLinear = true;
 
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
-  inboundRequestTypeList: string[] = INBOUND_REQUEST_TYPES;
-  validationMessages = ENTITY_VALIDATION_MESSAGES;
+  inboundRequestTypeList: string[] = [];
+  entityValidationMessages = ENTITY_VALIDATION_MESSAGES;
   errorMessage: ErrorMessage;
 
   isLoading = false;
@@ -40,10 +47,26 @@ export class EntityCreateComponent implements OnInit {
   summaryDisplayedColumns = ['field', 'value', 'error'];
   summaryPageDataSource;
 
+  scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
+  schedulesDataSource;
+  scheduleFileTypes: string[] = [];
+
+  mqDetails: MQDetails = {
+    CaDigitalCertificates: [],
+    Debug: [],
+    QueueBinding: [],
+    QueueContext: [],
+    SSLCiphers: [],
+    SSLOptions: [],
+    SystemDigitalCertificates: []
+  };
+
   entityTypeFormGroup: FormGroup;
   entityPageFormGroup: FormGroup;
   SWIFTDetailsFormGroup: FormGroup;
   summaryPageFormGroup: FormGroup;
+  schedulesFormGroup: FormGroup;
+  mqDetailsFormGroup: FormGroup;
 
   editableEntity: Entity;
 
@@ -60,11 +83,16 @@ export class EntityCreateComponent implements OnInit {
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
       if (params.entityId) {
-        this.entityService.getEntityById(params.entityId).subscribe(data => {
+        this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
+          this.isLoading = false;
           this.editableEntity = data;
-          this.initializeFormGroups(this.editableEntity);
+          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
-        });
+        },
+          error => {
+            this.isLoading = false;
+            this.errorMessage = getApiErrorMessage(error);
+          });
       }
     });
   }
@@ -73,33 +101,7 @@ export class EntityCreateComponent implements OnInit {
     this.entityTypeFormGroup = this.formBuilder.group({
       service: [entity.service, Validators.required]
     });
-    this.entityPageFormGroup = this.formBuilder.group({
-      entity: [entity.entity, {
-        validators: [
-          Validators.required,
-          this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
-        ],
-        asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
-        updateOn: 'blur'
-      }],
-      routeInbound: [entity.routeInbound, Validators.required],
-      inboundRequestorDN: [entity.inboundRequestorDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundResponderDN: [entity.inboundResponderDN, {
-        validators: [
-          Validators.required,
-          Validators.pattern(SWIFT_DN)
-        ]
-      }],
-      inboundService: [entity.inboundService, Validators.required],
-      inboundRequestType: [entity.inboundRequestType],
-      inboundDir: [entity.inboundDir, Validators.required],
-      inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
-    });
+    this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
         validators: [
@@ -127,7 +129,6 @@ export class EntityCreateComponent implements OnInit {
       transferInfo: [entity.transferInfo],
       transferDesc: [entity.transferDesc]
     });
-
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
@@ -149,7 +150,162 @@ export class EntityCreateComponent implements OnInit {
     deliveryNotification: false,
     nonRepudiation: false,
     e2eSigning: 'None',
+    mailboxPathIn: '',
+    mailboxPathOut: '',
+    maxBulksPerFile: null,
+    maxTransfersPerBulk: null,
+    endOfDay: null,
+    startOfDay: null,
+    compression: false,
+    entityParticipantType: 'INDIRECT'
   })
+
+  onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
+    this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
+    this.initializeFormGroups({ ...entity, service: value });
+    switch (value) {
+      case ENTITY_SERVICE_TYPE.SCT:
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          maxBulksPerFile: [entity.maxBulksPerFile, {
+            validators: [
+              Validators.required,
+              Validators.pattern(NON_NEGATIVE_INT)
+            ]
+          }],
+          maxTransfersPerBulk: [entity.maxTransfersPerBulk, {
+            validators: [
+              Validators.required,
+              Validators.pattern(NON_NEGATIVE_INT)
+            ]
+          }],
+          startOfDay: [entity.startOfDay, {
+            validators: [
+              Validators.required,
+              Validators.pattern(TIME_24)
+            ]
+          }],
+          endOfDay: [entity.endOfDay, {
+            validators: [
+              Validators.required,
+              Validators.pattern(TIME_24)
+            ]
+          }],
+          mailboxPathIn: [entity.mailboxPathIn, Validators.required],
+          mailboxPathOut: [entity.mailboxPathOut, Validators.required],
+          mqQueueIn: [entity.mqQueueIn],
+          mqQueueOut: [entity.mqQueueOut],
+          compression: [entity.compression],
+          entityParticipantType: [entity.entityParticipantType],
+          directParticipant: [entity.directParticipant]
+        }, { validators: this.entityValidators.directParticipantValidator() });
+        this.schedulesFormGroup = this.formBuilder.group({
+          schedules: [entity.schedules || []]
+        });
+        this.updateSchedulesDataSource();
+        this.entityService.getScheduleFileTypes().pipe(data => this.setLoading(data)).subscribe((data: string[]) => {
+          this.isLoading = false;
+          this.scheduleFileTypes = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+        this.mqDetailsFormGroup = this.formBuilder.group({
+          workaround: [],
+          mqHost: [entity.mqHost],
+          mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
+          mqQManager: [entity.mqQManager],
+          mqChannel: [entity.mqChannel],
+          mqQueueName: [entity.mqQueueName],
+          mqQueueBinding: [entity.mqQueueBinding],
+          mqQueueContext: [entity.mqQueueContext],
+          mqDebug: [entity.mqDebug],
+          mqSSLoptions: [entity.mqSSLoptions],
+          mqSSLciphers: [entity.mqSSLciphers],
+          mqSSLkey: [entity.mqSSLkey],
+          mqSSLcaCert: [entity.mqSSLcaCert],
+          mqHeader: [entity.mqHeader],
+          mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
+        }, { validators: this.entityValidators.mqDetailsRequiredIfDirect(this.entityPageFormGroup.controls.entityParticipantType) });
+        this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
+          this.isLoading = false;
+          this.mqDetails = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+        this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe(() => {
+          for (const control in this.mqDetailsFormGroup.controls){
+            if (this.mqDetailsFormGroup.contains(control)){
+              this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+            }
+          }
+          this.resetMqWalidators();
+        });
+
+        break;
+      case ENTITY_SERVICE_TYPE.GPL:
+        this.entityPageFormGroup = this.formBuilder.group({
+          entity: [entity.entity, {
+            validators: [
+              Validators.required,
+              this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
+            ],
+            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            updateOn: 'blur'
+          }],
+          routeInbound: [entity.routeInbound, Validators.required],
+          inboundRequestorDN: [entity.inboundRequestorDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundResponderDN: [entity.inboundResponderDN, {
+            validators: [
+              Validators.required,
+              Validators.pattern(SWIFT_DN)
+            ]
+          }],
+          inboundService: [entity.inboundService, Validators.required],
+          inboundRequestType: [entity.inboundRequestType],
+          inboundDir: [entity.inboundDir, Validators.required],
+          inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
+        });
+        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe((data: string[]) => {
+          this.isLoading = false;
+          this.inboundRequestTypeList = data;
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+        this.schedulesFormGroup = null;
+        this.mqDetailsFormGroup = null;
+        break;
+    }
+  }
+
+  resetMqWalidators(){
+    const port = this.mqDetailsFormGroup.controls.mqPort;
+    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    port.setValidators(
+            port.validator == null ?
+            Validators.pattern(NON_NEGATIVE_INT) :
+            [port.validator, Validators.pattern(NON_NEGATIVE_INT)]
+          );
+    sessionTimeout.setValidators(
+            sessionTimeout.validator == null ?
+            Validators.pattern(NON_NEGATIVE_INT) :
+            [sessionTimeout.validator, Validators.pattern(NON_NEGATIVE_INT)]
+          );
+  }
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
     const inboundRequestTypeList = this.entityPageFormGroup.get('inboundRequestType').value as string[];
@@ -178,7 +334,9 @@ export class EntityCreateComponent implements OnInit {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
-          ...this.summaryPageFormGroup.value
+          ...this.summaryPageFormGroup.value,
+          ...this.schedulesFormGroup && this.schedulesFormGroup.value,
+          ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
         });
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
@@ -203,7 +361,6 @@ export class EntityCreateComponent implements OnInit {
               }
               else {
                 this.stepper.reset();
-                this.initializeFormGroups(this.getEntityDefaultValue());
                 this.resetAllForms();
               }
             });
@@ -241,7 +398,6 @@ export class EntityCreateComponent implements OnInit {
         else {
           this.errorMessage = null;
           this.stepper.reset();
-          this.initializeFormGroups(this.getEntityDefaultValue());
           this.resetAllForms();
         }
       }
@@ -256,6 +412,8 @@ export class EntityCreateComponent implements OnInit {
     const entity = removeEmpties({
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
+      ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
+      ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
     });
@@ -265,6 +423,12 @@ export class EntityCreateComponent implements OnInit {
         value: entity[key],
         error: this.getErrorByField(key)
       })).filter(el => el.field !== 'changerComments');
+  }
+
+  getSchedulesForSummaryPage = (schedules: Schedule[]) => schedules &&
+  {
+    windowSchedules: schedules.filter((el: Schedule) => el.isWindow).map((el: Schedule) => `${el.timeStart}-${el.windowEnd}(${el.windowInterval})`).join(', '),
+    dailySchedules: schedules.filter((el: Schedule) => !el.isWindow).map((el: Schedule) => el.timeStart).join(', ')
   }
 
   markAllFieldsTouched() {
@@ -283,4 +447,42 @@ export class EntityCreateComponent implements OnInit {
   }
 
   isEditing = (): boolean => !isEmpty(this.editableEntity);
+
+  getEntityServicesArray = () => Object.keys(ENTITY_SERVICE_TYPE).map(e => ENTITY_SERVICE_TYPE[e]);
+
+  updateSchedulesDataSource = () =>
+    this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value)
+
+  getFormattedSchedule = (schedule: Schedule) =>
+    `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd +
+      (schedule.windowInterval > 0 ? ' (every ' + schedule.windowInterval + ' minutes)' : '') : ''}`
+
+  openScheduleDialog = (scheduleRow?: { schedule: Schedule, index: number }) =>
+    this.dialog.open(EntityScheduleDialogComponent, new EntityScheduleDialogConfig({
+      title: `${this.entityPageFormGroup.get('entity').value}: Schedules ${get(scheduleRow, 'schedule') ? 'Edit' : 'Add'}`,
+      actionData: { editSchedule: get(scheduleRow, 'schedule'), fileTypes: this.scheduleFileTypes }
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'editedSchedule')) {
+        this.schedulesFormGroup.get('schedules').value[scheduleRow.index] = data.editedSchedule;
+        this.updateSchedulesDataSource();
+      }
+      if (get(data, 'newSchedule')) {
+        this.schedulesFormGroup.get('schedules').value.push(data.newSchedule);
+        this.updateSchedulesDataSource();
+      }
+    })
+
+  deleteSchedule = (schedule: Schedule, index: number) => this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+    title: `Deleting ${this.getFormattedSchedule(schedule)} schedule`,
+    text: `Are you sure to delete ${this.getFormattedSchedule(schedule)} schedule?`,
+    yesCaption: `Delete`,
+    yesCaptionColor: 'warn',
+    noCaption: 'Back'
+  })).afterClosed().subscribe(result => {
+    if (result) {
+      this.schedulesFormGroup.get('schedules').value.splice(index, 1);
+      this.updateSchedulesDataSource();
+    }
+  })
+
 }

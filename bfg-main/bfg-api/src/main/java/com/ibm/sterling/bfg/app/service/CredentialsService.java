@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import com.ibm.sterling.bfg.app.model.security.UserCredentials;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,14 +17,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CredentialsService {
+
+    @Value("${authentication.url}")
+    private String authenticationUrl;
+
+    @Autowired
+    private PermissionsService permissionsService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -39,24 +42,23 @@ public class CredentialsService {
             }
         };
         String userCredentials = restTemplate.postForObject(
-                "https://b2bi-int1.fyre.ibm.com:25060/restwar/restapi/v1.0/authenticate/",
+                authenticationUrl,
                 new HttpEntity<>(loginMap, headers),
                 String.class
         );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
+
+        List<String> permissionList = permissionsService.getPermissionList(loginRequest);
+
         return Optional.ofNullable(user.get("authenticated"))
-                .filter(JsonNode::asBoolean).map(auth -> {
-                            List<String> groups = objectMapper.convertValue(user.get("groups"), ArrayList.class);
-                            return new UserCredentials(
-                                    user.get("name").asText(),
-                                    null,
-                                    groups.stream()
-                                            .map(SimpleGrantedAuthority::new)
-                                            .collect(Collectors.toList())
-                            );
-                        }
-                ).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
+                .filter(JsonNode::asBoolean).map(auth -> new UserCredentials(
+                        user.get("name").asText(),
+                        null,
+                        permissionList.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList())
+                )).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
     }
 
 }

@@ -1,14 +1,14 @@
 package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
-import com.ibm.sterling.bfg.app.model.validation.PostValidation;
-import com.ibm.sterling.bfg.app.model.validation.PutValidation;
+import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
@@ -17,13 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
 
 @Service
 @Transactional
@@ -36,6 +42,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
     @Autowired
     private Validator validator;
@@ -90,8 +99,46 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
+    private Class getEntityValidationGroup(Entity entity, Operation operation) {
+        Map<String, Map<Operation, Class>> entityOperationMap = new HashMap<String, Map<Operation, Class>>() {
+            {
+                put("GPL", new HashMap<Operation, Class>() {
+                            {
+                                put(CREATE, GplValidation.PostValidation.class);
+                                put(UPDATE, GplValidation.PutValidation.class);
+
+                            }
+                        }
+                );
+                put("SCT", new HashMap<Operation, Class>() {
+                            {
+                                put(CREATE, SctValidation.PostValidation.class);
+                                put(UPDATE, SctValidation.PutValidation.class);
+                            }
+                        }
+                );
+            }
+        };
+        return entityOperationMap.get(entity.getService()).get(operation);
+    }
+
+    private void validateEntity(Entity entity, Operation operation) {
+        Set<ConstraintViolation<Entity>> violations;
+        violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_CREATE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'CREATE' or " +
+            "hasAuthority('SFG_UI_SCT_CREATE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'CREATE' or " +
+            "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'UPDATE' or " +
+            "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'UPDATE' or " +
+            "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'DELETE' or " +
+            "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'DELETE'")
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
-        LOG.debug("Trying to save entity {} to change control", entity);
+        validateEntity(entity, operation);
+        LOG.info("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
         changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -99,19 +146,13 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta1(entity.getEntity());
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
-        try {
-            entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        } catch (Exception e) {
-            LOG.error("Error persisting the Change Control record: {}", e.getMessage());
-            LOG.error("The Entity {} could not be saved", entity);
-            e.printStackTrace();
-        }
-        return changeControl.convertEntityLogToEntity();
+        entity.setChangeID(changeControlService.save(changeControl).getChangeID());
+        return entity;
     }
 
-    public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception {
-        ChangeControl changeControl = changeControlService.findById(changeId)
-                .orElseThrow(EntityNotFoundException::new);
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_SCT') and #changeControl.getEntityLog().service == 'SCT' or " +
+            "hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_GPL') and #changeControl.getEntityLog().service == 'GPL'")
+    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
@@ -121,23 +162,18 @@ public class EntityServiceImpl implements EntityService {
                 entity = approve(changeControl);
                 break;
             case FAILED:
-
             case REJECTED:
         }
-        try {
-            changeControlService.setApproveInfo(
-                    changeControl,
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    approverComments,
-                    status);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changeControlService.setApproveInfo(
+                changeControl,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                approverComments,
+                status);
         return entity;
     }
 
     private Entity approve(ChangeControl changeControl) {
-        LOG.debug("Entity {} action", changeControl.getOperation());
+        LOG.info("Entity {} action", changeControl.getOperation());
         Entity entity = new Entity();
         Operation operation = changeControl.getOperation();
         switch (operation) {
@@ -147,27 +183,29 @@ public class EntityServiceImpl implements EntityService {
                 break;
             case DELETE:
         }
-        LOG.debug("Entity after {} action: {}", changeControl.getOperation(), entity);
+        LOG.info("Entity after {} action: {}", changeControl.getOperation(), entity);
         return entity;
     }
 
     private Entity saveEntityAfterApprove(ChangeControl changeControl) {
-        LOG.debug("Approve the Entity " + changeControl.getOperation() + " action");
+        LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
-        Set<ConstraintViolation<Entity>> violations = null;
+        Optional.ofNullable(entity.getEntityId()).ifPresent(entityId -> {
+                    List<Long> deletedScheduleId = getAbsentSchedules(
+                            scheduleService.findActualSchedulesByEntityId(entityId), entity.getSchedules());
+                    deletedScheduleId.forEach(id -> scheduleService.deleteById(id));
+                }
+        );
+        entity.setSchedules(
+                changeControl.getEntityLog()
+                        .getSchedules()
+                        .stream()
+                        .peek(schedule ->
+                                schedule.setEntity(entity))
+                        .collect(Collectors.toList())
+        );
         Operation operation = changeControl.getOperation();
-        switch (operation) {
-            case CREATE:
-                violations = validator.validate(entity, PostValidation.class);
-                break;
-            case UPDATE:
-                violations = validator.validate(entity, PutValidation.class);
-                break;
-            case DELETE:
-        }
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
+        validateEntity(entity, operation);
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
@@ -177,9 +215,24 @@ public class EntityServiceImpl implements EntityService {
         return savedEntity;
     }
 
+    private List<Long> getAbsentSchedules(List<Schedule> actualSchedules, List<Schedule> newSchedules) {
+        List<Long> actualSchedulesId = convertListOfSchedulesToListOfScheduleId(actualSchedules);
+        List<Long> newSchedulesId = convertListOfSchedulesToListOfScheduleId(newSchedules);
+        actualSchedulesId.removeAll(newSchedulesId);
+        return actualSchedulesId;
+    }
+
+    private List<Long> convertListOfSchedulesToListOfScheduleId(List<Schedule> scheduleList) {
+        return scheduleList
+                .stream()
+                .map(Schedule::getScheduleId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
-        LOG.debug("Search entities by entity name {} and service {}", entity, service);
+        LOG.info("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
         Specification<Entity> specification = Specification
                 .where(
@@ -219,4 +272,5 @@ public class EntityServiceImpl implements EntityService {
         entities.remove(editedEntity);
         return entities;
     }
+
 }

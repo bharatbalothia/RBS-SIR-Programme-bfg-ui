@@ -317,11 +317,6 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqHost'] || 'mqHost'}}</mat-label>
                         <input matInput formControlName="mqHost">
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqHost">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqHost').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqHost')">
                             {{getErrorByField('mqHost')}}
                         </mat-error>
@@ -341,11 +336,6 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQManager'] || 'mqQManager'}}</mat-label>
                         <input matInput formControlName="mqQManager">
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqQManager">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqQManager').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqQManager')">
                             {{getErrorByField('mqQManager')}}
                         </mat-error>
@@ -353,11 +343,6 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqChannel'] || 'mqChannel'}}</mat-label>
                         <input matInput formControlName="mqChannel">
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqChannel">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqChannel').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqChannel')">
                             {{getErrorByField('mqChannel')}}
                         </mat-error>
@@ -365,11 +350,6 @@
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQueueName'] || 'mqQueueName'}}</mat-label>
                         <input matInput formControlName="mqQueueName">
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqQueueName">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqQueueName').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqQueueName')">
                             {{getErrorByField('mqQueueName')}}
                         </mat-error>
@@ -381,11 +361,6 @@
                             <mat-option *ngFor="let mqQueueBinding of mqDetails.QueueBinding" [value]="mqQueueBinding">
                                 {{mqQueueBinding}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqQueueBinding">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqQueueBinding').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqQueueBinding')">
                             {{getErrorByField('mqQueueBinding')}}
                         </mat-error>
@@ -397,11 +372,6 @@
                             <mat-option *ngFor="let mqQueueContext of mqDetails.QueueContext" [value]="mqQueueContext">
                                 {{mqQueueContext}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqQueueContext">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqQueueContext').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqQueueContext')">
                             {{getErrorByField('mqQueueContext')}}
                         </mat-error>
@@ -413,88 +383,58 @@
                             <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug">
                                 {{mqDebug}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqDebug">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqDebug').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqDebug')">
                             {{getErrorByField('mqDebug')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLOptions'] || 'mqSSLOptions'}}
+                        <mat-label>{{entityDisplayNames['mqSSLoptions'] || 'mqSSLoptions'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLOptions">
-                            <mat-option *ngFor="let mqSSLOptions of mqDetails.SSLOptions" [value]="mqSSLOptions">
-                                {{mqSSLOptions}}</mat-option>
+                        <mat-select formControlName="mqSSLoptions">
+                            <mat-option *ngFor="let mqSSLoptions of mqDetails.SSLOptions" [value]="mqSSLoptions">
+                                {{mqSSLoptions}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLOptions">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLOptions').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLOptions')">
-                            {{getErrorByField('mqSSLOptions')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLoptions')">
+                            {{getErrorByField('mqSSLoptions')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLCiphers'] || 'mqSSLCiphers'}}
+                        <mat-label>{{entityDisplayNames['mqSSLciphers'] || 'mqSSLciphers'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLCiphers">
-                            <mat-option *ngFor="let mqSSLCiphers of mqDetails.SSLCiphers" [value]="mqSSLCiphers">
-                                {{mqSSLCiphers}}</mat-option>
+                        <mat-select formControlName="mqSSLciphers">
+                            <mat-option *ngFor="let mqSSLciphers of mqDetails.SSLCiphers" [value]="mqSSLciphers">
+                                {{mqSSLciphers}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCiphers">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLCiphers').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCiphers')">
-                            {{getErrorByField('mqSSLCiphers')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLciphers')">
+                            {{getErrorByField('mqSSLciphers')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
+                        <mat-label>{{entityDisplayNames['mqSSLkey'] || 'mqSSLkey'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLKeyCert">
-                            <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates" [value]="mqSSLKeyCert">
-                                {{mqSSLKeyCert}}</mat-option>
+                        <mat-select formControlName="mqSSLkey">
+                            <mat-option *ngFor="let mqSSLkey of mqDetails.SystemDigitalCertificates" [value]="mqSSLkey">
+                                {{mqSSLkey}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLKeyCert">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLKeyCert').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLKeyCert')">
-                            {{getErrorByField('mqSSLKeyCert')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLkey')">
+                            {{getErrorByField('mqSSLkey')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLCaCert'] || 'mqSSLCaCert'}}
+                        <mat-label>{{entityDisplayNames['mqSSLcaCert'] || 'mqSSLcaCert'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLCaCert">
-                            <mat-option *ngFor="let mqSSLCaCert of mqDetails.CaDigitalCertificates"
-                                [value]="mqSSLCaCert">
-                                {{mqSSLCaCert}}</mat-option>
+                        <mat-select formControlName="mqSSLcaCert">
+                            <mat-option *ngFor="let mqSSLcaCert of mqDetails.CaDigitalCertificates"
+                                [value]="mqSSLcaCert">
+                                {{mqSSLcaCert}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCaCert">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLCaCert').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCaCert')">
-                            {{getErrorByField('mqSSLCaCert')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLcaCert')">
+                            {{getErrorByField('mqSSLcaCert')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqHeader'] || 'mqHeader'}}</mat-label>
                         <input matInput formControlName="mqHeader">
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqHeader">
-                            <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqHeader').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqHeader')">
                             {{getErrorByField('mqHeader')}}
                         </mat-error>

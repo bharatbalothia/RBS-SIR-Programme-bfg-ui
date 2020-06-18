@@ -86,6 +86,7 @@ public class EntityController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SFG_UI_SCT_EDIT_ENTITY_SCT', 'SFG_UI_SCT_EDIT_ENTITY_GPL')")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
@@ -93,6 +94,7 @@ public class EntityController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SFG_UI_SCT_DELETE_ENTITY_GPL', 'SFG_UI_SCT_DELETE_ENTITY_SCT')")
     public ResponseEntity<?> deleteEntity(@PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> {

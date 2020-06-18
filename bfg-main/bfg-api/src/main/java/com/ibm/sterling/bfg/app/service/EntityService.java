@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.service;
 
 import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
@@ -26,7 +27,7 @@ public interface EntityService extends FieldValueExists {
 
     Entity save(Entity entity);
 
-    public Entity getEntityAfterApprove(String changeId, String approverComments, ChangeControlStatus status) throws Exception;
+    Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception;
 
     Entity saveEntityToChangeControl(Entity entity, Operation operation);
 

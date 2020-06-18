@@ -21,11 +21,17 @@ public class PermissionsService {
     @Value("${permissions.url}")
     private String permissionsUrl;
 
+    @Value("${permissions.userName}")
+    private String userName;
+
+    @Value("${permissions.password}")
+    private String password;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<String> getPermissionList(LoginRequest loginRequest) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
-        String userCredentials = loginRequest.getLogin() + ":" + loginRequest.getPassword();
+        String userCredentials = userName + ":" + password;
         headers.set(HttpHeaders.AUTHORIZATION,
                 HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
         headers.setContentType(MediaType.APPLICATION_JSON);

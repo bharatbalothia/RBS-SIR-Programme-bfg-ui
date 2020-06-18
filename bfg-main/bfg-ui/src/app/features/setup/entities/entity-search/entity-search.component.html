@@ -34,7 +34,7 @@
                             [state]="{ pageIndex: pageIndex, pageSize: pageSize }">
                             <mat-icon inline>edit</mat-icon>
                         </a>
-                        <button mat-icon-button *ngIf="!element.entityLog">
+                        <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">
                             <mat-icon>clear</mat-icon>
                         </button>
                     </mat-cell>

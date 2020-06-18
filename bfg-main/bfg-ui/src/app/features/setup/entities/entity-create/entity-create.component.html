@@ -423,68 +423,68 @@
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLoptions'] || 'mqSSLoptions'}}
+                        <mat-label>{{entityDisplayNames['mqSSLOptions'] || 'mqSSLOptions'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLoptions">
-                            <mat-option *ngFor="let mqSSLoptions of mqDetails.SSLOptions" [value]="mqSSLoptions">
-                                {{mqSSLoptions}}</mat-option>
+                        <mat-select formControlName="mqSSLOptions">
+                            <mat-option *ngFor="let mqSSLOptions of mqDetails.SSLOptions" [value]="mqSSLOptions">
+                                {{mqSSLOptions}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLoptions">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLOptions">
                             <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLoptions').hasError(validation.type)">
+                                *ngIf="mqDetailsFormGroup.get('mqSSLOptions').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLoptions')">
-                            {{getErrorByField('mqSSLoptions')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLOptions')">
+                            {{getErrorByField('mqSSLOptions')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLciphers'] || 'mqSSLciphers'}}
+                        <mat-label>{{entityDisplayNames['mqSSLCiphers'] || 'mqSSLCiphers'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLciphers">
-                            <mat-option *ngFor="let mqSSLciphers of mqDetails.SSLCiphers" [value]="mqSSLciphers">
-                                {{mqSSLciphers}}</mat-option>
+                        <mat-select formControlName="mqSSLCiphers">
+                            <mat-option *ngFor="let mqSSLCiphers of mqDetails.SSLCiphers" [value]="mqSSLCiphers">
+                                {{mqSSLCiphers}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLciphers">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCiphers">
                             <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLciphers').hasError(validation.type)">
+                                *ngIf="mqDetailsFormGroup.get('mqSSLCiphers').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLciphers')">
-                            {{getErrorByField('mqSSLciphers')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCiphers')">
+                            {{getErrorByField('mqSSLCiphers')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLkey'] || 'mqSSLkey'}}
+                        <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLkey">
-                            <mat-option *ngFor="let mqSSLkey of mqDetails.SystemDigitalCertificates" [value]="mqSSLkey">
-                                {{mqSSLkey}}</mat-option>
+                        <mat-select formControlName="mqSSLKeyCert">
+                            <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates" [value]="mqSSLKeyCert">
+                                {{mqSSLKeyCert}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLkey">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLKeyCert">
                             <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLkey').hasError(validation.type)">
+                                *ngIf="mqDetailsFormGroup.get('mqSSLKeyCert').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLkey')">
-                            {{getErrorByField('mqSSLkey')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLKeyCert')">
+                            {{getErrorByField('mqSSLKeyCert')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>{{entityDisplayNames['mqSSLcaCert'] || 'mqSSLcaCert'}}
+                        <mat-label>{{entityDisplayNames['mqSSLCaCert'] || 'mqSSLCaCert'}}
                         </mat-label>
-                        <mat-select formControlName="mqSSLcaCert">
-                            <mat-option *ngFor="let mqSSLcaCert of mqDetails.CaDigitalCertificates"
-                                [value]="mqSSLcaCert">
-                                {{mqSSLcaCert}}</mat-option>
+                        <mat-select formControlName="mqSSLCaCert">
+                            <mat-option *ngFor="let mqSSLCaCert of mqDetails.CaDigitalCertificates"
+                                [value]="mqSSLCaCert">
+                                {{mqSSLCaCert}}</mat-option>
                         </mat-select>
-                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLcaCert">
+                        <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCaCert">
                             <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqSSLcaCert').hasError(validation.type)">
+                                *ngIf="mqDetailsFormGroup.get('mqSSLCaCert').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLcaCert')">
-                            {{getErrorByField('mqSSLcaCert')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCaCert')">
+                            {{getErrorByField('mqSSLCaCert')}}
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field>

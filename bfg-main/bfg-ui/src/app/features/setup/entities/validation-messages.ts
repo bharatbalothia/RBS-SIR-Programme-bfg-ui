@@ -86,17 +86,17 @@ export const ENTITY_VALIDATION_MESSAGES = {
     mqDebug: [
         { type: 'required', message: `${getDisplayName('mqDebug')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
-    mqSSLoptions: [
-        { type: 'required', message: `${getDisplayName('mqSSLoptions')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    mqSSLOptions: [
+        { type: 'required', message: `${getDisplayName('mqSSLOptions')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
-    mqSSLciphers: [
-        { type: 'required', message: `${getDisplayName('mqSSLciphers')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    mqSSLCiphers: [
+        { type: 'required', message: `${getDisplayName('mqSSLCiphers')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
-    mqSSLkey: [
-        { type: 'required', message: `${getDisplayName('mqSSLkey')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    mqSSLKeyCert: [
+        { type: 'required', message: `${getDisplayName('mqSSLKeyCert')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
-    mqSSLcaCert: [
-        { type: 'required', message: `${getDisplayName('mqSSLcaCert')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    mqSSLCaCert: [
+        { type: 'required', message: `${getDisplayName('mqSSLCaCert')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
 };
 

@@ -218,6 +218,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
+          workaround: [],
           mqHost: [entity.mqHost],
           mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
           mqQManager: [entity.mqQManager],
@@ -226,13 +227,13 @@ export class EntityCreateComponent implements OnInit {
           mqQueueBinding: [entity.mqQueueBinding],
           mqQueueContext: [entity.mqQueueContext],
           mqDebug: [entity.mqDebug],
-          mqSSLoptions: [entity.mqSSLoptions],
-          mqSSLciphers: [entity.mqSSLciphers],
-          mqSSLkey: [entity.mqSSLkey],
-          mqSSLcaCert: [entity.mqSSLcaCert],
+          mqSSLOptions: [entity.mqSSLOptions],
+          mqSSLCiphers: [entity.mqSSLCiphers],
+          mqSSLKeyCert: [entity.mqSSLKeyCert],
+          mqSSLCaCert: [entity.mqSSLCaCert],
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
-        });
+        }, { validators: this.entityValidators.mqDetailsRequiredIfDirect(this.entityPageFormGroup.controls.entityParticipantType) });
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;
           this.mqDetails = data;
@@ -240,6 +241,15 @@ export class EntityCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
+        this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe(() => {
+          for (const control in this.mqDetailsFormGroup.controls){
+            if (this.mqDetailsFormGroup.contains(control)){
+              this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+            }
+          }
+          this.resetMqWalidators();
+        });
+
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -280,6 +290,21 @@ export class EntityCreateComponent implements OnInit {
         this.mqDetailsFormGroup = null;
         break;
     }
+  }
+
+  resetMqWalidators(){
+    const port = this.mqDetailsFormGroup.controls.mqPort;
+    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    port.setValidators(
+            port.validator == null ?
+            Validators.pattern(NON_NEGATIVE_INT) :
+            [port.validator, Validators.pattern(NON_NEGATIVE_INT)]
+          );
+    sessionTimeout.setValidators(
+            sessionTimeout.validator == null ?
+            Validators.pattern(NON_NEGATIVE_INT) :
+            [sessionTimeout.validator, Validators.pattern(NON_NEGATIVE_INT)]
+          );
   }
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
@@ -426,7 +451,7 @@ export class EntityCreateComponent implements OnInit {
   getEntityServicesArray = () => Object.keys(ENTITY_SERVICE_TYPE).map(e => ENTITY_SERVICE_TYPE[e]);
 
   updateSchedulesDataSource = () =>
-    this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value);
+    this.schedulesDataSource = new MatTableDataSource(this.schedulesFormGroup.get('schedules').value)
 
   getFormattedSchedule = (schedule: Schedule) =>
     `${schedule.timeStart}${schedule.isWindow ? ' to ' + schedule.windowEnd +

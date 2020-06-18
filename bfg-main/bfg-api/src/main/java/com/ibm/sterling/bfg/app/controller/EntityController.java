@@ -61,7 +61,7 @@ public class EntityController {
         String changeId = (String) approve.get("changeID");
         return Optional.ofNullable(
                 entityService.getEntityAfterApprove(
-                        changeId,
+                        changeControlService.findById(changeId).orElseThrow(EntityNotFoundException::new),
                         (String) approve.get("approverComments"),
                         status))
                 .map(record -> ok()

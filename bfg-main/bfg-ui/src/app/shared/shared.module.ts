@@ -27,14 +27,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { InputLowercaseDirective } from './directives/input-lowercase/input-lowercase.directive';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTabsModule } from '@angular/material/tabs';
+import { DisplayTableCellComponent } from './components/display-table-cell/display-table-cell.component';
 
 @NgModule({
   declarations: [
     // Components
     ConfirmDialogComponent,
     DetailsDialogComponent,
+    DisplayTableCellComponent,
     // Directives
     InputLowercaseDirective,
   ],
@@ -97,6 +99,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 
     // Components
     ConfirmDialogComponent,
+    DisplayTableCellComponent,
     // Directives
     InputLowercaseDirective,
   ]

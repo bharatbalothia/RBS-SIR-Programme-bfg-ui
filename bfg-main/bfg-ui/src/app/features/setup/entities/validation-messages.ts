@@ -68,15 +68,36 @@ export const ENTITY_VALIDATION_MESSAGES = {
         { type: 'required', message: `${getDisplayName('mqChannel')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
     mqQueueName: [
-        { type: 'required', message: `${getDisplayName('directParticipant')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+        { type: 'required', message: `${getDisplayName('mqQueueName')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
     mqHeader: [
-        { type: 'required', message: `${getDisplayName('directParticipant')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+        { type: 'required', message: `${getDisplayName('mqHeader')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
     ],
     mqSessionTimeout: [
-        { type: 'required', message: `${getDisplayName('directParticipant')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
-        { type: 'pattern', message: `${getDisplayName('directParticipant')} must be a positive number`},
-    ]
+        { type: 'required', message: `${getDisplayName('mqSessionTimeout')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+        { type: 'pattern', message: `${getDisplayName('mqSessionTimeout')} must be a positive number`},
+    ],
+    mqQueueBinding: [
+        { type: 'required', message: `${getDisplayName('mqQueueBinding')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqQueueContext: [
+        { type: 'required', message: `${getDisplayName('mqQueueContext')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqDebug: [
+        { type: 'required', message: `${getDisplayName('mqDebug')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqSSLoptions: [
+        { type: 'required', message: `${getDisplayName('mqSSLoptions')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqSSLciphers: [
+        { type: 'required', message: `${getDisplayName('mqSSLciphers')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqSSLkey: [
+        { type: 'required', message: `${getDisplayName('mqSSLkey')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
+    mqSSLcaCert: [
+        { type: 'required', message: `${getDisplayName('mqSSLcaCert')} is required if ${getDisplayName('entityParticipantType')} is DIRECT` },
+    ],
 };
 
 export const SCHEDULE_VALIDATION_MESSAGES = {

@@ -90,9 +90,9 @@ public class EntityController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String сhangerComments) {
+    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
         Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
-        Optional.ofNullable(сhangerComments).ifPresent(comment -> entity.setChangerComments(comment));
+        Optional.ofNullable(changerComments).ifPresent(comment -> entity.setChangerComments(comment));
         return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 

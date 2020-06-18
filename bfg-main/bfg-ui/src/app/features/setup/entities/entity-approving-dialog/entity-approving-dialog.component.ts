@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DetailsDialogData, Tab, Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/models/changeControl/change-status';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
+import { getApiErrorMessage, ErrorMessage, ErrorsField, getErrorsMessage } from 'src/app/core/utils/error-template';
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
@@ -17,6 +17,7 @@ import { getDisplayName } from '../display-names';
 export class EntityApprovingDialogComponent implements OnInit {
 
   getDisplayName = getDisplayName;
+  getErrorsMessage = getErrorsMessage;
 
   entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
@@ -70,9 +71,6 @@ export class EntityApprovingDialogComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
-
-  getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
-
 
   isTheSameUser() {
     return this.authService.getUserName() === this.changer;

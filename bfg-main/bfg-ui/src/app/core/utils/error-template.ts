@@ -18,3 +18,5 @@ export const getApiErrorMessage = (error) => {
         return error;
     }
 };
+
+export const getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);

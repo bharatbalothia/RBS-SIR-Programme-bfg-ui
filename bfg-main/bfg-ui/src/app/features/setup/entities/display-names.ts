@@ -7,6 +7,7 @@ import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-a
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 export const DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -204,6 +205,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
       formatRow: getScheduleRowFormat
     }
   },
+  changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.AFTER_CHANGES,
     tabSections: [
@@ -226,7 +228,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
       tableTitle: 'Schedules'
     }
   },
-  changeControl.entityBefore &&
+  changeControl.entityBefore && changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES,
     tabSections: [

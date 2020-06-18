@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { getDisplayName } from '../display-names';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { ErrorMessage, getApiErrorMessage, getErrorsMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-entity-delete-dialog',
@@ -14,6 +14,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 export class EntityDeleteDialogComponent implements OnInit {
 
   getDisplayName = getDisplayName;
+  getErrorsMessage = getErrorsMessage;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];

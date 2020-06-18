@@ -82,9 +82,10 @@ export class EntityApprovingDialogComponent implements OnInit {
 
   getEntityBeforeValue = (tabSectionTitle: string, fieldName: string) => {
     const tab = this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES);
+    const tableObject = get(tab, 'tableObject', null);
     const tabSections = get(tab, 'tabSections', []);
     const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
-    return tab.tableObject && tab.tableObject.tableTitle === tabSectionTitle
+    return tableObject && tableObject.tableTitle === tabSectionTitle
       ? tab.tableObject.tableDataSource.map(el => tab.tableObject.formatRow ? tab.tableObject.formatRow(el) : el)
       : get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
   }

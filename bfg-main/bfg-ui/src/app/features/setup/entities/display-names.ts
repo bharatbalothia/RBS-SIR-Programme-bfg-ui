@@ -1,7 +1,7 @@
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { isEmpty } from 'lodash';
+import { isEmpty, merge } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
@@ -88,6 +88,9 @@ const getEntityDetailsSectionItems = (entity) => ({
     { fieldName: getDisplayName('entityParticipantType'), fieldValue: entity.entityParticipantType },
     { fieldName: getDisplayName('directParticipant'), fieldValue: entity.directParticipant }],
   ],
+  'Schedules': [{
+    fieldName: 'Schedules', fieldValue: entity.schedules && entity.schedules.map((schedule: Schedule) => getScheduleRowFormat(schedule))
+  }],
   'MQ Details': [
     { fieldName: getDisplayName('mqHost'), fieldValue: entity.mqHost },
     { fieldName: getDisplayName('mqPort'), fieldValue: entity.mqPort },
@@ -159,7 +162,7 @@ export const getEntityDetailsFields = (entity: Entity): Tab[] => [
     tabTitle: `${entity.service} Routing Details`,
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Routing Details'] }]
   }
-];
+].filter(el => el);
 
 export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => [
   {
@@ -178,43 +181,83 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
       ],
     }]
   },
-  {
+  changeControl.entityBefore && {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES,
-    tabSections: changeControl.entityBefore ? [
+    tabSections: [
       { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Entity Details'] },
+      changeControl.entityBefore.service === ENTITY_SERVICE_TYPE.SCT &&
+      { sectionTitle: 'MQ Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['MQ Details'] },
       { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['SWIFT Details'] },
-      {
+      changeControl.entityBefore.service === ENTITY_SERVICE_TYPE.GPL && {
         sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
         sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Routing Details']
       }
-    ] : []
+    ],
+    tableObject: changeControl.entityBefore.service === ENTITY_SERVICE_TYPE.SCT && {
+      tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
+      tableDataSource: changeControl.entityBefore.schedules.map((schedule: Schedule) =>
+        ({
+          ...schedule,
+          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+        })),
+      tableTitle: 'Schedules',
+      formatRow: getScheduleRowFormat
+    }
   },
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.AFTER_CHANGES,
     tabSections: [
       { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Entity Details'] },
+      changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
+      { sectionTitle: 'MQ Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['MQ Details'] },
       { sectionTitle: 'SWIFT Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['SWIFT Details'] },
-      {
+      changeControl.entityLog.service === ENTITY_SERVICE_TYPE.GPL && {
         sectionTitle: `${changeControl.entityLog.service} Routing Details`,
         sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Routing Details']
       }
-    ]
+    ],
+    tableObject: changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT && {
+      tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
+      tableDataSource: changeControl.entityLog.schedules.map((schedule: Schedule) =>
+        ({
+          ...schedule,
+          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+        })),
+      tableTitle: 'Schedules'
+    }
   },
+  changeControl.entityBefore &&
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES,
-    tabSections: changeControl.entityBefore ? [
+    tabSections: [
       {
         sectionTitle: 'Entity Details',
         sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Entity Details']
+      },
+      changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
+      {
+        sectionTitle: 'MQ Details',
+        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['MQ Details']
+      },
+      changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
+      {
+        sectionTitle: 'Schedules',
+        sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Schedules']
       },
       {
         sectionTitle: 'SWIFT Details',
         sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['SWIFT Details']
       },
+      changeControl.entityLog.service === ENTITY_SERVICE_TYPE.GPL &&
       {
         sectionTitle: `${changeControl.entityBefore.service} Routing Details`,
         sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Routing Details']
       }
-    ] : []
+    ]
   }
-].filter(el => !isEmpty(el.tabSections));
+].filter(el => el);
+
+const getScheduleRowFormat = (schedule: Schedule) => `${schedule.isWindow ?
+  `${SCHEDULE_TYPE.WINDOW} ${schedule.timeStart}-${schedule.windowEnd}(${schedule.windowInterval})`
+  : `${SCHEDULE_TYPE.DAILY} ${schedule.timeStart}`}
+     ${schedule.fileType} (${schedule.lastRun ? `Last Run: ${schedule.lastRun}, ` : ''}${schedule.nextRun ? `Next Run: ${schedule.nextRun}` : ''})`;

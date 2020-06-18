@@ -15,7 +15,9 @@
                 </ng-container>
                 <ng-container matColumnDef="fieldValue">
                     <mat-cell *matCellDef="let element">
-                        {{(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue}}
+                        <app-display-table-cell
+                            [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
+                        </app-display-table-cell>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"

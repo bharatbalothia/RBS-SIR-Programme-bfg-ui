@@ -1,0 +1,8 @@
+<div *ngIf="!_array.isArray(value)">
+    {{value}}
+</div>
+<ul class="list-group" *ngIf="_array.isArray(value)">
+    <li *ngFor="let item of value" class="list-group-item">
+        {{ item }}
+    </li>
+</ul>

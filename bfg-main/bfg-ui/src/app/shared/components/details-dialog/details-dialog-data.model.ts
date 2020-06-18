@@ -19,6 +19,8 @@ export interface Section {
 export interface Table {
     tableColumns: string[];
     tableDataSource: any[];
+    tableTitle?: string;
+    formatRow?: (el: any) => string;
 }
 
 export interface SectionItem {

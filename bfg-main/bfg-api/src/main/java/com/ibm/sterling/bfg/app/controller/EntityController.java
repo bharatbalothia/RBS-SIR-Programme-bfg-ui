@@ -90,11 +90,10 @@ public class EntityController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEntity(@PathVariable int id) {
-        return entityService.findById(id)
-                .map(entity ->
-                    ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE)))
-                    .orElseThrow(EntityNotFoundException::new);
+    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam String сhangerComments) {
+        Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
+        entity.setChangerComments(сhangerComments);
+        return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 
     @GetMapping("/existence")

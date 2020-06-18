@@ -75,12 +75,12 @@ export const DISPLAY_NAMES = {
 
 export const getDisplayName = (key: string) => DISPLAY_NAMES[key] || key;
 
-const getEntityDetailsSectionItems = (entity) => ({
+const getEntityDetailsSectionItems = (entity, targetService?) => ({
   'Entity Details': [
     { fieldName: getDisplayName('entityId'), fieldValue: entity.entityId },
     { fieldName: getDisplayName('entity'), fieldValue: entity.entity },
     { fieldName: getDisplayName('service'), fieldValue: entity.service, shouldDisplayValueUpperCase: true },
-    ...entity.service === ENTITY_SERVICE_TYPE.SCT && [{ fieldName: getDisplayName('maxBulksPerFile'), fieldValue: entity.maxBulksPerFile },
+    ...(entity.service === ENTITY_SERVICE_TYPE.SCT || targetService === ENTITY_SERVICE_TYPE.SCT) && [{ fieldName: getDisplayName('maxBulksPerFile'), fieldValue: entity.maxBulksPerFile },
     { fieldName: getDisplayName('maxTransfersPerBulk'), fieldValue: entity.maxTransfersPerBulk },
     { fieldName: getDisplayName('compression'), fieldValue: entity.compression },
     { fieldName: getDisplayName('startOfDay'), fieldValue: entity.startOfDay },
@@ -232,7 +232,8 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
     tabSections: [
       {
         sectionTitle: 'Entity Details',
-        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['Entity Details']
+        sectionItems: getEntityDetailsSectionItems(
+          difference(changeControl.entityLog, changeControl.entityBefore), changeControl.entityLog.service)['Entity Details']
       },
       changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
       {

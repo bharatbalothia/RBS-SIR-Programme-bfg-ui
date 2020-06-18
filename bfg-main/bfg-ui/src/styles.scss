@@ -18,6 +18,12 @@ body {
     display: none !important;
 }
 
+.mat-stepper-horizontal {
+    .mat-step-label {
+        white-space: normal;
+    }
+}
+
 mat-form-field {
     &.ng-valid {
         .mat-form-field-wrapper {

@@ -410,7 +410,7 @@
                         <mat-label>{{entityDisplayNames['mqDebug'] || 'mqDebug'}}
                         </mat-label>
                         <mat-select formControlName="mqDebug">
-                            <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug">
+                            <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug.toUpperCase()">
                                 {{mqDebug}}</mat-option>
                         </mat-select>
                         <mat-error *ngFor="let validation of entityValidationMessages.mqDebug">

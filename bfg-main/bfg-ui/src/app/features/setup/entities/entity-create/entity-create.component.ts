@@ -218,7 +218,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
-          workaround: [],
+          workaround: ['workaround'],
           mqHost: [entity.mqHost],
           mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
           mqQManager: [entity.mqQManager],

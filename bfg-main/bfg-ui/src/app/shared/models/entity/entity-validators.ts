@@ -48,24 +48,4 @@ export class EntityValidators {
     };
   }
 
-  mqDetailsRequiredIfDirect(participantType: AbstractControl): ValidatorFn {
-    return (mqGroup: FormGroup): null => {
-      for (const control in mqGroup.controls){
-        if (mqGroup.contains(control)){
-          const currentControl = mqGroup.get(control);
-          if (participantType.value === 'DIRECT'){
-            if (currentControl.validator == null){
-              currentControl.setValidators(Validators.required);
-            } else {
-              currentControl.setValidators([currentControl.validator, Validators.required]);
-            }
-          } else if (currentControl.hasError('required')) {
-            currentControl.clearValidators();
-          }
-        }
-      }
-      return null;
-    };
-  }
-
 }

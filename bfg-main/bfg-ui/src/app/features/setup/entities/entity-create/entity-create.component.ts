@@ -218,7 +218,6 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
-          workaround: ['workaround'],
           mqHost: [entity.mqHost],
           mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
           mqQManager: [entity.mqQManager],
@@ -233,7 +232,7 @@ export class EntityCreateComponent implements OnInit {
           mqSSLCaCert: [entity.mqSSLCaCert],
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
-        }, { validators: this.entityValidators.mqDetailsRequiredIfDirect(this.entityPageFormGroup.controls.entityParticipantType) });
+        });
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;
           this.mqDetails = data;
@@ -241,13 +240,9 @@ export class EntityCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
-        this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe(() => {
-          for (const control in this.mqDetailsFormGroup.controls){
-            if (this.mqDetailsFormGroup.contains(control)){
-              this.mqDetailsFormGroup.get(control).updateValueAndValidity();
-            }
-          }
-          this.resetMqWalidators();
+        this.resetMqWalidators(this.entityPageFormGroup.controls.entityParticipantType.value);
+        this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
+          this.resetMqWalidators(value);
         });
 
         break;
@@ -292,9 +287,24 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  resetMqWalidators(){
+  resetMqWalidators(value){
     const port = this.mqDetailsFormGroup.controls.mqPort;
     const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    if (value === 'DIRECT'){
+      for (const control in this.mqDetailsFormGroup.controls){
+        if (this.mqDetailsFormGroup.contains(control)){
+          this.mqDetailsFormGroup.get(control).setValidators(Validators.required);
+          this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+        }
+      }
+    } else {
+      for (const control in this.mqDetailsFormGroup.controls){
+        if (this.mqDetailsFormGroup.contains(control)){
+          this.mqDetailsFormGroup.get(control).clearValidators();
+          this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+        }
+      }
+    }
     port.setValidators(
             port.validator == null ?
             Validators.pattern(NON_NEGATIVE_INT) :

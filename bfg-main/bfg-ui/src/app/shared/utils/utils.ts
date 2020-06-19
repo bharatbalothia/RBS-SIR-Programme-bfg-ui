@@ -10,7 +10,7 @@ export const removeEmpties = (obj) => {
 };
 
 export const difference = (object, base) => {
-    const changes = (object, base) => {
+    const changes = (object, base): any => {
         return transform(object, (result, value, key) => {
             if (!isEqual(value, base[key])) {
                 result[key] = (isObject(value) && isObject(base[key])) ? changes(value, base[key]) : value;

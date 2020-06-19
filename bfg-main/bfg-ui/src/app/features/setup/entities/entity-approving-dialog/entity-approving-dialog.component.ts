@@ -1,12 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { DetailsDialogData, Tab, Section } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { CHANGE_STATUS } from 'src/app/shared/models/changeControl/change-status';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField } from 'src/app/core/utils/error-template';
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
+import { getDisplayName } from '../display-names';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -14,6 +15,8 @@ import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
   styleUrls: ['./entity-approving-dialog.component.scss']
 })
 export class EntityApprovingDialogComponent implements OnInit {
+
+  getDisplayName = getDisplayName;
 
   entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
@@ -46,8 +49,12 @@ export class EntityApprovingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tabs.forEach((tab: Tab) => tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
-      .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue))));
+    this.tabs.forEach((tab: Tab) => {
+      if (tab.tabSections) {
+        tab.tabSections.filter(el => el).forEach(section => section.sectionItems = section.sectionItems
+          .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue)));
+      }
+    });
   }
 
   entityApprovingAction(status) {
@@ -74,9 +81,13 @@ export class EntityApprovingDialogComponent implements OnInit {
   isDifferencesTab = (tabTitle: string) => tabTitle === ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES;
 
   getEntityBeforeValue = (tabSectionTitle: string, fieldName: string) => {
-    const tabSections = get(this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES), 'tabSections', []);
+    const tab = this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES);
+    const tableObject = get(tab, 'tableObject', null);
+    const tabSections = get(tab, 'tabSections', []);
     const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
-    return get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
+    return tableObject && tableObject.tableTitle === tabSectionTitle
+      ? tab.tableObject.tableDataSource.map(el => tab.tableObject.formatRow ? tab.tableObject.formatRow(el) : el)
+      : get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
   }
 
 }

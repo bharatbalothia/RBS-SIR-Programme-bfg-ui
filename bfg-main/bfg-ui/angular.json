@@ -138,5 +138,8 @@
       }
     }
   },
-  "defaultProject": "bfg-ui"
+  "defaultProject": "bfg-ui",
+  "cli": {
+    "analytics": false
+  }
 }

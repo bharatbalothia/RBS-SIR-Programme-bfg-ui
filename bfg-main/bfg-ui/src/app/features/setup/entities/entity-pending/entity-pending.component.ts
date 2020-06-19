@@ -6,7 +6,7 @@ import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { DISPLAY_NAMES, getEntityDetailsFields, getPendingChangesFields } from '../display-names';
+import { DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs } from '../display-names';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
@@ -72,14 +72,14 @@ export class EntityPendingComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
-        tabs: getPendingChangesFields(changeCtrl),
+        tabs: getPendingChangesTabs(changeCtrl),
       })));
   }
 
   openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
-      tabs: getEntityDetailsFields(entity),
+      tabs: getEntityDetailsTabs(entity),
     }));
   }
 
@@ -87,7 +87,7 @@ export class EntityPendingComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
-        tabs: getPendingChangesFields(changeCtrl),
+        tabs: getPendingChangesTabs(changeCtrl),
         actionData: {
           changeID: changeControl.changeID,
           changer: changeControl.changer,

@@ -218,7 +218,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.mqDetailsFormGroup = this.formBuilder.group({
-          workaround: [],
+          workaround: ['workaround'],
           mqHost: [entity.mqHost],
           mqPort: [entity.mqPort, Validators.pattern(NON_NEGATIVE_INT)],
           mqQManager: [entity.mqQManager],
@@ -227,10 +227,10 @@ export class EntityCreateComponent implements OnInit {
           mqQueueBinding: [entity.mqQueueBinding],
           mqQueueContext: [entity.mqQueueContext],
           mqDebug: [entity.mqDebug],
-          mqSSLoptions: [entity.mqSSLoptions],
-          mqSSLciphers: [entity.mqSSLciphers],
-          mqSSLkey: [entity.mqSSLkey],
-          mqSSLcaCert: [entity.mqSSLcaCert],
+          mqSSLOptions: [entity.mqSSLOptions],
+          mqSSLCiphers: [entity.mqSSLCiphers],
+          mqSSLKeyCert: [entity.mqSSLKeyCert],
+          mqSSLCaCert: [entity.mqSSLCaCert],
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
         }, { validators: this.entityValidators.mqDetailsRequiredIfDirect(this.entityPageFormGroup.controls.entityParticipantType) });

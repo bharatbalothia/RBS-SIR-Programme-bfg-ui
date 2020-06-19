@@ -2,43 +2,7 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
-            <mat-table *ngFor="let dataSource of tab.tabSections" [dataSource]="dataSource.sectionItems">
-                <ng-container matColumnDef="tableTitle">
-                    <mat-header-cell *matHeaderCellDef colspan="2">
-                        {{dataSource.sectionTitle}}
-                    </mat-header-cell>
-                </ng-container>
-                <ng-container matColumnDef="fieldName">
-                    <mat-cell *matCellDef="let element">
-                        {{element.fieldName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="fieldValue">
-                    <mat-cell *matCellDef="let element">
-                        <app-display-table-cell
-                            [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
-                        </app-display-table-cell>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
-                    [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
-                </mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            </mat-table>
-
-            <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">
-                <ng-container *ngFor="let item of tab.tableObject.tableColumns" [matColumnDef]="item">
-                    <mat-header-cell *matHeaderCellDef>
-                        {{getDisplayName(item)}}
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element[item]}}
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns">
-                </mat-header-row>
-                <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>
-            </mat-table>
+            <app-tab-content [tab]="tab"></app-tab-content>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>

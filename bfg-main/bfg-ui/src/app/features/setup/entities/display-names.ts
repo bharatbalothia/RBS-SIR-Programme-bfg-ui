@@ -7,6 +7,7 @@ import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-a
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 export const DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -65,10 +66,10 @@ export const DISPLAY_NAMES = {
   mqQueueBinding: 'MQ Queue Binding',
   mqQueueContext: 'MQ Queue Context',
   mqDebug: 'MQ Debug',
-  mqSSLoptions: 'MQ SSL Options',
-  mqSSLciphers: 'MQ SSL Ciphers',
-  mqSSLkey: 'MQ SSL Key Certificate',
-  mqSSLcaCert: 'MQ SSL CA Certificate',
+  mqSSLOptions: 'MQ SSL Options',
+  mqSSLCiphers: 'MQ SSL Ciphers',
+  mqSSLKeyCert: 'MQ SSL Key Certificate',
+  mqSSLCaCert: 'MQ SSL CA Certificate',
   mqHeader: 'MQ Header',
   mqSessionTimeout: 'MQ Session Timeout',
 };
@@ -133,7 +134,7 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
   ]
 });
 
-export const getEntityDetailsFields = (entity: Entity): Tab[] => [
+export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
   {
     tabTitle: 'Entity Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
@@ -164,7 +165,7 @@ export const getEntityDetailsFields = (entity: Entity): Tab[] => [
   }
 ].filter(el => el);
 
-export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => [
+export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.CHANGE_DETAILS,
     tabSections: [{
@@ -204,6 +205,7 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
       formatRow: getScheduleRowFormat
     }
   },
+  changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.AFTER_CHANGES,
     tabSections: [
@@ -226,7 +228,7 @@ export const getPendingChangesFields = (changeControl: ChangeControl): Tab[] => 
       tableTitle: 'Schedules'
     }
   },
-  changeControl.entityBefore &&
+  changeControl.entityBefore && changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
     tabTitle: ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES,
     tabSections: [

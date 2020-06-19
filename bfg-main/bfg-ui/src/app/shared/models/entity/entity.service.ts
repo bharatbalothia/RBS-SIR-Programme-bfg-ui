@@ -27,6 +27,10 @@ export class EntityService {
     return this.http.put<Entity>(this.apiUrl + entity.entityId, entity);
   }
 
+  deleteEntity(entityId: number, changerComments: string) {
+    return this.http.delete(this.apiUrl + entityId, { params: changerComments && { changerComments } });
+  }
+
   getEntityList(params?: { entity?: string; service?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<EntitiesWithPagination>(this.apiUrl, { params });
   }

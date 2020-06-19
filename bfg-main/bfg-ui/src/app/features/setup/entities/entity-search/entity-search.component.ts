@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
-import { getEntityDetailsFields, getDisplayName, getPendingChangesFields } from '../display-names';
+import { getEntityDetailsTabs, getDisplayName, getPendingChangesTabs } from '../display-names';
 import { MatDialog } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
@@ -15,6 +15,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { EntityDeleteDialogComponent } from '../entity-delete-dialog/entity-delete-dialog.component';
 
 @Component({
   selector: 'app-entity-search',
@@ -86,14 +87,14 @@ export class EntitySearchComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
-        tabs: getPendingChangesFields(changeCtrl),
+        tabs: getPendingChangesTabs(changeCtrl),
       })));
   }
 
   openEntityDetailsDialog(entity: Entity) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
-      tabs: getEntityDetailsFields(entity),
+      tabs: getEntityDetailsTabs(entity),
     }));
   }
 
@@ -101,7 +102,7 @@ export class EntitySearchComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
-        tabs: getPendingChangesFields(changeCtrl),
+        tabs: getPendingChangesTabs(changeCtrl),
         actionData: {
           changeID: changeControl.changeID,
           changer: changeControl.changer,
@@ -119,6 +120,25 @@ export class EntitySearchComponent implements OnInit {
           });
         }
       }));
+  }
+
+  deleteEntity(entity: Entity) {
+    this.dialog.open(EntityDeleteDialogComponent, new DetailsDialogConfig({
+      title: `Delete ${entity.entity}`,
+      tabs: getEntityDetailsTabs(entity),
+      actionData: { entityId: entity.entityId }
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'refreshList')) {
+        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+          title: `Entity deleted`,
+          text: `Entity ${entity.entity} has been deleted`,
+          shouldHideYesCaption: true,
+          noCaption: 'Back'
+        })).afterClosed().subscribe(() => {
+          this.getEntityList(this.pageIndex, this.pageSize);
+        });
+      }
+    });
   }
 
 }

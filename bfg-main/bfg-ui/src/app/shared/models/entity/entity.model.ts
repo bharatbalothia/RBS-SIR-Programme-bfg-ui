@@ -49,10 +49,10 @@ export interface Entity {
     mqQueueBinding?: string;
     mqQueueContext?: string;
     mqDebug?: number;
-    mqSSLoptions?: string;
-    mqSSLciphers?: string;
-    mqSSLkey?: string;
-    mqSSLcaCert?: string;
+    mqSSLOptions?: string;
+    mqSSLCiphers?: string;
+    mqSSLKeyCert?: string;
+    mqSSLCaCert?: string;
     mqHeader?: string;
     mqSessionTimeout?: number;
     routeInbound: boolean;

@@ -84,12 +84,6 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public void deleteById(int id) {
-        LOG.info("deleting entity by id {}", id);
-        entityRepository.deleteById(id);
-    }
-
-    @Override
     public Entity save(Entity entity) {
         LOG.info("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
@@ -137,7 +131,9 @@ public class EntityServiceImpl implements EntityService {
             "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'DELETE' or " +
             "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'DELETE'")
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
-        validateEntity(entity, operation);
+        if (!operation.equals(Operation.DELETE)) {
+            validateEntity(entity, operation);
+        }
         LOG.info("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
         changeControl.setOperation(operation);
@@ -175,14 +171,14 @@ public class EntityServiceImpl implements EntityService {
     private Entity approve(ChangeControl changeControl) {
         LOG.info("Entity {} action", changeControl.getOperation());
         Entity entity = new Entity();
-        Operation operation = changeControl.getOperation();
-        switch (operation) {
-            case CREATE:
-            case UPDATE:
+//        Operation operation = changeControl.getOperation();
+//        switch (operation) {
+//            case CREATE:
+//            case UPDATE:
                 entity = saveEntityAfterApprove(changeControl);
-                break;
-            case DELETE:
-        }
+//                break;
+//            case DELETE:
+//        }
         LOG.info("Entity after {} action: {}", changeControl.getOperation(), entity);
         return entity;
     }
@@ -205,7 +201,14 @@ public class EntityServiceImpl implements EntityService {
                         .collect(Collectors.toList())
         );
         Operation operation = changeControl.getOperation();
-        validateEntity(entity, operation);
+        if (!operation.equals(Operation.DELETE)) {
+            validateEntity(entity, operation);
+        } else {
+            entity.setDeleted(Boolean.TRUE);
+            entity.setService("DEL_" + entity.getEntityId() + "_" + entity.getService());
+            entity.setMailboxPathOut("DEL_" + entity.getEntityId() + "_" + entity.getMailboxPathOut());
+            entity.setMqQueueOut("DEL_" + entity.getEntityId() + "_" + entity.getMqQueueOut());
+        }
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();

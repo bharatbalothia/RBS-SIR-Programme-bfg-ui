@@ -95,12 +95,10 @@ public class EntityController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasPermission(#id, 'Entity', 'DELETE')")
-    public ResponseEntity<?> deleteEntity(@PathVariable int id) {
-        return entityService.findById(id)
-                .map(record -> {
-                    entityService.deleteById(id);
-                    return ok().build();
-                }).orElseThrow(EntityNotFoundException::new);
+    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
+        Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
+        Optional.ofNullable(changerComments).ifPresent(comment -> entity.setChangerComments(comment));
+        return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 
     @GetMapping("/existence")

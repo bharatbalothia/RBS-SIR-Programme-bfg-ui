@@ -31,8 +31,8 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler successHandler;
     @Autowired
     private AuthenticationFailureHandler failureHandler;
-    @Autowired
-    private ProjectPermissionEvaluator permissionEvaluator;
+    //@Autowired
+    //private ProjectPermissionEvaluator permissionEvaluator;
 
     @Bean
     @Override
@@ -71,9 +71,9 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring()
                 .antMatchers("/api/auth/signin");
-        DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
-        handler.setPermissionEvaluator(permissionEvaluator);
-        web.expressionHandler(handler);
+        //DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
+        //handler.setPermissionEvaluator(permissionEvaluator);
+        //web.expressionHandler(handler);
     }
 
     @Bean

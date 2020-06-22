@@ -123,14 +123,6 @@ public class EntityServiceImpl implements EntityService {
         }
     }
 
-    /*
-        @PreAuthorize("hasAuthority('SFG_UI_SCT_CREATE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'CREATE' or " +
-                "hasAuthority('SFG_UI_SCT_CREATE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'CREATE' or " +
-                "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'UPDATE' or " +
-                "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'UPDATE' or " +
-                "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'DELETE' or " +
-                "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'DELETE'")
-    */
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
             validateEntity(entity, operation);
@@ -147,10 +139,6 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    /*
-        @PreAuthorize("hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_SCT') and #changeControl.getEntityLog().service == 'SCT' or " +
-                "hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_GPL') and #changeControl.getEntityLog().service == 'GPL'")
-    */
     public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");

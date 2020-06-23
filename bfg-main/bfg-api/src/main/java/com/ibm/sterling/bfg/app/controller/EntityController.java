@@ -57,7 +57,7 @@ public class EntityController {
     }
 
     @PostMapping("pending")
-    @PreAuthorize("hasPermission(#approve, 'APPROVE')")
+    @PreAuthorize("@entityPermissionEvaluator.checkApprovePermission(#approve)")
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
@@ -80,13 +80,13 @@ public class EntityController {
     }
 
     @PostMapping
-    @PreAuthorize("hasPermission(#entity, 'CREATE')")
+    @PreAuthorize("@entityPermissionEvaluator.checkCreatePermission(#entity)")
     public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
         return ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasPermission(#id, 'Entity', 'EDIT')")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPermission(#entity, #id)")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
@@ -94,10 +94,10 @@ public class EntityController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasPermission(#id, 'Entity', 'DELETE')")
+    @PreAuthorize("@entityPermissionEvaluator.checkDeletePermission(#id)")
     public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
         Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
-        Optional.ofNullable(changerComments).ifPresent(comment -> entity.setChangerComments(comment));
+        Optional.ofNullable(changerComments).ifPresent(entity::setChangerComments);
         return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 

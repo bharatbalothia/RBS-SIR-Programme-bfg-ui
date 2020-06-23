@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,12 +123,6 @@ public class EntityServiceImpl implements EntityService {
         }
     }
 
-    @PreAuthorize("hasAuthority('SFG_UI_SCT_CREATE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'CREATE' or " +
-            "hasAuthority('SFG_UI_SCT_CREATE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'CREATE' or " +
-            "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'UPDATE' or " +
-            "hasAuthority('SFG_UI_SCT_EDIT_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'UPDATE' or " +
-            "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_SCT') and #entity.service == 'SCT' and #operation.name() == 'DELETE' or " +
-            "hasAuthority('SFG_UI_SCT_DELETE_ENTITY_GPL') and #entity.service == 'GPL' and #operation.name() == 'DELETE'")
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
             validateEntity(entity, operation);
@@ -146,8 +139,6 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    @PreAuthorize("hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_SCT') and #changeControl.getEntityLog().service == 'SCT' or " +
-            "hasAuthority('SFG_UI_SCT_APPROVE_ENTITY_GPL') and #changeControl.getEntityLog().service == 'GPL'")
     public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
@@ -175,7 +166,7 @@ public class EntityServiceImpl implements EntityService {
 //        switch (operation) {
 //            case CREATE:
 //            case UPDATE:
-                entity = saveEntityAfterApprove(changeControl);
+        entity = saveEntityAfterApprove(changeControl);
 //                break;
 //            case DELETE:
 //        }

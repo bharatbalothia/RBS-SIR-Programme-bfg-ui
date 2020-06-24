@@ -1,0 +1,17 @@
+<mat-card class="trusted-certificate-create-card">
+    <mat-card-header>
+        <mat-card-title>Create Trusted Certificate
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <mat-error class="top-error-message" *ngIf="errorMessage">
+            {{errorMessage.message}} ({{errorMessage.code}})
+            <ul *ngIf="errorMessage.errors">
+                <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
+            </ul>
+        </mat-error>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>

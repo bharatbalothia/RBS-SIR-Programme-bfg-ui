@@ -11,6 +11,43 @@
             </ul>
         </mat-error>
     </mat-card-content>
+    <mat-horizontal-stepper #stepper [linear]="isLinear">
+        <mat-step [stepControl]="uploadTrustedCertificateFormGroup">
+            <form [formGroup]="uploadTrustedCertificateFormGroup">
+                <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
+                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload" accept=".der"
+                    (change)="handleFileInput($event.target.files)" hidden />
+                <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
+                    [disabled]="isLoading">
+                    <mat-icon>file_upload</mat-icon>
+                    Upload Trusted Certificate
+                </button>
+            </form>
+        </mat-step>
+        <mat-step *ngIf="detailsTrustedCertificateFormGroup" [stepControl]="detailsTrustedCertificateFormGroup">
+            <form [formGroup]="detailsTrustedCertificateFormGroup">
+                <ng-template matStepLabel>Details of Trusted Certificate</ng-template>
+                <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
+                    <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
+                    <input matInput formControlName="name" required>
+                    <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
+                        <mat-error class="error-message"
+                            *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
+                            {{validation.message}}</mat-error>
+                    </mat-error>
+                    <mat-error class="error-message" *ngIf="getErrorByField('name')">
+                        {{getErrorByField('name')}}
+                    </mat-error>
+                </mat-form-field>
+            </form>
+        </mat-step>
+        <mat-step *ngIf="confirmationTrustedCertificateFormGroup"
+            [stepControl]="confirmationTrustedCertificateFormGroup">
+            <form [formGroup]="uploadTrustedCertificateFormGroup">
+                <ng-template matStepLabel>Confirmation of Trusted Certificate</ng-template>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
     <mat-card-footer>
         <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
     </mat-card-footer>

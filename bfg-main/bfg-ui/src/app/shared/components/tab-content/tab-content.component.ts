@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { getDisplayName } from 'src/app/features/setup/entities/display-names';
+import { getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { Tab } from '../details-dialog/details-dialog-data.model';
 
 @Component({
@@ -9,7 +9,7 @@ import { Tab } from '../details-dialog/details-dialog-data.model';
 })
 export class TabContentComponent implements OnInit {
 
-  getDisplayName = getDisplayName;
+  getEntityDisplayName = getEntityDisplayName;
 
   @Input() tab: Tab;
 

@@ -96,6 +96,15 @@
                 <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>
+        <profile>
+            <id>poc</id>
+            <properties>
+                <active.profile>poc</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
     </profiles>
     <build>
         <plugins>

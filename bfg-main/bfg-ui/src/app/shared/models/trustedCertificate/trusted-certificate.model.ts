@@ -4,23 +4,20 @@ export interface TrustedCertificate {
     thumbprint: string;
     startDate: Date;
     endDate: Date;
-    issuer: {
-        C: string[];
-        O: string[];
-        OU: string[];
-        CN: string[];
-        L: string[];
-    };
-    subject: {
-        ST: string[];
-        C: string[];
-        CN: string[];
-        L: string[];
-        O: string[];
-    };
+    issuer: TSItemInfo;
+    subject: TSItemInfo;
     authChainReport: AuthChainReport[];
     valid: boolean;
     changerComments: string;
+}
+
+export interface TSItemInfo {
+    C: string[];
+    O: string[];
+    ST: string[];
+    OU: string[];
+    CN: string[];
+    L: string[];
 }
 
 export interface AuthChainReport {

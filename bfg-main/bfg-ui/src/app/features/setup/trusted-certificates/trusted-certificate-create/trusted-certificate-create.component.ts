@@ -1,11 +1,15 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { TrustedCertificateServiceService } from 'src/app/shared/models/trustedCertificate/trusted-certificate-service.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
 import { getTrustedCertificateDisplayName } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
-import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
+import { TrustedCertificate, TSItemInfo } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
 import { get } from 'lodash';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -25,7 +29,11 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   trustedCertificateFile;
 
+  confirmationDisplayedColumns = ['field', 'value', 'error'];
+  confirmationPageDataSource;
+
   @ViewChild('stepper') stepper;
+  @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   uploadTrustedCertificateFormGroup: FormGroup;
   detailsTrustedCertificateFormGroup: FormGroup;
@@ -33,34 +41,26 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private trustedCertificateService: TrustedCertificateServiceService
+    private trustedCertificateService: TrustedCertificateServiceService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
-    this.initializeFormGroups(this.getTrustedCertificateDefaultValue());
-  }
-
-  initializeFormGroups(trustedCertificate: TrustedCertificate) {
     this.uploadTrustedCertificateFormGroup = this.formBuilder.group({
       trustedCertificateFile: ['', Validators.required]
     });
+    this.initializeDetailsFormGroups(this.getTrustedCertificateDefaultValue());
+  }
+
+  initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({
       name: [get(this.trustedCertificateFile, 'name')],
-      serialNumber: [''],
-      thumbprint: [],
-      startDate: [trustedCertificate.startDate && trustedCertificate.endDate && `${trustedCertificate.startDate}-${trustedCertificate.endDate}`],
-      issuerC: [],
-      issuerCN: [],
-      issuerL: [],
-      issuerO: [],
-      issuerOU: [],
-      subjectC: [],
-      subjectCN: [],
-      subjectL: [],
-      subjectO: [],
-      subjectST: [],
-    });
-    this.confirmationTrustedCertificateFormGroup = this.formBuilder.group({
+      serialNumber: [trustedCertificate.serialNumber],
+      thumbprint: [trustedCertificate.thumbprint],
+      validDates: [trustedCertificate.startDate && trustedCertificate.endDate && `${trustedCertificate.startDate}-${trustedCertificate.endDate}`],
+      issuer: [trustedCertificate.issuer],
+      subject: [trustedCertificate.subject],
+      authChainReport: [trustedCertificate.authChainReport],
       changerComments: ['']
     });
   }
@@ -75,13 +75,15 @@ export class TrustedCertificateCreateComponent implements OnInit {
       CN: [],
       L: [],
       O: [],
-      OU: []
+      OU: [],
+      ST: [],
     },
     subject: {
       C: [],
       CN: [],
       L: [],
       O: [],
+      OU: [],
       ST: [],
     },
     authChainReport: [],
@@ -96,8 +98,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     this.trustedCertificateService.uploadTrustedCertificate(formData).pipe(data => this.setLoading(data))
       .subscribe((data: TrustedCertificate) => {
         this.isLoading = false;
-        this.initializeFormGroups(data);
-        this.confirmationTrustedCertificateFormGroup = this.formBuilder.group({});
+        this.initializeDetailsFormGroups(data);
         this.stepper.next();
       }, error => {
         this.isLoading = false;
@@ -111,4 +112,44 @@ export class TrustedCertificateCreateComponent implements OnInit {
   }
 
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
+
+  getTSItemInfoValues = (item) => Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+
+  cancelTrustedCertificate() {
+    const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+      title: `Cancel creation of the ${trustedCertificateName} Trusted Certificate`,
+      text: `Are you sure to cancel the creation of the ${trustedCertificateName} Trusted Certificate?`,
+      yesCaption: `Cancel creation`,
+      yesCaptionColor: 'warn',
+      noCaption: 'Back'
+    }));
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.errorMessage = null;
+        this.stepper.reset();
+        this.resetAllForms();
+      }
+    });
+  }
+
+  resetAllForms() {
+    this.formGroups.forEach(formGroup => formGroup.resetForm());
+  }
+
+  getConfirmationFieldsSource() {
+    const entity = removeEmpties({
+      ...this.detailsTrustedCertificateFormGroup.value,
+      authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', [])
+        .map(el => this.getTSItemInfoValues(el).join(',\n')),
+      issuer: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', [])),
+      subject: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', [])),
+    });
+    this.confirmationPageDataSource = Object.keys(entity)
+      .map((key) => ({
+        field: key,
+        value: entity[key],
+        error: getErrorByField(key, this.errorMessage)
+      }));
+  }
 }

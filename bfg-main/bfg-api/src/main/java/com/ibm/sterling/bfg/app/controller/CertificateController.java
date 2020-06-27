@@ -1,7 +1,10 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.ibm.sterling.bfg.app.model.TrustedCertificateDetails;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.service.CertificateValidationService;
+import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
+import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.InvalidNameException;
+import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -27,6 +31,12 @@ public class CertificateController {
 
     @Autowired
     private CertificateValidationService certificateValidationService;
+
+    @Autowired
+    private TrustedCertificateService certificateService;
+
+    @Autowired
+    private ChangeControlCertService changeControlService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
@@ -44,4 +54,17 @@ public class CertificateController {
         return ok(new TrustedCertificateDetails(x509Certificate, certificateValidationService));
     }
 
+    @PostMapping
+    public ResponseEntity<TrustedCertificate> createTrustedCertificate(@RequestParam("file") MultipartFile certificate,
+                                                                       @RequestParam String name,
+                                                                       @RequestParam String comments)
+            throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
+        X509Certificate x509Certificate = getX509Certificate(certificate);
+        return ok(certificateService.convertX509CertificateToTrustedCertificate(x509Certificate, name, comments));
+    }
+
+    private X509Certificate getX509Certificate(MultipartFile certificate) throws CertificateException, IOException {
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        return (X509Certificate) (factory.generateCertificate(certificate.getInputStream()));
+    }
 }

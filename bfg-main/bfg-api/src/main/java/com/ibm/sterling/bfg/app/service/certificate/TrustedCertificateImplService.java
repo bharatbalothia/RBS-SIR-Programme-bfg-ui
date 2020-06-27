@@ -72,7 +72,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certName);
         trustedCertificate.setChangerComments(comment);
-//        trustedCertificate.setCertificate(x509Certificate);
+        trustedCertificate.setCertificate(x509Certificate);
         return saveCertificateToChangeControl(trustedCertificate, CREATE);
     }
 

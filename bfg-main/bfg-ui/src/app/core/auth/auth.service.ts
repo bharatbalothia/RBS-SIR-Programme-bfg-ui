@@ -9,6 +9,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { get } from 'lodash';
 import { Router } from '@angular/router';
 import { ROUTING_PATHS } from '../constants/routing-paths';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 
 
 @Injectable({
@@ -24,6 +27,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private dialog: MatDialog
   ) { }
 
   private apiUrl: string = environment.apiUrl + 'auth/';
@@ -63,6 +67,32 @@ export class AuthService {
       return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).sub;
     }
     return null;
+  }
+
+  getUserPermissions(): string[] {
+    if (this.isAuthenticated()) {
+      return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).permissions;
+    }
+    return null;
+  }
+
+  isEnoughPermissions(requiredPermissions: string[]): boolean{
+    let enoughPermissions = false;
+    const userPermissions = this.getUserPermissions();
+    if (!requiredPermissions){
+      return true;
+    }
+    requiredPermissions.forEach( element => enoughPermissions = enoughPermissions || userPermissions.includes(element));
+    return enoughPermissions;
+  }
+
+  showForbidden(){
+    this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+      title: `Forbidden`,
+      text: `You don't have enough permissions to proceed`,
+      shouldHideYesCaption: true,
+      noCaption: 'Back'
+    }));
   }
 
 }

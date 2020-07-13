@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
@@ -57,6 +58,7 @@ public class TrustedCertificate implements CertType {
     @Transient
     private List<Map<String, String>> authChainReport;
 
+    @JsonIgnore
     @Column(name = "CERTIFICATE")
     @Lob
     private X509Certificate certificate;

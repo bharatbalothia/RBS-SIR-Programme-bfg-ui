@@ -23,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.InvalidNameException;
-import javax.security.cert.CertificateEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -65,7 +64,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                          String certName,
                                                                          String comment)
-            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException {
+            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
 
         TrustedCertificateDetails trustedCertificateDetails =
                 new TrustedCertificateDetails(x509Certificate, certificateValidationService);
@@ -172,4 +171,5 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                                 .getBytes())
         );
     }
+
 }

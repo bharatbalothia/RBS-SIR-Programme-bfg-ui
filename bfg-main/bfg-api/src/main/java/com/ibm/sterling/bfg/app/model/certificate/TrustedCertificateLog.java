@@ -177,4 +177,5 @@ public class TrustedCertificateLog {
     public void setAuthChainReport(List<Map<String, String>> authChainReport) {
         this.authChainReport = authChainReport;
     }
+
 }

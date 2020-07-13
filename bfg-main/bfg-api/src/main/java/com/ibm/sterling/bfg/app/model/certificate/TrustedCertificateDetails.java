@@ -33,7 +33,17 @@ public class TrustedCertificateDetails {
         this.thumbprint = new String(Hex.encode(messageDigest.digest()));
         this.startDate = new SimpleDateFormat("dd/MM/yyyy").format(x509Certificate.getNotBefore());
         this.endDate = new SimpleDateFormat("dd/MM/yyyy").format(x509Certificate.getNotAfter());
-        this.issuer = findIssuer(x509Certificate);
+        this.issuer = new LdapName(x509Certificate.getIssuerDN().getName())
+                .getRdns().stream()
+                .flatMap(rdn -> Collections.singletonMap(rdn.getType(), String.valueOf(rdn.getValue()))
+                        .entrySet().stream())
+                .collect(
+                        Collectors.groupingBy(
+                                Map.Entry::getKey,
+                                LinkedHashMap::new,
+                                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                        )
+                );
         this.subject = new LdapName(x509Certificate.getSubjectDN().getName())
                 .getRdns().stream()
                 .flatMap(rdn -> Collections.singletonMap(rdn.getType(), String.valueOf(rdn.getValue()))
@@ -58,20 +68,6 @@ public class TrustedCertificateDetails {
                                 .getBytes())
         );
         this.isValid = true;
-    }
-
-    private LinkedHashMap<String, List<String>> findIssuer(X509Certificate x509Certificate) throws InvalidNameException {
-        return new LdapName(x509Certificate.getIssuerDN().getName())
-                .getRdns().stream()
-                .flatMap(rdn -> Collections.singletonMap(rdn.getType(), String.valueOf(rdn.getValue()))
-                        .entrySet().stream())
-                .collect(
-                        Collectors.groupingBy(
-                                Map.Entry::getKey,
-                                LinkedHashMap::new,
-                                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-                        )
-                );
     }
 
     public String getSerialNumber() {

@@ -103,6 +103,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       }, error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
+        this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setValue(null);
       });
   }
 
@@ -113,7 +114,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
-  getTSItemInfoValues = (item) => Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+  getTSItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
 
   cancelTrustedCertificate() {
     const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
@@ -142,8 +143,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
       ...this.detailsTrustedCertificateFormGroup.value,
       authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', [])
         .map(el => this.getTSItemInfoValues(el).join(',\n')),
-      issuer: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', [])),
-      subject: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', [])),
+      issuer: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
+      subject: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
     });
     this.confirmationPageDataSource = Object.keys(entity)
       .map((key) => ({
@@ -151,5 +152,42 @@ export class TrustedCertificateCreateComponent implements OnInit {
         value: entity[key],
         error: getErrorByField(key, this.errorMessage)
       }));
+  }
+
+  sendTrustedCertificate() {
+    const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
+    this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+      title: `Create ${trustedCertificateName} trusted certificate`,
+      text: `Are you sure to create ${trustedCertificateName} trusted certificate?`,
+      yesCaption: 'Create',
+      noCaption: 'Cancel'
+    })).afterClosed().subscribe(result => {
+      this.errorMessage = null;
+      const formData: FormData = new FormData();
+      formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
+      formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
+      formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
+      if (result) {
+        this.trustedCertificateService.createTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
+          () => {
+            this.isLoading = false;
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Trusted Certificate created`,
+              text: `Trusted Certificate ${trustedCertificateName} has been created`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.stepper.reset();
+              this.resetAllForms();
+            });
+          },
+          (error) => {
+            this.isLoading = false;
+            this.errorMessage = getApiErrorMessage(error);
+            this.getConfirmationFieldsSource();
+          }
+        );
+      }
+    });
   }
 }

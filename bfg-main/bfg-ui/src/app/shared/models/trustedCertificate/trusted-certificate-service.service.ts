@@ -17,4 +17,8 @@ export class TrustedCertificateServiceService {
     return this.http.post<TrustedCertificate>(this.apiUrl + 'upload', formData);
   }
 
+  createTrustedCertificate(formData) {
+    return this.http.post<TrustedCertificate>(this.apiUrl, formData);
+  }
+
 }

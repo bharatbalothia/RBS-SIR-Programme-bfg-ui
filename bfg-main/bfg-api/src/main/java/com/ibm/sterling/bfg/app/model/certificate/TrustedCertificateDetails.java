@@ -26,7 +26,7 @@ public class TrustedCertificateDetails {
     private boolean isValid;
 
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService)
-            throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException, javax.security.cert.CertificateEncodingException {
+            throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
         this.serialNumber = x509Certificate.getSerialNumber().toString();
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
         messageDigest.update(x509Certificate.getEncoded());
@@ -117,4 +117,5 @@ public class TrustedCertificateDetails {
         certificate.setAuthChainReport(this.authChainReport);
         return certificate;
     }
+
 }

@@ -6,6 +6,7 @@ import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.security.cert.CertificateException;
@@ -26,9 +27,9 @@ public class TrustedCertificateLog {
             name = "SCT_TRUSTED_CERT_LOG_IDSEQ",
             strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "CERT_LOG_ID_"),
-                    @org.hibernate.annotations.Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
+                    @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "CERT_LOG_ID_"),
+                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String certificateId;
 
     @Column(name = "CERTIFICATE_NAME")

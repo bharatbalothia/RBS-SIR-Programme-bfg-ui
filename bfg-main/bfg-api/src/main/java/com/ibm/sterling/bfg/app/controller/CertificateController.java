@@ -65,6 +65,7 @@ public class CertificateController {
 
     private X509Certificate getX509Certificate(MultipartFile certificate) throws CertificateException, IOException {
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) (factory.generateCertificate(certificate.getInputStream()));
+        return (X509Certificate) factory.generateCertificate(certificate.getInputStream());
     }
+
 }

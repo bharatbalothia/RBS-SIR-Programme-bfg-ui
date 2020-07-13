@@ -114,7 +114,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
-  getTSItemInfoValues = (item) => Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+  getTSItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
 
   cancelTrustedCertificate() {
     const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
@@ -143,8 +143,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
       ...this.detailsTrustedCertificateFormGroup.value,
       authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', [])
         .map(el => this.getTSItemInfoValues(el).join(',\n')),
-      issuer: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', [])),
-      subject: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', [])),
+      issuer: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
+      subject: this.getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
     });
     this.confirmationPageDataSource = Object.keys(entity)
       .map((key) => ({
@@ -166,9 +166,9 @@ export class TrustedCertificateCreateComponent implements OnInit {
       const formData: FormData = new FormData();
       formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
       formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
-      formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value)
+      formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
       if (result) {
-        this.trustedCertificateService.createTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
+        this.trustedCertificateService.uploadTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

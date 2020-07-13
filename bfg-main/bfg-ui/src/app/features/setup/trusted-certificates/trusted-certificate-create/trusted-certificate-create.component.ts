@@ -168,7 +168,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
       formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
       if (result) {
-        this.trustedCertificateService.uploadTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
+        this.trustedCertificateService.createTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

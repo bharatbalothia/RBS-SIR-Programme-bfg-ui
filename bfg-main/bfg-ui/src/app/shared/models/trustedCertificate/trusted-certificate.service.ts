@@ -2,15 +2,26 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { TrustedCertificate } from './trusted-certificate.model';
+import { TrustedCertificatesWithPagination } from './trusted-certificates-with-pagination.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TrustedCertificateServiceService {
+export class TrustedCertificateService {
 
   private apiUrl: string = environment.apiUrl + 'certificates/';
 
   constructor(private http: HttpClient) {
+  }
+
+  getTrustedCertificateList(params?: {
+    entity?: string;
+    service?: string;
+    page?: string;
+    size?: string
+  }): Observable<TrustedCertificatesWithPagination> {
+    return this.http.get<TrustedCertificatesWithPagination>(this.apiUrl, { params });
   }
 
   uploadTrustedCertificate(formData) {

@@ -1,0 +1,30 @@
+.search-trusted-certificate-card {
+
+    margin: 15px 15px 15px 15px;
+
+    .search-by-content {
+
+        .search-by-label {
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .search-by-field {
+            margin-right: 15px;
+        }
+
+        button {
+            vertical-align: text-bottom;
+        }
+
+    }
+
+    .mat-table {
+        width: 100%;
+
+    }
+
+    .mat-spinner {
+        margin: auto;
+    }
+}

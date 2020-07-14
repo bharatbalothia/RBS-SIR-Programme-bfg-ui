@@ -146,7 +146,7 @@ public class EntityServiceImpl implements EntityService {
         Entity entity = new Entity();
         switch (status) {
             case ACCEPTED:
-                entity = approve(changeControl);
+                entity = saveEntityAfterApprove(changeControl);
                 break;
             case FAILED:
             case REJECTED:
@@ -156,21 +156,6 @@ public class EntityServiceImpl implements EntityService {
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 approverComments,
                 status);
-        return entity;
-    }
-
-    private Entity approve(ChangeControl changeControl) {
-        LOG.info("Entity {} action", changeControl.getOperation());
-        Entity entity = new Entity();
-//        Operation operation = changeControl.getOperation();
-//        switch (operation) {
-//            case CREATE:
-//            case UPDATE:
-        entity = saveEntityAfterApprove(changeControl);
-//                break;
-//            case DELETE:
-//        }
-        LOG.info("Entity after {} action: {}", changeControl.getOperation(), entity);
         return entity;
     }
 

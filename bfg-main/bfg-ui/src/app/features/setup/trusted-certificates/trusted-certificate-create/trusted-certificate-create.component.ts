@@ -56,7 +56,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({
-      name: [trustedCertificate.name],
+      name: [get(this.trustedCertificateFile, 'name')],
       serialNumber: [trustedCertificate.serialNumber],
       thumbprint: [trustedCertificate.thumbprint],
       validDates: [trustedCertificate.startDate && trustedCertificate.endDate && `${trustedCertificate.startDate}-${trustedCertificate.endDate}`],
@@ -68,7 +68,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   }
 
   getTrustedCertificateDefaultValue = (): TrustedCertificate => ({
-    name: get(this.trustedCertificateFile, 'name', ''),
+    name: '',
     serialNumber: '',
     thumbprint: '',
     startDate: null,

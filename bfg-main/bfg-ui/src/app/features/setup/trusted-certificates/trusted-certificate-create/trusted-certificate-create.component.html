@@ -85,7 +85,7 @@
                         <section
                             *ngFor="let element of detailsTrustedCertificateFormGroup.get('authChainReport').value; let i=index"
                             class="section-info">
-                            <h4 class="section-label">{{i}}:</h4>
+                            <h4 class="section-label">{{i+1}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell [value]="getTSItemInfoValues(element)">
                                 </app-display-table-cell>

@@ -1,11 +1,11 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.service.CertificateValidationService;
-import org.springframework.security.crypto.codec.Hex;
+import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
+import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
@@ -18,6 +18,7 @@ public class TrustedCertificateDetails {
 
     private String serialNumber;
     private String thumbprint;
+    private String thumbprint256;
     private String startDate;
     private String endDate;
     private Map<String, List<String>> issuer;
@@ -28,9 +29,9 @@ public class TrustedCertificateDetails {
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
         this.serialNumber = x509Certificate.getSerialNumber().toString();
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-        messageDigest.update(x509Certificate.getEncoded());
-        this.thumbprint = new String(Hex.encode(messageDigest.digest()));
+        byte[] encodedCert = x509Certificate.getEncoded();
+        this.thumbprint = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-1").digest(encodedCert));
+        this.thumbprint256 = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-256").digest(encodedCert));
         this.startDate = new SimpleDateFormat("dd/MM/yyyy").format(x509Certificate.getNotBefore());
         this.endDate = new SimpleDateFormat("dd/MM/yyyy").format(x509Certificate.getNotAfter());
         this.issuer = new LdapName(x509Certificate.getIssuerDN().getName())
@@ -56,17 +57,7 @@ public class TrustedCertificateDetails {
         List<String> rdnKeys = new ArrayList<>(issuer.keySet());
         Collections.reverse(rdnKeys);
         this.authChainReport = certificateValidationService.getCertificateChain(
-                Base64.getEncoder().encodeToString(
-                        rdnKeys.stream()
-                                .map(constValue -> constValue + "=" +
-                                        issuer.get(constValue).stream()
-                                                .map(issuerValueByKey -> issuerValueByKey.replace(",", "\\"))
-                                                .reduce("", (issuerValueByKeyOne, issuerValueByKeyTwo) ->
-                                                        issuerValueByKeyOne + issuerValueByKeyTwo
-                                                ))
-                                .reduce("", (issuerValueOne, issuerValueTwo) -> issuerValueOne + issuerValueTwo)
-                                .getBytes())
-        );
+                certificateValidationService.getEncodedIssuerDN(issuer));
         this.isValid = true;
     }
 
@@ -76,6 +67,10 @@ public class TrustedCertificateDetails {
 
     public String getThumbprint() {
         return thumbprint;
+    }
+
+    public String getThumbprint256() {
+        return thumbprint256;
     }
 
     public String getStartDate() {
@@ -106,6 +101,7 @@ public class TrustedCertificateDetails {
         TrustedCertificate certificate = new TrustedCertificate();
         certificate.setSerialNumber(this.serialNumber);
         certificate.setCertificateThumbprint(this.thumbprint);
+        certificate.setCertificateThumbprint256(this.thumbprint256);
         certificate.setStartDate(this.startDate);
         certificate.setEndDate(this.endDate);
         certificate.setIssuer(this.issuer);

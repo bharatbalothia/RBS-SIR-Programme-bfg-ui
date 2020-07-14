@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
-import com.ibm.sterling.bfg.app.service.CertificateValidationService;
+import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -23,6 +23,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -58,7 +59,9 @@ public class CertificateController {
                                                                        @RequestParam String name,
                                                                        @RequestParam String comments)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
-        return ok(certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(certificate), name, comments));
+        return ok(certificateService.saveCertificateToChangeControl(
+                certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(certificate), name, comments), CREATE)
+        );
     }
 
     private X509Certificate getX509Certificate(MultipartFile certificate) throws CertificateException, IOException {

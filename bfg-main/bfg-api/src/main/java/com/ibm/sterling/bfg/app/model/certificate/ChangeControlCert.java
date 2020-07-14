@@ -29,7 +29,7 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),
-                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d") })
+                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     @NotNull
     private String changeID; //pkey for the record
 
@@ -176,6 +176,7 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
         certFromLog.setCertificateName(trustedCertificateLog.getCertificateName());
         certFromLog.setSerialNumber(trustedCertificateLog.getSerialNumber());
         certFromLog.setCertificateThumbprint(trustedCertificateLog.getCertificateThumbprint());
+        certFromLog.setCertificateThumbprint256(trustedCertificateLog.getCertificateThumbprint256());
         certFromLog.setCertificate(trustedCertificateLog.getCertificate());
         certFromLog.setStartDate(trustedCertificateLog.getStartDate());
         certFromLog.setEndDate(trustedCertificateLog.getEndDate());
@@ -186,7 +187,7 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
         return certFromLog;
     }
 
-    public boolean isPending(){
+    public boolean isPending() {
         return status == ChangeControlStatus.PENDING;
     }
 
@@ -223,8 +224,8 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
     }
 
     @Override
-    public int compareTo(ChangeControl сс) {
-        return resultMeta1.toLowerCase().compareTo(сс.getResultMeta1().toLowerCase());
+    public int compareTo(ChangeControl changeControl) {
+        return resultMeta1.toLowerCase().compareTo(changeControl.getResultMeta1().toLowerCase());
     }
 
     @Override

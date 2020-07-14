@@ -114,7 +114,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
-  getTSItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+  getTSItemInfoValues = (item) => item && Object.keys(item).sort().map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
 
   cancelTrustedCertificate() {
     const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';

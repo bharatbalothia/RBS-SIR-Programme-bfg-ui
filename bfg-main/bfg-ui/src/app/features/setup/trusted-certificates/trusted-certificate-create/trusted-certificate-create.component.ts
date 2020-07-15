@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/
 import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
-import { getTrustedCertificateDisplayName, getTSItemInfoValues } from '../trusted-certificate-display-names';
+import { getTrustedCertificateDisplayName, getTrustedCertificateItemInfoValues } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
 import { get } from 'lodash';
@@ -21,7 +21,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   getErrorsMessage = getErrorsMessage;
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
-  getTSItemInfoValues = getTSItemInfoValues;
+  getTrustedCertificateItemInfoValues = getTrustedCertificateItemInfoValues;
 
   trustedCertificateValidationMessages = TRUSTED_CERTIFICATE_VALIDATION_MESSAGES;
 
@@ -152,9 +152,9 @@ export class TrustedCertificateCreateComponent implements OnInit {
     const entity = removeEmpties({
       ...this.detailsTrustedCertificateFormGroup.value,
       authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', [])
-        .map(el => getTSItemInfoValues(el).join(',\n')),
-      issuer: getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
-      subject: getTSItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
+        .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')),
+      issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
+      subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
     });
     this.confirmationPageDataSource = Object.keys(entity)
       .map((key) => ({

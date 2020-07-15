@@ -24,7 +24,7 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
 
 export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFICATE_DISPLAY_NAMES[key] || key;
 
-export const getTSItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
@@ -33,8 +33,14 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
         { fieldName: getTrustedCertificateDisplayName('thumbprint'), fieldValue: trustedCertificate.thumbprint },
         { fieldName: getTrustedCertificateDisplayName('startDate'), fieldValue: trustedCertificate.startDate },
         { fieldName: getTrustedCertificateDisplayName('endDate'), fieldValue: trustedCertificate.endDate },
-        { fieldName: getTrustedCertificateDisplayName('issuer'), fieldValue: getTSItemInfoValues(trustedCertificate.issuer) },
-        { fieldName: getTrustedCertificateDisplayName('subject'), fieldValue: getTSItemInfoValues(trustedCertificate.subject) },
+        {
+            fieldName: getTrustedCertificateDisplayName('issuer'),
+            fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.issuer)
+        },
+        {
+            fieldName: getTrustedCertificateDisplayName('subject'),
+            fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.subject)
+        },
     ],
 });
 

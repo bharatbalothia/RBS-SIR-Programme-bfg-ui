@@ -10,6 +10,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
+import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -56,7 +57,12 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({
-      name: [this.getTrustedCertificateName(trustedCertificate)],
+      name: [this.getTrustedCertificateName(trustedCertificate), {
+        validators: [
+          Validators.required,
+          Validators.pattern(TRUSTED_CERTIFICATE_NAME)
+        ]
+      }],
       serialNumber: [trustedCertificate.serialNumber],
       thumbprint: [trustedCertificate.thumbprint],
       validDates: [trustedCertificate.startDate && trustedCertificate.endDate && `${trustedCertificate.startDate}-${trustedCertificate.endDate}`],

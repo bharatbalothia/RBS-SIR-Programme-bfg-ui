@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +10,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +41,9 @@ public class TrustedCertificateLog {
     @Column(name = "THUMBPRINT")
     private String certificateThumbprint;
 
+    @Column(name = "THUMBPRINT256")
+    private String certificateThumbprint256;
+
     @Column(name = "START_DATE")
     private String startDate;
 
@@ -58,6 +61,7 @@ public class TrustedCertificateLog {
     @Transient
     private List<Map<String, String>> authChainReport;
 
+    @JsonIgnore
     @Column(name = "CERTIFICATE")
     @Lob
     private X509Certificate certificate;
@@ -69,11 +73,12 @@ public class TrustedCertificateLog {
     public TrustedCertificateLog() {
     }
 
-    public TrustedCertificateLog(TrustedCertificate trustedCertificate) throws CertificateException {
+    public TrustedCertificateLog(TrustedCertificate trustedCertificate) {
         this.certificateId = trustedCertificate.getCertificateId();
         this.certificateName = trustedCertificate.getCertificateName();
         this.serialNumber = trustedCertificate.getSerialNumber();
         this.certificateThumbprint = trustedCertificate.getCertificateThumbprint();
+        this.certificateThumbprint256 = trustedCertificate.getCertificateThumbprint256();
         this.startDate = trustedCertificate.getStartDate();
         this.endDate = trustedCertificate.getEndDate();
         this.issuer = trustedCertificate.getIssuer();
@@ -112,6 +117,14 @@ public class TrustedCertificateLog {
 
     public void setCertificateThumbprint(String certificateThumbprint) {
         this.certificateThumbprint = certificateThumbprint;
+    }
+
+    public String getCertificateThumbprint256() {
+        return certificateThumbprint256;
+    }
+
+    public void setCertificateThumbprint256(String certificateThumbprint256) {
+        this.certificateThumbprint256 = certificateThumbprint256;
     }
 
     public ChangeControlCert getControlCert() {

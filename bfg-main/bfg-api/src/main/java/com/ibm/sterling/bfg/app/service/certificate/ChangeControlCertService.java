@@ -36,7 +36,7 @@ public class ChangeControlCertService {
         return controlCertRepository.save(changeControl);
     }
 
-    public ChangeControlCert updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
+    public ChangeControlCert updateStatus(String changeControlId, ChangeControlStatus status) {
         ChangeControlCert controlFromBD = controlCertRepository.findById(changeControlId)
                 .orElseThrow(CertificateNotFoundException::new);
         controlFromBD.setStatus(status);
@@ -83,10 +83,11 @@ public class ChangeControlCertService {
                 .and(
                         GenericSpecification.filter(service, "resultMeta2"))
                 .and(
-                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText() , "status")
+                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
                 );
         return convertStreamToList(controlCertRepository
                 .findAll(specification)
                 .stream());
     }
+
 }

@@ -16,7 +16,10 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     L: 'Locality',
     C: 'Country',
     ST: 'State or Province',
-    changerComments: 'Changer Comments'
+    changerComments: 'Changer Comments',
+    authChainReport: 'Auth Chain Report',
+    subjectDN: 'Subject DN',
+    certificateName: 'Certificate Name'
 };
 
 export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFICATE_DISPLAY_NAMES[key] || key;

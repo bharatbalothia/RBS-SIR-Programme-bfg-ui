@@ -29,5 +29,6 @@ public interface TrustedCertificateService {
 
     TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControl, String approverComments, ChangeControlStatus status) throws Exception;
 
-    Page<CertType> findEntities(Pageable pageable, String certName, String thumbprint);
+    Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint);
+
 }

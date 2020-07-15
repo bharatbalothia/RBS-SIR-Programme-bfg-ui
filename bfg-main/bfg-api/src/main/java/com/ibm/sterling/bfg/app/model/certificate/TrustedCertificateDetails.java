@@ -1,6 +1,9 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 
 import javax.naming.InvalidNameException;
@@ -24,11 +27,14 @@ public class TrustedCertificateDetails {
     private Map<String, List<String>> issuer;
     private Map<String, List<String>> subject;
     private List<Map<String, String>> authChainReport;
-    private boolean isValid;
+    private boolean isValid = true;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<String, Object> certificateErrors;
 
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
-        this.serialNumber = x509Certificate.getSerialNumber().toString();
+        Map<String, Object> errors = new HashMap<>();
+        this.serialNumber = String.valueOf(x509Certificate.getSerialNumber().intValue());
         byte[] encodedCert = x509Certificate.getEncoded();
         this.thumbprint = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-1").digest(encodedCert));
         this.thumbprint256 = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-256").digest(encodedCert));
@@ -56,9 +62,19 @@ public class TrustedCertificateDetails {
                 );
         List<String> rdnKeys = new ArrayList<>(issuer.keySet());
         Collections.reverse(rdnKeys);
-        this.authChainReport = certificateValidationService.getCertificateChain(
+        List<Map<String, String>> certificateChainResponse = certificateValidationService.getCertificateChain(
                 certificateValidationService.getEncodedIssuerDN(issuer));
-        this.isValid = true;
+        if (certificateChainResponse.get(0).containsKey("error")) {
+            this.authChainReport = null;
+            errors.put("authChainReport", new ObjectMapper().readValue(
+                    certificateChainResponse.get(0).get("error"), new TypeReference<Map<String, String>>() {
+                    })
+            );
+        } else this.authChainReport = certificateChainResponse;
+        if (!errors.isEmpty()) {
+            this.certificateErrors = errors;
+            this.isValid = false;
+        }
     }
 
     public String getSerialNumber() {
@@ -108,6 +124,10 @@ public class TrustedCertificateDetails {
         certificate.setSubject(this.subject);
         certificate.setAuthChainReport(this.authChainReport);
         return certificate;
+    }
+
+    public Map<String, Object> getCertificateErrors() {
+        return certificateErrors;
     }
 
 }

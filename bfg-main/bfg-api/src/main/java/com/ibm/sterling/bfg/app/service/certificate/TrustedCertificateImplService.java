@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
@@ -39,7 +40,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     private TrustedCertificateRepository certificateRepository;
 
     @Autowired
-    private ChangeControlCertService changeControlService;
+    private ChangeControlCertService changeControlCertService;
 
     @Autowired
     private CertificateValidationService certificateValidationService;
@@ -70,6 +71,8 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
                 new TrustedCertificateDetails(x509Certificate, certificateValidationService);
+        if (!trustedCertificateDetails.isValid())
+            throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certName);
         trustedCertificate.setChangerComments(comment);
@@ -87,7 +90,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         changeControl.setResultMeta1(cert.getCertificateName());
         changeControl.setResultMeta2(cert.getCertificateThumbprint());
         changeControl.setTrustedCertificateLog(new TrustedCertificateLog(cert));
-        cert.setChangeID(changeControlService.save(changeControl).getChangeID());
+        cert.setChangeID(changeControlCertService.save(changeControl).getChangeID());
         return cert;
     }
 
@@ -100,7 +103,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         TrustedCertificate cert = new TrustedCertificate();
         if (ACCEPTED.equals(status))
             cert = saveTrustedCertificateAfterApprove(changeControl);
-        changeControlService.setApproveInfo(
+        changeControlCertService.setApproveInfo(
                 changeControl,
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 approverComments,
@@ -124,14 +127,14 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         TrustedCertificateLog certLog = changeControl.getTrustedCertificateLog();
         certLog.setCertificateId(cert.getCertificateId());
         changeControl.setTrustedCertificateLog(certLog);
-        changeControlService.save(changeControl);
+        changeControlCertService.save(changeControl);
         return cert;
     }
 
     @Override
-    public Page<CertType> findEntities(Pageable pageable, String certName, String thumbprint) {
+    public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint) {
         LOG.info("Search trusted certificates by trusted certificate name {} and thumbprint {}", certName, thumbprint);
-        List<CertType> certificates = new ArrayList<>(changeControlService.findAllPending(certName, thumbprint));
+        List<CertType> certificates = new ArrayList<>(changeControlCertService.findAllPending(certName, thumbprint));
         Specification<TrustedCertificate> specification = Specification
                 .where(
                         GenericSpecification.<TrustedCertificate>filter(certName, "certificateName"))

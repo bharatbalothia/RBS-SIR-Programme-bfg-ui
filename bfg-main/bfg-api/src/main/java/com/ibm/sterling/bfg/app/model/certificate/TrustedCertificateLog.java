@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
@@ -60,6 +61,7 @@ public class TrustedCertificateLog {
     @Transient
     private List<Map<String, String>> authChainReport;
 
+    @JsonIgnore
     @Column(name = "CERTIFICATE")
     @Lob
     private X509Certificate certificate;

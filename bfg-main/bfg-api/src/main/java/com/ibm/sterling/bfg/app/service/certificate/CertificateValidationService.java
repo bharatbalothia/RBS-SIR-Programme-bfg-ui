@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,7 +23,15 @@ public class CertificateValidationService {
     public List<Map<String, String>> getCertificateChain(String issuerDN) throws JsonProcessingException {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(certificateChainUrl)
                 .queryParam("issuerdn", issuerDN);
-        ResponseEntity<String> response = new RestTemplate().getForEntity(builder.toUriString(), String.class);
+        ResponseEntity<String> response;
+        try {
+            response = new RestTemplate().getForEntity(builder.toUriString(), String.class);
+        } catch (HttpStatusCodeException e) {
+            String message = e.getMessage();
+            return Collections.singletonList(Collections.singletonMap("error", Optional.ofNullable(message)
+                    .map(errMessage -> errMessage.substring(message.indexOf("[") + 1, message.indexOf("]")))
+                    .orElse(message)));
+        }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
         return objectMapper.convertValue(root, List.class);
     }
@@ -39,8 +48,8 @@ public class CertificateValidationService {
                                                 issuerValueByKeyOne + issuerValueByKeyTwo
                                         ))
                         .reduce("", (issuerValueOne, issuerValueTwo) -> issuerValueOne + issuerValueTwo)
-                        .getBytes())
-                ;
+                        .getBytes()
+        );
     }
 
 }

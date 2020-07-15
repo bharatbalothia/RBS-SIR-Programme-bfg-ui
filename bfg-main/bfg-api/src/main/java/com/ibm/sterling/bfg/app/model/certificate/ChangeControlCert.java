@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 
 @Table(name = "FB_CHANGE_CONTROL")
 @Entity
-public class ChangeControlCert implements ChangeControlConstants, Comparable<ChangeControl>, Serializable, CertType {
+public class ChangeControlCert implements ChangeControlConstants, Comparable<ChangeControlCert>, Serializable, CertType {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlCert.class);
 
@@ -224,8 +224,8 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
     }
 
     @Override
-    public int compareTo(ChangeControl changeControl) {
-        return resultMeta1.toLowerCase().compareTo(changeControl.getResultMeta1().toLowerCase());
+    public int compareTo(ChangeControlCert changeControlCert) {
+        return resultMeta1.toLowerCase().compareTo(changeControlCert.getResultMeta1().toLowerCase());
     }
 
     @Override

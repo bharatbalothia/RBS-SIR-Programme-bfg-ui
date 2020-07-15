@@ -1,11 +1,11 @@
 package com.ibm.sterling.bfg.app.controller;
 
+import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
-import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
 import static org.springframework.http.ResponseEntity.ok;
@@ -41,9 +40,11 @@ public class CertificateController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public Page<?> getCertificates(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                   @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        return ListToPageConverter.convertListToPage(new ArrayList<String>(), PageRequest.of(page, size));
+    public Page<CertType> getCertificates(@RequestParam(value = "cert-name", defaultValue = "", required = false) String certName,
+                                          @RequestParam(value = "thumbprint", defaultValue = "", required = false) String thumbprint,
+                                          @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+        return certificateService.findCertificates(PageRequest.of(page, size), certName, thumbprint);
     }
 
     @PostMapping("/upload")

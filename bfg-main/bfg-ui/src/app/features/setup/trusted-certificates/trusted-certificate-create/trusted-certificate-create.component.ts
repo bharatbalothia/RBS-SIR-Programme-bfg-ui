@@ -63,6 +63,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       }],
       serialNumber: [trustedCertificate.serialNumber],
       thumbprint: [trustedCertificate.thumbprint],
+      thumbprint256: [trustedCertificate.thumbprint256],
       validDates: [trustedCertificate.startDate && trustedCertificate.endDate && `${trustedCertificate.startDate}-${trustedCertificate.endDate}`],
       issuer: [trustedCertificate.issuer],
       subject: [trustedCertificate.subject],
@@ -77,6 +78,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getTrustedCertificateDefaultValue = (): TrustedCertificate => ({
     serialNumber: '',
     thumbprint: '',
+    thumbprint256: '',
     startDate: null,
     endDate: null,
     issuer: {

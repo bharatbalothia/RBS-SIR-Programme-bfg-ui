@@ -1,3 +1,4 @@
+import { ErrorsField } from 'src/app/core/utils/error-template';
 
 export interface TrustedCertificate {
     certificateName: string;
@@ -11,6 +12,8 @@ export interface TrustedCertificate {
     authChainReport: AuthChainReport[];
     valid: boolean;
     changerComments: string;
+    certificateErrors?: ErrorsField[];
+    certificateWarnings?: ErrorsField[];
 }
 
 export interface TSItemInfo {

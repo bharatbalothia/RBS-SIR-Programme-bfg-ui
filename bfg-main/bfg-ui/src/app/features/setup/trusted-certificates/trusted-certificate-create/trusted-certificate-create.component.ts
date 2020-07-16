@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -115,12 +116,22 @@ export class TrustedCertificateCreateComponent implements OnInit {
         this.isLoading = false;
         this.initializeDetailsFormGroups(data);
         this.stepper.next();
+        if (data.certificateErrors || data.certificateWarnings) {
+          this.errorMessage = this.getErrorsAndWarnings(data);
+        }
       }, error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
         this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setValue(null);
       });
   }
+
+  getErrorsAndWarnings = (trustedCertificate: TrustedCertificate) => ({
+    code: null,
+    message: trustedCertificate.certificateErrors && ERROR_MESSAGES.trustedCertificateErrors,
+    errors: get(trustedCertificate, 'certificateErrors', []),
+    warnings: get(trustedCertificate, 'certificateWarnings', [])
+  })
 
   setLoading(data) {
     this.isLoading = true;
@@ -154,7 +165,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getConfirmationFieldsSource() {
     const entity = removeEmpties({
       ...this.detailsTrustedCertificateFormGroup.value,
-      authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', [])
+      authChainReport: (get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || [])
         .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')),
       issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),

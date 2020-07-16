@@ -12,7 +12,7 @@
         <mat-step [stepControl]="uploadTrustedCertificateFormGroup">
             <form [formGroup]="uploadTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
-                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload" accept=".der"
+                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
                     (change)="handleFileInput($event.target.files)" hidden />
                 <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
                     [disabled]="isLoading">
@@ -81,7 +81,7 @@
                         </section>
                     </div>
                 </div>
-                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport')">
+                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport') && detailsTrustedCertificateFormGroup.get('authChainReport').value">
                     <h3 class="ts-item-section-title">{{getTrustedCertificateDisplayName('authChainReport')}}:</h3>
                     <div class="ts-item-section-value">
                         <section

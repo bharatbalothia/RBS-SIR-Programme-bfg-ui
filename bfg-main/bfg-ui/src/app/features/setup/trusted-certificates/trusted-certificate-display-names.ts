@@ -24,7 +24,7 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
 
 export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFICATE_DISPLAY_NAMES[key] || key;
 
-export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`);
+export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`).sort();
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [

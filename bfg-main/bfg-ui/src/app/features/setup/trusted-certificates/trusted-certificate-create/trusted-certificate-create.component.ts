@@ -129,8 +129,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getErrorsAndWarnings = (trustedCertificate: TrustedCertificate) => ({
     code: null,
     message: trustedCertificate.certificateErrors && ERROR_MESSAGES.trustedCertificateErrors,
-    errors: get(trustedCertificate, 'certificateErrors', []),
-    warnings: get(trustedCertificate, 'certificateWarnings', [])
+    errors: get(trustedCertificate, 'certificateErrors', null),
+    warnings: get(trustedCertificate, 'certificateWarnings', null)
   })
 
   setLoading(data) {

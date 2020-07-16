@@ -21,8 +21,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
 
-  entityNameSearchingValue = '';
-  serviceSearchingValue = '';
+  certificateNameSearchingValue = '';
+  thumbprintSearchingValue = '';
 
   isLoading = true;
   trustedCertificates: TrustedCertificatesWithPagination;
@@ -49,8 +49,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
   getTrustedCertificateList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
-      entity: this.entityNameSearchingValue || null,
-      service: this.serviceSearchingValue || null,
+      'cert-name': this.certificateNameSearchingValue || null,
+      thumbprint: this.thumbprintSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: TrustedCertificatesWithPagination) => {
@@ -68,7 +68,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `Trusted Certificate: ${trustedCertificate.name}`,
+      title: `Trusted Certificate: ${trustedCertificate.certificateName}`,
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
     }));
   }

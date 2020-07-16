@@ -77,7 +77,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     ? `${get(trustedCertificate, 'subject.O', '')}-${trustedCertificate.serialNumber}` : trustedCertificate.serialNumber
 
   getTrustedCertificateDefaultValue = (): TrustedCertificate => ({
-    name: '',
+    certificateName: '',
     serialNumber: '',
     thumbprint: '',
     startDate: null,

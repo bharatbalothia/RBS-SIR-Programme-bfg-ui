@@ -5,20 +5,16 @@
     <mat-card-content class="card-content">
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
-            <!-- <mat-form-field class="search-by-field">
-                <mat-label>Search by service</mat-label>
-                <mat-select [(ngModel)]="serviceSearchingValue">
-                    <mat-option value="">ALL</mat-option>
-                    <mat-option value="GPL">GPL</mat-option>
-                    <mat-option value="SCT">SCT</mat-option>
-                </mat-select>
+            <mat-form-field class="search-by-field">
+                <mat-label>Search by certificate name</mat-label>
+                <input matInput [(ngModel)]="certificateNameSearchingValue">
             </mat-form-field>
             <mat-form-field class="search-by-field">
-                <mat-label>Search by entity name</mat-label>
-                <input matInput [(ngModel)]="entityNameSearchingValue">
+                <mat-label>Search by thumbprint</mat-label>
+                <input matInput [(ngModel)]="thumbprintSearchingValue">
             </mat-form-field>
             <button color="primary" mat-raised-button
-                (click)="getEntityList(pageIndex, pageSize)">Search</button> -->
+                (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
         </div>
         <div class="mat-elevation-z8">
             <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
@@ -26,34 +22,27 @@
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <!-- <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
+                        <button mat-button *ngIf="element.changeID">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
-                        </button> -->
-                        <!-- <a mat-icon-button *ngIf="!element.entityLog"
-                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
-                            [state]="{ pageIndex: pageIndex, pageSize: pageSize }">
-                            <mat-icon inline>edit</mat-icon>
-                        </a> -->
-                        <!-- <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">
-                            <mat-icon>clear</mat-icon>
-                        </button> -->
+                        </button>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="changes">
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <!-- <button mat-button *ngIf="element.entityLog" (click)="openInfoDialog(element)"> -->
+                        <button mat-button *ngIf="element.trustedCertificateLog">
                         <mat-icon inline>info</mat-icon> Changes
-                        <!-- </button> -->
+                        </button>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button (click)="openTrustedCertificateDetailsDialog(element)">
-                        {{element.entity || element.resultMeta1}}
+                        <button mat-button
+                            (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog || element)">
+                            {{element.certificateName || element.resultMeta1}}
                         </button>
                     </mat-cell>
                 </ng-container>
@@ -61,7 +50,7 @@
                 <ng-container matColumnDef="thumbprint">
                     <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <!-- {{element.service || element.resultMeta2}}  -->
+                        {{element.certificateThumbprint || element.resultMeta2}} 
                     </mat-cell>
                 </ng-container>
 

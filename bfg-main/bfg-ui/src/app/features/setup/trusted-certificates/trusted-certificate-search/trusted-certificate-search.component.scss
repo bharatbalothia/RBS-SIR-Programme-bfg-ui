@@ -22,6 +22,14 @@
     .mat-table {
         width: 100%;
 
+        .mat-column-action {
+            width: 75px !important;
+        }
+
+        .mat-column-thumbprint {
+            word-break: break-all;
+        }
+
     }
 
     .mat-spinner {

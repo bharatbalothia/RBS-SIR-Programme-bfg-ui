@@ -2,7 +2,6 @@ import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/tru
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
-    name: 'Name',
     serialNumber: 'Serial Number',
     thumbprint: 'SHA-1 Thumbprint',
     validDates: 'Valid Dates',
@@ -28,7 +27,7 @@ export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
-        { fieldName: getTrustedCertificateDisplayName('name'), fieldValue: trustedCertificate.name },
+        { fieldName: getTrustedCertificateDisplayName('certificateName'), fieldValue: trustedCertificate.certificateName },
         { fieldName: getTrustedCertificateDisplayName('serialNumber'), fieldValue: trustedCertificate.serialNumber },
         { fieldName: getTrustedCertificateDisplayName('thumbprint'), fieldValue: trustedCertificate.thumbprint },
         { fieldName: getTrustedCertificateDisplayName('startDate'), fieldValue: trustedCertificate.startDate },

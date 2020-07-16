@@ -1,6 +1,6 @@
 
 export interface TrustedCertificate {
-    name: string;
+    certificateName: string;
     serialNumber: string;
     thumbprint: string;
     startDate: Date;

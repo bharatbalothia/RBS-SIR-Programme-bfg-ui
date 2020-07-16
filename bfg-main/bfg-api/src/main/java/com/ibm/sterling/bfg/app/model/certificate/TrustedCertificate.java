@@ -39,10 +39,10 @@ public class TrustedCertificate implements CertType {
     private String serialNumber;
 
     @Column(name = "THUMBPRINT")
-    private String certificateThumbprint;
+    private String thumbprint;
 
     @Column(name = "THUMBPRINT256")
-    private String certificateThumbprint256;
+    private String thumbprint256;
 
     @Column(name = "START_DATE")
     private String startDate;
@@ -96,20 +96,20 @@ public class TrustedCertificate implements CertType {
         this.certificateName = certificateName;
     }
 
-    public String getCertificateThumbprint() {
-        return certificateThumbprint;
+    public String getThumbprint() {
+        return thumbprint;
     }
 
-    public void setCertificateThumbprint(String certificateThumbprint) {
-        this.certificateThumbprint = certificateThumbprint;
+    public void setThumbprint(String thumbprint) {
+        this.thumbprint = thumbprint;
     }
 
-    public String getCertificateThumbprint256() {
-        return certificateThumbprint256;
+    public String getThumbprint256() {
+        return thumbprint256;
     }
 
-    public void setCertificateThumbprint256(String certificateThumbprint256) {
-        this.certificateThumbprint256 = certificateThumbprint256;
+    public void setThumbprint256(String thumbprint256) {
+        this.thumbprint256 = thumbprint256;
     }
 
     public X509Certificate getCertificate() {
@@ -190,8 +190,8 @@ public class TrustedCertificate implements CertType {
                 "certificateId='" + certificateId + '\'' +
                 ", certificateName='" + certificateName + '\'' +
                 ", serialNumber='" + serialNumber + '\'' +
-                ", certificateThumbprint='" + certificateThumbprint + '\'' +
-                ", certificateThumbprint256='" + certificateThumbprint256 + '\'' +
+                ", thumbprint='" + thumbprint + '\'' +
+                ", thumbprint256='" + thumbprint256 + '\'' +
                 '}';
     }
 

@@ -37,7 +37,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     private static final Logger LOG = LogManager.getLogger(TrustedCertificateImplService.class);
 
     @Autowired
-    private TrustedCertificateRepository certificateRepository;
+    private TrustedCertificateRepository trustedCertificateRepository;
 
     @Autowired
     private ChangeControlCertService changeControlCertService;
@@ -47,13 +47,13 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Override
     public List<TrustedCertificate> listAll() {
-        return certificateRepository.findAll();
+        return trustedCertificateRepository.findAll();
     }
 
     @Override
     public TrustedCertificate findById(String id) throws JsonProcessingException {
         LOG.info("Trusted certificate by id {}", id);
-        TrustedCertificate certById = certificateRepository.findById(id)
+        TrustedCertificate certById = trustedCertificateRepository.findById(id)
                 .orElseThrow(CertificateNotFoundException::new);
         setAuthChainReport(certById);
         return certById;
@@ -70,7 +70,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                                                                          String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
-                new TrustedCertificateDetails(x509Certificate, certificateValidationService);
+                new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository);
         if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
@@ -83,65 +83,67 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     @Override
     public TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) {
         LOG.info("Trying to save trusted certificate {} to change control", cert);
-        ChangeControlCert changeControl = new ChangeControlCert();
-        changeControl.setOperation(operation);
-        changeControl.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
-        changeControl.setChangerComments(cert.getChangerComments());
-        changeControl.setResultMeta1(cert.getCertificateName());
-        changeControl.setResultMeta2(cert.getCertificateThumbprint());
-        changeControl.setTrustedCertificateLog(new TrustedCertificateLog(cert));
-        cert.setChangeID(changeControlCertService.save(changeControl).getChangeID());
+        ChangeControlCert changeControlCert = new ChangeControlCert();
+        changeControlCert.setOperation(operation);
+        changeControlCert.setChanger(SecurityContextHolder.getContext().getAuthentication().getName());
+        changeControlCert.setChangerComments(cert.getChangerComments());
+        changeControlCert.setResultMeta1(cert.getCertificateName());
+        changeControlCert.setResultMeta2(cert.getThumbprint());
+        changeControlCert.setResultMeta3(cert.getThumbprint256());
+        changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(cert));
+        cert.setChangeID(changeControlCertService.save(changeControlCert).getChangeID());
         return cert;
     }
 
     @Override
-    public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControl,
+    public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
                                                                 String approverComments, ChangeControlStatus status) throws Exception {
-        if (changeControl.getStatus() != PENDING) {
+        if (changeControlCert.getStatus() != PENDING) {
             throw new Exception("Status is not pending and therefore no action can be taken");
         }
         TrustedCertificate cert = new TrustedCertificate();
         if (ACCEPTED.equals(status))
-            cert = saveTrustedCertificateAfterApprove(changeControl);
+            cert = saveTrustedCertificateAfterApprove(changeControlCert);
         changeControlCertService.setApproveInfo(
-                changeControl,
+                changeControlCert,
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 approverComments,
                 status
         );
-        setAuthChainReport(cert);
+        //setAuthChainReport(cert);
         return cert;
     }
 
-    private TrustedCertificate saveTrustedCertificateAfterApprove(ChangeControlCert changeControl) {
-        LOG.info("Approve the Trusted certificate {} action", changeControl.getOperation());
-        TrustedCertificate cert = changeControl.convertTrustedCertificateLogToTrustedCertificate();
-        Operation operation = changeControl.getOperation();
+    private TrustedCertificate saveTrustedCertificateAfterApprove(ChangeControlCert changeControlCert) {
+        LOG.info("Approve the Trusted certificate {} action", changeControlCert.getOperation());
+        TrustedCertificate cert = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
+        Operation operation = changeControlCert.getOperation();
         if (operation.equals(DELETE)) {
-            certificateRepository.delete(cert);
+            trustedCertificateRepository.delete(cert);
         } else {
-            certificateRepository.save(cert);
+            trustedCertificateRepository.save(cert);
         }
         //setAuthChainReport(cert);
-        LOG.info("Saved trusted certificate to DB {}", cert);
-        TrustedCertificateLog certLog = changeControl.getTrustedCertificateLog();
+        TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(cert.getCertificateId());
-        changeControl.setTrustedCertificateLog(certLog);
-        changeControlCertService.save(changeControl);
+        changeControlCert.setTrustedCertificateLog(certLog);
+        changeControlCertService.save(changeControlCert);
         return cert;
     }
 
     @Override
-    public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint) {
-        LOG.info("Search trusted certificates by trusted certificate name {} and thumbprint {}", certName, thumbprint);
-        List<CertType> certificates = new ArrayList<>(changeControlCertService.findAllPending(certName, thumbprint));
+    public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256) {
+        LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}", certName, thumbprint, thumbprint256);
+        List<CertType> certificates = new ArrayList<>(changeControlCertService.findAllPending(certName, thumbprint, thumbprint256));
         Specification<TrustedCertificate> specification = Specification
                 .where(
                         GenericSpecification.<TrustedCertificate>filter(certName, "certificateName"))
                 .and(
-                        GenericSpecification.filter(thumbprint, "certificateThumbprint"));
+                        GenericSpecification.filter(thumbprint, "thumbprint"))
+                .and(
+                        GenericSpecification.filter(thumbprint256, "thumbprint256"));
         certificates.addAll(
-                certificateRepository
+                trustedCertificateRepository
                         .findAll(specification));
         certificates.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
         return ListToPageConverter.convertListToPage(certificates, pageable);

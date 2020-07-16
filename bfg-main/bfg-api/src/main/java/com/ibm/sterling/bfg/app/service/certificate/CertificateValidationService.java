@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -21,11 +20,9 @@ public class CertificateValidationService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Map<String, String>> getCertificateChain(String issuerDN) throws JsonProcessingException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(certificateChainUrl)
-                .queryParam("issuerdn", issuerDN);
         ResponseEntity<String> response;
         try {
-            response = new RestTemplate().getForEntity(builder.toUriString(), String.class);
+            response = new RestTemplate().getForEntity(certificateChainUrl + "?issuerdn=" + issuerDN, String.class);
         } catch (HttpStatusCodeException e) {
             String message = e.getMessage();
             return Collections.singletonList(Collections.singletonMap("error", Optional.ofNullable(message)

@@ -21,26 +21,26 @@ public class ChangeControlCertService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlCertService.class);
 
     @Autowired
-    private ChangeControlCertRepository controlCertRepository;
+    private ChangeControlCertRepository changeControlCertRepository;
 
     public List<ChangeControlCert> listAll() {
-        return controlCertRepository.findAll();
+        return changeControlCertRepository.findAll();
     }
 
     public Optional<ChangeControlCert> findById(String id) {
         LOGGER.info("Certificate change control by id {}", id);
-        return controlCertRepository.findById(id);
+        return changeControlCertRepository.findById(id);
     }
 
     public ChangeControlCert save(ChangeControlCert changeControl) {
-        return controlCertRepository.save(changeControl);
+        return changeControlCertRepository.save(changeControl);
     }
 
     public ChangeControlCert updateStatus(String changeControlId, ChangeControlStatus status) {
-        ChangeControlCert controlFromBD = controlCertRepository.findById(changeControlId)
+        ChangeControlCert controlFromBD = changeControlCertRepository.findById(changeControlId)
                 .orElseThrow(CertificateNotFoundException::new);
         controlFromBD.setStatus(status);
-        controlCertRepository.save(controlFromBD);
+        changeControlCertRepository.save(controlFromBD);
         return controlFromBD;
     }
 
@@ -51,11 +51,11 @@ public class ChangeControlCertService {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
-        controlCertRepository.save(changeControl);
+        changeControlCertRepository.save(changeControl);
     }
 
     public boolean isNameUnique(String entityName) {
-        return controlCertRepository
+        return changeControlCertRepository
                 .findAll()
                 .stream()
                 .noneMatch(changeControl ->
@@ -65,7 +65,7 @@ public class ChangeControlCertService {
     }
 
     public List<ChangeControlCert> findAllPending() {
-        return convertStreamToList(controlCertRepository
+        return convertStreamToList(changeControlCertRepository
                 .findByStatus(ChangeControlStatus.PENDING)
                 .stream());
     }
@@ -76,16 +76,18 @@ public class ChangeControlCertService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChangeControlCert> findAllPending(String entity, String service) {
+    public List<ChangeControlCert> findAllPending(String certName, String thumbprint, String thumbprint256) {
         Specification<ChangeControlCert> specification = Specification
                 .where(
-                        GenericSpecification.<ChangeControlCert>filter(entity, "resultMeta1"))
+                        GenericSpecification.<ChangeControlCert>filter(certName, "resultMeta1"))
                 .and(
-                        GenericSpecification.filter(service, "resultMeta2"))
+                        GenericSpecification.filter(thumbprint, "resultMeta2"))
+                .and(
+                        GenericSpecification.filter(thumbprint256, "resultMeta3"))
                 .and(
                         GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
                 );
-        return convertStreamToList(controlCertRepository
+        return convertStreamToList(changeControlCertRepository
                 .findAll(specification)
                 .stream());
     }

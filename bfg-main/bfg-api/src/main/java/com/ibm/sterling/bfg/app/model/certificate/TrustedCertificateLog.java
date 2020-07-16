@@ -39,10 +39,10 @@ public class TrustedCertificateLog {
     private String serialNumber;
 
     @Column(name = "THUMBPRINT")
-    private String certificateThumbprint;
+    private String thumbprint;
 
     @Column(name = "THUMBPRINT256")
-    private String certificateThumbprint256;
+    private String thumbprint256;
 
     @Column(name = "START_DATE")
     private String startDate;
@@ -77,8 +77,8 @@ public class TrustedCertificateLog {
         this.certificateId = trustedCertificate.getCertificateId();
         this.certificateName = trustedCertificate.getCertificateName();
         this.serialNumber = trustedCertificate.getSerialNumber();
-        this.certificateThumbprint = trustedCertificate.getCertificateThumbprint();
-        this.certificateThumbprint256 = trustedCertificate.getCertificateThumbprint256();
+        this.thumbprint = trustedCertificate.getThumbprint();
+        this.thumbprint256 = trustedCertificate.getThumbprint256();
         this.startDate = trustedCertificate.getStartDate();
         this.endDate = trustedCertificate.getEndDate();
         this.issuer = trustedCertificate.getIssuer();
@@ -111,20 +111,20 @@ public class TrustedCertificateLog {
         this.certificateName = certificateName;
     }
 
-    public String getCertificateThumbprint() {
-        return certificateThumbprint;
+    public String getThumbprint() {
+        return thumbprint;
     }
 
-    public void setCertificateThumbprint(String certificateThumbprint) {
-        this.certificateThumbprint = certificateThumbprint;
+    public void setThumbprint(String thumbprint) {
+        this.thumbprint = thumbprint;
     }
 
-    public String getCertificateThumbprint256() {
-        return certificateThumbprint256;
+    public String getThumbprint256() {
+        return thumbprint256;
     }
 
-    public void setCertificateThumbprint256(String certificateThumbprint256) {
-        this.certificateThumbprint256 = certificateThumbprint256;
+    public void setThumbprint256(String thumbprint256) {
+        this.thumbprint256 = thumbprint256;
     }
 
     public ChangeControlCert getControlCert() {

@@ -6,6 +6,7 @@ import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,7 +17,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-public interface TrustedCertificateService {
+public interface TrustedCertificateService extends FieldValueExists {
     List<TrustedCertificate> listAll();
 
     TrustedCertificate findById(String id) throws JsonProcessingException;

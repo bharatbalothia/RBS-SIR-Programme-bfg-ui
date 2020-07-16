@@ -3,6 +3,8 @@ package com.ibm.sterling.bfg.app.model.certificate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,12 @@ public class TrustedCertificate implements CertType {
                     @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String certificateId;
 
+    @EntityUnique(
+            service = TrustedCertificateService.class,
+            fieldName = "CERTIFICATE_NAME",
+            message = "CERTIFICATE_NAME has to be unique")
+    @Pattern(regexp = "^[0-9a-zA-Z _\\-:]+$",
+            message = "Please match the requested format for certificateName")
     @Column(name = "CERTIFICATE_NAME")
     private String certificateName;
 

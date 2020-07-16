@@ -23,6 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.InvalidNameException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -44,6 +47,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Autowired
     private CertificateValidationService certificateValidationService;
+
+    @Autowired
+    private Validator validator;
 
     @Override
     public List<TrustedCertificate> listAll() {
@@ -80,8 +86,19 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         return trustedCertificate;
     }
 
+    private void validateEntity(TrustedCertificate trustedCertificate) {
+        Set<ConstraintViolation<TrustedCertificate>> violations;
+        violations = validator.validate(trustedCertificate);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
     @Override
     public TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) {
+        if (!operation.equals(Operation.DELETE)) {
+            validateEntity(cert);
+        }
         LOG.info("Trying to save trusted certificate {} to change control", cert);
         ChangeControlCert changeControlCert = new ChangeControlCert();
         changeControlCert.setOperation(operation);
@@ -121,6 +138,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         if (operation.equals(DELETE)) {
             trustedCertificateRepository.delete(cert);
         } else {
+            validateEntity(cert);
             trustedCertificateRepository.save(cert);
         }
         //setAuthChainReport(cert);
@@ -147,6 +165,13 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                         .findAll(specification));
         certificates.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
         return ListToPageConverter.convertListToPage(certificates, pageable);
+    }
+
+    @Override
+    public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
+        if (fieldName.equals("CERTIFICATE_NAME"))
+            return trustedCertificateRepository.existsByCertificateName(String.valueOf(value));
+        return false;
     }
 
 }

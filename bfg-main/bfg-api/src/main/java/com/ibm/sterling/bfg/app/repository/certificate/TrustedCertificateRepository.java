@@ -14,4 +14,7 @@ public interface TrustedCertificateRepository extends JpaRepository<TrustedCerti
     boolean existsByThumbprint(String thumbprint);
 
     boolean existsByThumbprint256(String thumbprint256);
+
+    boolean existsByCertificateName(String certificateName);
+
 }

@@ -38,7 +38,7 @@
                     display: -ms-flexbox;
                     display: flex;
                     -ms-flex-pack: center;
-                    -ms-flex-align: center;
+                    -ms-flex-align: end;
                     justify-content: center;
                     -ms-flex-direction: column;
                     flex-direction: column;
@@ -57,6 +57,10 @@
                 }
             }
         }
+    }
+
+    .value-table-cell {
+        width: 100%;
     }
 
     .stepper-actions {

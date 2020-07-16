@@ -10,4 +10,8 @@ import java.util.List;
 @Repository
 public interface TrustedCertificateRepository extends JpaRepository<TrustedCertificate, String> {
     List<TrustedCertificate> findAll(Specification<TrustedCertificate> specification);
+
+    boolean existsByThumbprint(String thumbprint);
+
+    boolean existsByThumbprint256(String thumbprint256);
 }

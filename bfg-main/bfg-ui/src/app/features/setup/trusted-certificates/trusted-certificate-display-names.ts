@@ -4,6 +4,7 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     serialNumber: 'Serial Number',
     thumbprint: 'SHA-1 Thumbprint',
+    thumbprint256: 'SHA-2 Thumbprint',
     validDates: 'Valid Dates',
     startDate: 'Start Date',
     endDate: 'End Date',

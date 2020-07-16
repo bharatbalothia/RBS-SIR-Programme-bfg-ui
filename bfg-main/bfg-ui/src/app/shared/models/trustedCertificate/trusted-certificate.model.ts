@@ -3,6 +3,7 @@ export interface TrustedCertificate {
     certificateName: string;
     serialNumber: string;
     thumbprint: string;
+    thumbprint256: string;
     startDate: Date;
     endDate: Date;
     issuer: TSItemInfo;

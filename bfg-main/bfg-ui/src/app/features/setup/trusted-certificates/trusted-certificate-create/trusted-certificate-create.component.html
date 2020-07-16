@@ -52,6 +52,11 @@
                             <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint').value}}
                             </div>
                         </section>
+                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('thumbprint256')">
+                            <h4 class="section-label">{{getTrustedCertificateDisplayName('thumbprint256')}}:</h4>
+                            <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint256').value}}
+                            </div>
+                        </section>
                         <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('validDates')">
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('validDates')}}:</h4>
                             <div class="section-value">{{detailsTrustedCertificateFormGroup.get('validDates').value}}
@@ -118,7 +123,7 @@
                 <ng-container matColumnDef="value">
                     <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <app-display-table-cell [value]="element.value">
+                        <app-display-table-cell class='value-table-cell' [value]="element.value">
                         </app-display-table-cell>
                     </mat-cell>
                 </ng-container>

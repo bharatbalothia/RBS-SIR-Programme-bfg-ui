@@ -70,6 +70,9 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
     @Column(name = "RESULT_META2")
     private String resultMeta2; //meta-data about the object when using CREATE action (searchable)
 
+    @Column(name = "RESULT_META3")
+    private String resultMeta3; //meta-data about the object when using CREATE action (searchable)
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CERT_LOG_ID")
     private TrustedCertificateLog trustedCertificateLog;
@@ -158,6 +161,14 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
         this.resultMeta2 = resultMeta2;
     }
 
+    public String getResultMeta3() {
+        return resultMeta3;
+    }
+
+    public void setResultMeta3(String resultMeta3) {
+        this.resultMeta3 = resultMeta3;
+    }
+
     public String getStatusText() {
         return status.getStatusText();
     }
@@ -175,8 +186,8 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
         certFromLog.setCertificateId(trustedCertificateLog.getCertificateId());
         certFromLog.setCertificateName(trustedCertificateLog.getCertificateName());
         certFromLog.setSerialNumber(trustedCertificateLog.getSerialNumber());
-        certFromLog.setCertificateThumbprint(trustedCertificateLog.getCertificateThumbprint());
-        certFromLog.setCertificateThumbprint256(trustedCertificateLog.getCertificateThumbprint256());
+        certFromLog.setThumbprint(trustedCertificateLog.getThumbprint());
+        certFromLog.setThumbprint256(trustedCertificateLog.getThumbprint256());
         certFromLog.setCertificate(trustedCertificateLog.getCertificate());
         certFromLog.setStartDate(trustedCertificateLog.getStartDate());
         certFromLog.setEndDate(trustedCertificateLog.getEndDate());
@@ -204,7 +215,8 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
                 ", changerComments='" + changerComments + '\'' +
                 ", approverComments='" + approverComments + '\'' +
                 ", resultMeta1='" + resultMeta1 + '\'' +
-                ", resultMeta2='" + resultMeta2 + '}';
+                ", resultMeta2='" + resultMeta2 + '\'' +
+                ", resultMeta3='" + resultMeta3 + '}';
     }
 
     public Timestamp getDateChanged() {

@@ -81,7 +81,7 @@
                         </section>
                     </div>
                 </div>
-                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport')">
+                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport') && detailsTrustedCertificateFormGroup.get('authChainReport').value">
                     <h3 class="ts-item-section-title">{{getTrustedCertificateDisplayName('authChainReport')}}:</h3>
                     <div class="ts-item-section-value">
                         <section

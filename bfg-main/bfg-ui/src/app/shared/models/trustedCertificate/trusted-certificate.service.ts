@@ -18,6 +18,7 @@ export class TrustedCertificateService {
   getTrustedCertificateList(params?: {
     certName?: string;
     thumbprint?: string;
+    thumbprint256?: string;
     page?: string;
     size?: string
   }): Observable<TrustedCertificatesWithPagination> {

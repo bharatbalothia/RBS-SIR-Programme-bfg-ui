@@ -24,6 +24,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
+  thumbprint256SearchingValue = '';
 
   errorMessage: ErrorMessage;
 
@@ -55,6 +56,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
       certName: this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
+      thumbprint256: this.thumbprint256SearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: TrustedCertificatesWithPagination) => {

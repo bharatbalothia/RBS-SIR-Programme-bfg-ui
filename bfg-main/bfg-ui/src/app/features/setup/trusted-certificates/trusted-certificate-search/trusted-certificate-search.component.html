@@ -55,7 +55,14 @@
                 <ng-container matColumnDef="thumbprint">
                     <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.certificateThumbprint || element.resultMeta2}}
+                        {{element.thumbprint || element.resultMeta2}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="thumbprint256">
+                    <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.thumbprint256 || element.resultMeta3}}
                     </mat-cell>
                 </ng-container>
 

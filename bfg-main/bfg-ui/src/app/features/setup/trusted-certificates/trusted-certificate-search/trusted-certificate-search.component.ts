@@ -30,7 +30,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   isLoading = true;
   trustedCertificates: TrustedCertificatesWithPagination;
-  displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint'];
+  displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
   dataSource: MatTableDataSource<TrustedCertificate>;
 
   pageIndex = 0;

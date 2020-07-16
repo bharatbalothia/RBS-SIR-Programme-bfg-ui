@@ -31,6 +31,7 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
         { fieldName: getTrustedCertificateDisplayName('certificateName'), fieldValue: trustedCertificate.certificateName },
         { fieldName: getTrustedCertificateDisplayName('serialNumber'), fieldValue: trustedCertificate.serialNumber },
         { fieldName: getTrustedCertificateDisplayName('thumbprint'), fieldValue: trustedCertificate.thumbprint },
+        { fieldName: getTrustedCertificateDisplayName('thumbprint256'), fieldValue: trustedCertificate.thumbprint256 },
         { fieldName: getTrustedCertificateDisplayName('startDate'), fieldValue: trustedCertificate.startDate },
         { fieldName: getTrustedCertificateDisplayName('endDate'), fieldValue: trustedCertificate.endDate },
         {
@@ -46,7 +47,7 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
 
 export const getTrustedCertificateDetailsTabs = (trustedCertificate: TrustedCertificate): Tab[] => [
     {
-        tabTitle: 'Entity Details',
+        tabTitle: 'Trusted Certificate Details',
         tabSections: [{ sectionItems: getTrustedCertificateDetailsSectionItems(trustedCertificate)['Trusted Certificate Details'] }]
     }
 ].filter(el => el);

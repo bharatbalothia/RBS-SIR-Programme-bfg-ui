@@ -34,8 +34,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
   dataSource: MatTableDataSource<TrustedCertificate>;
 
   pageIndex = 0;
-  pageSize = 10;
-  pageSizeOptions: number[] = [5, 10, 20];
+  pageSize = 100;
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private trustedCertificateService: TrustedCertificateService,

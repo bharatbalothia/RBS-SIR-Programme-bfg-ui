@@ -53,7 +53,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
-      'cert-name': this.certificateNameSearchingValue || null,
+      certName: this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()

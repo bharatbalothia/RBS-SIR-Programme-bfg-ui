@@ -65,7 +65,10 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile certificate)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
-        if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
+        String originalFilename = certificate.getOriginalFilename();
+        if (!"der".equals(Optional.ofNullable(originalFilename)
+                .map(filename -> filename.substring(filename.lastIndexOf(".") + 1))
+                .orElse("")))
             throw new FileTypeNotValidException();
         return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService, trustedCertificateRepository));
     }

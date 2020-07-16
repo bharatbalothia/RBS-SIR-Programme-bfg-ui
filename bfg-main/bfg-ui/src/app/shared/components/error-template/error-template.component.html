@@ -1,0 +1,13 @@
+<div class="error-message">
+    <mat-error class="warnings-message" *ngIf="errorMessage && errorMessage.warnings">
+        <ul *ngIf="errorMessage.warnings">
+            <li ng *ngFor="let warning of errorMessage.warnings">{{getErrorsMessage(warning)}}</li>
+        </ul>
+    </mat-error>
+    <mat-error class="errors-message" *ngIf="errorMessage">
+        {{errorMessage.message}} {{errorMessage.code ? '('+errorMessage.code+')' : ''}}
+        <ul *ngIf="errorMessage.errors">
+            <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
+        </ul>
+    </mat-error>
+</div>

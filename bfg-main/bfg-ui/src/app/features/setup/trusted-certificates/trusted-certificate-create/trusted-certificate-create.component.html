@@ -4,12 +4,9 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <mat-error class="top-error-message" *ngIf="errorMessage">
-            {{errorMessage.message}} ({{errorMessage.code}})
-            <ul *ngIf="errorMessage.errors">
-                <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
-            </ul>
-        </mat-error>
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        </div>
     </mat-card-content>
     <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getConfirmationFieldsSource()">
         <mat-step [stepControl]="uploadTrustedCertificateFormGroup">

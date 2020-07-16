@@ -104,6 +104,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   })
 
   handleFileInput(files: FileList) {
+    this.errorMessage = null;
     this.trustedCertificateFile = files.item(0);
     const formData: FormData = new FormData();
     formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);

@@ -10,6 +10,7 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -23,6 +24,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
+
+  errorMessage: ErrorMessage;
 
   isLoading = true;
   trustedCertificates: TrustedCertificatesWithPagination;
@@ -48,6 +51,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   getTrustedCertificateList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
+    this.errorMessage = null;
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
       'cert-name': this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
@@ -59,7 +63,11 @@ export class TrustedCertificateSearchComponent implements OnInit {
       this.pageSize = pageSize;
       this.trustedCertificates = data;
       this.updateTable();
-    });
+    },
+      (error) => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
   }
 
   updateTable() {

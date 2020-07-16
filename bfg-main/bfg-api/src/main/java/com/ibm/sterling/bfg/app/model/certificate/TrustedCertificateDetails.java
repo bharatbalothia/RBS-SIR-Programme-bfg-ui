@@ -30,12 +30,15 @@ public class TrustedCertificateDetails {
     private List<Map<String, String>> authChainReport = null;
     private boolean isValid = true;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, Object> certificateErrors;
+    private List<Map<String, Object>> certificateErrors;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Map<String, Object>> certificateWarnings;
 
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService,
                                      TrustedCertificateRepository trustedCertificateRepository)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
         Map<String, Object> errors = new HashMap<>();
+        Map<String, Object> warnings = new HashMap<>();
         this.serialNumber = String.valueOf(x509Certificate.getSerialNumber().intValue());
         byte[] encodedCert = x509Certificate.getEncoded();
         this.thumbprint = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-1").digest(encodedCert));
@@ -72,7 +75,7 @@ public class TrustedCertificateDetails {
                 );
 
         if (issuer.equals(subject))
-            errors.put("authChainReport", "Certificate is valid but is self-signed and therefore cannot be trusted via a certificate chain");
+            warnings.put("authChainReport", "Certificate is valid but is self-signed and therefore cannot be trusted via a certificate chain");
         else {
             List<Map<String, String>> certificateChainResponse = certificateValidationService.getCertificateChain(
                     certificateValidationService.getEncodedIssuerDN(issuer));
@@ -84,8 +87,11 @@ public class TrustedCertificateDetails {
             else this.authChainReport = certificateChainResponse;
         }
         if (!errors.isEmpty()) {
-            this.certificateErrors = errors;
+            this.certificateErrors = Collections.singletonList(errors);
             this.isValid = false;
+        }
+        if (!warnings.isEmpty()) {
+            this.certificateWarnings = Collections.singletonList(warnings);
         }
     }
 
@@ -138,8 +144,12 @@ public class TrustedCertificateDetails {
         return certificate;
     }
 
-    public Map<String, Object> getCertificateErrors() {
+    public List<Map<String, Object>> getCertificateErrors() {
         return certificateErrors;
+    }
+
+    public List<Map<String, Object>> getCertificateWarnings() {
+        return certificateWarnings;
     }
 
 }

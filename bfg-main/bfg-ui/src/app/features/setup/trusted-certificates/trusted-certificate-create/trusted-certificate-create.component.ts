@@ -12,6 +12,7 @@ import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/co
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { TrustedCertificateValidators } from 'src/app/shared/models/trustedCertificate/trusted-certificate-validator';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -47,6 +48,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     private formBuilder: FormBuilder,
     private trustedCertificateService: TrustedCertificateService,
     private dialog: MatDialog,
+    private trustedCertificateValidators: TrustedCertificateValidators,
   ) { }
 
   ngOnInit(): void {
@@ -72,7 +74,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       subject: [trustedCertificate.subject],
       authChainReport: [trustedCertificate.authChainReport],
       changerComments: ['']
-    });
+    }, { validators: this.trustedCertificateValidators.isTrustedCertificateHasErrors(trustedCertificate) });
   }
 
   getTrustedCertificateName = (trustedCertificate: TrustedCertificate) => get(trustedCertificate, 'subject.O', '').toString() !== ''
@@ -126,7 +128,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       });
   }
 
-  getErrorsAndWarnings = (trustedCertificate: TrustedCertificate) => ({
+  getErrorsAndWarnings = (trustedCertificate: TrustedCertificate) => removeEmpties({
     code: null,
     message: trustedCertificate.certificateErrors && ERROR_MESSAGES.trustedCertificateErrors,
     errors: get(trustedCertificate, 'certificateErrors', null),

@@ -23,45 +23,44 @@ public class ChangeControlService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlService.class);
 
     @Autowired
-    private ChangeControlRepository controlRepository;
+    private ChangeControlRepository changeControlRepository;
 
     @Autowired
     private EntityLogRepository entityLogRepository;
 
     public List<ChangeControl> listAll() {
-        return controlRepository.findAll();
+        return changeControlRepository.findAll();
     }
 
     public Optional<ChangeControl> findById(String id) {
         LOGGER.info("change control by id {}", id);
-        return controlRepository.findById(id);
+        return changeControlRepository.findById(id);
     }
 
     public ChangeControl save(ChangeControl changeControl) {
-          return controlRepository.save(changeControl);
+        return changeControlRepository.save(changeControl);
     }
 
     public ChangeControl updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
-            ChangeControl controlFromBD = controlRepository.findById(changeControlId)
-                    .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
-            controlFromBD.setStatus(status);
-            controlRepository.save(controlFromBD);
-            return controlFromBD;
+        ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
+                .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
+        controlFromBD.setStatus(status);
+        changeControlRepository.save(controlFromBD);
+        return controlFromBD;
     }
 
     public void setApproveInfo(ChangeControl changeControl,
-                                        String user,
-                                        String comments,
-                                        ChangeControlStatus status) {
+                               String user,
+                               String comments,
+                               ChangeControlStatus status) {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
-
-        controlRepository.save(changeControl);
+        changeControlRepository.save(changeControl);
     }
 
     public boolean isNameUnique(String entityName) {
-        return controlRepository
+        return changeControlRepository
                 .findAll()
                 .stream()
                 .noneMatch(changeControl ->
@@ -72,7 +71,7 @@ public class ChangeControlService {
     }
 
     public List<ChangeControl> findAllPending() {
-        return convertStreamToList(controlRepository
+        return convertStreamToList(changeControlRepository
                 .findByStatus(ChangeControlStatus.PENDING)
                 .stream());
     }
@@ -90,9 +89,9 @@ public class ChangeControlService {
                 .and(
                         GenericSpecification.filter(service, "resultMeta2"))
                 .and(
-                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText() , "status")
+                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
                 );
-        return convertStreamToList(controlRepository
+        return convertStreamToList(changeControlRepository
                 .findAll(specification)
                 .stream());
     }

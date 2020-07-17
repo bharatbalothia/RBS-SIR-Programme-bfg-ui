@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES } from '../constants/error-messages';
+import { get } from 'lodash';
 
 export interface ErrorsField {
     [key: string]: string;
@@ -20,3 +21,6 @@ export const getApiErrorMessage = (error) => {
 };
 
 export const getErrorsMessage = (error: ErrorsField) => Object.keys(error).map(e => error[e]);
+
+export const getErrorByField = (key, errorMessage: ErrorMessage) =>
+    get(errorMessage, 'errors', []).filter(el => el[key]).map(el => el[key]).join('\n ');

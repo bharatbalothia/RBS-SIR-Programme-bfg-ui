@@ -1,0 +1,14 @@
+.trusted-certificate-home-content {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    .trusted-certificate-home-card {
+        width: fit-content;
+        margin: 15px 0px 15px 15px;
+
+        .card-content {
+            text-align: center;
+        }
+    }
+}

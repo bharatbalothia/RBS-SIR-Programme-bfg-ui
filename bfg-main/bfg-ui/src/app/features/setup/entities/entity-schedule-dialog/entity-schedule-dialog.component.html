@@ -3,7 +3,7 @@
     <form [formGroup]="scheduleFormGroup" (submit)="scheduleFormGroup.valid && submit()">
         <section>
             <mat-form-field>
-                <mat-label>{{getDisplayName('isWindow')}}</mat-label>
+                <mat-label>{{getEntityDisplayName('isWindow')}}</mat-label>
                 <mat-select formControlName="isWindow" (selectionChange)="onScheduleTypeSelect($event.value)" required>
                     <mat-option *ngFor="let type of getScheduleTypes()"
                         [value]="scheduleType[type] === scheduleType.WINDOW">{{scheduleType[type]}}
@@ -17,7 +17,7 @@
         </section>
         <section>
             <mat-form-field>
-                <mat-label>{{getDisplayName('timeStart')}}</mat-label>
+                <mat-label>{{getEntityDisplayName('timeStart')}}</mat-label>
                 <input matInput type="time" formControlName="timeStart" required>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.timeStart">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('timeStart',validation.type)">
@@ -28,7 +28,7 @@
         <div *ngIf="isScheduleTypeWindow()" class="window-type-fields">
             <section>
                 <mat-form-field>
-                    <mat-label>{{getDisplayName('windowEnd')}}</mat-label>
+                    <mat-label>{{getEntityDisplayName('windowEnd')}}</mat-label>
                     <input matInput type="time" formControlName="windowEnd" required>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowEnd">
                         <mat-error class="error-message" *ngIf="ifFieldHasError('windowEnd',validation.type)">
@@ -38,7 +38,7 @@
             </section>
             <section>
                 <mat-form-field>
-                    <mat-label>{{getDisplayName('windowInterval')}}</mat-label>
+                    <mat-label>{{getEntityDisplayName('windowInterval')}}</mat-label>
                     <input matInput type="number" min="0" formControlName="windowInterval" required>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowInterval">
                         <mat-error class="error-message" *ngIf="ifFieldHasError('windowInterval',validation.type)">
@@ -49,7 +49,7 @@
         </div>
         <section>
             <mat-form-field>
-                <mat-label>{{getDisplayName('fileType')}}</mat-label>
+                <mat-label>{{getEntityDisplayName('fileType')}}</mat-label>
                 <mat-select formControlName="fileType" required>
                     <mat-option *ngFor="let fileType of fileTypes" [value]="fileType">{{fileType}}</mat-option>
                 </mat-select>

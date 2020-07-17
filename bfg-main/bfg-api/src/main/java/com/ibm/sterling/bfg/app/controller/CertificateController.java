@@ -112,6 +112,7 @@ public class CertificateController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException {
         return ok().body(certificateService.findById(id));
     }

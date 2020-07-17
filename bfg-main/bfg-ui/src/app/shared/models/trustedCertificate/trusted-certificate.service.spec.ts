@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TrustedCertificateServiceService } from './trusted-certificate-service.service';
+import { TrustedCertificateServiceService } from './trusted-certificate.service';
 
 describe('TrustedCertificateServiceService', () => {
   let service: TrustedCertificateServiceService;

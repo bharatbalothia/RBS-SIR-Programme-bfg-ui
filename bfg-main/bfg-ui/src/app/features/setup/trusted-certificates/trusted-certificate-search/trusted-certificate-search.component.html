@@ -1,0 +1,88 @@
+<mat-card class="search-trusted-certificate-card">
+    <mat-card-header>
+        <mat-card-title>Trusted Certificates</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        <div class="search-by-content">
+            <h3 class="search-by-label">Search by</h3>
+            <mat-form-field class="search-by-field">
+                <mat-label>Search by Certificate Name</mat-label>
+                <input matInput [(ngModel)]="certificateNameSearchingValue">
+            </mat-form-field>
+            <mat-form-field class="search-by-field">
+                <mat-label>Search by SHA-1 Thumbprint</mat-label>
+                <input matInput [(ngModel)]="thumbprintSearchingValue">
+            </mat-form-field>
+            <mat-form-field class="search-by-field">
+                <mat-label>Search by SHA-2 Thumbprint</mat-label>
+                <input matInput [(ngModel)]="thumbprint256SearchingValue">
+            </mat-form-field>
+            <button color="primary" mat-raised-button
+                (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
+        </div>
+        <div class="mat-elevation-z8">
+            <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button *ngIf="element.changeID">
+                            <mat-icon inline>format_list_numbered</mat-icon> Version manager
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="changes">
+                    <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button *ngIf="element.trustedCertificateLog">
+                            <mat-icon inline>info</mat-icon> Changes
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-button
+                            (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog || element)">
+                            {{element.certificateName || element.resultMeta1}}
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="thumbprint">
+                    <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.thumbprint || element.resultMeta2}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="thumbprint256">
+                    <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.thumbprint256 || element.resultMeta3}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="noData">
+                    <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                        No records found.
+                    </mat-footer-cell>
+                </ng-container>
+
+                <mat-footer-row *matFooterRowDef="['noData']" [hidden]="dataSource && dataSource.data.length > 0">
+                </mat-footer-row>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator *ngIf="!isLoading" [length]="trustedCertificates.totalElements"
+                [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
+                [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+                (page)="getTrustedCertificateList($event.pageIndex, $event.pageSize)">
+            </mat-paginator>
+        </div>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </mat-card-content>
+</mat-card>

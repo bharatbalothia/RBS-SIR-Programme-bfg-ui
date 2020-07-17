@@ -29,8 +29,8 @@ export class EntityPendingComponent implements OnInit {
   dataSource: MatTableDataSource<ChangeControl>;
 
   pageIndex = 0;
-  pageSize = 10;
-  pageSizeOptions: number[] = [5, 10, 20];
+  pageSize = 100;
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private entityService: EntityService,

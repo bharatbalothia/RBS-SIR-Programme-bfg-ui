@@ -4,18 +4,15 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <mat-error class="top-error-message" *ngIf="errorMessage">
-            {{errorMessage.message}} ({{errorMessage.code}})
-            <ul *ngIf="errorMessage.errors">
-                <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
-            </ul>
-        </mat-error>
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        </div>
     </mat-card-content>
     <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getConfirmationFieldsSource()">
         <mat-step [stepControl]="uploadTrustedCertificateFormGroup">
             <form [formGroup]="uploadTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
-                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload" accept=".der"
+                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
                     (change)="handleFileInput($event.target.files)" hidden />
                 <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
                     [disabled]="isLoading">
@@ -69,7 +66,7 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('issuer')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTSItemInfoValues(detailsTrustedCertificateFormGroup.get('issuer').value)">
+                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('issuer').value)">
                                 </app-display-table-cell>
                             </div>
 
@@ -78,13 +75,13 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTSItemInfoValues(detailsTrustedCertificateFormGroup.get('subject').value)">
+                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('subject').value)">
                                 </app-display-table-cell>
                             </div>
                         </section>
                     </div>
                 </div>
-                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport')">
+                <div class="ts-item-section" *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport') && detailsTrustedCertificateFormGroup.get('authChainReport').value">
                     <h3 class="ts-item-section-title">{{getTrustedCertificateDisplayName('authChainReport')}}:</h3>
                     <div class="ts-item-section-value">
                         <section
@@ -92,7 +89,7 @@
                             class="section-info">
                             <h4 class="section-label">{{i+1}}:</h4>
                             <div class="section-value">
-                                <app-display-table-cell [value]="getTSItemInfoValues(element)">
+                                <app-display-table-cell [value]="getTrustedCertificateItemInfoValues(element)">
                                 </app-display-table-cell>
                             </div>
                         </section>
@@ -142,7 +139,7 @@
             <div class='stepper-actions'>
                 <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                 <button mat-raised-button class="action-button" color='primary'
-                            (click)="sendTrustedCertificate()">Create</button>
+                    (click)="sendTrustedCertificate()">Create</button>
                 <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
                     Cancel</button>
             </div>

@@ -9,6 +9,7 @@ export interface ErrorMessage {
     code: string;
     message: string;
     errors?: ErrorsField[];
+    warnings?: ErrorsField[];
 }
 
 export const getApiErrorMessage = (error) => {

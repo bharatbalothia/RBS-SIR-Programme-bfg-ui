@@ -54,3 +54,10 @@ mat-form-field {
         }
     }
 }
+
+.mat-table {
+    .mat-cell {
+        word-break: break-all;
+        word-wrap: break-word;
+    }
+}

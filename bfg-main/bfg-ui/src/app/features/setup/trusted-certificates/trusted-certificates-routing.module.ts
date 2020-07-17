@@ -22,7 +22,12 @@ export const routes: Routes = [
             permissions: ['FB_UI_TRUSTED_CERTS_NEW']
         }
     },
-    { path: ROUTING_PATHS.SEARCH, component: TrustedCertificateSearchComponent },
+    {
+        path: ROUTING_PATHS.SEARCH, component: TrustedCertificateSearchComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: ['FB_UI_TRUSTED_CERTS']
+        }},
 ];
 
 @NgModule({

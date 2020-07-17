@@ -10,6 +10,7 @@ import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -49,6 +50,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     private CertificateValidationService certificateValidationService;
 
     @Autowired
+    private ChangeControlCertRepository changeControlCertRepository;
+
+    @Autowired
     private Validator validator;
 
     @Override
@@ -76,7 +80,8 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                                                                          String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
-                new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository);
+                new TrustedCertificateDetails(x509Certificate, certificateValidationService,
+                        trustedCertificateRepository, changeControlCertRepository);
         if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
@@ -86,7 +91,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         return trustedCertificate;
     }
 
-    private void validateEntity(TrustedCertificate trustedCertificate) {
+    private void validateCertificate(TrustedCertificate trustedCertificate) {
         Set<ConstraintViolation<TrustedCertificate>> violations;
         violations = validator.validate(trustedCertificate);
         if (!violations.isEmpty()) {
@@ -97,7 +102,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     @Override
     public TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
-            validateEntity(cert);
+            validateCertificate(cert);
         }
         LOG.info("Trying to save trusted certificate {} to change control", cert);
         ChangeControlCert changeControlCert = new ChangeControlCert();
@@ -138,7 +143,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         if (operation.equals(DELETE)) {
             trustedCertificateRepository.delete(cert);
         } else {
-            validateEntity(cert);
+            validateCertificate(cert);
             trustedCertificateRepository.save(cert);
         }
         //setAuthChainReport(cert);

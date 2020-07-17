@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
@@ -51,6 +52,9 @@ public class CertificateController {
     @Autowired
     private TrustedCertificateRepository trustedCertificateRepository;
 
+    @Autowired
+    private ChangeControlCertRepository changeControlCertRepository;
+
     @GetMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<CertType> getCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
@@ -67,7 +71,8 @@ public class CertificateController {
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
         if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
             throw new FileTypeNotValidException();
-        return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService, trustedCertificateRepository));
+        return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
+                trustedCertificateRepository, changeControlCertRepository));
     }
 
     @PostMapping

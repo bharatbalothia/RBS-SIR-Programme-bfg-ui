@@ -11,5 +11,8 @@ import java.util.List;
 @Repository
 public interface ChangeControlCertRepository extends JpaRepository<ChangeControlCert, String> {
     List<ChangeControlCert> findByStatus(ChangeControlStatus status);
+
     List<ChangeControlCert> findAll(Specification<ChangeControlCert> specification);
+
+    boolean existsByResultMeta2AndStatus(String resultMeta2, ChangeControlStatus changeControlStatus);
 }

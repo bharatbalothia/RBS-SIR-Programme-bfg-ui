@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -39,6 +40,7 @@ public class TrustedCertificate implements CertType {
             service = TrustedCertificateService.class,
             fieldName = "CERTIFICATE_NAME",
             message = "CERTIFICATE_NAME has to be unique")
+    @NotBlank(message = "CERTIFICATE_NAME has to be present")
     @Pattern(regexp = "^[0-9a-zA-Z _\\-:]+$",
             message = "Please match the requested format for certificateName")
     @Column(name = "CERTIFICATE_NAME")

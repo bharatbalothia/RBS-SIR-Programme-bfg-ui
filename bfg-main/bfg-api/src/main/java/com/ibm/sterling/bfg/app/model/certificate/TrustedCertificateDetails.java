@@ -39,7 +39,7 @@ public class TrustedCertificateDetails {
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService,
                                      TrustedCertificateRepository trustedCertificateRepository, ChangeControlCertRepository changeControlCertRepository)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
-        Map<String, List<String>> errors = new HashMap<>();
+        List<Map<String, List<String>>> errors = new ArrayList<>();
         Map<String, Object> warnings = new HashMap<>();
         this.serialNumber = String.valueOf(x509Certificate.getSerialNumber().intValue());
         byte[] encodedCert = x509Certificate.getEncoded();
@@ -51,7 +51,7 @@ public class TrustedCertificateDetails {
         Date notAfterDate = x509Certificate.getNotAfter();
         this.endDate = certificateDateFormat.format(notAfterDate);
         if (notAfterDate.before(Calendar.getInstance().getTime()))
-            errors.put("endDate", Collections.singletonList("Certificate has expired"));
+            errors.add(Collections.singletonMap("endDate", Collections.singletonList("Certificate has expired")));
         this.issuer = new LdapName(x509Certificate.getIssuerDN().getName())
                 .getRdns().stream()
                 .flatMap(rdn -> Collections.singletonMap(rdn.getType(), String.valueOf(rdn.getValue()))
@@ -74,7 +74,7 @@ public class TrustedCertificateDetails {
                 );
         handleAuthChainReport(certificateValidationService, errors, warnings);
         if (!errors.isEmpty()) {
-            this.certificateErrors = Collections.singletonList(errors);
+            this.certificateErrors = errors;
             this.isValid = false;
         }
         if (!warnings.isEmpty()) {
@@ -83,33 +83,34 @@ public class TrustedCertificateDetails {
     }
 
     private void handleAuthChainReport(CertificateValidationService certificateValidationService,
-                                       Map<String, List<String>> errors, Map<String, Object> warnings) throws JsonProcessingException {
+                                       List<Map<String, List<String>>> errors, Map<String, Object> warnings) throws JsonProcessingException {
         if (issuer.equals(subject))
             warnings.put("authChainReport", "Certificate is valid but is self-signed and therefore cannot be trusted via a certificate chain");
         else {
             List<Map<String, String>> certificateChainResponse = certificateValidationService.getCertificateChain(
                     certificateValidationService.getEncodedIssuerDN(issuer));
             if (certificateChainResponse.get(0).containsKey("error"))
-                errors.put("authChainReport", Collections.singletonList(new ObjectMapper().readValue(
+                errors.add(Collections.singletonMap("authChainReport", Collections.singletonList(new ObjectMapper().readValue(
                         certificateChainResponse.get(0).get("error"), new TypeReference<Map<String, String>>() {
-                        }).get("message"))
+                        }).get("message")))
                 );
             else this.authChainReport = certificateChainResponse;
         }
     }
 
     private void checkThumbprintUniqueness(TrustedCertificateRepository trustedCertificateRepository,
-                                           ChangeControlCertRepository changeControlCertRepository, Map<String, List<String>> errors) {
+                                           ChangeControlCertRepository changeControlCertRepository, List<Map<String, List<String>>> errors) {
         if (trustedCertificateRepository.existsByThumbprint(thumbprint))
-            errors.put("thumbprint", new ArrayList<>(Collections.singletonList("SHA-1 Thumbprint is not unique")));
+            errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(Collections.singletonList("SHA-1 Thumbprint is not unique"))));
         if (trustedCertificateRepository.existsByThumbprint256(thumbprint256))
-            errors.put("thumbprint256", Collections.singletonList("SHA-2 Thumbprint is not unique"));
-        if (changeControlCertRepository.existsByResultMeta2AndStatus(thumbprint, ChangeControlStatus.PENDING))
-            if (errors.containsKey("thumbprint"))
-                errors.get("thumbprint").add("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert");
-            else
-                errors.put("thumbprint", new ArrayList<>(
-                        Collections.singletonList("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert")));
+            errors.add(Collections.singletonMap("thumbprint256", Collections.singletonList("SHA-2 Thumbprint is not unique")));
+        Optional<Map<String, List<String>>> listThumbprint = errors.stream().filter(error -> error.containsKey("thumbprint"))
+                .findFirst();
+        if (changeControlCertRepository.existsByResultMeta2AndStatus(this.thumbprint, ChangeControlStatus.PENDING))
+            if (listThumbprint.isPresent())
+                listThumbprint.get().get("thumbprint").add("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert");
+            else errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(
+                    Collections.singletonList("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert"))));
     }
 
     public String getSerialNumber() {

@@ -72,20 +72,4 @@
         margin: auto;
     }
 
-    .page-select {
-        display: flex;
-        align-items: baseline;
-        margin-right: 8px;
-        justify-content: flex-end;
-        font-size: 12px;
-
-        .label {
-            margin: 0 4px;
-            color: rgba(0, 0, 0, 0.54);
-        }
-
-        .page-select-field {
-            width: 50px;
-        }
-    }
 }

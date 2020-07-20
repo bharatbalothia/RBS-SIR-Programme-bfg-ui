@@ -53,6 +53,8 @@ export class EntitySearchComponent implements OnInit {
   }
 
   getEntityList(pageIndex: number, pageSize: number) {
+    console.log(pageIndex, pageSize);
+
     this.isLoading = true;
     this.entityService.getEntityList(removeEmpties({
       entity: this.entityNameSearchingValue || null,

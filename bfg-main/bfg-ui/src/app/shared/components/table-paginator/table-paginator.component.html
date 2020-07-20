@@ -1,0 +1,10 @@
+<div class="page-select">
+    <div class="label">Page:</div>
+    <mat-form-field class="page-select-field">
+        <input matInput appNumberOnly [value]="pageIndex + 1"
+            (change)="getRows($event.target.value > 0 ? $event.target.value -1 : 0, pageSize)" [min]="min" [max]="max">
+    </mat-form-field>
+    <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        showFirstLastButtons (page)="getRows($event.pageIndex, $event.pageSize)">
+    </mat-paginator>
+</div>

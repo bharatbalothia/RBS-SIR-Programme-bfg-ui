@@ -32,6 +32,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { DisplayTableCellComponent } from './components/display-table-cell/display-table-cell.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { ErrorTemplateComponent } from './components/error-template/error-template.component';
+import { NumberOnlyDirective } from './directives/number-only.directive';
+import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 
 @NgModule({
   declarations: [
@@ -41,8 +43,10 @@ import { ErrorTemplateComponent } from './components/error-template/error-templa
     DisplayTableCellComponent,
     TabContentComponent,
     ErrorTemplateComponent,
+    TablePaginatorComponent,
     // Directives
     InputLowercaseDirective,
+    NumberOnlyDirective,
   ],
   imports: [
     CommonModule,
@@ -106,8 +110,10 @@ import { ErrorTemplateComponent } from './components/error-template/error-templa
     DisplayTableCellComponent,
     TabContentComponent,
     ErrorTemplateComponent,
+    TablePaginatorComponent,
     // Directives
     InputLowercaseDirective,
+    NumberOnlyDirective,
   ]
 })
 export class SharedModule { }

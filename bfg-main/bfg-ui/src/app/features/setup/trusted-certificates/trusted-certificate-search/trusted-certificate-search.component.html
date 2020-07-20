@@ -77,11 +77,14 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <mat-paginator *ngIf="!isLoading" [length]="trustedCertificates.totalElements"
-                [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
-                [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
-                (page)="getTrustedCertificateList($event.pageIndex, $event.pageSize)">
-            </mat-paginator>
+
+            <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1"
+                [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
+                [max]="trustedCertificates && trustedCertificates.totalPages"
+                [length]="trustedCertificates.totalElements" [pageIndex]="trustedCertificates.pageable.pageNumber"
+                [pageSize]="trustedCertificates.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+                showFirstLastButtons></app-table-paginator>
+
         </div>
         <mat-spinner *ngIf="isLoading"></mat-spinner>
     </mat-card-content>

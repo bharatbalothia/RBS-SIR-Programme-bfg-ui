@@ -1,16 +1,30 @@
 .page-select {
     display: flex;
-    align-items: baseline;
-    margin-right: 8px;
-    justify-content: flex-end;
     font-size: 12px;
+    justify-content: flex-end;
+    align-items: center;
 
-    .label {
-        margin: 0 4px;
-        color: rgba(0, 0, 0, 0.54);
+    .left-content {
+        margin-left: 15px;
+        margin-right: auto;
+
+        .current-page {
+            color: rgba(0, 0, 0, 0.54);
+        }
     }
 
-    .page-select-field {
-        width: 50px;
+    .right-content {
+        display: flex;
+        align-items: baseline;
+        margin-right: 8px;
+
+        .go-to-button {
+            margin: 0 4px;
+            color: rgba(0, 0, 0, 0.54);
+        }
+
+        .page-select-field {
+            width: 50px;
+        }
     }
 }

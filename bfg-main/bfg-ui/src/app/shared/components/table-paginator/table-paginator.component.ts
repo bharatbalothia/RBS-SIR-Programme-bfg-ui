@@ -22,4 +22,8 @@ export class TablePaginatorComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  setPageIndex(index: number = 0){
+    this.pageIndex = index;
+  }
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
@@ -20,7 +21,7 @@ import java.util.List;
 public interface TrustedCertificateService extends FieldValueExists {
     List<TrustedCertificate> listAll();
 
-    TrustedCertificate findById(String id) throws JsonProcessingException;
+    TrustedCertificateDetails findById(String id) throws JsonProcessingException, InvalidNameException, NoSuchAlgorithmException, java.security.cert.CertificateEncodingException;
 
     TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                   String certName,

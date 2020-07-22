@@ -72,7 +72,7 @@ public class CertificateController {
         if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
             throw new FileTypeNotValidException();
         return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
-                trustedCertificateRepository, changeControlCertRepository));
+                trustedCertificateRepository, changeControlCertRepository, false));
     }
 
     @PostMapping
@@ -113,7 +113,8 @@ public class CertificateController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException {
+    public ResponseEntity<TrustedCertificateDetails> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
+            NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
         return ok().body(certificateService.findById(id));
     }
 

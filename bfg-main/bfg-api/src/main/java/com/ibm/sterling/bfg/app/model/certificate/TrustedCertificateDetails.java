@@ -37,7 +37,8 @@ public class TrustedCertificateDetails {
     private List<Map<String, Object>> certificateWarnings;
 
     public TrustedCertificateDetails(X509Certificate x509Certificate, CertificateValidationService certificateValidationService,
-                                     TrustedCertificateRepository trustedCertificateRepository, ChangeControlCertRepository changeControlCertRepository)
+                                     TrustedCertificateRepository trustedCertificateRepository, ChangeControlCertRepository changeControlCertRepository,
+                                     boolean isCheckBeforeApproval)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
         List<Map<String, List<String>>> errors = new ArrayList<>();
         Map<String, Object> warnings = new HashMap<>();
@@ -45,7 +46,8 @@ public class TrustedCertificateDetails {
         byte[] encodedCert = x509Certificate.getEncoded();
         this.thumbprint = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-1").digest(encodedCert));
         this.thumbprint256 = DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-256").digest(encodedCert));
-        checkThumbprintUniqueness(trustedCertificateRepository, changeControlCertRepository, errors);
+        if (!isCheckBeforeApproval)
+            checkThumbprintUniqueness(trustedCertificateRepository, changeControlCertRepository, errors);
         SimpleDateFormat certificateDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         this.startDate = certificateDateFormat.format(x509Certificate.getNotBefore());
         Date notAfterDate = x509Certificate.getNotAfter();

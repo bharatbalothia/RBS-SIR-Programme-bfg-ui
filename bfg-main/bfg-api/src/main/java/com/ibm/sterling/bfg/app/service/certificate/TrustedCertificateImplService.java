@@ -28,6 +28,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -61,27 +62,21 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificate findById(String id) throws JsonProcessingException {
+    public TrustedCertificateDetails findById(String id) throws JsonProcessingException, InvalidNameException,
+            NoSuchAlgorithmException, CertificateEncodingException {
         LOG.info("Trusted certificate by id {}", id);
-        TrustedCertificate certById = trustedCertificateRepository.findById(id)
+        TrustedCertificate trustedCertificate = trustedCertificateRepository.findById(id)
                 .orElseThrow(CertificateNotFoundException::new);
-        setAuthChainReport(certById);
-        return certById;
-    }
-
-    private void setAuthChainReport(TrustedCertificate certById) throws JsonProcessingException {
-        certById.setAuthChainReport(certificateValidationService.getCertificateChain(
-                certificateValidationService.getEncodedIssuerDN(certById.getIssuer()))
-        );
+        return new TrustedCertificateDetails(trustedCertificate.getCertificate(),
+                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, true);
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                          String certName,
                                                                          String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
-        TrustedCertificateDetails trustedCertificateDetails =
-                new TrustedCertificateDetails(x509Certificate, certificateValidationService,
-                        trustedCertificateRepository, changeControlCertRepository);
+        TrustedCertificateDetails trustedCertificateDetails = new TrustedCertificateDetails(x509Certificate,
+                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, false);
         if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
@@ -132,7 +127,6 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                 approverComments,
                 status
         );
-        //setAuthChainReport(cert);
         return cert;
     }
 
@@ -146,7 +140,6 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
             validateCertificate(cert);
             trustedCertificateRepository.save(cert);
         }
-        //setAuthChainReport(cert);
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(cert.getCertificateId());
         changeControlCert.setTrustedCertificateLog(certLog);

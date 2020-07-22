@@ -30,6 +30,9 @@ public class TrustedCertificateLog {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "CERT_LOG_ID_"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
+    private String certificateLogId;
+
+    @Column(name = "CERT_ID")
     private String certificateId;
 
     @Column(name = "CERTIFICATE_NAME")
@@ -93,6 +96,14 @@ public class TrustedCertificateLog {
 
     public static Logger getLOGGER() {
         return LOGGER;
+    }
+
+    public String getCertificateLogId() {
+        return certificateLogId;
+    }
+
+    public void setCertificateLogId(String certificateLogId) {
+        this.certificateLogId = certificateLogId;
     }
 
     public String getCertificateId() {

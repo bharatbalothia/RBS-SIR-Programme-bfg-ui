@@ -2,12 +2,15 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTypeNotValidException;
 import com.ibm.sterling.bfg.app.model.CertType;
+import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
@@ -21,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.naming.InvalidNameException;
 import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
@@ -117,4 +119,14 @@ public class CertificateController {
         return ok().body(certificateService.findById(id));
     }
 
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
+            throws JsonProcessingException, CertificateException {
+        TrustedCertificate cert = Optional
+                .ofNullable(certificateService.findById(id))
+                .orElseThrow(CertificateNotFoundException::new);
+        Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
+        return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
+    }
 }

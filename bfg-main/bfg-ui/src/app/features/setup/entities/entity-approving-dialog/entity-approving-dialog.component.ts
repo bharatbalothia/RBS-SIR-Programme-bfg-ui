@@ -6,8 +6,8 @@ import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { getApiErrorMessage, ErrorMessage, ErrorsField, getErrorsMessage } from 'src/app/core/utils/error-template';
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
 import { getEntityDisplayName } from '../entity-display-names';
+import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -19,7 +19,7 @@ export class EntityApprovingDialogComponent implements OnInit {
   getEntityDisplayName = getEntityDisplayName;
   getErrorsMessage = getErrorsMessage;
 
-  entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;
+  dialogTabs = DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
 
   isLoading = false;
@@ -76,10 +76,10 @@ export class EntityApprovingDialogComponent implements OnInit {
     return this.authService.getUserName() === this.changer;
   }
 
-  isDifferencesTab = (tabTitle: string) => tabTitle === ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES;
+  isDifferencesTab = (tabTitle: string) => tabTitle === DIALOG_TABS.DIFFERENCES;
 
   getEntityBeforeValue = (tabSectionTitle: string, fieldName: string) => {
-    const tab = this.tabs.find(el => el.tabTitle === ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES);
+    const tab = this.tabs.find(el => el.tabTitle === DIALOG_TABS.BEFORE_CHANGES);
     const tableObject = get(tab, 'tableObject', null);
     const tabSections = get(tab, 'tabSections', []);
     const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);

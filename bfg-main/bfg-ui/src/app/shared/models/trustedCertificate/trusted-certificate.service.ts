@@ -42,4 +42,8 @@ export class TrustedCertificateService {
     return this.http.get<TrustedCertificate>(this.apiUrl + certificateId);
   }
 
+  validateCertificateById(certificateId: string) {
+    return this.http.get<TrustedCertificate>(this.apiUrl + 'validate/' + certificateId);
+  }
+
 }

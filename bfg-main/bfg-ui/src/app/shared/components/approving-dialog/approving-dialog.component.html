@@ -3,17 +3,19 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
-            <app-tab-content [tab]="tab" [displayName]="getEntityDisplayName.bind(this)"></app-tab-content>
+            <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <div class="delete-actions">
+    <div *ngIf="approveAction" class="approve-actions">
         <mat-form-field>
-            <mat-label>Changer Comments</mat-label>
-            <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
+            <mat-label>Approver Comments</mat-label>
+            <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
         </mat-form-field>
-        <button mat-raised-button color='primary' (click)="entityDeleteAction()">Delete</button>
+        <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
+            [disabled]="isTheSameUser()">Accept</button>
+        <button mat-raised-button color="warn" (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
     </div>
     <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

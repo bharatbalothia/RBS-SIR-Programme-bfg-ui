@@ -11,6 +11,7 @@ import { ChangeControlsWithPagination } from 'src/app/shared/models/changeContro
 import { take } from 'rxjs/operators';
 import { get } from 'lodash';
 import { TrustedCertificateApprovingDialogComponent } from '../trusted-certificate-approving-dialog/trusted-certificate-approving-dialog.component';
+import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -58,7 +59,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
     const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
     if (certificateId) {
-      return this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
+      return this.trustedCertificateService.validateCertificateById(certificateId.toString()).toPromise()
         .then(data => ({ ...changeControl, certificateBefore: data }), () => changeControl);
     }
     else {
@@ -68,9 +69,10 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   openInfoDialog(changeControl: ChangeControl) {
     this.addCertificateBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(TrustedCertificateApprovingDialogComponent, new DetailsDialogConfig({
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
         tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
+        displayName: getTrustedCertificateDisplayName
       })));
   }
 
@@ -78,6 +80,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `Trusted Certificate: ${trustedCertificate.certificateName}`,
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
+      displayName: getTrustedCertificateDisplayName
     }));
   }
 

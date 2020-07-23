@@ -3,6 +3,7 @@ export interface DetailsDialogData {
     tabs?: Tab[];
     yesCaption?: string;
     actionData?: any;
+    displayName: (fieldName: string) => string;
 }
 
 export interface Tab {

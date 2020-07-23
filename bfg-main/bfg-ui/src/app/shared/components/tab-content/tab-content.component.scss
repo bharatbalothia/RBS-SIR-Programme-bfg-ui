@@ -1,6 +1,15 @@
 .mat-table {
 
+    .section-title {
+        justify-content: center;
+    }
+
     .mat-header-row[hidden] {
         display: none !important;
+    }
+
+    .mat-cell {
+        word-break: break-all;
+        padding-right: 10px;
     }
 }

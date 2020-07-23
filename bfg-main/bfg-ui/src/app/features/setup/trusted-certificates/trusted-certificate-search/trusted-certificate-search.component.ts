@@ -80,6 +80,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `Trusted Certificate: ${trustedCertificate.certificateName}`,
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
+      displayName: getTrustedCertificateDisplayName
     }));
   }
 

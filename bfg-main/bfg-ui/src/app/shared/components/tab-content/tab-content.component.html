@@ -1,21 +1,34 @@
-<mat-table *ngFor="let dataSource of tab.tabSections" [dataSource]="dataSource.sectionItems">
+<mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index" [dataSource]="dataSource.sectionItems">
     <ng-container matColumnDef="tableTitle">
         <mat-header-cell *matHeaderCellDef colspan="2">
             {{dataSource.sectionTitle}}
         </mat-header-cell>
     </ng-container>
     <ng-container matColumnDef="fieldName">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.fieldName}}
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="fieldValueBefore">
+        <mat-header-cell *matHeaderCellDef [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+            Value Before
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+            <app-display-table-cell [value]="getBeforeValue(dataSource.sectionTitle, element.fieldName)">
+            </app-display-table-cell>
+        </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="fieldValue">
+        <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
         <mat-cell *matCellDef="let element">
             <app-display-table-cell
                 [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
             </app-display-table-cell>
         </mat-cell>
     </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="tabSectionIndex > 0">
+    </mat-header-row>
     <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
         [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
     </mat-header-row>
@@ -23,14 +36,22 @@
 </mat-table>
 
 <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">
+    <ng-container matColumnDef="tableTitle">
+        <mat-header-cell class="section-title" *matHeaderCellDef
+            [attr.colspan]="tab.tableObject.tableColumns.length">
+            {{tab.tableObject.tableTitle}}
+        </mat-header-cell>
+    </ng-container>
     <ng-container *ngFor="let item of tab.tableObject.tableColumns" [matColumnDef]="item">
         <mat-header-cell *matHeaderCellDef>
-            {{getEntityDisplayName(item)}}
+            {{displayName(item)}}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element[item]}}
         </mat-cell>
     </ng-container>
+    <mat-header-row *matHeaderRowDef="['tableTitle']" [hidden]="!tab.tableObject.tableTitle">
+    </mat-header-row>
     <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns">
     </mat-header-row>
     <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>

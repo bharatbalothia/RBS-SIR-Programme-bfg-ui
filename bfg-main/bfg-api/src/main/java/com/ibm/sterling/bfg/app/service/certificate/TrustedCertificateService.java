@@ -33,4 +33,7 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256);
 
+    TrustedCertificateDetails findCertificateDataById(String id) throws JsonProcessingException, InvalidNameException,
+            NoSuchAlgorithmException, java.security.cert.CertificateEncodingException;
+
 }

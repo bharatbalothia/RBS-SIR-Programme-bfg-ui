@@ -11,6 +11,7 @@ import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
+import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -45,6 +46,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     private TrustedCertificateRepository trustedCertificateRepository;
 
     @Autowired
+    private TrustedCertificateLogRepository trustedCertificateLogRepository;
+
+    @Autowired
     private ChangeControlCertService changeControlCertService;
 
     @Autowired
@@ -68,6 +72,21 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         TrustedCertificate trustedCertificate = trustedCertificateRepository.findById(id)
                 .orElseThrow(CertificateNotFoundException::new);
         return new TrustedCertificateDetails(trustedCertificate.getCertificate(),
+                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, true);
+    }
+
+    @Override
+    public TrustedCertificateDetails findCertificateDataById(String id) throws JsonProcessingException, InvalidNameException,
+            NoSuchAlgorithmException, CertificateEncodingException {
+        Optional<TrustedCertificate> trustedCertificate = trustedCertificateRepository.findById(id);
+        Optional<TrustedCertificateLog> trustedCertificateLog = trustedCertificateLogRepository.findById(id);
+        X509Certificate certificate;
+        if (trustedCertificate.isPresent()) {
+            certificate = trustedCertificate.get().getCertificate();
+        } else {
+            certificate = trustedCertificateLog.map(TrustedCertificateLog::getCertificate).orElseThrow(CertificateNotFoundException::new);
+        }
+        return new TrustedCertificateDetails(certificate,
                 certificateValidationService, trustedCertificateRepository, changeControlCertRepository, true);
     }
 

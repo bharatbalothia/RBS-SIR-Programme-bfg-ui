@@ -46,13 +46,9 @@ export class ApprovingDialogComponent implements OnInit {
 
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
-    this.errorMessage = this.isTheSameUser() ? { code: null, message: 'Changes should be approved by another user' } : null;
-
-    this.errorMessage = removeEmpties({
-      code: null,
-      message: null,
-      warnings: get(this.data, 'actionData.warnings', null)
-    });
+    this.errorMessage = this.isTheSameUser() ?
+      { code: null, message: 'Changes should be approved by another user', warnings: get(this.data, 'actionData.warnings', null) }
+      : { code: null, message: null, warnings: get(this.data, 'actionData.warnings', null) };
 
     this.displayName = this.data.displayName;
   }

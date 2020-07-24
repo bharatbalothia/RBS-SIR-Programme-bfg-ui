@@ -28,7 +28,7 @@ public class CertificateValidationService {
         try {
             certificateValidationResponse = new RestTemplate().postForObject(
                     certificateValidationUrl,
-                    new HttpEntity<>(Collections.singletonMap("certificate-body", certificateContent), new HttpHeaders()),
+                    new HttpEntity<>(Collections.singletonMap("certificateBody", certificateContent), new HttpHeaders()),
                     String.class
             );
         } catch (HttpStatusCodeException e) {

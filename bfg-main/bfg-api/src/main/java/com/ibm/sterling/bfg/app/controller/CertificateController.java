@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
-import com.ibm.sterling.bfg.app.exception.FileTypeNotValidException;
+import com.ibm.sterling.bfg.app.exception.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
@@ -70,7 +70,7 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile certificate)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
         if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
-            throw new FileTypeNotValidException();
+            throw new FileNotValidException();
         return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
                 trustedCertificateRepository, changeControlCertRepository, false));
     }

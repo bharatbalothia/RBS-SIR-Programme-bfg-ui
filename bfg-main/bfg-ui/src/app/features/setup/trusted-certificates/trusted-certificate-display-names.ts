@@ -3,6 +3,7 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { difference } from 'src/app/shared/utils/utils';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     serialNumber: 'Serial Number',
@@ -68,20 +69,25 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
         tabTitle: DIALOG_TABS.CHANGE_DETAILS,
         tabSections: [{
             sectionItems: [
-                { fieldName: 'Change ID', fieldValue: changeControl.changeID },
-                { fieldName: 'Object type', fieldValue: changeControl.objectType },
-                { fieldName: 'Operation', fieldValue: changeControl.operation },
-                { fieldName: 'Status', fieldValue: changeControl.status },
-                { fieldName: 'Changer', fieldValue: changeControl.changer },
-                { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
-                { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
-                { fieldName: 'Approver', fieldValue: changeControl.approver },
-                { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
+                { fieldName: getTrustedCertificateDisplayName('changeID'), fieldValue: changeControl.changeID },
+                { fieldName: getTrustedCertificateDisplayName('objectType'), fieldValue: changeControl.objectType },
+                { fieldName: getTrustedCertificateDisplayName('operation'), fieldValue: changeControl.operation },
+                { fieldName: getTrustedCertificateDisplayName('status'), fieldValue: changeControl.status },
+                { fieldName: getTrustedCertificateDisplayName('changer'), fieldValue: changeControl.changer },
+                { fieldName: getTrustedCertificateDisplayName('dateChanged'), fieldValue: changeControl.dateChanged },
+                { fieldName: getTrustedCertificateDisplayName('changerComments'), fieldValue: changeControl.changerComments },
+                { fieldName: getTrustedCertificateDisplayName('approver'), fieldValue: changeControl.approver },
+                { fieldName: getTrustedCertificateDisplayName('approverComments'), fieldValue: changeControl.approverComments },
             ],
         }]
     },
-    changeControl.certificateBefore && {
+    changeControl.certificateBefore && changeControl.operation !== CHANGE_OPERATION.CREATE && {
         tabTitle: DIALOG_TABS.BEFORE_CHANGES,
         tabSections: [{ sectionItems: getTrustedCertificateDetailsSectionItems(changeControl.certificateBefore)['Trusted Certificate Details'] }]
     },
+    changeControl.operation !== CHANGE_OPERATION.DELETE &&
+    {
+        tabTitle: DIALOG_TABS.AFTER_CHANGES,
+        tabSections: [{ sectionItems: getTrustedCertificateDetailsSectionItems(changeControl.trustedCertificateLog)['Trusted Certificate Details'] }]
+    }
 ].filter(el => el);

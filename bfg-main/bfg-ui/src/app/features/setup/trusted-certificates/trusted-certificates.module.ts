@@ -5,7 +5,6 @@ import { TrustedCertificatesRoutingModule } from './trusted-certificates-routing
 import { TrustedCertificateCreateComponent } from './trusted-certificate-create/trusted-certificate-create.component';
 import { TrustedCertificateSearchComponent } from './trusted-certificate-search/trusted-certificate-search.component';
 import { TrustedCertificatePendingComponent } from './trusted-certificate-pending/trusted-certificate-pending.component';
-import { TrustedCertificateApprovingDialogComponent } from './trusted-certificate-approving-dialog/trusted-certificate-approving-dialog.component';
 
 
 
@@ -15,7 +14,6 @@ import { TrustedCertificateApprovingDialogComponent } from './trusted-certificat
     TrustedCertificateCreateComponent,
     TrustedCertificateSearchComponent,
     TrustedCertificatePendingComponent,
-    TrustedCertificateApprovingDialogComponent
   ],
   imports: [
     SharedModule,

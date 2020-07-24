@@ -6,6 +6,7 @@ import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.mo
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { removeEmpties } from '../../utils/utils';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -46,6 +47,12 @@ export class ApprovingDialogComponent implements OnInit {
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
     this.errorMessage = this.isTheSameUser() ? { code: null, message: 'Changes should be approved by another user' } : null;
+
+    this.errorMessage = removeEmpties({
+      code: null,
+      message: null,
+      warnings: get(this.data, 'actionData.warnings', null)
+    });
 
     this.displayName = this.data.displayName;
   }

@@ -1,59 +1,62 @@
 <mat-card class="trusted-certificate-pending-card">
-    <mat-card-header>
-      <mat-card-title>Trusted Certificate pending changes</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="card-content">
-      <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
-  
-        <ng-container matColumnDef="action">
-          <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <!-- <button mat-button (click)="openApprovingDialog(element)"> -->
-              <mat-icon inline>format_list_numbered</mat-icon> Version manager
-            <!-- </button> -->
-          </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="changes">
-          <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <button mat-button (click)="openInfoDialog(element)">
-              <mat-icon inline>info</mat-icon> Changes
-            </button>
-          </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <button mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog)">
-              {{element.resultMeta1}}
-            </button>
-          </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="thumbprint">
-            <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.resultMeta2}}
-            </mat-cell>
-        </ng-container>
+  <mat-card-header>
+    <mat-card-title>Trusted Certificate pending changes</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <div class="top-error-message">
+      <app-error-template [errorMessage]="errorMessage"></app-error-template>
+    </div>
+    <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
 
-        <ng-container matColumnDef="thumbprint256">
-            <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.resultMeta3}}
-            </mat-cell>
-        </ng-container>
-  
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      <mat-paginator *ngIf="!isLoading" [length]="changeControls.totalElements"
-                  [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
-                  [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
-                  (page)="getPendingChanges($event.pageIndex, $event.pageSize)">
-              </mat-paginator>
-      <mat-spinner *ngIf="isLoading"></mat-spinner>
-    </mat-card-content>
-  </mat-card>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button (click)="openApprovingDialog(element)">
+            <mat-icon inline>format_list_numbered</mat-icon> Version manager
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="changes">
+        <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button (click)="openInfoDialog(element)">
+            <mat-icon inline>info</mat-icon> Changes
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog)">
+            {{element.resultMeta1}}
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="thumbprint">
+        <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.resultMeta2}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="thumbprint256">
+        <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.resultMeta3}}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator *ngIf="!isLoading" [length]="changeControls.totalElements"
+      [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
+      [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+      (page)="getPendingChanges($event.pageIndex, $event.pageSize)">
+    </mat-paginator>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  </mat-card-content>
+</mat-card>

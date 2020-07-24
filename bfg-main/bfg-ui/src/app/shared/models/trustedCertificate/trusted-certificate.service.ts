@@ -5,6 +5,7 @@ import { TrustedCertificate } from './trusted-certificate.model';
 import { TrustedCertificatesWithPagination } from './trusted-certificates-with-pagination.model';
 import { Observable } from 'rxjs';
 import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
+import { ChangeResolution } from '../changeControl/change-resolution.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,10 @@ export class TrustedCertificateService {
 
   validateCertificateById(certificateId: string) {
     return this.http.get<TrustedCertificate>(this.apiUrl + 'validate/' + certificateId);
+  }
+
+  resolveChange(resolution: ChangeResolution) {
+    return this.http.post(this.apiUrl + 'pending', resolution);
   }
 
 }

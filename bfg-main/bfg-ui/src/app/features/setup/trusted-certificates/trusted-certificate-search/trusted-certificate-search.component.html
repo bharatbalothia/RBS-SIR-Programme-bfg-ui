@@ -27,7 +27,7 @@
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button *ngIf="element.changeID">
+                        <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
                     </mat-cell>
@@ -36,7 +36,7 @@
                 <ng-container matColumnDef="changes">
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button *ngIf="element.trustedCertificateLog">
+                        <button mat-button *ngIf="element.trustedCertificateLog" (click)="openInfoDialog(element)">
                             <mat-icon inline>info</mat-icon> Changes
                         </button>
                     </mat-cell>

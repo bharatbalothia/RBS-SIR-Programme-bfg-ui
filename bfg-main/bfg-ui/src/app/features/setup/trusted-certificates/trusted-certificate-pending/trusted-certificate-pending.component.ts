@@ -10,8 +10,10 @@ import { ChangeControl } from 'src/app/shared/models/changeControl/change-contro
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { take } from 'rxjs/operators';
 import { get } from 'lodash';
-import { TrustedCertificateApprovingDialogComponent } from '../trusted-certificate-approving-dialog/trusted-certificate-approving-dialog.component';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -23,6 +25,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
 
   isLoading = true;
+  errorMessage: ErrorMessage;
+
   changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
   dataSource: MatTableDataSource<ChangeControl>;
@@ -49,18 +53,31 @@ export class TrustedCertificatePendingComponent implements OnInit {
         this.pageSize = pageSize;
         this.changeControls = data;
         this.updateTable();
-      });
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
-  addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+  addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
     const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
     if (certificateId) {
+      this.errorMessage = null;
+      this.isLoading = true;
       return this.trustedCertificateService.validateCertificateById(certificateId.toString()).toPromise()
-        .then(data => ({ ...changeControl, certificateBefore: data }), () => changeControl);
+        .then(data => {
+          this.isLoading = false;
+          return { ...changeControl, certificateBefore: data, warnings: data.certificateWarnings };
+        }, error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+          return false;
+        });
     }
     else {
       return new Promise((res) => res(changeControl));
@@ -68,7 +85,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   openInfoDialog(changeControl: ChangeControl) {
-    this.addCertificateBeforeToChangeControl(changeControl).then(changeCtrl =>
+    this.addValidationToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
         tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
@@ -84,27 +101,31 @@ export class TrustedCertificatePendingComponent implements OnInit {
     }));
   }
 
-  // openApprovingDialog(changeControl: ChangeControl) {
-  //   this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-  //     this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
-  //       title: 'Approve Change',
-  //       tabs: getPendingChangesTabs(changeCtrl),
-  //       actionData: {
-  //         changeID: changeControl.changeID,
-  //         changer: changeControl.changer,
-  //         isApproveActions: true
-  //       }
-  //     })).afterClosed().subscribe(data => {
-  //       if (get(data, 'refreshList')) {
-  //         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-  //           title: `Entity ${get(data, 'status').toLowerCase()}`,
-  //           text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-  //           shouldHideYesCaption: true,
-  //           noCaption: 'Back'
-  //         })).afterClosed().subscribe(() => {
-  //           this.getPendingChanges(this.pageIndex, this.pageSize);
-  //         });
-  //       }
-  //     }));
-  // }
+  openApprovingDialog(changeControl: ChangeControl) {
+    this.addValidationToChangeControl(changeControl).then(changeCtrl =>
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
+        displayName: getTrustedCertificateDisplayName,
+        actionData: {
+          changeID: changeCtrl.changeID,
+          changer: changeCtrl.changer,
+          warnings: get(changeCtrl, 'warnings', null),
+          approveAction:
+            (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+            title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
+            text:
+              `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
+            shouldHideYesCaption: true,
+            noCaption: 'Back'
+          })).afterClosed().subscribe(() => {
+            this.getPendingChanges(this.pageIndex, this.pageSize);
+          });
+        }
+      }));
+  }
 }

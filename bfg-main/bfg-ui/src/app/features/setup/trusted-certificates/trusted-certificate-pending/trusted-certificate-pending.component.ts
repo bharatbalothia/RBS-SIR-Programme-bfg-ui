@@ -25,6 +25,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
 
   isLoading = true;
+  isLoadingDetails = false;
   errorMessage: ErrorMessage;
 
   changeControls: ChangeControlsWithPagination;
@@ -68,13 +69,13 @@ export class TrustedCertificatePendingComponent implements OnInit {
     const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
     if (certificateId) {
       this.errorMessage = null;
-      this.isLoading = true;
+      this.isLoadingDetails = true;
       return this.trustedCertificateService.validateCertificateById(certificateId.toString()).toPromise()
         .then(data => {
-          this.isLoading = false;
+          this.isLoadingDetails = false;
           return { ...changeControl, certificateBefore: data, warnings: data.certificateWarnings };
         }, error => {
-          this.isLoading = false;
+          this.isLoadingDetails = false;
           this.errorMessage = getApiErrorMessage(error);
           return false;
         });

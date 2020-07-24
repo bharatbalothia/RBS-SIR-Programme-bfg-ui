@@ -10,7 +10,7 @@ public enum CertificateErrorCode implements ErrorCode {
     METHOD_MISSING_ARGUMENT_EXCEPTION("CER_MISS_REQ_PARAM_CODE", "CER_MISS_REQ_PARAM_MSG", "CER_MISS_REQ_PARAM_STATUS"),
     CertificateNotFoundException("CER_NOT_FOUND_CODE", "CER_NOT_FOUND_MSG", "CER_NOT_FOUND_STATUS"),
     CertificateNotValidException("CER_NOT_VALID_CODE", "CER_NOT_VALID_MSG", "CER_NOT_VALID_STATUS"),
-    FileTypeNotValidException("CER_FILE_TYPE_NOT_VALID_CODE", "CER_FILE_TYPE_NOT_VALID_MSG", "CER_FILE_TYPE_NOT_VALID_STATUS"),
+    FileNotValidException("CER_FILE_NOT_VALID_CODE", "CER_FILE_NOT_VALID_MSG", "CER_FILE_NOT_VALID_STATUS"),
     AccessDeniedException("CER_ACCESS_DENIED_CODE", "CER_ACCESS_DENIED_MSG", "CER_ACCESS_DENIED_STATUS");
 
     CertificateErrorCode(String value, String msg, String status) {

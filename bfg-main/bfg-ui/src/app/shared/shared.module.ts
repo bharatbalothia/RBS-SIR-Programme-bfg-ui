@@ -33,6 +33,8 @@ import { DisplayTableCellComponent } from './components/display-table-cell/displ
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { ErrorTemplateComponent } from './components/error-template/error-template.component';
 import { ApprovingDialogComponent } from './components/approving-dialog/approving-dialog.component';
+import { NumberOnlyDirective } from './directives/number-only.directive';
+import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 
 @NgModule({
   declarations: [
@@ -43,8 +45,10 @@ import { ApprovingDialogComponent } from './components/approving-dialog/approvin
     TabContentComponent,
     ErrorTemplateComponent,
     ApprovingDialogComponent,
+    TablePaginatorComponent,
     // Directives
     InputLowercaseDirective,
+    NumberOnlyDirective,
   ],
   imports: [
     CommonModule,
@@ -109,8 +113,10 @@ import { ApprovingDialogComponent } from './components/approving-dialog/approvin
     TabContentComponent,
     ErrorTemplateComponent,
     ApprovingDialogComponent,
+    TablePaginatorComponent,
     // Directives
     InputLowercaseDirective,
+    NumberOnlyDirective,
   ]
 })
 export class SharedModule { }

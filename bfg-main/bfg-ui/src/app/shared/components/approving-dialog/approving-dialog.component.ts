@@ -46,9 +46,8 @@ export class ApprovingDialogComponent implements OnInit {
 
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
-    this.errorMessage = this.isTheSameUser() ?
-      { code: null, message: 'Changes should be approved by another user', warnings: get(this.data, 'actionData.warnings', null) }
-      : { code: null, message: null, warnings: get(this.data, 'actionData.warnings', null) };
+
+    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
 
     this.displayName = this.data.displayName;
   }
@@ -68,10 +67,6 @@ export class ApprovingDialogComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
-  }
-
-  isTheSameUser() {
-    return this.authService.getUserName() === this.changer;
   }
 
 }

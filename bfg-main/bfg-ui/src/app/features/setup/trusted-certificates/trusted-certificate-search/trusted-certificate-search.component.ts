@@ -16,6 +16,8 @@ import { ChangeControl } from 'src/app/shared/models/changeControl/change-contro
 import { get } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -45,6 +47,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   constructor(
     private trustedCertificateService: TrustedCertificateService,
+    private authService: AuthService,
     private dialog: MatDialog
   ) { }
 
@@ -83,14 +86,13 @@ export class TrustedCertificateSearchComponent implements OnInit {
   }
 
   addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
-    if (certificateId) {
-      this.errorMessage = null;
+    const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
+    if (certificateLogId) {
       this.isLoadingDetails = true;
-      return this.trustedCertificateService.validateCertificateById(certificateId.toString()).toPromise()
+      return this.trustedCertificateService.validateCertificateById(certificateLogId.toString()).toPromise()
         .then(data => {
           this.isLoadingDetails = false;
-          return { ...changeControl, certificateBefore: data, warnings: data.certificateWarnings };
+          return ({ ...changeControl, warnings: data.certificateWarnings, errors: data.certificateErrors });
         }, error => {
           this.isLoadingDetails = false;
           this.errorMessage = getApiErrorMessage(error);
@@ -102,8 +104,32 @@ export class TrustedCertificateSearchComponent implements OnInit {
     }
   }
 
+  addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
+    const certificateId = get(changeControl.entityLog, 'certificateId');
+    if (certificateId) {
+      this.isLoadingDetails = true;
+      return this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
+        .then(data => {
+          this.isLoadingDetails = false;
+          return ({ ...changeControl, certificateBefore: data });
+        },
+          error => {
+            this.isLoadingDetails = false;
+            this.errorMessage = getApiErrorMessage(error);
+            return false;
+          });
+    }
+    else {
+      return new Promise((res) => res(changeControl));
+    }
+  }
+
+  isTheSameUser(user: string) {
+    return this.authService.getUserName() === user;
+  }
+
   openInfoDialog(changeControl: ChangeControl) {
-    this.addValidationToChangeControl(changeControl).then(changeCtrl =>
+    this.addCertificateBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
         tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
@@ -120,31 +146,38 @@ export class TrustedCertificateSearchComponent implements OnInit {
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.addValidationToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: 'Approve Change',
-        tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
-        displayName: getTrustedCertificateDisplayName,
-        actionData: {
-          changeID: changeCtrl.changeID,
-          changer: changeCtrl.changer,
-          warnings: get(changeCtrl, 'warnings', null),
-          approveAction:
-            (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
-        }
-      })).afterClosed().subscribe(data => {
-        if (get(data, 'refreshList')) {
-          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-            title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
-            text:
-              `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
-            shouldHideYesCaption: true,
-            noCaption: 'Back'
-          })).afterClosed().subscribe(() => {
-            this.getTrustedCertificateList(this.pageIndex, this.pageSize);
-          });
-        }
-      }));
+    this.addValidationToChangeControl(changeControl)
+      .then(validatedChangeControl => this.addCertificateBeforeToChangeControl(validatedChangeControl))
+      .then((changeCtrl: ChangeControl) =>
+        this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+          title: 'Approve Change',
+          tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
+          displayName: getTrustedCertificateDisplayName,
+          actionData: {
+            changeID: changeCtrl.changeID,
+            changer: changeCtrl.changer,
+            errorMessage: {
+              message: (get(changeCtrl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'])
+                || (this.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
+              warnings: get(changeCtrl, 'warnings'),
+              errors: get(changeCtrl, 'errors')
+            },
+            approveAction:
+              (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
+          }
+        })).afterClosed().subscribe(data => {
+          if (get(data, 'refreshList')) {
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
+              text:
+                `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+            });
+          }
+        }));
   }
 
 }

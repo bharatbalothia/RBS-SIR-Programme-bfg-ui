@@ -1,11 +1,13 @@
 package com.ibm.sterling.bfg.app.change.service;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlConstants;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.change.model.Operation;
-import com.ibm.sterling.bfg.app.change.repository.ChangeControlRepository;
+
 import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
+import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

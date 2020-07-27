@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
@@ -113,8 +114,7 @@ public class CertificateController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<TrustedCertificateDetails> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
-            NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
+    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) {
         return ok().body(certificateService.findById(id));
     }
 
@@ -123,6 +123,17 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
             NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
         return ok().body(certificateService.findCertificateDataById(id));
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
+            throws JsonProcessingException, CertificateException {
+        TrustedCertificate cert = Optional
+                .ofNullable(certificateService.findById(id))
+                .orElseThrow(CertificateNotFoundException::new);
+        Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
+        return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }
 
 }

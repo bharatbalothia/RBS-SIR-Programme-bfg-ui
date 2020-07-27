@@ -6,7 +6,7 @@
     <div class="top-error-message">
       <app-error-template [errorMessage]="errorMessage"></app-error-template>
     </div>
-    <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+    <mat-table [dataSource]="dataSource">
 
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
@@ -57,6 +57,8 @@
       [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
       (page)="getPendingChanges($event.pageIndex, $event.pageSize)">
     </mat-paginator>
-    <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
   </mat-card-content>
+  <mat-card-footer>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading || isLoadingDetails"></mat-progress-bar>
+  </mat-card-footer>
 </mat-card>

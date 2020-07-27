@@ -14,7 +14,7 @@
             <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
         </mat-form-field>
         <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
-            [disabled]="errorMessage.message || errorMessage.errors">Accept</button>
+            [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)">Accept</button>
         <button mat-raised-button color="warn" (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
     </div>
     <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>

@@ -148,7 +148,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
               errors: get(changeCtrl, 'errors')
             },
             approveAction:
-              (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
+              (params: { changeID: string, status: string, approverComments: string }) =>
+                this.trustedCertificateService.resolveChange(params)
           }
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {

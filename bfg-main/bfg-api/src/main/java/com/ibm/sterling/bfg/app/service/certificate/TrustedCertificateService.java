@@ -21,7 +21,7 @@ import java.util.List;
 public interface TrustedCertificateService extends FieldValueExists {
     List<TrustedCertificate> listAll();
 
-    TrustedCertificateDetails findById(String id) throws JsonProcessingException, InvalidNameException, NoSuchAlgorithmException, java.security.cert.CertificateEncodingException;
+    TrustedCertificate findById(String id);
 
     TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                   String certName,

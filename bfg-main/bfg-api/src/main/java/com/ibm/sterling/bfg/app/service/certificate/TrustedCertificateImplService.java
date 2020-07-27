@@ -66,13 +66,10 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificateDetails findById(String id) throws JsonProcessingException, InvalidNameException,
-            NoSuchAlgorithmException, CertificateEncodingException {
+    public TrustedCertificate findById(String id) {
         LOG.info("Trusted certificate by id {}", id);
-        TrustedCertificate trustedCertificate = trustedCertificateRepository.findById(id)
+        return trustedCertificateRepository.findById(id)
                 .orElseThrow(CertificateNotFoundException::new);
-        return new TrustedCertificateDetails(trustedCertificate.getCertificate(),
-                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, true);
     }
 
     @Override

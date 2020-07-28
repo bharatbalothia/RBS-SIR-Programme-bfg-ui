@@ -25,7 +25,7 @@
 <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">
     <ng-container *ngFor="let item of tab.tableObject.tableColumns" [matColumnDef]="item">
         <mat-header-cell *matHeaderCellDef>
-            {{getDisplayName(item)}}
+            {{getEntityDisplayName(item)}}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element[item]}}

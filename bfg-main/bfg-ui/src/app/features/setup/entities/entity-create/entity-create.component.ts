@@ -6,9 +6,9 @@ import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/co
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { ErrorMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
-import { DISPLAY_NAMES } from '../display-names';
+import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
 import { EntityValidators } from '../../../../shared/models/entity/entity-validators';
 import { SWIFT_DN, TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,7 +30,7 @@ import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 })
 export class EntityCreateComponent implements OnInit {
 
-  entityDisplayNames = DISPLAY_NAMES;
+  entityDisplayNames = ENTITY_DISPLAY_NAMES;
   scheduleType = SCHEDULE_TYPE;
 
   isLinear = true;
@@ -287,34 +287,34 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  resetMqWalidators(value){
+  resetMqWalidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
     const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
-    if (value === 'DIRECT'){
-      for (const control in this.mqDetailsFormGroup.controls){
-        if (this.mqDetailsFormGroup.contains(control)){
+    if (value === 'DIRECT') {
+      for (const control in this.mqDetailsFormGroup.controls) {
+        if (this.mqDetailsFormGroup.contains(control)) {
           this.mqDetailsFormGroup.get(control).setValidators(Validators.required);
           this.mqDetailsFormGroup.get(control).updateValueAndValidity();
         }
       }
     } else {
-      for (const control in this.mqDetailsFormGroup.controls){
-        if (this.mqDetailsFormGroup.contains(control)){
+      for (const control in this.mqDetailsFormGroup.controls) {
+        if (this.mqDetailsFormGroup.contains(control)) {
           this.mqDetailsFormGroup.get(control).clearValidators();
           this.mqDetailsFormGroup.get(control).updateValueAndValidity();
         }
       }
     }
     port.setValidators(
-            port.validator == null ?
-            Validators.pattern(NON_NEGATIVE_INT) :
-            [port.validator, Validators.pattern(NON_NEGATIVE_INT)]
-          );
+      port.validator == null ?
+        Validators.pattern(NON_NEGATIVE_INT) :
+        [port.validator, Validators.pattern(NON_NEGATIVE_INT)]
+    );
     sessionTimeout.setValidators(
-            sessionTimeout.validator == null ?
-            Validators.pattern(NON_NEGATIVE_INT) :
-            [sessionTimeout.validator, Validators.pattern(NON_NEGATIVE_INT)]
-          );
+      sessionTimeout.validator == null ?
+        Validators.pattern(NON_NEGATIVE_INT) :
+        [sessionTimeout.validator, Validators.pattern(NON_NEGATIVE_INT)]
+    );
   }
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
@@ -414,9 +414,7 @@ export class EntityCreateComponent implements OnInit {
     });
   }
 
-  getErrorByField(key) {
-    return get(this.errorMessage, 'errors', []).filter(el => el[key]).map(el => el[key]).join('\n ');
-  }
+  getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
   getSummaryFieldsSource() {
     const entity = removeEmpties({
@@ -431,7 +429,7 @@ export class EntityCreateComponent implements OnInit {
       .map((key) => ({
         field: key,
         value: entity[key],
-        error: this.getErrorByField(key)
+        error: getErrorByField(key, this.errorMessage)
       })).filter(el => el.field !== 'changerComments');
   }
 

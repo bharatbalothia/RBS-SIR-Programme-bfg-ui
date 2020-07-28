@@ -6,7 +6,7 @@ import { take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs } from '../display-names';
+import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs } from '../entity-display-names';
 import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
@@ -21,7 +21,7 @@ import { ChangeControlsWithPagination } from 'src/app/shared/models/changeContro
 })
 export class EntityPendingComponent implements OnInit {
 
-  entityDisplayNames = DISPLAY_NAMES;
+  entityDisplayNames = ENTITY_DISPLAY_NAMES;
 
   isLoading = true;
   changeControls: ChangeControlsWithPagination;
@@ -29,8 +29,8 @@ export class EntityPendingComponent implements OnInit {
   dataSource: MatTableDataSource<ChangeControl>;
 
   pageIndex = 0;
-  pageSize = 10;
-  pageSizeOptions: number[] = [5, 10, 20];
+  pageSize = 100;
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private entityService: EntityService,

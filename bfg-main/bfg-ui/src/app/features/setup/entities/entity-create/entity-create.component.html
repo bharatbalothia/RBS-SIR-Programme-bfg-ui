@@ -4,8 +4,9 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
-        </mat-error>
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        </div>
         <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getSummaryFieldsSource()">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">
@@ -458,7 +459,8 @@
                         <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
                         </mat-label>
                         <mat-select formControlName="mqSSLKeyCert">
-                            <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates" [value]="mqSSLKeyCert">
+                            <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates"
+                                [value]="mqSSLKeyCert">
                                 {{mqSSLKeyCert}}</mat-option>
                         </mat-select>
                         <mat-error *ngFor="let validation of entityValidationMessages.mqSSLKeyCert">

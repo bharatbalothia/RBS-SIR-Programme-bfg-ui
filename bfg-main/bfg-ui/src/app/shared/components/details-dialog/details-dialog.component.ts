@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, Pipe } from '@angular/core';
 import { DetailsDialogData, Section, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined } from 'lodash';
-import { getDisplayName } from 'src/app/features/setup/entities/display-names';
+import { getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 
 @Component({
   selector: 'app-details-dialog',
@@ -11,7 +11,7 @@ import { getDisplayName } from 'src/app/features/setup/entities/display-names';
 })
 export class DetailsDialogComponent implements OnInit {
 
-  getDisplayName = getDisplayName;
+  getEntityDisplayName = getEntityDisplayName;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];

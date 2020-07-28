@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
-import { getEntityDetailsTabs, getDisplayName, getPendingChangesTabs } from '../display-names';
+import { getEntityDetailsTabs, getEntityDisplayName, getPendingChangesTabs } from '../entity-display-names';
 import { MatDialog } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
@@ -24,7 +24,7 @@ import { EntityDeleteDialogComponent } from '../entity-delete-dialog/entity-dele
 })
 export class EntitySearchComponent implements OnInit {
 
-  getDisplayName = getDisplayName;
+  getEntityDisplayName = getEntityDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
 
   entityNameSearchingValue = '';
@@ -36,8 +36,8 @@ export class EntitySearchComponent implements OnInit {
   dataSource: MatTableDataSource<Entity | ChangeControl>;
 
   pageIndex = 0;
-  pageSize = 10;
-  pageSizeOptions: number[] = [5, 10, 20];
+  pageSize = 100;
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private entityService: EntityService,

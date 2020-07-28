@@ -1,0 +1,19 @@
+.error-message {
+
+    .warnings-message {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        border-radius: .25rem;
+        padding: .75rem 1.25rem;
+        margin-bottom: 15px;
+    }
+
+    .errors-message {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        border-radius: .25rem;
+        padding: .75rem 1.25rem;
+    }
+}

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TrustedCertificatesHomeComponent } from './trusted-certificates-home.component';
+import { TrustedCertificatesHomeComponent } from './trusted-certificate-home.component';
 
 describe('TrustedCertificatesHomeComponent', () => {
   let component: TrustedCertificatesHomeComponent;

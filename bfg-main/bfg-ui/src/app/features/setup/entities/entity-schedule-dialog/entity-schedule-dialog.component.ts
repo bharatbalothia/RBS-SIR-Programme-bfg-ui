@@ -4,7 +4,7 @@ import { DetailsDialogData } from 'src/app/shared/components/details-dialog/deta
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { get, isUndefined } from 'lodash';
-import { getDisplayName } from '../display-names';
+import { getEntityDisplayName } from '../entity-display-names';
 import { SCHEDULE_VALIDATION_MESSAGES } from '../validation-messages';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
@@ -18,7 +18,7 @@ export class EntityScheduleDialogComponent implements OnInit {
 
   scheduleType = SCHEDULE_TYPE;
   scheduleValidationMessages = SCHEDULE_VALIDATION_MESSAGES;
-  getDisplayName = getDisplayName;
+  getEntityDisplayName = getEntityDisplayName;
 
   scheduleFormGroup: FormGroup;
 

@@ -7,7 +7,7 @@ import { getApiErrorMessage, ErrorMessage, ErrorsField, getErrorsMessage } from 
 import { get, isUndefined } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog-tabs';
-import { getDisplayName } from '../display-names';
+import { getEntityDisplayName } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-approving-dialog',
@@ -16,7 +16,7 @@ import { getDisplayName } from '../display-names';
 })
 export class EntityApprovingDialogComponent implements OnInit {
 
-  getDisplayName = getDisplayName;
+  getEntityDisplayName = getEntityDisplayName;
   getErrorsMessage = getErrorsMessage;
 
   entityApprovingDialogTabs = ENTITY_APPROVING_DIALOG_TABS;

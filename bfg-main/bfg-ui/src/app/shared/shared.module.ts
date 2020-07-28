@@ -31,6 +31,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DisplayTableCellComponent } from './components/display-table-cell/display-table-cell.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
+import { ErrorTemplateComponent } from './components/error-template/error-template.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { TabContentComponent } from './components/tab-content/tab-content.compon
     DetailsDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
+    ErrorTemplateComponent,
     // Directives
     InputLowercaseDirective,
   ],
@@ -103,6 +105,7 @@ import { TabContentComponent } from './components/tab-content/tab-content.compon
     ConfirmDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
+    ErrorTemplateComponent,
     // Directives
     InputLowercaseDirective,
   ]

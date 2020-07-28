@@ -31,4 +31,6 @@ public interface EntityService extends FieldValueExists {
 
     Page<EntityType> findEntities(Pageable pageable, String entity, String service);
 
+    boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException;
+
 }

@@ -112,7 +112,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     this.errorMessage = null;
     this.trustedCertificateFile = files.item(0);
     const formData: FormData = new FormData();
-    formData.append('file', this.trustedCertificateFile);
+    formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
     this.trustedCertificateService.uploadTrustedCertificate(formData).pipe(data => this.setLoading(data))
       .subscribe((data: TrustedCertificate) => {
         this.isLoading = false;
@@ -190,7 +190,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       const formData: FormData = new FormData();
-      formData.append('file', this.trustedCertificateFile);
+      formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
       formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
       formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
       if (result) {

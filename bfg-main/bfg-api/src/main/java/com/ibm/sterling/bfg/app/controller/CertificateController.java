@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
-import com.ibm.sterling.bfg.app.exception.FileTypeNotValidException;
+import com.ibm.sterling.bfg.app.exception.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.naming.InvalidNameException;
 import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
@@ -70,9 +71,9 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile certificate)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
         if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
-            throw new FileTypeNotValidException();
+            throw new FileNotValidException();
         return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
-                trustedCertificateRepository, changeControlCertRepository));
+                trustedCertificateRepository, changeControlCertRepository, false));
     }
 
     @PostMapping
@@ -115,8 +116,15 @@ public class CertificateController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException {
+    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) {
         return ok().body(certificateService.findById(id));
+    }
+
+    @GetMapping("/validate/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
+            NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
+        return ok().body(certificateService.findCertificateDataById(id));
     }
 
     @DeleteMapping("{id}")
@@ -129,4 +137,5 @@ public class CertificateController {
         Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
         return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }
+
 }

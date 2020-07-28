@@ -1,45 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { getTrustedCertificateDisplayName, getTrustedCertificateDetailsTabs, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
-import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { TrustedCertificatesWithPagination } from 'src/app/shared/models/trustedCertificate/trusted-certificates-with-pagination.model';
-import { MatTableDataSource } from '@angular/material/table';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
+import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayName, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { MatTableDataSource } from '@angular/material/table';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { MatDialog } from '@angular/material/dialog';
-import { removeEmpties } from 'src/app/shared/utils/utils';
-import { take } from 'rxjs/operators';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
+import { take } from 'rxjs/operators';
 import { get } from 'lodash';
+import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 
 @Component({
-  selector: 'app-trusted-certificate-search',
-  templateUrl: './trusted-certificate-search.component.html',
-  styleUrls: ['./trusted-certificate-search.component.scss']
+  selector: 'app-trusted-certificate-pending',
+  templateUrl: './trusted-certificate-pending.component.html',
+  styleUrls: ['./trusted-certificate-pending.component.scss']
 })
-export class TrustedCertificateSearchComponent implements OnInit {
+export class TrustedCertificatePendingComponent implements OnInit {
 
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
-  ROUTING_PATHS = ROUTING_PATHS;
-
-  certificateNameSearchingValue = '';
-  thumbprintSearchingValue = '';
-  thumbprint256SearchingValue = '';
-
-  errorMessage: ErrorMessage;
 
   isLoading = true;
   isLoadingDetails = false;
-  trustedCertificates: TrustedCertificatesWithPagination;
+  errorMessage: ErrorMessage;
+
+  changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
-  dataSource: MatTableDataSource<TrustedCertificate>;
+  dataSource: MatTableDataSource<ChangeControl>;
 
   pageIndex = 0;
   pageSize = 100;
@@ -51,38 +45,28 @@ export class TrustedCertificateSearchComponent implements OnInit {
     private dialog: MatDialog
   ) { }
 
-  ngOnInit(): void {
-    if (window.history.state.pageIndex && window.history.state.pageSize) {
-      this.pageIndex = window.history.state.pageIndex;
-      this.pageSize = window.history.state.pageSize;
-    }
-    this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+  ngOnInit() {
+    this.getPendingChanges(this.pageIndex, this.pageSize);
   }
 
-  getTrustedCertificateList(pageIndex: number, pageSize: number) {
+  getPendingChanges(pageIndex: number, pageSize: number) {
     this.isLoading = true;
-    this.errorMessage = null;
-    this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
-      certName: this.certificateNameSearchingValue || null,
-      thumbprint: this.thumbprintSearchingValue || null,
-      thumbprint256: this.thumbprint256SearchingValue || null,
-      page: pageIndex.toString(),
-      size: pageSize.toString()
-    })).pipe(take(1)).subscribe((data: TrustedCertificatesWithPagination) => {
-      this.isLoading = false;
-      this.pageIndex = pageIndex;
-      this.pageSize = pageSize;
-      this.trustedCertificates = data;
-      this.updateTable();
-    },
-      (error) => {
+    this.trustedCertificateService.getPendingChanges({ page: pageIndex.toString(), size: pageSize.toString() })
+      .pipe(take(1)).subscribe((data: ChangeControlsWithPagination) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.changeControls = data;
+        this.updateTable();
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   updateTable() {
-    this.dataSource = new MatTableDataSource(this.trustedCertificates.content);
+    this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
   addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
@@ -129,6 +113,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     return promise;
   }
 
+
   isTheSameUser(user: string) {
     return this.authService.getUserName() === user;
   }
@@ -168,7 +153,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
               errors: get(changeCtrl, 'errors')
             },
             approveAction:
-              (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
+              (params: { changeID: string, status: string, approverComments: string }) =>
+                this.trustedCertificateService.resolveChange(params)
           }
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {
@@ -179,10 +165,9 @@ export class TrustedCertificateSearchComponent implements OnInit {
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {
-              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+              this.getPendingChanges(this.pageIndex, this.pageSize);
             });
           }
         }));
   }
-
 }

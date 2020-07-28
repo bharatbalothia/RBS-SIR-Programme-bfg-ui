@@ -1,25 +1,12 @@
-.search-trusted-certificate-card {
+.trusted-certificate-pending-card {
 
     margin: 15px 15px 15px 15px;
 
     .card-content {
         min-height: 150px;
 
-        .search-by-content {
-
-            .search-by-label {
-                margin-top: 10px;
-                margin-bottom: 0px;
-            }
-
-            .search-by-field {
-                margin-right: 15px;
-            }
-
-            button {
-                vertical-align: text-bottom;
-            }
-
+        .top-error-message {
+            margin-left: 24px;
         }
 
         .mat-table {

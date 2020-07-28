@@ -27,7 +27,7 @@ export class EntityScheduleDialogComponent implements OnInit {
   fileTypes: string[];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialog: MatDialogRef<EntityScheduleDialogComponent>,
     private formBuilder: FormBuilder
   ) {

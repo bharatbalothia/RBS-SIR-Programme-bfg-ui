@@ -23,6 +23,9 @@ Navigate to bfg-api folder.
 
 Run `.\build_and_deploy.bat`
 
+## Build for RBS POC
+
+Navigate to bfg-ui folder and run `mvn clean install -Ppoc` to build UI module. Repeat the same in bfg-api folder.
 
 ## Testing
 

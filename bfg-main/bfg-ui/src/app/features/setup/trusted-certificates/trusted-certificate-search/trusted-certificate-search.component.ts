@@ -86,42 +86,47 @@ export class TrustedCertificateSearchComponent implements OnInit {
   }
 
   addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
-    if (certificateLogId) {
-      this.isLoadingDetails = true;
-      return this.trustedCertificateService.validateCertificateById(certificateLogId.toString()).toPromise()
-        .then(data => {
-          this.isLoadingDetails = false;
-          return ({ ...changeControl, warnings: data.certificateWarnings, errors: data.certificateErrors });
-        }, error => {
-          this.isLoadingDetails = false;
-          this.errorMessage = getApiErrorMessage(error);
-          return false;
-        });
-    }
-    else {
-      return new Promise((res) => res(changeControl));
-    }
+    const promise = new Promise((resolve) => {
+      const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
+      if (certificateLogId) {
+        this.isLoadingDetails = true;
+        this.trustedCertificateService.validateCertificateById(certificateLogId.toString()).toPromise()
+          .then(data => {
+            this.isLoadingDetails = false;
+            resolve({ ...changeControl, warnings: data.certificateWarnings, errors: data.certificateErrors });
+          },
+            error => {
+              this.isLoadingDetails = false;
+              this.errorMessage = getApiErrorMessage(error);
+            });
+      }
+      else {
+        resolve(changeControl);
+      }
+    });
+    return promise;
   }
 
   addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const certificateId = get(changeControl.entityLog, 'certificateId');
-    if (certificateId) {
-      this.isLoadingDetails = true;
-      return this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
-        .then(data => {
-          this.isLoadingDetails = false;
-          return ({ ...changeControl, certificateBefore: data });
-        },
-          error => {
+    const promise = new Promise((resolve) => {
+      const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
+      if (certificateId) {
+        this.isLoadingDetails = true;
+        this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
+          .then(data => {
             this.isLoadingDetails = false;
-            this.errorMessage = getApiErrorMessage(error);
-            return false;
-          });
-    }
-    else {
-      return new Promise((res) => res(changeControl));
-    }
+            resolve({ ...changeControl, certificateBefore: data });
+          },
+            error => {
+              this.isLoadingDetails = false;
+              this.errorMessage = getApiErrorMessage(error);
+            });
+      }
+      else {
+        resolve(changeControl);
+      }
+    });
+    return promise;
   }
 
   isTheSameUser(user: string) {

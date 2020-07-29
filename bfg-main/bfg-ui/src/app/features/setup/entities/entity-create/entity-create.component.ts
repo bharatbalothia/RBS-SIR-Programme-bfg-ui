@@ -22,6 +22,7 @@ import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-
 import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-entity-create',
@@ -69,6 +70,7 @@ export class EntityCreateComponent implements OnInit {
   mqDetailsFormGroup: FormGroup;
 
   editableEntity: Entity;
+  selectedService = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -77,6 +79,7 @@ export class EntityCreateComponent implements OnInit {
     private entityValidators: EntityValidators,
     private activatedRouter: ActivatedRoute,
     private router: Router,
+    private toolTip: TooltipService
   ) { }
 
   ngOnInit() {
@@ -161,6 +164,7 @@ export class EntityCreateComponent implements OnInit {
   })
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
+    this.selectedService = value;
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -492,5 +496,14 @@ export class EntityCreateComponent implements OnInit {
       this.updateSchedulesDataSource();
     }
   })
+
+  getTooltip(field: string, step: string): string{
+    const toolTip = this.toolTip.getTooltip({
+      type: 'entity',
+      qualifier: this.selectedService.toLowerCase() + '-' + step,
+      mode: this.isEditing() ? 'edit' : 'create',
+      fieldName: field});
+    return toolTip.length > 0 ? toolTip : (this.entityDisplayNames[field] || '');
+  }
 
 }

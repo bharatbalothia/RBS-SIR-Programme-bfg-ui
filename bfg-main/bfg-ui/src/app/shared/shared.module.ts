@@ -35,6 +35,7 @@ import { ErrorTemplateComponent } from './components/error-template/error-templa
 import { ApprovingDialogComponent } from './components/approving-dialog/approving-dialog.component';
 import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
+import { TooltipComponent } from './components/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TablePaginatorComponent } from './components/table-paginator/table-pagi
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    TooltipComponent,
   ],
   imports: [
     CommonModule,
@@ -117,6 +119,7 @@ import { TablePaginatorComponent } from './components/table-paginator/table-pagi
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    TooltipComponent
   ]
 })
 export class SharedModule { }

@@ -500,7 +500,7 @@ export class EntityCreateComponent implements OnInit {
   getTooltip(field: string, step: string): string{
     const toolTip = this.toolTip.getTooltip({
       type: 'entity',
-      qualifier: this.selectedService.toLowerCase() + '-' + step,
+      qualifier: (this.selectedService.toLowerCase() || 'sct') + '-' + step,
       mode: this.isEditing() ? 'edit' : 'create',
       fieldName: field});
     return toolTip.length > 0 ? toolTip : (this.entityDisplayNames[field] || '');

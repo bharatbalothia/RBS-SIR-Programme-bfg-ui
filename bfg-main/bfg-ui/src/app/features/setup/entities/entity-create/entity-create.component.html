@@ -343,7 +343,7 @@
                             {{getErrorByField('mqHost')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqHost', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqPort'] || 'mqPort'}}</mat-label>
                         <input matInput type="number" min="0" formControlName="mqPort">
@@ -353,10 +353,10 @@
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqPort')">
-                            {{getErrorByField('mqPort', 'entity')}}
+                            {{getErrorByField('mqPort')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqPort', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqPort', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQManager'] || 'mqQManager'}}</mat-label>
                         <input matInput formControlName="mqQManager">
@@ -369,7 +369,7 @@
                             {{getErrorByField('mqQManager')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqQManager', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqQManager', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqChannel'] || 'mqChannel'}}</mat-label>
                         <input matInput formControlName="mqChannel">
@@ -379,23 +379,23 @@
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqChannel')">
-                            {{getErrorByField('mqChannel', 'entity')}}
+                            {{getErrorByField('mqChannel')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqChannel', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqChannel', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQueueName'] || 'mqQueueName'}}</mat-label>
                         <input matInput formControlName="mqQueueName">
                         <mat-error *ngFor="let validation of entityValidationMessages.mqQueueName">
                             <mat-error class="error-message"
-                                *ngIf="mqDetailsFormGroup.get('mqQueueName', 'entity').hasError(validation.type)">
+                                *ngIf="mqDetailsFormGroup.get('mqQueueName').hasError(validation.type)">
                                 {{validation.message}}</mat-error>
                         </mat-error>
                         <mat-error class="error-message" *ngIf="getErrorByField('mqQueueName')">
                             {{getErrorByField('mqQueueName')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqQueueName', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqQueueName', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQueueBinding'] || 'mqQueueBinding'}}
                         </mat-label>
@@ -412,7 +412,7 @@
                             {{getErrorByField('mqQueueBinding')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqQueueBinding', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqQueueBinding', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqQueueContext'] || 'mqQueueContext'}}
                         </mat-label>
@@ -429,7 +429,7 @@
                             {{getErrorByField('mqQueueContext')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqQueueContext', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqQueueContext', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqDebug'] || 'mqDebug'}}
                         </mat-label>
@@ -446,7 +446,7 @@
                             {{getErrorByField('mqDebug')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqDebug', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSSLOptions'] || 'mqSSLOptions'}}
                         </mat-label>
@@ -463,7 +463,7 @@
                             {{getErrorByField('mqSSLOptions')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqSSLOptions', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqSSLOptions', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSSLCiphers'] || 'mqSSLCiphers'}}
                         </mat-label>
@@ -480,7 +480,7 @@
                             {{getErrorByField('mqSSLCiphers')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqSSLCiphers', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqSSLCiphers', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
                         </mat-label>
@@ -498,7 +498,7 @@
                             {{getErrorByField('mqSSLKeyCert')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqSSLKeyCert', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqSSLKeyCert', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSSLCaCert'] || 'mqSSLCaCert'}}
                         </mat-label>
@@ -516,7 +516,7 @@
                             {{getErrorByField('mqSSLCaCert')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqSSLCaCert', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqSSLCaCert', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqHeader'] || 'mqHeader'}}</mat-label>
                         <input matInput formControlName="mqHeader">
@@ -529,7 +529,7 @@
                             {{getErrorByField('mqHeader')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqHeader', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqHeader', 'mqdetails')"></app-tooltip>
                     <mat-form-field>
                         <mat-label>{{entityDisplayNames['mqSessionTimeout'] || 'mqSessionTimeout'}}</mat-label>
                         <input matInput formControlName="mqSessionTimeout" type="number" min="0">
@@ -542,7 +542,7 @@
                             {{getErrorByField('mqSessionTimeout')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('mqSessionTimeout', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('mqSessionTimeout', 'mqdetails')"></app-tooltip>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
@@ -567,7 +567,7 @@
                                 {{getErrorByField('requestorDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestorDN', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('requestorDN', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
@@ -582,7 +582,7 @@
                                 {{getErrorByField('responderDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('responderDN', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('responderDN', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
@@ -592,7 +592,7 @@
                                 {{getErrorByField('requestType')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestType', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('requestType', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['trace'] || 'trace'}}:</label>
@@ -654,27 +654,27 @@
                                 {{getErrorByField('deliveryNotifDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('deliveryNotifDN', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('deliveryNotifDN', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['deliveryNotifRT'] || 'deliveryNotifRT'}}</mat-label>
                             <input matInput formControlName="deliveryNotifRT">
                             <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotifRT')">
-                                {{getErrorByField('deliveryNotifRT', 'entity')}}
+                                {{getErrorByField('deliveryNotifRT')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('deliveryNotifRT')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('deliveryNotifRT', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestRef'] || 'requestRef'}}</mat-label>
                             <input matInput formControlName="requestRef">
                             <mat-error class="error-message" *ngIf="getErrorByField('requestRef')">
-                                {{getErrorByField('requestRef', 'entity')}}
+                                {{getErrorByField('requestRef')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestRef', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('requestRef', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
@@ -684,27 +684,27 @@
                                 {{getErrorByField('fileInfo')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('fileInfo', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('fileInfo', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['fileDesc'] || 'fileDesc'}}</mat-label>
                             <input matInput formControlName="fileDesc">
                             <mat-error class="error-message" *ngIf="getErrorByField('fileDesc')">
-                                {{getErrorByField('fileDesc', 'entity')}}
+                                {{getErrorByField('fileDesc')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('fileDesc', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('fileDesc', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['transferInfo'] || 'transferInfo'}}</mat-label>
                             <input matInput formControlName="transferInfo">
                             <mat-error class="error-message" *ngIf="getErrorByField('transferInfo')">
-                                {{getErrorByField('transferInfo', 'entity')}}
+                                {{getErrorByField('transferInfo')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('transferInfo', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('transferInfo', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>
@@ -714,7 +714,7 @@
                                 {{getErrorByField('transferDesc')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('transferDesc', 'entity')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('transferDesc', 'swift')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>

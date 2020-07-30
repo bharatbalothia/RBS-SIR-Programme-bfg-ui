@@ -59,6 +59,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('routeInbound')">
                             {{getErrorByField('routeInbound')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('routeInbound', 'entity')"></app-tooltip>
                     </section>
                     <section *ngIf="entityPageFormGroup.get('inboundRequestorDN')">
                         <mat-form-field>
@@ -132,6 +133,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundDir')">
                             {{getErrorByField('inboundDir')}}
                         </mat-error>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundDir')" [tip]="getTooltip('inboundDir', 'entity')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundRoutingRule')">
                         <label
@@ -143,6 +145,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundRoutingRule')">
                             {{getErrorByField('inboundRoutingRule')}}
                         </mat-error>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRoutingRule')" [tip]="getTooltip('inboundRoutingRule', 'entity')"></app-tooltip>
                     </section>
                     <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
                         <mat-label>{{entityDisplayNames['maxBulksPerFile'] || 'maxBulksPerFile'}}</mat-label>
@@ -247,6 +250,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('compression')">
                             {{getErrorByField('compression')}}
                         </mat-error>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('compression')" [tip]="getTooltip('compression', 'entity')"></app-tooltip>
                     </section>
                     <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
                         <mat-label>{{entityDisplayNames['entityParticipantType'] || 'entityParticipantType'}}
@@ -603,6 +607,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('trace')">
                             {{getErrorByField('trace')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('trace', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['snF'] || 'snF'}}:</label>
@@ -613,6 +618,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('snF')">
                             {{getErrorByField('snF')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('snF', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label
@@ -624,6 +630,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotification')">
                             {{getErrorByField('deliveryNotification')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('deliveryNotification', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label
@@ -635,6 +642,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('nonRepudiation')">
                             {{getErrorByField('nonRepudiation')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('nonRepudiation', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
@@ -645,6 +653,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('e2eSigning')">
                             {{getErrorByField('e2eSigning')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('e2eSigning', 'swift')"></app-tooltip>
                     </section>
                     <section>
                         <mat-form-field>

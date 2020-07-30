@@ -1,19 +1,16 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { isUndefined, get } from 'lodash';
+import { ErrorMessage, getErrorsMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DetailsDialogData, Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { getEntityDisplayName } from '../entity-display-names';
-import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { ErrorMessage, getApiErrorMessage, getErrorsMessage } from 'src/app/core/utils/error-template';
+import { get, isUndefined } from 'lodash';
 
 @Component({
-  selector: 'app-entity-delete-dialog',
-  templateUrl: './entity-delete-dialog.component.html',
-  styleUrls: ['./entity-delete-dialog.component.scss']
+  selector: 'app-delete-dialog',
+  templateUrl: './delete-dialog.component.html',
+  styleUrls: ['./delete-dialog.component.scss']
 })
-export class EntityDeleteDialogComponent implements OnInit {
+export class DeleteDialogComponent implements OnInit {
 
-  getEntityDisplayName = getEntityDisplayName;
   getErrorsMessage = getErrorsMessage;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
@@ -22,18 +19,23 @@ export class EntityDeleteDialogComponent implements OnInit {
   isLoading = false;
   errorMessage: ErrorMessage;
 
-  entityId: number;
+  id: string;
   changerComments: string;
+
+  displayName: (fieldName: string) => string;
+  deleteAction: (id: string, changerComments: string) => any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
-    private entityService: EntityService,
-    private dialog: MatDialogRef<EntityDeleteDialogComponent>,
+    private dialog: MatDialogRef<DeleteDialogComponent>,
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
-    this.entityId = get(this.data, 'actionData.entityId');
+    this.id = get(this.data, 'actionData.id');
+
+    this.displayName = this.data.displayName;
+    this.deleteAction = get(this.data, 'actionData.deleteAction');
   }
 
   ngOnInit() {
@@ -50,10 +52,10 @@ export class EntityDeleteDialogComponent implements OnInit {
     });
   }
 
-  entityDeleteAction() {
+  deletingAction() {
     this.isLoading = true;
     this.errorMessage = null;
-    this.entityService.deleteEntity(this.entityId, this.changerComments)
+    this.deleteAction(this.id, this.changerComments)
       .subscribe(() => {
         this.isLoading = false;
         this.dialog.close({ refreshList: true });

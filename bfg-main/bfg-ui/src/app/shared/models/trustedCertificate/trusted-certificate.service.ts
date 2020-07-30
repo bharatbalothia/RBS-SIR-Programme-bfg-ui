@@ -51,4 +51,8 @@ export class TrustedCertificateService {
     return this.http.post(this.apiUrl + 'pending', resolution);
   }
 
+  deleteTrustedCertificate(certificateId: string, changerComments: string) {
+    return this.http.delete(this.apiUrl + certificateId, { params: changerComments && { changerComments } });
+  }
+
 }

@@ -27,7 +27,7 @@ export class EntityService {
     return this.http.put<Entity>(this.apiUrl + entity.entityId, entity);
   }
 
-  deleteEntity(entityId: number, changerComments: string) {
+  deleteEntity(entityId: string, changerComments: string) {
     return this.http.delete(this.apiUrl + entityId, { params: changerComments && { changerComments } });
   }
 

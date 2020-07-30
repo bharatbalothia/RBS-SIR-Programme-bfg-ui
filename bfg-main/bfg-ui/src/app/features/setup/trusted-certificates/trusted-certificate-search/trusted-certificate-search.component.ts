@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -183,6 +184,29 @@ export class TrustedCertificateSearchComponent implements OnInit {
             });
           }
         }));
+  }
+
+  deleteTrustedCertificate(trustedCertificate: TrustedCertificate) {
+    this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+      title: `Delete ${trustedCertificate.certificateName}`,
+      tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
+      displayName: getTrustedCertificateDisplayName,
+      actionData: {
+        id: trustedCertificate.certificateId,
+        deleteAction: (id: string, changerComments: string) => this.trustedCertificateService.deleteTrustedCertificate(id, changerComments)
+      }
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'refreshList')) {
+        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+          title: `Trusted Certificate deleted`,
+          text: `Trusted Certificate ${trustedCertificate.certificateName} has been deleted`,
+          shouldHideYesCaption: true,
+          noCaption: 'Back'
+        })).afterClosed().subscribe(() => {
+          this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+        });
+      }
+    });
   }
 
 }

@@ -30,6 +30,10 @@
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
+                        <button mat-icon-button *ngIf="!element.trustedCertificateLog"
+                            (click)="deleteTrustedCertificate(element)">
+                            <mat-icon>clear</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
 

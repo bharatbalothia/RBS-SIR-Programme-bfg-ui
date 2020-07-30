@@ -94,6 +94,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       O: [],
       OU: [],
       ST: [],
+      EMAILADDRESS: []
     },
     subject: {
       C: [],
@@ -102,6 +103,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       O: [],
       OU: [],
       ST: [],
+      EMAILADDRESS: []
     },
     authChainReport: [],
     valid: null,

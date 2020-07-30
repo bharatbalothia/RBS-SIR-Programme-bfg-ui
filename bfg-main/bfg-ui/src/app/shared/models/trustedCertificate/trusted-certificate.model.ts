@@ -24,6 +24,7 @@ export interface TSItemInfo {
     OU: string[];
     CN: string[];
     L: string[];
+    EMAILADDRESS: string[];
 }
 
 export interface AuthChainReport {

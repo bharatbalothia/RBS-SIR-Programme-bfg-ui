@@ -8,6 +8,7 @@ import { getEntityDisplayName } from '../entity-display-names';
 import { SCHEDULE_VALIDATION_MESSAGES } from '../validation-messages';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-entity-schedule-dialog',
@@ -29,7 +30,8 @@ export class EntityScheduleDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialog: MatDialogRef<EntityScheduleDialogComponent>,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private toolTip: TooltipService
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
@@ -101,5 +103,14 @@ export class EntityScheduleDialogComponent implements OnInit {
     else {
       this.dialog.close({ newSchedule: this.scheduleFormGroup.value });
     }
+  }
+
+  getTooltip(field: string): string{
+    const toolTip = this.toolTip.getTooltip({
+      type: 'entity',
+      qualifier: 'sct-schedule',
+      mode: this.isEditStatus() ? 'edit' : 'create',
+      fieldName: field});
+    return toolTip.length > 0 ? toolTip : (this.getEntityDisplayName(field) || '');
   }
 }

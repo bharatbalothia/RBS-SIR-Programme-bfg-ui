@@ -20,6 +20,7 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     L: 'Locality',
     C: 'Country',
     ST: 'State or Province',
+    EMAILADDRESS: 'Email Address',
     changerComments: 'Changer Comments',
     authChainReport: 'Auth Chain Report',
     subjectDN: 'Subject DN',

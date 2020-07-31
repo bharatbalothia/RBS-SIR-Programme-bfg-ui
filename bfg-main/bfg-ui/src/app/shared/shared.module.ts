@@ -35,6 +35,7 @@ import { ErrorTemplateComponent } from './components/error-template/error-templa
 import { ApprovingDialogComponent } from './components/approving-dialog/approving-dialog.component';
 import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
+import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { TablePaginatorComponent } from './components/table-paginator/table-pagi
     ErrorTemplateComponent,
     ApprovingDialogComponent,
     TablePaginatorComponent,
+    DeleteDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
@@ -114,6 +116,7 @@ import { TablePaginatorComponent } from './components/table-paginator/table-pagi
     ErrorTemplateComponent,
     ApprovingDialogComponent,
     TablePaginatorComponent,
+    DeleteDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

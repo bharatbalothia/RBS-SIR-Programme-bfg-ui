@@ -92,6 +92,7 @@ public class CertificateController {
     }
 
     @PostMapping("pending")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
     public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
@@ -106,6 +107,7 @@ public class CertificateController {
     }
 
     @GetMapping("pending")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
@@ -126,7 +128,7 @@ public class CertificateController {
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
     public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
             throws JsonProcessingException, CertificateException {
         TrustedCertificate cert = Optional

@@ -14,8 +14,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { EntityDeleteDialogComponent } from '../entity-delete-dialog/entity-delete-dialog.component';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-entity-search',
@@ -53,8 +53,6 @@ export class EntitySearchComponent implements OnInit {
   }
 
   getEntityList(pageIndex: number, pageSize: number) {
-    console.log(pageIndex, pageSize);
-
     this.isLoading = true;
     this.entityService.getEntityList(removeEmpties({
       entity: this.entityNameSearchingValue || null,
@@ -129,11 +127,14 @@ export class EntitySearchComponent implements OnInit {
   }
 
   deleteEntity(entity: Entity) {
-    this.dialog.open(EntityDeleteDialogComponent, new DetailsDialogConfig({
+    this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${entity.entity}`,
       tabs: getEntityDetailsTabs(entity),
       displayName: getEntityDisplayName,
-      actionData: { entityId: entity.entityId }
+      actionData: {
+        id: entity.entityId,
+        deleteAction: (id: string, changerComments: string) => this.entityService.deleteEntity(id, changerComments)
+      }
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

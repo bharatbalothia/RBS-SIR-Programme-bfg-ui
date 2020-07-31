@@ -3,7 +3,7 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
-            <app-tab-content [tab]="tab" [displayName]="getEntityDisplayName.bind(this)"></app-tab-content>
+            <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>
@@ -13,7 +13,9 @@
             <mat-label>Changer Comments</mat-label>
             <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
         </mat-form-field>
-        <button mat-raised-button color='primary' (click)="entityDeleteAction()">Delete</button>
+        <button mat-raised-button color='primary'
+            [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)"
+            (click)="deletingAction()">Delete</button>
     </div>
     <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

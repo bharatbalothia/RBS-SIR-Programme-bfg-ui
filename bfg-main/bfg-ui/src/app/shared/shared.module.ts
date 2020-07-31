@@ -36,6 +36,7 @@ import { ApprovingDialogComponent } from './components/approving-dialog/approvin
 import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
+import { TooltipComponent } from './components/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    TooltipComponent,
   ],
   imports: [
     CommonModule,
@@ -120,6 +122,7 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    TooltipComponent
   ]
 })
 export class SharedModule { }

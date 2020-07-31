@@ -5,6 +5,7 @@ import { TrustedCertificateHomeComponent } from './trusted-certificate-home/trus
 import { TrustedCertificateCreateComponent } from './trusted-certificate-create/trusted-certificate-create.component';
 import { PermissionsGuardService } from 'src/app/core/guards/permissions-guard.service';
 import { TrustedCertificateSearchComponent } from './trusted-certificate-search/trusted-certificate-search.component';
+import { TrustedCertificatePendingComponent } from './trusted-certificate-pending/trusted-certificate-pending.component';
 
 
 export const routes: Routes = [
@@ -27,7 +28,9 @@ export const routes: Routes = [
         canActivate: [PermissionsGuardService],
         data: {
             permissions: ['FB_UI_TRUSTED_CERTS']
-        }},
+        }
+    },
+    { path: ROUTING_PATHS.PENDING, component: TrustedCertificatePendingComponent }
 ];
 
 @NgModule({

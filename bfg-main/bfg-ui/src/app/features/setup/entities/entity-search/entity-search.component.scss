@@ -2,29 +2,37 @@
 
     margin: 15px 15px 15px 15px;
 
-    .search-by-content {
+    .card-content {
+        min-height: 150px;
 
-        .search-by-label {
-            margin-top: 10px;
-            margin-bottom: 0px;
+        .search-by-content {
+
+            .search-by-label {
+                margin-top: 10px;
+                margin-bottom: 0px;
+            }
+
+            .search-by-field {
+                margin-right: 15px;
+            }
+
+            button {
+                vertical-align: text-bottom;
+            }
+
         }
 
-        .search-by-field {
-            margin-right: 15px;
+        .mat-table {
+            width: 100%;
+
         }
 
-        button {
-            vertical-align: text-bottom;
+        .mat-spinner {
+            height: 100px;
+            width: 100px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
         }
-
-    }
-
-    .mat-table {
-        width: 100%;
-
-    }
-
-    .mat-spinner {
-        margin: auto;
     }
 }

@@ -14,7 +14,8 @@ import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 @Service
 public class PropertyService {
 
-    public final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private PropertySettings settings;
@@ -91,4 +92,5 @@ public class PropertyService {
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
         return objectMapper.convertValue(root, List.class);
     }
+
 }

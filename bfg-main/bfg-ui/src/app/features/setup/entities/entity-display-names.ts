@@ -3,11 +3,11 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { isEmpty, merge, isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
-import { ENTITY_APPROVING_DIALOG_TABS } from './entity-approving-dialog/entity-approving-dialog-tabs';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 
 export const ENTITY_DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -167,7 +167,7 @@ export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
 
 export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
   {
-    tabTitle: ENTITY_APPROVING_DIALOG_TABS.CHANGE_DETAILS,
+    tabTitle: DIALOG_TABS.CHANGE_DETAILS,
     tabSections: [{
       sectionItems: [
         { fieldName: 'Change ID', fieldValue: changeControl.changeID },
@@ -183,7 +183,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
     }]
   },
   changeControl.entityBefore && {
-    tabTitle: ENTITY_APPROVING_DIALOG_TABS.BEFORE_CHANGES,
+    tabTitle: DIALOG_TABS.BEFORE_CHANGES,
     tabSections: [
       { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityBefore)['Entity Details'] },
       changeControl.entityBefore.service === ENTITY_SERVICE_TYPE.SCT &&
@@ -207,7 +207,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
   },
   changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
-    tabTitle: ENTITY_APPROVING_DIALOG_TABS.AFTER_CHANGES,
+    tabTitle: DIALOG_TABS.AFTER_CHANGES,
     tabSections: [
       { sectionTitle: 'Entity Details', sectionItems: getEntityDetailsSectionItems(changeControl.entityLog)['Entity Details'] },
       changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT &&
@@ -230,7 +230,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
   },
   changeControl.entityBefore && changeControl.operation !== CHANGE_OPERATION.DELETE &&
   {
-    tabTitle: ENTITY_APPROVING_DIALOG_TABS.DIFFERENCES,
+    tabTitle: DIALOG_TABS.DIFFERENCES,
     tabSections: [
       {
         sectionTitle: 'Entity Details',

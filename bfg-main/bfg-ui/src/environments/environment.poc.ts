@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://vmgbfap02d.server.rbsgrp.net:13357/api/'
+  apiUrl: 'https://devecpvm013357.server.rbsgrp.net:9443/api/'
 };

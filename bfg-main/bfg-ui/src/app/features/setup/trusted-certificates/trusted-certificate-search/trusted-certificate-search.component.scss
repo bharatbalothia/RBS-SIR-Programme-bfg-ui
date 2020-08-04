@@ -2,73 +2,82 @@
 
     margin: 15px 15px 15px 15px;
 
-    .search-by-content {
+    .card-content {
+        min-height: 150px;
 
-        .search-by-label {
-            margin-top: 10px;
-            margin-bottom: 0px;
+        .search-by-content {
+
+            .search-by-label {
+                margin-top: 10px;
+                margin-bottom: 0px;
+            }
+
+            .search-by-field {
+                margin-right: 15px;
+            }
+
+            button {
+                vertical-align: text-bottom;
+            }
+
         }
 
-        .search-by-field {
-            margin-right: 15px;
+        .mat-table {
+            width: 100%;
+
+            .mat-column-action {
+                word-wrap: break-word !important;
+                white-space: unset !important;
+                flex: 0 0 16% !important;
+                width: 16% !important;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+
+                word-break: break-word;
+
+                -ms-hyphens: auto;
+                -moz-hyphens: auto;
+                -webkit-hyphens: auto;
+                hyphens: auto;
+            }
+
+            .mat-column-changes {
+                word-wrap: break-word !important;
+                white-space: unset !important;
+                flex: 0 0 11% !important;
+                width: 11% !important;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+
+                word-break: break-word;
+
+                -ms-hyphens: auto;
+                -moz-hyphens: auto;
+                -webkit-hyphens: auto;
+                hyphens: auto;
+            }
+
+            .mat-column-name {
+                word-break: break-all;
+            }
+
+            .mat-column-thumbprint {
+                word-break: break-all;
+            }
+
+            .mat-column-thumbprint256 {
+                word-break: break-all;
+            }
+
         }
 
-        button {
-            vertical-align: text-bottom;
+        .mat-spinner {
+            height: 100px;
+            width: 100px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
         }
-
     }
 
-    .mat-table {
-        width: 100%;
-
-        .mat-column-action {
-            word-wrap: break-word !important;
-            white-space: unset !important;
-            flex: 0 0 16% !important;
-            width: 16% !important;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-
-            word-break: break-word;
-
-            -ms-hyphens: auto;
-            -moz-hyphens: auto;
-            -webkit-hyphens: auto;
-            hyphens: auto;
-        }
-
-        .mat-column-changes {
-            word-wrap: break-word !important;
-            white-space: unset !important;
-            flex: 0 0 11% !important;
-            width: 11% !important;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-
-            word-break: break-word;
-
-            -ms-hyphens: auto;
-            -moz-hyphens: auto;
-            -webkit-hyphens: auto;
-            hyphens: auto;
-        }
-
-        .mat-column-name {
-            word-break: break-all;
-        }
-
-        .mat-column-thumbprint {
-            word-break: break-all;
-        }
-
-        .mat-column-thumbprint256 {
-            word-break: break-all;
-        }
-
-    }
-
-    .mat-spinner {
-        margin: auto;
-    }
 }

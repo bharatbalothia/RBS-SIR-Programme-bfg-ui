@@ -10,12 +10,12 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { EntityApprovingDialogComponent } from '../entity-approving-dialog/entity-approving-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { EntityDeleteDialogComponent } from '../entity-delete-dialog/entity-delete-dialog.component';
+import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-entity-search',
@@ -85,9 +85,10 @@ export class EntitySearchComponent implements OnInit {
 
   openInfoDialog(changeControl: ChangeControl) {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: `Change Record: Pending`,
         tabs: getPendingChangesTabs(changeCtrl),
+        displayName: getEntityDisplayName
       })));
   }
 
@@ -95,18 +96,21 @@ export class EntitySearchComponent implements OnInit {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `${entity.service}: ${entity.entity}`,
       tabs: getEntityDetailsTabs(entity),
+      displayName: getEntityDisplayName
     }));
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(EntityApprovingDialogComponent, new DetailsDialogConfig({
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
         tabs: getPendingChangesTabs(changeCtrl),
+        displayName: getEntityDisplayName,
         actionData: {
           changeID: changeControl.changeID,
           changer: changeControl.changer,
-          isApproveActions: true
+          approveAction:
+            (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
         }
       })).afterClosed().subscribe(data => {
         if (get(data, 'refreshList')) {
@@ -123,10 +127,14 @@ export class EntitySearchComponent implements OnInit {
   }
 
   deleteEntity(entity: Entity) {
-    this.dialog.open(EntityDeleteDialogComponent, new DetailsDialogConfig({
+    this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${entity.entity}`,
       tabs: getEntityDetailsTabs(entity),
-      actionData: { entityId: entity.entityId }
+      displayName: getEntityDisplayName,
+      actionData: {
+        id: entity.entityId,
+        deleteAction: (id: string, changerComments: string) => this.entityService.deleteEntity(id, changerComments)
+      }
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({

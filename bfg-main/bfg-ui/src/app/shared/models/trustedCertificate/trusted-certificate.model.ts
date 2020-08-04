@@ -1,6 +1,7 @@
 import { ErrorsField } from 'src/app/core/utils/error-template';
 
 export interface TrustedCertificate {
+    certificateId?: string;
     certificateName: string;
     serialNumber: string;
     thumbprint: string;
@@ -23,6 +24,7 @@ export interface TSItemInfo {
     OU: string[];
     CN: string[];
     L: string[];
+    EMAILADDRESS: string[];
 }
 
 export interface AuthChainReport {

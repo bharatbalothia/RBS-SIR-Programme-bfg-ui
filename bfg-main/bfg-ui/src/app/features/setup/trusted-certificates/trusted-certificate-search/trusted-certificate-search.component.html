@@ -27,8 +27,12 @@
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button *ngIf="element.changeID">
+                        <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
+                        </button>
+                        <button mat-icon-button *ngIf="!element.trustedCertificateLog"
+                            (click)="deleteTrustedCertificate(element)">
+                            <mat-icon>clear</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
@@ -36,7 +40,7 @@
                 <ng-container matColumnDef="changes">
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button *ngIf="element.trustedCertificateLog">
+                        <button mat-button *ngIf="element.trustedCertificateLog" (click)="openInfoDialog(element)">
                             <mat-icon inline>info</mat-icon> Changes
                         </button>
                     </mat-cell>
@@ -77,12 +81,15 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <mat-paginator *ngIf="!isLoading" [length]="trustedCertificates.totalElements"
-                [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
-                [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
-                (page)="getTrustedCertificateList($event.pageIndex, $event.pageSize)">
-            </mat-paginator>
+
+            <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1"
+                [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
+                [max]="trustedCertificates && trustedCertificates.totalPages"
+                [length]="trustedCertificates.totalElements" [pageIndex]="trustedCertificates.pageable.pageNumber"
+                [pageSize]="trustedCertificates.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+                showFirstLastButtons></app-table-paginator>
+
         </div>
-        <mat-spinner *ngIf="isLoading"></mat-spinner>
+        <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
     </mat-card-content>
 </mat-card>

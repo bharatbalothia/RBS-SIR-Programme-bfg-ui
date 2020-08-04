@@ -1,4 +1,5 @@
 import { Entity } from '../entity/entity.model';
+import { TrustedCertificate } from '../trustedCertificate/trusted-certificate.model';
 
 export interface ChangeControl {
     changeID: string;
@@ -15,8 +16,10 @@ export interface ChangeControl {
     resultMeta1: string;
     resultMeta2: string;
     resultMeta3: null;
-    entityLog: Entity;
+    entityLog?: Entity;
+    trustedCertificateLog?: TrustedCertificate;
     entityBefore?: Entity;
+    certificateBefore?: TrustedCertificate;
     pending: boolean;
     statusText: string;
     shortType: string;

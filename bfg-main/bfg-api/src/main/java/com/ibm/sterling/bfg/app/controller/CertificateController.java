@@ -2,12 +2,13 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
-import com.ibm.sterling.bfg.app.exception.FileTypeNotValidException;
+import com.ibm.sterling.bfg.app.exception.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
@@ -70,9 +71,9 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile certificate)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
         if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
-            throw new FileTypeNotValidException();
+            throw new FileNotValidException();
         return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
-                trustedCertificateRepository, changeControlCertRepository));
+                trustedCertificateRepository, changeControlCertRepository, false));
     }
 
     @PostMapping
@@ -91,6 +92,7 @@ public class CertificateController {
     }
 
     @PostMapping("pending")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
     public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
         String changeId = (String) approve.get("changeID");
@@ -105,6 +107,7 @@ public class CertificateController {
     }
 
     @GetMapping("pending")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
@@ -113,8 +116,26 @@ public class CertificateController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException {
+    public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) {
         return ok().body(certificateService.findById(id));
+    }
+
+    @GetMapping("/validate/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
+            NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
+        return ok().body(certificateService.findCertificateDataById(id));
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
+    public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
+            throws JsonProcessingException, CertificateException {
+        TrustedCertificate cert = Optional
+                .ofNullable(certificateService.findById(id))
+                .orElseThrow(CertificateNotFoundException::new);
+        Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
+        return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }
 
 }

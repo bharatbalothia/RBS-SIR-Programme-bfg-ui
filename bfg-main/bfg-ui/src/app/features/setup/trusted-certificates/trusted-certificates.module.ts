@@ -4,6 +4,7 @@ import { TrustedCertificateHomeComponent } from './trusted-certificate-home/trus
 import { TrustedCertificatesRoutingModule } from './trusted-certificates-routing.module';
 import { TrustedCertificateCreateComponent } from './trusted-certificate-create/trusted-certificate-create.component';
 import { TrustedCertificateSearchComponent } from './trusted-certificate-search/trusted-certificate-search.component';
+import { TrustedCertificatePendingComponent } from './trusted-certificate-pending/trusted-certificate-pending.component';
 
 
 
@@ -11,7 +12,8 @@ import { TrustedCertificateSearchComponent } from './trusted-certificate-search/
   declarations: [
     TrustedCertificateHomeComponent,
     TrustedCertificateCreateComponent,
-    TrustedCertificateSearchComponent
+    TrustedCertificateSearchComponent,
+    TrustedCertificatePendingComponent,
   ],
   imports: [
     SharedModule,

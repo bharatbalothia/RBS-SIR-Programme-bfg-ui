@@ -5,8 +5,9 @@
             <li ng *ngFor="let warning of errorMessage.warnings">{{getErrorsMessage(warning)}}</li>
         </ul>
     </mat-error>
-    <mat-error class="errors-message" *ngIf="errorMessage && errorMessage.message">
-        {{errorMessage.message}} {{errorMessage.code ? '('+errorMessage.code+')' : ''}}
+    <mat-error class="errors-message" *ngIf="errorMessage && (errorMessage.message || errorMessage.errors)">
+        <div *ngIf="errorMessage.message">{{errorMessage.message}}
+            {{errorMessage.code ? '('+errorMessage.code+')' : ''}}</div>
         <ul *ngIf="errorMessage.errors">
             <li ng *ngFor="let error of errorMessage.errors">{{getErrorsMessage(error)}}</li>
         </ul>

@@ -94,6 +94,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       O: [],
       OU: [],
       ST: [],
+      EMAILADDRESS: []
     },
     subject: {
       C: [],
@@ -102,6 +103,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       O: [],
       OU: [],
       ST: [],
+      EMAILADDRESS: []
     },
     authChainReport: [],
     valid: null,
@@ -124,7 +126,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       }, error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
-        this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setValue(null);
+        this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setErrors({ invalid: true });
       });
   }
 

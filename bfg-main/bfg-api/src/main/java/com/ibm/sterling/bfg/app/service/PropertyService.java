@@ -44,21 +44,12 @@ public class PropertyService {
 
     public Map<String, List<String>> getFileCriteriaData() throws JsonProcessingException {
         Map<String, List<String>> fileCriteriaData = new HashMap<>();
-        fileCriteriaData.put("type", getPropertyList(
-                settings.getFileUrl() + "?" + PROPERTY_KEY + "=" + settings.getFileTypePrefixListKey())
-                .stream()
-                .flatMap(property -> Arrays.stream(property.get(PROPERTY_VALUE).split(",")))
-                .map(fileTypeKeyPostfix -> {
-                            try {
-                                return getPropertyList(settings.getFileUrl() + "?" +
-                                        PROPERTY_KEY + "=" + settings.getFileTypePrefixKey() + fileTypeKeyPostfix)
-                                        .get(0).get(PROPERTY_VALUE);
-                            } catch (JsonProcessingException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        }
-                ).collect(Collectors.toList()));
+        fileCriteriaData.put("type",
+                Arrays.asList(getPropertyList(
+                        settings.getFileUrl() + "?" + PROPERTY_KEY + "=" + settings.getSearchFileTypesKey())
+                        .get(0)
+                        .get(PROPERTY_VALUE)
+                        .split(",")));
         fileCriteriaData.put("fileStatus",
                 getPropertyList(settings.getFileUrl() + "?_where=con(" + PROPERTY_KEY + "," +
                         settings.getFileStatusPrefixKey() + ")").stream()

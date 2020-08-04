@@ -17,8 +17,7 @@ public class PropertySettings {
     private String caCertUrl;
     private String sysCertUrl;
     private String certIdKey;
-    private String fileTypePrefixListKey;
-    private String fileTypePrefixKey;
+    private String searchFileTypesKey;
     private String fileUrl;
     private String fileStatusPrefixKey;
 
@@ -62,12 +61,8 @@ public class PropertySettings {
         return certIdKey;
     }
 
-    public String getFileTypePrefixListKey() {
-        return fileTypePrefixListKey;
-    }
-
-    public String getFileTypePrefixKey() {
-        return fileTypePrefixKey;
+    public String getSearchFileTypesKey() {
+        return searchFileTypesKey;
     }
 
     public String getFileUrl() {
@@ -118,12 +113,8 @@ public class PropertySettings {
         this.certIdKey = certIdKey;
     }
 
-    public void setFileTypePrefixListKey(String fileTypePrefixListKey) {
-        this.fileTypePrefixListKey = fileTypePrefixListKey;
-    }
-
-    public void setFileTypePrefixKey(String fileTypePrefixKey) {
-        this.fileTypePrefixKey = fileTypePrefixKey;
+    public void setSearchFileTypesKey(String searchFileTypesKey) {
+        this.searchFileTypesKey = searchFileTypesKey;
     }
 
     public void setFileUrl(String fileUrl) {

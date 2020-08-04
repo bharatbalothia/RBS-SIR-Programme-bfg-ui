@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.ibm.sterling.bfg.app.model.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

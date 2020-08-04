@@ -32,7 +32,7 @@ public class FileSearchController {
     public Page<File> getFiles(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                @RequestParam(value = "page", defaultValue = "0", required = false) Integer page)
             throws JsonProcessingException {
-        return fileSearchService.getFilesList(PageRequest.of(page, size));
+        return fileSearchService.getFilesList(page, size);
     }
 
     @GetMapping("file-criteria-data")

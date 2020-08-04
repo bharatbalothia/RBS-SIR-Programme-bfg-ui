@@ -4,18 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.file.File;
-import com.ibm.sterling.bfg.app.model.security.LoginRequest;
-import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -33,7 +34,7 @@ public class FileSearchService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Page<File> getFilesList(Pageable pageable) throws JsonProcessingException {
+    public Page<File> getFilesList(Integer page, Integer size) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         String userCredentials = userName + ":" + password;
         headers.set(HttpHeaders.AUTHORIZATION,
@@ -41,7 +42,9 @@ public class FileSearchService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)
+                .queryParam("start", page)
+                .queryParam("rows", size);
 
         HttpEntity request = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -52,8 +55,14 @@ public class FileSearchService {
                         String.class
                 );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        JsonNode totalRows = root.get("totalRows");
         JsonNode results = root.get("results");
+        Integer totalElements = objectMapper.convertValue(totalRows, Integer.class);
         List<File> fileList = objectMapper.convertValue(results, List.class);
-        return ListToPageConverter.convertListToPage(fileList, pageable) ;
+
+        Pageable pageable = PageRequest.of(page, size);
+        return new PageImpl<>(fileList, pageable, totalElements);
     }
+
+
 }

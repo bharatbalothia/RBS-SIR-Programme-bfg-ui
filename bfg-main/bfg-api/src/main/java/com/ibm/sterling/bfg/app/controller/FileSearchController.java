@@ -36,8 +36,10 @@ public class FileSearchController {
     }
 
     @GetMapping("file-criteria-data")
-    public ResponseEntity<Map<String, List<String>>> getFileCriteriaData() throws JsonProcessingException {
-        return ok(propertyService.getFileCriteriaData());
+    public ResponseEntity<Map<String, List<String>>> getFileCriteriaData(
+            @RequestParam(value = "service", required = false) String service,
+            @RequestParam(value = "outbound", required = false) Boolean outbound) throws JsonProcessingException {
+        return ok(propertyService.getFileCriteriaData(service, outbound));
     }
 
 }

@@ -17,6 +17,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
       },
       {
+        path: ROUTING_PATHS.FILE_SEARCH,
+        loadChildren: () => import('./features/search/file-search/file-search.module').then(m => m.FileSearchModule)
+      },
+      {
         path: ROUTING_PATHS.ENTITIES,
         loadChildren: () => import('./features/setup/entities/entities.module').then(m => m.EntitiesModule)
       },

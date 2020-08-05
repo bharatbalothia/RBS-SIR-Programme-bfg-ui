@@ -49,6 +49,7 @@ public class FileSearchService {
         Map<String, String> fileSearchCriteriaMap = objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
         });
         fileSearchCriteriaMap.values().removeIf(Objects::isNull);
+
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
         fileSearchCriteriaMap.forEach(fileSearchCriteriaMultiValueMap::add);
 
@@ -61,8 +62,13 @@ public class FileSearchService {
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class);
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        JsonNode totalRows = root.get("totalRows");
+            JsonNode root = null;
+            try {
+                root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            JsonNode totalRows = root.get("totalRows");
         JsonNode results = root.get("results");
         Integer totalElements = objectMapper.convertValue(totalRows, Integer.class);
         List<File> fileList = objectMapper.convertValue(results, List.class);

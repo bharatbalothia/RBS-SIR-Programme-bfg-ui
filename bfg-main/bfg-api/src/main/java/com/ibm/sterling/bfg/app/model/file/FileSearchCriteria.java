@@ -1,5 +1,7 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,9 @@ public class FileSearchCriteria {
     private Integer entityid;
     private Boolean override;
     private Boolean outbound;
+    @JsonProperty("bp-state")
+    private BpState bpState;
+    private Integer status;
     private Integer wfid;
     private String filename;
     private Integer start;
@@ -125,4 +130,19 @@ public class FileSearchCriteria {
         this.to = to;
     }
 
+    public BpState getBpState() {
+        return bpState;
+    }
+
+    public void setBpState(BpState bpState) {
+        this.bpState = bpState;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }

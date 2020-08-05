@@ -3,6 +3,8 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.model.file.BpState;
+import com.ibm.sterling.bfg.app.model.file.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,9 @@ public class PropertyService {
 
     public Map<String, List<String>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
         Map<String, List<String>> fileCriteriaData = new HashMap<>();
+        fileCriteriaData.put("service", valuesOfEnum(com.ibm.sterling.bfg.app.model.file.Service.class));
+        fileCriteriaData.put("direction", valuesOfEnum(Direction.class));
+        fileCriteriaData.put("bp-state", valuesOfEnum(BpState.class));
         fileCriteriaData.put("type",
                 Arrays.asList(getPropertyList(
                         settings.getFileUrl() + "?" + PROPERTY_KEY + "=" + settings.getSearchFileTypesKey())
@@ -62,6 +67,12 @@ public class PropertyService {
                                 }
                         ).collect(Collectors.toList()));
         return fileCriteriaData;
+    }
+
+    public static <T extends Enum<T>> List<String> valuesOfEnum(
+            Class<T> enumeration) {
+        List<T> ts = Arrays.asList(enumeration.getEnumConstants());
+        return ts.stream().map(Enum::name).collect(Collectors.toList());
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

@@ -42,7 +42,7 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, List<String>> getFileCriteriaData() throws JsonProcessingException {
+    public Map<String, List<String>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
         Map<String, List<String>> fileCriteriaData = new HashMap<>();
         fileCriteriaData.put("type",
                 Arrays.asList(getPropertyList(
@@ -52,7 +52,9 @@ public class PropertyService {
                         .split(",")));
         fileCriteriaData.put("fileStatus",
                 getPropertyList(settings.getFileUrl() + "?_where=con(" + PROPERTY_KEY + "," +
-                        settings.getFileStatusPrefixKey() + ")").stream()
+                        Optional.ofNullable(service).orElse("") + settings.getFileStatusPrefixKey() +
+                        Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse("") + ")"
+                ).stream()
                         .map(property -> {
                                     String propertyKey = property.get(PROPERTY_KEY);
                                     return "[" + propertyKey.substring(propertyKey.lastIndexOf(".") + 1) + "] " +

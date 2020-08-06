@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 
@@ -49,16 +51,20 @@ public class PropertyService {
         fileCriteriaData.put("service", valuesOfEnum(com.ibm.sterling.bfg.app.model.file.Service.class));
         fileCriteriaData.put("direction", valuesOfEnum(Direction.class));
         fileCriteriaData.put("bp-state", valuesOfEnum(BpState.class));
+        Function<String, String> queryStringToGetDataByKey = attributeValue ->
+                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
         fileCriteriaData.put("type",
-                Arrays.asList(getPropertyList(
-                        settings.getFileUrl() + "?" + PROPERTY_KEY + "=" + settings.getSearchFileTypesKey())
-                        .get(0)
-                        .get(PROPERTY_VALUE)
-                        .split(",")));
+                getPropertyList(settings.getFileUrl() +
+                        queryStringToGetDataByKey.apply(
+                                settings.getFileSearchPrefixKey() + "types." + Optional.ofNullable(service).orElse(""))
+                ).stream()
+                        .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                        .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus",
-                getPropertyList(settings.getFileUrl() + "?_where=con(" + PROPERTY_KEY + "," +
-                        Optional.ofNullable(service).orElse("") + settings.getFileStatusPrefixKey() +
-                        Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse("") + ")"
+                getPropertyList(settings.getFileUrl() +
+                        queryStringToGetDataByKey.apply(
+                                Optional.ofNullable(service).orElse("") + settings.getFileStatusPrefixKey() +
+                                        Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse(""))
                 ).stream()
                         .map(property -> {
                                     String propertyKey = property.get(PROPERTY_KEY);
@@ -69,7 +75,7 @@ public class PropertyService {
         return fileCriteriaData;
     }
 
-    public static <T extends Enum<T>> List<String> valuesOfEnum(
+    private static <T extends Enum<T>> List<String> valuesOfEnum(
             Class<T> enumeration) {
         List<T> ts = Arrays.asList(enumeration.getEnumConstants());
         return ts.stream().map(Enum::name).collect(Collectors.toList());

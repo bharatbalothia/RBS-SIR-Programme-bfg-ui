@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 

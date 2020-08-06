@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 public class FileSearchCriteria {
-    private String service;
+    private Service service;
     private String reference;
     private Long messageid;
     private Integer entityid;
@@ -25,11 +25,11 @@ public class FileSearchCriteria {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime to;
 
-    public String getService() {
+    public Service getService() {
         return service;
     }
 
-    public void setService(String service) {
+    public void setService(Service service) {
         this.service = service;
     }
 

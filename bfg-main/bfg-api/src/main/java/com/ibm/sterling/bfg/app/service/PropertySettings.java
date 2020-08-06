@@ -20,6 +20,7 @@ public class PropertySettings {
     private String fileSearchPrefixKey;
     private String fileUrl;
     private String fileStatusPrefixKey;
+    private String[] fileSearchPostfixKey;
 
     public String getUserName() {
         return userName;
@@ -125,4 +126,11 @@ public class PropertySettings {
         this.fileStatusPrefixKey = fileStatusPrefixKey;
     }
 
+    public String[] getFileSearchPostfixKey() {
+        return fileSearchPostfixKey;
+    }
+
+    public void setFileSearchPostfixKey(String[] fileSearchPostfixKey) {
+        this.fileSearchPostfixKey = fileSearchPostfixKey;
+    }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.file.BpState;
-import com.ibm.sterling.bfg.app.model.file.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -48,11 +47,24 @@ public class PropertyService {
 
     public Map<String, List<String>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
         Map<String, List<String>> fileCriteriaData = new HashMap<>();
-        fileCriteriaData.put("service", valuesOfEnum(com.ibm.sterling.bfg.app.model.file.Service.class));
-        fileCriteriaData.put("direction", valuesOfEnum(Direction.class));
-        fileCriteriaData.put("bp-state", valuesOfEnum(BpState.class));
+
         Function<String, String> queryStringToGetDataByKey = attributeValue ->
                 "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
+
+        Arrays.asList(settings.getFileSearchPostfixKey())
+                .forEach(value -> {
+                    try {
+                        fileCriteriaData.put(value, getPropertyList(settings.getFileUrl() +
+                                queryStringToGetDataByKey.apply(
+                                        settings.getFileSearchPrefixKey() + value)
+                        ).stream()
+                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                                .collect(Collectors.toList()));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
+
         fileCriteriaData.put("type",
                 getPropertyList(settings.getFileUrl() +
                         queryStringToGetDataByKey.apply(
@@ -73,12 +85,6 @@ public class PropertyService {
                                 }
                         ).collect(Collectors.toList()));
         return fileCriteriaData;
-    }
-
-    private static <T extends Enum<T>> List<String> valuesOfEnum(
-            Class<T> enumeration) {
-        List<T> ts = Arrays.asList(enumeration.getEnumConstants());
-        return ts.stream().map(Enum::name).collect(Collectors.toList());
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,8 +18,10 @@ public class FileSearchCriteria {
     private Integer status;
     private Integer wfid;
     private String filename;
-    private Integer start;
-    private Integer rows;
+    @JsonAlias("page")
+    private Integer start = 0;
+    @JsonAlias("size")
+    private Integer rows = 10;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime from;
     private String type;
@@ -144,4 +147,5 @@ public class FileSearchCriteria {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
 }

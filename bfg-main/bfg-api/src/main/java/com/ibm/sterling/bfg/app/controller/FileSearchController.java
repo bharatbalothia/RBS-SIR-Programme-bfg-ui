@@ -1,7 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.model.file.BpState;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.service.FileSearchService;
@@ -27,13 +26,9 @@ public class FileSearchController {
     @Autowired
     private PropertyService propertyService;
 
-    @GetMapping
-    public Page<File> getFiles(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-                               @RequestBody(required = false) FileSearchCriteria fileSearchCriteria)
-            throws JsonProcessingException {
-        return fileSearchService.getFilesList(
-                Optional.ofNullable(fileSearchCriteria).orElse(new FileSearchCriteria()), page, size);
+    @PostMapping
+    public Page<File> getFiles(@RequestBody(required = false) FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        return fileSearchService.getFilesList(Optional.ofNullable(fileSearchCriteria).orElse(new FileSearchCriteria()));
     }
 
     @GetMapping("file-criteria-data")

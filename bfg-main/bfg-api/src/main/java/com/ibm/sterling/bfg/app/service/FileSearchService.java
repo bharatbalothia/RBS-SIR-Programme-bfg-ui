@@ -38,7 +38,7 @@ public class FileSearchService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria, Integer page, Integer size) throws JsonProcessingException {
+    public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         String userCredentials = userName + ":" + password;
         headers.set(HttpHeaders.AUTHORIZATION,
@@ -49,31 +49,21 @@ public class FileSearchService {
         Map<String, String> fileSearchCriteriaMap = objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
         });
         fileSearchCriteriaMap.values().removeIf(Objects::isNull);
-
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
         fileSearchCriteriaMap.forEach(fileSearchCriteriaMultiValueMap::add);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)
-                .queryParam("start", page)
-                .queryParam("rows", size)
                 .queryParams(fileSearchCriteriaMultiValueMap);
         ResponseEntity<String> response = new RestTemplate().exchange(
                 uriBuilder.build().toString(),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class);
-            JsonNode root = null;
-            try {
-                root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            JsonNode totalRows = root.get("totalRows");
-        JsonNode results = root.get("results");
-        Integer totalElements = objectMapper.convertValue(totalRows, Integer.class);
-        List<File> fileList = objectMapper.convertValue(results, List.class);
 
-        Pageable pageable = PageRequest.of(page, size);
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
         return new PageImpl<>(fileList, pageable, totalElements);
     }
 

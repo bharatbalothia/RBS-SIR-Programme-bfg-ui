@@ -1,0 +1,4 @@
+export const FILE_DIRECTIONS = {
+    INBOUND: 'INBOUND',
+    OUTBOUND: 'OUTBOUND',
+};

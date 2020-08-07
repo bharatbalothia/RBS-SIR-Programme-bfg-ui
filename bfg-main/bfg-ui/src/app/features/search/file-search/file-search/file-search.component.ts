@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
+import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
 
 @Component({
   selector: 'app-file-search',
@@ -26,6 +27,8 @@ export class FileSearchComponent implements OnInit {
 
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
+
+  selectedData: string;
 
   files: FilesWithPagination;
   displayedColumns: string[] = [
@@ -57,21 +60,30 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
+      entity: [''],
+      service: [''],
+      direction: [''],
       fileStatus: [''],
+      'bp-state': [''],
+      fileName: [''],
+      reference: [''],
       type: [''],
+      from: [''],
+      to: ['']
     });
   }
 
-  getFileCriteriaData = () => this.fileService.getFileCriteriaData()
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: FileCriteriaData) => {
-      this.isLoading = false;
-      this.fileCriteriaData = data;
-    },
-      error => {
+  getFileCriteriaData = (params?: { outbound?, service?: string }) =>
+    this.fileService.getFileCriteriaData(removeEmpties(params))
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: FileCriteriaData) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
+        this.fileCriteriaData = data;
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        })
 
   setLoading(data) {
     this.isLoading = true;
@@ -108,4 +120,17 @@ export class FileSearchComponent implements OnInit {
       this.getFileList(this.pageIndex, this.pageSize);
     }
   }
+
+  resetSearchParameters = () => this.searchingParametersFormGroup.reset();
+
+  onServiceSelect(event) {
+    this.getFileCriteriaData({ service: event.value });
+  }
+
+  onDirectionSelect(event) {
+    this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value) });
+  }
+
+  getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
+
 }

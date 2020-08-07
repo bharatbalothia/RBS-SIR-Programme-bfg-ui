@@ -12,6 +12,33 @@
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Searching Parameters</ng-template>
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
+                    <mat-label>{{getFileSearchDisplayName('entity')}}
+                    </mat-label>
+                    <mat-select formControlName="entity">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity">
+                            {{entity}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">
+                    <mat-label>{{getFileSearchDisplayName('service')}}
+                    </mat-label>
+                    <mat-select formControlName="service" (selectionChange)="onServiceSelect($event)">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option *ngFor="let service of fileCriteriaData.service" [value]="service">
+                            {{service}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.direction">
+                    <mat-label>{{getFileSearchDisplayName('direction')}}
+                    </mat-label>
+                    <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option *ngFor="let direction of fileCriteriaData.direction" [value]="direction">
+                            {{direction}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
                     <mat-label>{{getFileSearchDisplayName('fileStatus')}}
                     </mat-label>
@@ -20,6 +47,23 @@
                         <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
                             {{fileStatus}}</mat-option>
                     </mat-select>
+                </mat-form-field>
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData['bp-state']">
+                    <mat-label>{{getFileSearchDisplayName('bp-state')}}
+                    </mat-label>
+                    <mat-select formControlName="bp-state">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option *ngFor="let bpState of fileCriteriaData['bp-state']" [value]="bpState">
+                            {{bpState}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>{{getFileSearchDisplayName('fileName')}}</mat-label>
+                    <input matInput formControlName="fileName">
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
+                    <input matInput formControlName="reference">
                 </mat-form-field>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.type">
                     <mat-label>{{getFileSearchDisplayName('type')}}
@@ -30,8 +74,22 @@
                             {{type}}</mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field>
+                    <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+                    <input [owlDateTime]="from" matInput [owlDateTimeTrigger]="from" [selectMode]="'rangeFrom'"
+                        [(ngModel)]="selectedData" formControlName="from">
+                    <owl-date-time #from></owl-date-time>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+                    <input [owlDateTime]="to" matInput [owlDateTimeTrigger]="to" [selectMode]="'rangeTo'"
+                        [(ngModel)]="selectedData" formControlName="to">
+                    <owl-date-time #to></owl-date-time>
+                </mat-form-field>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
+                        Reset</button>
                 </div>
             </form>
         </mat-step>

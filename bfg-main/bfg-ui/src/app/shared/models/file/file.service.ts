@@ -15,12 +15,12 @@ export class FileService {
     constructor(private http: HttpClient) {
     }
 
-    getFileCriteriaData() {
-        return this.http.get<FileCriteriaData>(this.apiUrl + 'file-criteria-data');
+    getFileCriteriaData(params?: { outbound?, service?: string }) {
+        return this.http.get<FileCriteriaData>(this.apiUrl + 'file-criteria-data', { params });
     }
 
     getFileList(params?): Observable<FilesWithPagination> {
-        return this.http.get<FilesWithPagination>(this.apiUrl, { params });
+        return this.http.post<FilesWithPagination>(this.apiUrl, params);
     }
 
 }

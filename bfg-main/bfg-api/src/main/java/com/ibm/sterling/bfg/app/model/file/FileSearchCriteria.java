@@ -7,14 +7,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 public class FileSearchCriteria {
-    private Service service;
+    private String service;
     private String reference;
     private Long messageid;
     private Integer entityid;
     private Boolean override;
     private Boolean outbound;
     @JsonProperty("bp-state")
-    private BpState bpState;
+    private String bpState;
     private Integer status;
     private Integer wfid;
     private String filename;
@@ -28,11 +28,11 @@ public class FileSearchCriteria {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime to;
 
-    public Service getService() {
+    public String getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(String service) {
         this.service = service;
     }
 
@@ -132,11 +132,11 @@ public class FileSearchCriteria {
         this.to = to;
     }
 
-    public BpState getBpState() {
+    public String getBpState() {
         return bpState;
     }
 
-    public void setBpState(BpState bpState) {
+    public void setBpState(String bpState) {
         this.bpState = bpState;
     }
 

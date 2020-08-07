@@ -64,7 +64,7 @@ public class FileSearchService {
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
         Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
-        return new PageImpl<>(fileList, pageable, totalElements);
+        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
     }
 
 }

@@ -46,11 +46,9 @@ public class FileSearchService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        Map<String, String> fileSearchCriteriaMap = objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
-        });
-        fileSearchCriteriaMap.values().removeIf(Objects::isNull);
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
-        fileSearchCriteriaMap.forEach(fileSearchCriteriaMultiValueMap::add);
+        objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
+        }).forEach(fileSearchCriteriaMultiValueMap::add);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)
                 .queryParams(fileSearchCriteriaMultiValueMap);

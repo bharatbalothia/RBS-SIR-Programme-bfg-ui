@@ -96,7 +96,7 @@
             </form>
         </mat-step>
         <mat-step>
-            <h3 *ngIf="files">
+            <h3 *ngIf="files && files.totalElements">
                 {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
             </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
@@ -186,10 +186,11 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1" [getRows]="getFileList.bind(this)"
-                    [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-                    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
-                    [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
+                <app-table-paginator [value]="pageIndex + 1"
+                    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages"
+                    [length]="files.totalElements" [pageIndex]="files.pageable.pageNumber"
+                    [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+                </app-table-paginator>
 
             </div>
             <div class='stepper-actions'>

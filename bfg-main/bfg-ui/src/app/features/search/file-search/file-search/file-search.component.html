@@ -96,6 +96,9 @@
             </form>
         </mat-step>
         <mat-step>
+            <h3 *ngIf="files">
+                {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
+            </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
             <div class="mat-elevation-z8" *ngIf="files">
                 <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
@@ -126,6 +129,20 @@
                         <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element.reference}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.type}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="service">
+                        <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.service}}
                         </mat-cell>
                     </ng-container>
 

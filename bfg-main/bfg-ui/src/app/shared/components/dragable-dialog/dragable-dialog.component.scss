@@ -1,0 +1,20 @@
+.header {
+    display: flex;
+    align-self: center;
+
+    .close-icon {
+        margin-left: auto;
+    }
+}
+
+.mat-dialog-actions {
+
+    display: block;
+
+    .close-button {
+        float: right;
+    }
+}
+
+::ng-deep.dragable-dialog-container {
+}

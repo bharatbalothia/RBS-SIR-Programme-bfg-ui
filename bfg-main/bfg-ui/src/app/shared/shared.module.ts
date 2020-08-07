@@ -38,6 +38,8 @@ import { TablePaginatorComponent } from './components/table-paginator/table-pagi
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { DragDropModule} from '@angular/cdk/drag-drop';
+import { DragableDialogComponent } from './components/dragable-dialog/dragable-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
+    DragableDialogComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +87,8 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
     MatPaginatorModule,
     MatTabsModule,
     OwlDateTimeModule,
-    OwlNativeDateTimeModule
+    OwlNativeDateTimeModule,
+    DragDropModule
   ],
   exports: [
     // Modules
@@ -127,7 +131,8 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
-    TooltipComponent
+    TooltipComponent,
+    DragableDialogComponent
   ]
 })
 export class SharedModule { }

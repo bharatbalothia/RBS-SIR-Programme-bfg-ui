@@ -39,7 +39,7 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
 import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { DragDropModule} from '@angular/cdk/drag-drop';
-import { DragableDialogComponent } from './components/dragable-dialog/dragable-dialog.component';
+import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +56,7 @@ import { DragableDialogComponent } from './components/dragable-dialog/dragable-d
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
-    DragableDialogComponent
+    DragableDialogWrapperComponent
   ],
   imports: [
     CommonModule,
@@ -131,8 +131,7 @@ import { DragableDialogComponent } from './components/dragable-dialog/dragable-d
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
-    TooltipComponent,
-    DragableDialogComponent
+    TooltipComponent
   ]
 })
 export class SharedModule { }

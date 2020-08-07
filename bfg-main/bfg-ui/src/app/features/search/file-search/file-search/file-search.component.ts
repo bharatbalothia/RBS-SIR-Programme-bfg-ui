@@ -10,6 +10,7 @@ import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
+import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
 
 @Component({
   selector: 'app-file-search',
@@ -19,6 +20,8 @@ import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
 export class FileSearchComponent implements OnInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
+  getFileStatusIcon = getFileStatusIcon;
+  FILE_STATUS_ICON = FILE_STATUS_ICON;
 
   isLinear = true;
 
@@ -32,7 +35,6 @@ export class FileSearchComponent implements OnInit {
 
   files: FilesWithPagination;
   displayedColumns: string[] = [
-    'select',
     'status',
     'id',
     'fileName',
@@ -64,7 +66,7 @@ export class FileSearchComponent implements OnInit {
       service: [''],
       direction: [''],
       fileStatus: [''],
-      'bp-state': [''],
+      bpstate: [''],
       fileName: [''],
       reference: [''],
       type: [''],

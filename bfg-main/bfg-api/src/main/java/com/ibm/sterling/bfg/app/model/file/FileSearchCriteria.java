@@ -1,9 +1,7 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
+import com.ibm.sterling.bfg.app.model.validation.DateValid;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 
@@ -26,11 +24,11 @@ public class FileSearchCriteria {
     @JsonAlias("size")
     @JsonSetter(nulls = Nulls.SKIP)
     private Integer rows = 10;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime from;
+    @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for from")
+    private String from;
     private String type;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime to;
+    @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for to")
+    private String to;
 
     public String getService() {
         return service;
@@ -112,11 +110,11 @@ public class FileSearchCriteria {
         this.rows = rows;
     }
 
-    public LocalDateTime getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(LocalDateTime from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
@@ -128,11 +126,11 @@ public class FileSearchCriteria {
         this.type = type;
     }
 
-    public LocalDateTime getTo() {
+    public String getTo() {
         return to;
     }
 
-    public void setTo(LocalDateTime to) {
+    public void setTo(String to) {
         this.to = to;
     }
 

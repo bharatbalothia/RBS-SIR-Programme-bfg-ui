@@ -34,8 +34,8 @@ export class FileSearchComponent implements OnInit {
   fileCriteriaData: FileCriteriaData;
 
   defaultSelectedData: string[] = [
-    moment().subtract(1, 'months').hours(0).minutes(0).seconds(0).toISOString(),
-    moment().add(1, 'days').hours(11).minutes(59).seconds(0).toISOString()
+    moment().subtract(1, 'months').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
+    moment().add(1, 'days').hours(11).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
   ];
 
   selectedData: string[];
@@ -109,8 +109,8 @@ export class FileSearchComponent implements OnInit {
     this.errorMessage = null;
     this.fileService.getFileList(removeEmpties({
       ...this.searchingParametersFormGroup.value,
-      from: get(this.searchingParametersFormGroup.get('from'), 'value[0]'),
-      to: get(this.searchingParametersFormGroup.get('to'), 'value[1]'),
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value[0]')),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: FilesWithPagination) => {
@@ -125,6 +125,8 @@ export class FileSearchComponent implements OnInit {
         this.errorMessage = getApiErrorMessage(error);
       });
   }
+
+  convertDateToFormat = (date: string) => moment(date).isValid() ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : null;
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.files.content);

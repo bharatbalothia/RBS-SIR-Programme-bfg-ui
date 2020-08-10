@@ -39,6 +39,27 @@ public class FileSearchService {
     private ObjectMapper objectMapper;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        JsonNode root = getFileListFromSBI(fileSearchCriteria);
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
+        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+    }
+
+    public Optional<File> getFileById(Integer id) throws JsonProcessingException {
+        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        fileSearchCriteria.setId(id);
+        JsonNode root = getFileListFromSBI(fileSearchCriteria);
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        if (totalElements == 1) {
+            List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+            return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         String userCredentials = userName + ":" + password;
         headers.set(HttpHeaders.AUTHORIZATION,
@@ -58,11 +79,6 @@ public class FileSearchService {
                 new HttpEntity<>(headers),
                 String.class);
 
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
-        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+        return objectMapper.readTree(Objects.requireNonNull(response.getBody()));
     }
-
 }

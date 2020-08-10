@@ -10,6 +10,9 @@ import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
+import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
+import { get } from 'lodash';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-file-search',
@@ -19,6 +22,8 @@ import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
 export class FileSearchComponent implements OnInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
+  getFileStatusIcon = getFileStatusIcon;
+  FILE_STATUS_ICON = FILE_STATUS_ICON;
 
   isLinear = true;
 
@@ -28,15 +33,21 @@ export class FileSearchComponent implements OnInit {
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
 
-  selectedData: string;
+  defaultSelectedData: string[] = [
+    moment().subtract(1, 'months').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
+    moment().add(1, 'days').hours(11).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
+  ];
+
+  selectedData: string[];
 
   files: FilesWithPagination;
   displayedColumns: string[] = [
-    'select',
     'status',
     'id',
     'fileName',
     'reference',
+    'type',
+    'service',
     'timestamp',
     'WFID',
     'error',
@@ -51,7 +62,9 @@ export class FileSearchComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private fileService: FileService
-  ) { }
+  ) {
+    this.selectedData = this.defaultSelectedData;
+  }
 
   ngOnInit(): void {
     this.initializeSearchingParametersFormGroup();
@@ -64,12 +77,12 @@ export class FileSearchComponent implements OnInit {
       service: [''],
       direction: [''],
       fileStatus: [''],
-      'bp-state': [''],
+      bpstate: [''],
       fileName: [''],
       reference: [''],
       type: [''],
-      from: [''],
-      to: ['']
+      from: [this.defaultSelectedData],
+      to: [this.defaultSelectedData]
     });
   }
 
@@ -96,6 +109,8 @@ export class FileSearchComponent implements OnInit {
     this.errorMessage = null;
     this.fileService.getFileList(removeEmpties({
       ...this.searchingParametersFormGroup.value,
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value[0]')),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: FilesWithPagination) => {
@@ -111,6 +126,8 @@ export class FileSearchComponent implements OnInit {
       });
   }
 
+  convertDateToFormat = (date: string) => moment(date).isValid() ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : null;
+
   updateTable() {
     this.dataSource = new MatTableDataSource(this.files.content);
   }
@@ -121,16 +138,21 @@ export class FileSearchComponent implements OnInit {
     }
   }
 
-  resetSearchParameters = () => this.searchingParametersFormGroup.reset();
-
-  onServiceSelect(event) {
-    this.getFileCriteriaData({ service: event.value });
+  resetSearchParameters = () => {
+    this.initializeSearchingParametersFormGroup();
+    this.getFileCriteriaData();
   }
 
-  onDirectionSelect(event) {
-    this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value) });
-  }
+  onServiceSelect = (event) => this.getFileCriteriaData({ service: event.value });
+
+  onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value.toUpperCase()) });
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
+
+  getSearchingTableHeader(totalElements: number, pageSize: number, page: number) {
+    const start = (page * pageSize) - (pageSize - 1);
+    const end = Math.min(start + pageSize - 1, totalElements);
+    return `Items ${start}-${end} of ${totalElements}`;
+  }
 
 }

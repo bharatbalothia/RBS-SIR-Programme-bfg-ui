@@ -48,13 +48,15 @@
                             {{fileStatus}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData['bp-state']">
-                    <mat-label>{{getFileSearchDisplayName('bp-state')}}
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+                    <mat-label>{{getFileSearchDisplayName('bpstate')}}
                     </mat-label>
-                    <mat-select formControlName="bp-state">
+                    <mat-select formControlName="bpstate">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let bpState of fileCriteriaData['bp-state']" [value]="bpState">
-                            {{bpState}}</mat-option>
+                        <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
+                            <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
+                            {{bpstate}}
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field>
@@ -94,70 +96,81 @@
             </form>
         </mat-step>
         <mat-step>
+            <h3 *ngIf="files && files.totalElements">
+                {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
+            </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
             <div class="mat-elevation-z8" *ngIf="files">
                 <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
 
-                    <ng-container matColumnDef="select">
-                        <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            Select
-                        </mat-cell>
-                    </ng-container>
-
                     <ng-container matColumnDef="status">
                         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            Status
+                            <mat-icon [svgIcon]="getFileStatusIcon(element.status)"></mat-icon>
+                            &nbsp;{{element.status}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="id">
                         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            ID
+                            {{element.id}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="fileName">
                         <mat-header-cell *matHeaderCellDef> FileName </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            FileName
+                            {{element.filename}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="reference">
                         <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            reference
+                            {{element.reference}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.type}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="service">
+                        <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.service}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="timestamp">
                         <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            TimeStamp
+                            {{element.timestamp}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="WFID">
                         <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            WFID
+                            {{element.workflowID}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="error">
                         <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            error
+                            {{element.errorCode}}
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="transactions">
                         <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            Transactions
+                            <mat-icon inline>info</mat-icon>&nbsp;info
                         </mat-cell>
                     </ng-container>
 
@@ -173,10 +186,11 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1" [getRows]="getFileList.bind(this)"
-                    [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-                    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
-                    [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
+                <app-table-paginator [value]="pageIndex + 1"
+                    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages"
+                    [length]="files.totalElements" [pageIndex]="files.pageable.pageNumber"
+                    [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+                </app-table-paginator>
 
             </div>
             <div class='stepper-actions'>

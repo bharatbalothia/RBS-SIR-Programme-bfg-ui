@@ -2,8 +2,8 @@ package com.ibm.sterling.bfg.app.model.file;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.security.Timestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDateTime;
 
 public class File {
     private static final long serialVersionUID = 1L;
@@ -16,7 +16,8 @@ public class File {
     private String reference;
     private String type;
     private String service;
-    private Timestamp timestamp;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timestamp;
     private Integer workflowID;
     private String entityID;
     private Integer messageID;
@@ -81,11 +82,11 @@ public class File {
         this.service = service;
     }
 
-    public Timestamp getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

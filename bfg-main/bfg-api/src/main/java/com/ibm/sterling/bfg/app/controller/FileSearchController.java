@@ -1,9 +1,7 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
@@ -18,7 +16,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -53,13 +50,13 @@ public class FileSearchController {
 
     @GetMapping("{fileId}/transactions/{transactionId}")
     public Transaction getTransactionById(@PathVariable Integer fileId,
-                                                     @PathVariable Integer transactionId)
+                                          @PathVariable Integer transactionId)
             throws JsonProcessingException {
         return fileSearchService.getTransactionById(fileId, transactionId).orElseThrow(FileNotFoundException::new);
     }
 
     @GetMapping("file-criteria-data")
-    public ResponseEntity<Map<String, List<String>>> getFileCriteriaData(
+    public ResponseEntity<Map<String, List<Object>>> getFileCriteriaData(
             @RequestParam(value = "service", required = false) String service,
             @RequestParam(value = "outbound", required = false) Boolean outbound) throws JsonProcessingException {
         return ok(propertyService.getFileCriteriaData(service, outbound));

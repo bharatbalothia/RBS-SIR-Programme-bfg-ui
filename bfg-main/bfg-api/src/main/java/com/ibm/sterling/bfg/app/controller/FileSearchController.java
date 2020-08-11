@@ -1,11 +1,10 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
+import com.ibm.sterling.bfg.app.model.file.Transaction;
 import com.ibm.sterling.bfg.app.service.FileSearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -42,8 +40,23 @@ public class FileSearchController {
                 .orElseThrow(FileNotFoundException::new));
     }
 
+    @GetMapping("{fileId}/transactions")
+    public Page<Transaction> getTransactionsForFiles(@PathVariable Integer fileId,
+                                                     @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                                     @RequestParam(value = "page", defaultValue = "0", required = false) Integer page)
+            throws JsonProcessingException {
+        return fileSearchService.getTransactionsList(fileId, size, page);
+    }
+
+    @GetMapping("{fileId}/transactions/{transactionId}")
+    public Transaction getTransactionById(@PathVariable Integer fileId,
+                                          @PathVariable Integer transactionId)
+            throws JsonProcessingException {
+        return fileSearchService.getTransactionById(fileId, transactionId).orElseThrow(FileNotFoundException::new);
+    }
+
     @GetMapping("file-criteria-data")
-    public ResponseEntity<Map<String, List<String>>> getFileCriteriaData(
+    public ResponseEntity<Map<String, List<Object>>> getFileCriteriaData(
             @RequestParam(value = "service", required = false) String service,
             @RequestParam(value = "outbound", required = false) Boolean outbound) throws JsonProcessingException {
         return ok(propertyService.getFileCriteriaData(service, outbound));

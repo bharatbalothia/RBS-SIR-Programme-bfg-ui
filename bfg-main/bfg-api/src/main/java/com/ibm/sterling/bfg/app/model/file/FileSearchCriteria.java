@@ -15,6 +15,7 @@ public class FileSearchCriteria {
     private Boolean override;
     private Boolean outbound;
     @JsonProperty("bp-state")
+    @JsonAlias("bpState")
     private String bpState;
     private Integer status;
     private Integer wfid;

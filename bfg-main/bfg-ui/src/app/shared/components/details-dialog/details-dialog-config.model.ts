@@ -13,7 +13,5 @@ export class DetailsDialogConfig extends MatDialogConfig<DetailsDialogData> {
             this.hasBackdrop = false;
             this.panelClass = 'dragable-dialog-wrapper-container';
         }
-        console.log(this.data);
-        
     }
 }

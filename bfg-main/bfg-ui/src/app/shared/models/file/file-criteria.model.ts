@@ -4,5 +4,5 @@ export interface FileCriteriaData {
     entity: string[];
     service: string[];
     direction: string[];
-    bpstate: string[];
+    bpState: string[];
 }

@@ -6,6 +6,7 @@ import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
+import com.ibm.sterling.bfg.app.model.file.Transaction;
 import com.ibm.sterling.bfg.app.service.FileSearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,21 @@ public class FileSearchController {
     public ResponseEntity<File> getFileById(@PathVariable Integer id) throws JsonProcessingException {
         return ok(fileSearchService.getFileById(id)
                 .orElseThrow(FileNotFoundException::new));
+    }
+
+    @GetMapping("{fileId}/transactions")
+    public Page<Transaction> getTransactionsForFiles(@PathVariable Integer fileId,
+                                                     @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                                     @RequestParam(value = "page", defaultValue = "0", required = false) Integer page)
+            throws JsonProcessingException {
+        return fileSearchService.getTransactionsList(fileId, size, page);
+    }
+
+    @GetMapping("{fileId}/transactions/{transactionId}")
+    public Transaction getTransactionById(@PathVariable Integer fileId,
+                                                     @PathVariable Integer transactionId)
+            throws JsonProcessingException {
+        return fileSearchService.getTransactionById(fileId, transactionId).orElseThrow(FileNotFoundException::new);
     }
 
     @GetMapping("file-criteria-data")

@@ -12,13 +12,13 @@
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Searching Parameters</ng-template>
-                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
-                    <mat-label>{{getFileSearchDisplayName('entity')}}
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entityID">
+                    <mat-label>{{getFileSearchDisplayName('entityID')}}
                     </mat-label>
-                    <mat-select formControlName="entity">
+                    <mat-select formControlName="entityID">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity">
-                            {{entity}}</mat-option>
+                        <mat-option *ngFor="let entityID of fileCriteriaData.entityID" [value]="entityID">
+                            {{entityID}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">
@@ -48,14 +48,14 @@
                             {{fileStatus}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
-                    <mat-label>{{getFileSearchDisplayName('bpstate')}}
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpState">
+                    <mat-label>{{getFileSearchDisplayName('bpState')}}
                     </mat-label>
-                    <mat-select formControlName="bpstate">
+                    <mat-select formControlName="bpState">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
-                            <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
-                            {{bpstate}}
+                        <mat-option *ngFor="let bpState of fileCriteriaData.bpState" [value]="bpState">
+                            <mat-icon [svgIcon]="FILE_STATUS_ICON[bpState | uppercase]"></mat-icon>
+                            {{bpState}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -114,7 +114,9 @@
                     <ng-container matColumnDef="id">
                         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.id}}
+                            <button mat-button (click)="openFileDetailsDialog(element)">
+                                {{element.id}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 
@@ -136,6 +138,7 @@
                         <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element.type}}
+                            <mat-icon>{{element.outbound ? 'call_made' : 'call_received'}}</mat-icon>
                         </mat-cell>
                     </ng-container>
 
@@ -186,10 +189,10 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator [value]="pageIndex + 1"
-                    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages"
-                    [length]="files.totalElements" [pageIndex]="files.pageable.pageNumber"
-                    [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+                <app-table-paginator [value]="pageIndex + 1" [getRows]="getFileList.bind(this)" [min]="1"
+                    [max]="files && files.totalPages" [length]="files.totalElements"
+                    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
+                    [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
                 </app-table-paginator>
 
             </div>

@@ -44,12 +44,10 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, List<String>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
-        Map<String, List<String>> fileCriteriaData = new HashMap<>();
-
+    public Map<String, List<Object>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
+        Map<String, List<Object>> fileCriteriaData = new HashMap<>();
         Function<String, String> queryStringToGetDataByKey = attributeValue ->
                 "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
-
         Arrays.asList(settings.getFileSearchPostfixKey())
                 .forEach(value -> {
                     try {
@@ -63,7 +61,6 @@ public class PropertyService {
                         e.printStackTrace();
                     }
                 });
-
         fileCriteriaData.put("type",
                 getPropertyList(settings.getFileUrl() +
                         queryStringToGetDataByKey.apply(
@@ -78,9 +75,19 @@ public class PropertyService {
                                         Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse(""))
                 ).stream()
                         .map(property -> {
+                                    Map<String, Object> fileStatusMap = new HashMap<>();
                                     String propertyKey = property.get(PROPERTY_KEY);
-                                    return "[" + propertyKey.substring(propertyKey.lastIndexOf(".") + 1) + "] " +
-                                            property.get(PROPERTY_VALUE);
+                                    fileStatusMap.put("service", propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
+                                    int indexOfLastDotInKey = propertyKey.lastIndexOf(".");
+                                    fileStatusMap.put("outbound", "outbound".equals(propertyKey.substring(
+                                            propertyKey.lastIndexOf(".", indexOfLastDotInKey - 1) + 1,
+                                            indexOfLastDotInKey)));
+                                    String noStatusLabel = property.get(PROPERTY_VALUE);
+                                    fileStatusMap.put("title", noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
+                                    String status = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
+                                    fileStatusMap.put("status", status);
+                                    fileStatusMap.put("label", "[" + status + "] " + noStatusLabel);
+                                    return fileStatusMap;
                                 }
                         ).collect(Collectors.toList()));
         return fileCriteriaData;

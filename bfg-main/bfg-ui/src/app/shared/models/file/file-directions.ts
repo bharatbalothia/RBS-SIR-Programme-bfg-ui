@@ -2,3 +2,7 @@ export const FILE_DIRECTIONS = {
     INBOUND: 'INBOUND',
     OUTBOUND: 'OUTBOUND',
 };
+
+export const getDirectionBooleanValue = (direction: string) => direction.toUpperCase() === FILE_DIRECTIONS.OUTBOUND;
+
+export const getDirectionStringValue = (outbound: boolean) => outbound ? FILE_DIRECTIONS.OUTBOUND : FILE_DIRECTIONS.INBOUND;

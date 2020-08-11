@@ -23,4 +23,8 @@ export class FileService {
         return this.http.post<FilesWithPagination>(this.apiUrl, params);
     }
 
+    getFileById(fileId: string) {
+        return this.http.get<File>(this.apiUrl + fileId);
+    }
+
 }

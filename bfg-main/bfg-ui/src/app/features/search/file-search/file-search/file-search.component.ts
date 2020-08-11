@@ -3,16 +3,19 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
-import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
+import { getDirectionBooleanValue } from 'src/app/shared/models/file/file-directions';
 import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 
 @Component({
   selector: 'app-file-search',
@@ -61,7 +64,8 @@ export class FileSearchComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private fileService: FileService
+    private fileService: FileService,
+    private dialog: MatDialog
   ) {
     this.selectedData = this.defaultSelectedData;
   }
@@ -73,11 +77,11 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entity: [''],
+      entityID: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],
-      bpstate: [''],
+      bpState: [''],
       fileName: [''],
       reference: [''],
       type: [''],
@@ -145,14 +149,39 @@ export class FileSearchComponent implements OnInit {
 
   onServiceSelect = (event) => this.getFileCriteriaData({ service: event.value });
 
-  onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value.toUpperCase()) });
-
-  getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
+  onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: getDirectionBooleanValue(event.value) });
 
   getSearchingTableHeader(totalElements: number, pageSize: number, page: number) {
     const start = (page * pageSize) - (pageSize - 1);
     const end = Math.min(start + pageSize - 1, totalElements);
     return `Items ${start}-${end} of ${totalElements}`;
+  }
+
+  openFileDetailsDialog(file: File) {
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `File - ${file.id}`,
+      tabs: getFileDetailsTabs(file),
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        actions: {
+          errorCode: () =>
+            this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+              title: ``,
+              tabs: [],
+              displayName: getFileSearchDisplayName,
+              isDragable: true
+            })),
+          transactionTotal: () =>
+            this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+              title: ``,
+              tabs: [],
+              displayName: getFileSearchDisplayName,
+              isDragable: true
+            }))
+        }
+      }
+    }));
   }
 
 }

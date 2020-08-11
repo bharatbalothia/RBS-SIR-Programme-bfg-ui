@@ -7,6 +7,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 
 @JsonInclude(NON_NULL)
 public class FileSearchCriteria {
+    private Integer id;
     private String service;
     private String reference;
     private Long messageid;
@@ -14,6 +15,7 @@ public class FileSearchCriteria {
     private Boolean override;
     private Boolean outbound;
     @JsonProperty("bp-state")
+    @JsonAlias("bpState")
     private String bpState;
     private Integer status;
     private Integer wfid;
@@ -29,6 +31,14 @@ public class FileSearchCriteria {
     private String type;
     @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for to")
     private String to;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getService() {
         return service;

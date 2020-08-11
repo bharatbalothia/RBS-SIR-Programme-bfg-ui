@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
+import com.ibm.sterling.bfg.app.model.file.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.*;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
@@ -39,6 +39,43 @@ public class FileSearchService {
     private ObjectMapper objectMapper;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
+        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+    }
+
+    public Optional<File> getFileById(Integer id) throws JsonProcessingException {
+        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        fileSearchCriteria.setId(id);
+        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        if (totalElements == 1) {
+            List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+            return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
+        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        fileSearchCriteria.setRows(size);
+        fileSearchCriteria.setStart(page);
+        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
+        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
+        List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
+        Pageable pageable = PageRequest.of(page, size);
+        return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
+
+    }
+
+    public Optional<Transaction> getTransactionById(Integer fileId, Integer transactionId) {
+        return Optional.empty();
+    }
+
+    private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         String userCredentials = userName + ":" + password;
         headers.set(HttpHeaders.AUTHORIZATION,
@@ -58,11 +95,8 @@ public class FileSearchService {
                 new HttpEntity<>(headers),
                 String.class);
 
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
-        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+        return objectMapper.readTree(Objects.requireNonNull(response.getBody()));
     }
+
 
 }

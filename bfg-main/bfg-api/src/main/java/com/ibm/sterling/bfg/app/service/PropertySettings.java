@@ -21,6 +21,8 @@ public class PropertySettings {
     private String fileUrl;
     private String fileStatusPrefixKey;
     private String[] fileSearchPostfixKey;
+    private String fileErrorUrl;
+    private String[] fileErrorPostfixKey;
 
     public String getUserName() {
         return userName;
@@ -132,5 +134,21 @@ public class PropertySettings {
 
     public void setFileSearchPostfixKey(String[] fileSearchPostfixKey) {
         this.fileSearchPostfixKey = fileSearchPostfixKey;
+    }
+
+    public String getFileErrorUrl() {
+        return fileErrorUrl;
+    }
+
+    public void setFileErrorUrl(String fileErrorUrl) {
+        this.fileErrorUrl = fileErrorUrl;
+    }
+
+    public String[] getFileErrorPostfixKey() {
+        return fileErrorPostfixKey;
+    }
+
+    public void setFileErrorPostfixKey(String[] fileErrorPostfixKey) {
+        this.fileErrorPostfixKey = fileErrorPostfixKey;
     }
 }

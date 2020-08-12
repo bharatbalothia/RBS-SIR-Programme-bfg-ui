@@ -101,7 +101,7 @@
             </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
             <div class="mat-elevation-z8" *ngIf="files">
-                <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+                <mat-table [dataSource]="dataSource">
 
                     <ng-container matColumnDef="status">
                         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
@@ -173,7 +173,10 @@
                     <ng-container matColumnDef="transactions">
                         <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-icon inline>info</mat-icon>&nbsp;info
+                            <button mat-button (click)="openTransactionsDialog(element)">
+                                <mat-icon inline>info</mat-icon>&nbsp;info
+                            </button>
+
                         </mat-cell>
                     </ng-container>
 

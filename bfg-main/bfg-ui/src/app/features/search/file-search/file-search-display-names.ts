@@ -1,6 +1,8 @@
-import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { Tab, TableActions } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { File } from 'src/app/shared/models/file/file.model';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
+import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
+import { Transaction } from 'src/app/shared/models/file/transaction.model';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     entityID: 'Entity',
@@ -20,6 +22,9 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     transactionTotal: 'Transactions',
     messageID: 'Message ID',
     status: 'Status',
+    settleAmount: 'Settle Amount',
+    settleDate: 'Settle Date',
+    transactionID: 'Transaction ID'
 };
 
 export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAMES[key] || key;
@@ -46,5 +51,34 @@ export const getFileDetailsTabs = (file: File): Tab[] => [
     {
         tabTitle: 'File Details',
         tabSections: [{ sectionItems: getFileDetailsSectionItems(file)['File Details'] }]
+    }
+].filter(el => el);
+
+export const getFileTransactionsTabs = (transactionList: TransactionsWithPagination, tableActions: TableActions): Tab[] => [
+    {
+        tabTitle: 'Transactions',
+        tabSections: [],
+        tableObject: {
+            tableColumns: ['id', 'transactionID', 'settleDate', 'settleAmount', 'type', 'status', 'workflowID'],
+            tableDataSource: transactionList.content,
+            tableActions
+        }
+    }
+].filter(el => el);
+
+export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
+    {
+        tabTitle: 'Transaction Details',
+        tabSections: [{
+            sectionItems: [
+                { fieldName: 'id', fieldValue: transaction.id },
+                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
+                { fieldName: 'settleDate', fieldValue: transaction.settleDate },
+                { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
+                { fieldName: 'type', fieldValue: transaction.type },
+                { fieldName: 'status', fieldValue: transaction.status },
+                { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+            ]
+        }]
     }
 ].filter(el => el);

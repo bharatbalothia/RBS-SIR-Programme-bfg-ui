@@ -3,7 +3,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getFileTransactionsTabs, getTransactionDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -16,6 +16,8 @@ import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
+import { Transaction } from 'src/app/shared/models/file/transaction.model';
 
 @Component({
   selector: 'app-file-search',
@@ -109,7 +111,6 @@ export class FileSearchComponent implements OnInit {
 
 
   getFileList(pageIndex: number, pageSize: number) {
-    this.isLoading = true;
     this.errorMessage = null;
     this.fileService.getFileList(removeEmpties({
       ...this.searchingParametersFormGroup.value,
@@ -117,7 +118,7 @@ export class FileSearchComponent implements OnInit {
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
       page: pageIndex.toString(),
       size: pageSize.toString()
-    })).pipe(take(1)).subscribe((data: FilesWithPagination) => {
+    })).pipe(data => this.setLoading(data)).pipe(take(1)).subscribe((data: FilesWithPagination) => {
       this.isLoading = false;
       this.pageIndex = pageIndex;
       this.pageSize = pageSize;
@@ -157,7 +158,7 @@ export class FileSearchComponent implements OnInit {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  openFileDetailsDialog(file: File) {
+  openFileDetailsDialog = (file: File) =>
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `File - ${file.id}`,
       tabs: getFileDetailsTabs(file),
@@ -172,16 +173,42 @@ export class FileSearchComponent implements OnInit {
               displayName: getFileSearchDisplayName,
               isDragable: true
             })),
-          transactionTotal: () =>
-            this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-              title: ``,
-              tabs: [],
-              displayName: getFileSearchDisplayName,
-              isDragable: true
-            }))
+          transactionTotal: () => this.openTransactionsDialog(file)
         }
       }
-    }));
-  }
+    }))
 
+  openTransactionsDialog = (file: File) => this.fileService.getTransactionListByFileId(file.id)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: TransactionsWithPagination) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Transactions for ${file.filename} [${file.id}]`,
+        tabs: getFileTransactionsTabs(data, {
+          transactionID: (transactionId) => this.openTransactionDetailsDialog(file.id, transactionId)
+        }),
+        displayName: getFileSearchDisplayName,
+        isDragable: true,
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
+
+  openTransactionDetailsDialog = (fileId: number, transactionId: number) => this.fileService.getTransactionById(fileId, transactionId)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: Transaction) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Transaction Details of ${data.transactionID}`,
+        tabs: getTransactionDetailsTabs(data),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 }

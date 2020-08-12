@@ -40,4 +40,7 @@ export class TabContentComponent implements OnInit {
 
   getClickAction = (fieldName) => get(this.actions, fieldName, (e) => e)();
 
+  isTableCellHasAction = (columnName) => get(this.tab, `tableObject.tableActions.${columnName}`, false);
+
+  getTableCellClickAction = (columnName, value) => get(this.tab, `tableObject.tableActions.${columnName}`, (e) => e)(value);
 }

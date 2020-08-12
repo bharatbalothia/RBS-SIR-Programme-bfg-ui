@@ -42,10 +42,10 @@
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
                     <mat-label>{{getFileSearchDisplayName('fileStatus')}}
                     </mat-label>
-                    <mat-select formControlName="fileStatus">
+                    <mat-select formControlName="status">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
-                            {{fileStatus}}</mat-option>
+                        <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus.status">
+                            {{fileStatus.label}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpState">

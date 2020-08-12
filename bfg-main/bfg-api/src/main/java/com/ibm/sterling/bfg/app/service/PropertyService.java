@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,14 @@ public class PropertyService {
                                 }
                         ).collect(Collectors.toList()));
         return fileCriteriaData;
+    }
+
+    public ErrorDetail getErrorDetailsByCode(String errorCode) {
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("code", errorCode);
+        errorDetails.put("name", "GENERIC_FA_SEND_FAILED");
+        errorDetails.put("description", "An error occurred in the Generic SWIFTNET Send Process during Compression using the GZIP Servic.");
+        return objectMapper.convertValue(errorDetails, ErrorDetail.class);
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

@@ -3,7 +3,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getFileTransactionsTabs, getTransactionDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getFileTransactionsTabs, getTransactionDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -18,6 +18,7 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
+import { FileError } from 'src/app/shared/models/file/file-error.model';
 
 @Component({
   selector: 'app-file-search',
@@ -166,13 +167,7 @@ export class FileSearchComponent implements OnInit {
       isDragable: true,
       actionData: {
         actions: {
-          errorCode: () =>
-            this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-              title: ``,
-              tabs: [],
-              displayName: getFileSearchDisplayName,
-              isDragable: true
-            })),
+          errorCode: () => this.openErrorDetailsDialog(file),
           transactionTotal: () => this.openTransactionsDialog(file)
         }
       }
@@ -203,6 +198,22 @@ export class FileSearchComponent implements OnInit {
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `Transaction Details of ${data.transactionID}`,
         tabs: getTransactionDetailsTabs(data),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
+
+  openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: FileError) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${data.code}`,
+        tabs: getErrorDetailsTabs(data),
         displayName: getFileSearchDisplayName,
         isDragable: true
       }));

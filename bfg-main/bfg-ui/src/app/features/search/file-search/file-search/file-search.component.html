@@ -166,7 +166,9 @@
                     <ng-container matColumnDef="error">
                         <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.errorCode}}
+                            <button mat-button (click)="openErrorDetailsDialog(element)">
+                                {{element.errorCode}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 

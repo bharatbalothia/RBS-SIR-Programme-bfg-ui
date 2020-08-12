@@ -3,6 +3,7 @@ import { File } from 'src/app/shared/models/file/file.model';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
+import { FileError } from 'src/app/shared/models/file/file-error.model';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     entityID: 'Entity',
@@ -24,7 +25,10 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     status: 'Status',
     settleAmount: 'Settle Amount',
     settleDate: 'Settle Date',
-    transactionID: 'Transaction ID'
+    transactionID: 'Transaction ID',
+    code: 'Error Code',
+    name: 'Name',
+    description: 'Description'
 };
 
 export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAMES[key] || key;
@@ -78,6 +82,19 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'type', fieldValue: transaction.type },
                 { fieldName: 'status', fieldValue: transaction.status },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+            ]
+        }]
+    }
+].filter(el => el);
+
+export const getErrorDetailsTabs = (fileError: FileError): Tab[] => [
+    {
+        tabTitle: 'Error Details',
+        tabSections: [{
+            sectionItems: [
+                { fieldName: 'code', fieldValue: fileError.code },
+                { fieldName: 'name', fieldValue: fileError.name },
+                { fieldName: 'description', fieldValue: fileError.description },
             ]
         }]
     }

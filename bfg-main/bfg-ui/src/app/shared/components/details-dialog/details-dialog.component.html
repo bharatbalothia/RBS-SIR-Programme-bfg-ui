@@ -1,11 +1,25 @@
-<h2 mat-dialog-title>{{data.title}}</h2>
-<mat-dialog-content>
+<h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
+<app-dragable-dialog-wrapper *ngIf="data.isDragable">
+    <mat-dialog-content>
+        <mat-tab-group>
+            <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
+                <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [actions]="actions">
+                </app-tab-content>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
+    </mat-dialog-actions>
+</app-dragable-dialog-wrapper>
+
+<mat-dialog-content *ngIf="!data.isDragable">
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
             <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="!data.isDragable">
     <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
 </mat-dialog-actions>

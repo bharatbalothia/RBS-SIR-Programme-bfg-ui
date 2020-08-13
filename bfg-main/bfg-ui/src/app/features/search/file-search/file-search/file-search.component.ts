@@ -3,7 +3,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getFileTransactionsTabs, getTransactionDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -13,6 +13,13 @@ import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } fr
 import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
+import { Transaction } from 'src/app/shared/models/file/transaction.model';
+import { FileError } from 'src/app/shared/models/file/file-error.model';
+import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 
 @Component({
   selector: 'app-file-search',
@@ -63,7 +70,8 @@ export class FileSearchComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private fileService: FileService
+    private fileService: FileService,
+    private dialog: MatDialog
   ) {
     this.selectedData = this.defaultSelectedData;
   }
@@ -75,7 +83,7 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entity: [''],
+      entityID: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],
@@ -120,13 +128,13 @@ export class FileSearchComponent implements OnInit {
   }
 
   setLoading(data) {
+    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
 
 
   getFileList(pageIndex: number, pageSize: number) {
-    this.isLoading = true;
     this.errorMessage = null;
 
     const formData = {
@@ -192,6 +200,47 @@ export class FileSearchComponent implements OnInit {
     const end = Math.min(start + pageSize - 1, totalElements);
     return `Items ${start}-${end} of ${totalElements}`;
   }
+
+  openFileDetailsDialog = (file: File) =>
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `File - ${file.id}`,
+      tabs: getFileDetailsTabs(file),
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        actions: {
+          errorCode: () => this.openErrorDetailsDialog(file),
+          transactionTotal: () => this.openTransactionsDialog(file)
+        }
+      }
+    }))
+
+  openTransactionsDialog = (file: File) =>
+    this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
+      title: `Transactions for ${file.filename} [${file.id}]`,
+      tabs: [],
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        fileId: file.id
+      }
+    }))
+
+  openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: FileError) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${data.code}`,
+        tabs: getErrorDetailsTabs(data),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 
   setServiceAndDirectionFromStatus(fromStatus){
     if (fromStatus !== ''){

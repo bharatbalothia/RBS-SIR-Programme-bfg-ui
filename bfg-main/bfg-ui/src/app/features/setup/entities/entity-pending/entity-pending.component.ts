@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-entity-pending',
@@ -24,6 +25,8 @@ export class EntityPendingComponent implements OnInit {
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
 
   isLoading = true;
+  errorMessage: ErrorMessage;
+
   changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
   dataSource: MatTableDataSource<ChangeControl>;
@@ -50,7 +53,11 @@ export class EntityPendingComponent implements OnInit {
         this.pageSize = pageSize;
         this.changeControls = data;
         this.updateTable();
-      });
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   updateTable() {

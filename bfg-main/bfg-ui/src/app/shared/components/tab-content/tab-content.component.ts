@@ -14,6 +14,8 @@ export class TabContentComponent implements OnInit {
 
   @Input() displayName: (fieldName: string) => string;
 
+  @Input() actions;
+
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
 
   constructor() { }
@@ -36,4 +38,9 @@ export class TabContentComponent implements OnInit {
       : get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
   }
 
+  getClickAction = (fieldName) => get(this.actions, fieldName, (e) => e)();
+
+  isTableCellHasAction = (columnName) => get(this.tab, `tableObject.tableActions.${columnName}`, false);
+
+  getTableCellClickAction = (columnName, value) => get(this.tab, `tableObject.tableActions.${columnName}`, (e) => e)(value);
 }

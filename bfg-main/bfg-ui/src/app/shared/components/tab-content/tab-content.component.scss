@@ -9,7 +9,10 @@
     }
 
     .mat-cell {
-        word-break: break-all;
-        padding-right: 10px;
+
+        .mat-button {
+            padding: 0 !important;
+        }
     }
+
 }

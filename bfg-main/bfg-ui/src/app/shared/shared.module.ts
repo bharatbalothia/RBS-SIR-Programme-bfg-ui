@@ -37,7 +37,11 @@ import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
-import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE  } from 'ng-pick-datetime';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
+
+
 
 @NgModule({
   declarations: [
@@ -50,10 +54,11 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,
+    TooltipComponent,
+    DragableDialogWrapperComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
-    TooltipComponent,
   ],
   imports: [
     CommonModule,
@@ -84,11 +89,13 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     MatPaginatorModule,
     MatTabsModule,
     OwlDateTimeModule,
-    OwlNativeDateTimeModule
+    OwlNativeDateTimeModule,
+    DragDropModule
   ],
   exports: [
     // Modules
     CommonModule,
+    LayoutModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
@@ -106,6 +113,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     MatChipsModule,
     MatAutocompleteModule,
     MatRadioModule,
+    HttpClientModule,
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
@@ -115,6 +123,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     MatTabsModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
+    DragDropModule,
 
     // Components
     ConfirmDialogComponent,
@@ -124,6 +133,8 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,
+    TooltipComponent,
+    DragableDialogWrapperComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

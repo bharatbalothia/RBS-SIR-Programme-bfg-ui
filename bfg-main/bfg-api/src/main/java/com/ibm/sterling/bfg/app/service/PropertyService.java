@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,30 @@ public class PropertyService {
                                 }
                         ).collect(Collectors.toList()));
         return fileCriteriaData;
+    }
+
+    public ErrorDetail getErrorDetailsByCode(String errorCode) {
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("code", errorCode);
+        Function<String, String> queryStringToGetDataByKey = attributeValue ->
+                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
+        Arrays.asList(settings.getFileErrorPostfixKey())
+                .forEach(value -> {
+                    try {
+                        errorDetails.put(value.toLowerCase(), getPropertyList(settings.getFileUrl() +
+                                queryStringToGetDataByKey.apply(
+                                        errorCode + "." + value)
+                        ).stream()
+                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE)))
+                                .collect(Collectors.toList())
+                        .stream()
+                        .map(val -> String.valueOf(val))
+                        .collect(Collectors.joining("")));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
+        return objectMapper.convertValue(errorDetails, ErrorDetail.class);
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

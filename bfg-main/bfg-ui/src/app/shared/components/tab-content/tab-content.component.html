@@ -1,4 +1,5 @@
-<mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index" [dataSource]="dataSource.sectionItems">
+<mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
+    [dataSource]="dataSource.sectionItems">
     <ng-container matColumnDef="tableTitle">
         <mat-header-cell *matHeaderCellDef colspan="2">
             {{dataSource.sectionTitle}}
@@ -7,7 +8,7 @@
     <ng-container matColumnDef="fieldName">
         <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.fieldName}}
+            {{displayName(element.fieldName)}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="fieldValueBefore">
@@ -22,7 +23,9 @@
     <ng-container matColumnDef="fieldValue">
         <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <app-display-table-cell
+            <button mat-button *ngIf="element.isActionButton"
+                (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
+            <app-display-table-cell *ngIf="!element.isActionButton"
                 [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
             </app-display-table-cell>
         </mat-cell>
@@ -37,8 +40,7 @@
 
 <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">
     <ng-container matColumnDef="tableTitle">
-        <mat-header-cell class="section-title" *matHeaderCellDef
-            [attr.colspan]="tab.tableObject.tableColumns.length">
+        <mat-header-cell class="section-title" *matHeaderCellDef [attr.colspan]="tab.tableObject.tableColumns.length">
             {{tab.tableObject.tableTitle}}
         </mat-header-cell>
     </ng-container>
@@ -47,7 +49,10 @@
             {{displayName(item)}}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element[item]}}
+            <button mat-button *ngIf="isTableCellHasAction(item)"
+                (click)="getTableCellClickAction(item, element[item])">{{element[item]}}</button>
+            <app-display-table-cell *ngIf="!isTableCellHasAction(item)" [value]="element[item]">
+            </app-display-table-cell>
         </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="['tableTitle']" [hidden]="!tab.tableObject.tableTitle">

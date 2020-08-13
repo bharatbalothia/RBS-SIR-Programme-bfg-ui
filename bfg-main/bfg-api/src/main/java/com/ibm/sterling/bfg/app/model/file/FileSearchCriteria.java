@@ -19,9 +19,8 @@ public class FileSearchCriteria {
     private String bpState;
     private Integer status;
     private Integer wfid;
-    @JsonProperty("filename")
     @JsonAlias("fileName")
-    private String fileName;
+    private String filename;
     @JsonAlias("page")
     @JsonSetter(nulls = Nulls.SKIP)
     private Integer start = 0;
@@ -98,12 +97,12 @@ public class FileSearchCriteria {
         this.wfid = wfid;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public Integer getStart() {
@@ -161,5 +160,4 @@ public class FileSearchCriteria {
     public void setStatus(Integer status) {
         this.status = status;
     }
-
 }

@@ -1,5 +1,6 @@
 <h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
+    <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <mat-dialog-content>
         <mat-table [dataSource]="dataSource">
 
@@ -73,7 +74,7 @@
         </app-table-paginator>
     </mat-dialog-content>
     <mat-dialog-actions>
-        <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
         <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+        <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
     </mat-dialog-actions>
 </app-dragable-dialog-wrapper>

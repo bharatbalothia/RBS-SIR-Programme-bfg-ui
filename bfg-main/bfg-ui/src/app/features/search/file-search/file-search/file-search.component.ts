@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
-import { FILE_DIRECTIONS } from 'src/app/shared/models/file/file-directions';
+import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
@@ -76,7 +76,7 @@ export class FileSearchComponent implements OnInit {
       entity: [''],
       service: [''],
       direction: [''],
-      status: [''],
+      fileStatus: [''],
       bpState: [''],
       fileName: [''],
       reference: [''],
@@ -107,13 +107,20 @@ export class FileSearchComponent implements OnInit {
   getFileList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
     this.errorMessage = null;
-    this.fileService.getFileList(removeEmpties({
+
+    const formData = {
       ...this.searchingParametersFormGroup.value,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value[0]')),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
+      outbound: getDirectionBooleanValue(get(this.searchingParametersFormGroup.get('direction'), 'value')),
       page: pageIndex.toString(),
       size: pageSize.toString()
-    })).pipe(take(1)).subscribe((data: FilesWithPagination) => {
+    };
+    formData.status = formData.fileStatus.status;
+    formData.fileStatus = null;
+    formData.direction = null;
+
+    this.fileService.getFileList(removeEmpties(formData)).pipe(take(1)).subscribe((data: FilesWithPagination) => {
       this.isLoading = false;
       this.pageIndex = pageIndex;
       this.pageSize = pageSize;

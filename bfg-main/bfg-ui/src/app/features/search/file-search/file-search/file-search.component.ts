@@ -168,6 +168,7 @@ export class FileSearchComponent implements OnInit {
   onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value.toUpperCase()) });
 
   onStatusSelect = (event) => {
+    this.setServiceAndDirectionFromStatus(event.value);
   }
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
@@ -176,6 +177,42 @@ export class FileSearchComponent implements OnInit {
     const start = (page * pageSize) - (pageSize - 1);
     const end = Math.min(start + pageSize - 1, totalElements);
     return `Items ${start}-${end} of ${totalElements}`;
+  }
+
+  setServiceAndDirectionFromStatus(fromStatus){
+    if (fromStatus !== ''){
+      let refreshRequired = false;
+      const serviceControl = this.searchingParametersFormGroup.controls.service;
+      const initialService = serviceControl.value;
+      const directionControl = this.searchingParametersFormGroup.controls.direction;
+      const initialDirection = directionControl.value;
+      const filterObject = {
+        outbound: this.getDirectionValue(initialDirection.toUpperCase()),
+        service: initialService
+       };
+
+      const newService = this.fileCriteriaData.service.find((element) =>
+        element.toUpperCase() === fromStatus.service.toUpperCase()
+      );
+
+      const newDirection = this.fileCriteriaData.direction.find((element) =>
+        element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
+      );
+
+      if ( newDirection && (initialDirection !== newDirection) ){
+        directionControl.setValue(newDirection);
+        refreshRequired = true;
+        filterObject.outbound = this.getDirectionValue(newDirection.toUpperCase());
+      }
+      if ( newService && (initialService !== newService) ){
+        serviceControl.setValue(newService);
+        refreshRequired = true;
+        filterObject.service = newService;
+      }
+      if (refreshRequired){
+        this.getFileCriteriaData(filterObject);
+      }
+    }
   }
 
 }

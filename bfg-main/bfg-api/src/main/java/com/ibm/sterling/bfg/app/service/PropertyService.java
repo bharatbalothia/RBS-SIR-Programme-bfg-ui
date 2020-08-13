@@ -97,8 +97,24 @@ public class PropertyService {
     public ErrorDetail getErrorDetailsByCode(String errorCode) {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("code", errorCode);
-        errorDetails.put("name", "GENERIC_FA_SEND_FAILED");
-        errorDetails.put("description", "An error occurred in the Generic SWIFTNET Send Process during Compression using the GZIP Servic.");
+        Function<String, String> queryStringToGetDataByKey = attributeValue ->
+                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
+        Arrays.asList(settings.getFileErrorPostfixKey())
+                .forEach(value -> {
+                    try {
+                        errorDetails.put(value.toLowerCase(), getPropertyList(settings.getFileUrl() +
+                                queryStringToGetDataByKey.apply(
+                                        errorCode + "." + value)
+                        ).stream()
+                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE)))
+                                .collect(Collectors.toList())
+                        .stream()
+                        .map(val -> String.valueOf(val))
+                        .collect(Collectors.joining("")));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
         return objectMapper.convertValue(errorDetails, ErrorDetail.class);
     }
 

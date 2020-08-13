@@ -94,7 +94,7 @@ public class PropertyService {
         return fileCriteriaData;
     }
 
-    public ErrorDetail getErrorDetailsByCode(String errorCode) {
+    public Optional<ErrorDetail> getErrorDetailsByCode(String errorCode) {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("code", errorCode);
         Function<String, String> queryStringToGetDataByKey = attributeValue ->
@@ -115,7 +115,11 @@ public class PropertyService {
                         e.printStackTrace();
                     }
                 });
-        return objectMapper.convertValue(errorDetails, ErrorDetail.class);
+        ErrorDetail errorDetail = objectMapper.convertValue(errorDetails, ErrorDetail.class);
+        if (errorDetail.getName().isEmpty() && errorDetail.getDescription().isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(errorDetail);
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

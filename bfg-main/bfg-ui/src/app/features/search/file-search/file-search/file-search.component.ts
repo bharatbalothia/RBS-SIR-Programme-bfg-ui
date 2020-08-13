@@ -92,11 +92,24 @@ export class FileSearchComponent implements OnInit {
       .subscribe((data: FileCriteriaData) => {
         this.isLoading = false;
         this.fileCriteriaData = data;
+        this.persistSelectedFileStatus();
       },
         error => {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         })
+
+  persistSelectedFileStatus() {
+    const contol = this.searchingParametersFormGroup.controls.fileStatus;
+    const initialStatus = contol.value;
+    const valueInData = this.fileCriteriaData.fileStatus.find((val) => JSON.stringify(val) === JSON.stringify(initialStatus));
+    if (valueInData) {
+      console.log(valueInData);
+      contol.setValue(valueInData);
+    } else{
+      contol.setValue('');
+    }
+  }
 
   setLoading(data) {
     this.isLoading = true;
@@ -153,6 +166,9 @@ export class FileSearchComponent implements OnInit {
   onServiceSelect = (event) => this.getFileCriteriaData({ service: event.value });
 
   onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value.toUpperCase()) });
+
+  onStatusSelect = (event) => {
+  }
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
 

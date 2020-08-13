@@ -17,6 +17,10 @@ public class PropertySettings {
     private String caCertUrl;
     private String sysCertUrl;
     private String certIdKey;
+    private String fileSearchPrefixKey;
+    private String fileUrl;
+    private String fileStatusPrefixKey;
+    private String[] fileSearchPostfixKey;
 
     public String getUserName() {
         return userName;
@@ -56,6 +60,18 @@ public class PropertySettings {
 
     public String getCertIdKey() {
         return certIdKey;
+    }
+
+    public String getFileSearchPrefixKey() {
+        return fileSearchPrefixKey;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public String getFileStatusPrefixKey() {
+        return fileStatusPrefixKey;
     }
 
     public void setUserName(String userName) {
@@ -98,4 +114,23 @@ public class PropertySettings {
         this.certIdKey = certIdKey;
     }
 
+    public void setFileSearchPrefixKey(String fileSearchPrefixKey) {
+        this.fileSearchPrefixKey = fileSearchPrefixKey;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public void setFileStatusPrefixKey(String fileStatusPrefixKey) {
+        this.fileStatusPrefixKey = fileStatusPrefixKey;
+    }
+
+    public String[] getFileSearchPostfixKey() {
+        return fileSearchPostfixKey;
+    }
+
+    public void setFileSearchPostfixKey(String[] fileSearchPostfixKey) {
+        this.fileSearchPostfixKey = fileSearchPostfixKey;
+    }
 }

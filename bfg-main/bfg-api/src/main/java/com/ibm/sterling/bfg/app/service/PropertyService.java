@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 
 @Service
@@ -38,6 +42,55 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).equals(settings.getFileTypeKey()))
                 .flatMap(property -> Arrays.stream(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, List<Object>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
+        Map<String, List<Object>> fileCriteriaData = new HashMap<>();
+        Function<String, String> queryStringToGetDataByKey = attributeValue ->
+                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
+        Arrays.asList(settings.getFileSearchPostfixKey())
+                .forEach(value -> {
+                    try {
+                        fileCriteriaData.put(value, getPropertyList(settings.getFileUrl() +
+                                queryStringToGetDataByKey.apply(
+                                        settings.getFileSearchPrefixKey() + value)
+                        ).stream()
+                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                                .collect(Collectors.toList()));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
+        fileCriteriaData.put("type",
+                getPropertyList(settings.getFileUrl() +
+                        queryStringToGetDataByKey.apply(
+                                settings.getFileSearchPrefixKey() + "types." + Optional.ofNullable(service).orElse(""))
+                ).stream()
+                        .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                        .collect(Collectors.toList()));
+        fileCriteriaData.put("fileStatus",
+                getPropertyList(settings.getFileUrl() +
+                        queryStringToGetDataByKey.apply(
+                                Optional.ofNullable(service).orElse("") + settings.getFileStatusPrefixKey() +
+                                        Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse(""))
+                ).stream()
+                        .map(property -> {
+                                    Map<String, Object> fileStatusMap = new HashMap<>();
+                                    String propertyKey = property.get(PROPERTY_KEY);
+                                    fileStatusMap.put("service", propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
+                                    int indexOfLastDotInKey = propertyKey.lastIndexOf(".");
+                                    fileStatusMap.put("outbound", "outbound".equals(propertyKey.substring(
+                                            propertyKey.lastIndexOf(".", indexOfLastDotInKey - 1) + 1,
+                                            indexOfLastDotInKey)));
+                                    String noStatusLabel = property.get(PROPERTY_VALUE);
+                                    fileStatusMap.put("title", noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
+                                    String status = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
+                                    fileStatusMap.put("status", status);
+                                    fileStatusMap.put("label", "[" + status + "] " + noStatusLabel);
+                                    return fileStatusMap;
+                                }
+                        ).collect(Collectors.toList()));
+        return fileCriteriaData;
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

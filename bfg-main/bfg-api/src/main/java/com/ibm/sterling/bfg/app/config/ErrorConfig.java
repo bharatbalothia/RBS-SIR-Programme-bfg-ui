@@ -14,7 +14,7 @@ import java.util.List;
 
 @Configuration
 @PropertySource({"classpath:response.properties", "classpath:entityresponse.properties", "classpath:authresponse.properties",
-        "classpath:certificateresponse.properties"})
+        "classpath:certificateresponse.properties", "classpath:fileresponse.properties"})
 public class ErrorConfig {
 
     @Autowired

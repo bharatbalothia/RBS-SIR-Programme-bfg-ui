@@ -37,6 +37,7 @@ import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,9 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatPaginatorModule,
-    MatTabsModule
+    MatTabsModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   exports: [
     // Modules
@@ -110,6 +113,8 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     MatTooltipModule,
     MatPaginatorModule,
     MatTabsModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
 
     // Components
     ConfirmDialogComponent,
@@ -123,6 +128,9 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent
+  ],
+  providers: [
+    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })
 export class SharedModule { }

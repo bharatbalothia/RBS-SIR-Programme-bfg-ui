@@ -35,16 +35,16 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
-        { fieldName: getFileSearchDisplayName('id'), fieldValue: file.id },
-        { fieldName: getFileSearchDisplayName('entityID'), fieldValue: file.entityID },
-        { fieldName: getFileSearchDisplayName('filename'), fieldValue: file.filename },
-        { fieldName: getFileSearchDisplayName('reference'), fieldValue: file.reference },
-        { fieldName: getFileSearchDisplayName('service'), fieldValue: file.service },
-        { fieldName: getFileSearchDisplayName('type'), fieldValue: file.type },
-        { fieldName: getFileSearchDisplayName('direction'), fieldValue: getDirectionStringValue(file.outbound) },
-        { fieldName: getFileSearchDisplayName('timestamp'), fieldValue: file.timestamp },
-        { fieldName: getFileSearchDisplayName('workflowID'), fieldValue: file.workflowID },
-        { fieldName: getFileSearchDisplayName('messageID'), fieldValue: file.messageID },
+        { fieldName: 'id', fieldValue: file.id },
+        { fieldName: 'entityID', fieldValue: file.entityID },
+        { fieldName: 'filename', fieldValue: file.filename },
+        { fieldName: 'reference', fieldValue: file.reference },
+        { fieldName: 'service', fieldValue: file.service },
+        { fieldName: 'type', fieldValue: file.type },
+        { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound) },
+        { fieldName: 'timestamp', fieldValue: file.timestamp },
+        { fieldName: 'workflowID', fieldValue: file.workflowID },
+        { fieldName: 'messageID', fieldValue: file.messageID },
         { fieldName: 'status', fieldValue: file.status },
         { fieldName: 'errorCode', fieldValue: file.errorCode, isActionButton: true },
         { fieldName: 'transactionTotal', fieldValue: file.transactionTotal, isActionButton: true }

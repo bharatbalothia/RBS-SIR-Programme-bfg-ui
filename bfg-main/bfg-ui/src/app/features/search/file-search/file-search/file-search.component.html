@@ -101,7 +101,7 @@
             </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
             <div class="mat-elevation-z8">
-                <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+                <mat-table [dataSource]="dataSource">
 
                     <ng-container matColumnDef="status">
                         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>

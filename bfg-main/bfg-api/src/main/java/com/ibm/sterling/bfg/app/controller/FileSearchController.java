@@ -1,6 +1,8 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.ErrorDetailsNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.model.file.File;
@@ -50,15 +52,17 @@ public class FileSearchController {
     }
 
     @GetMapping("{fileId}/transactions/{transactionId}")
-    public Transaction getTransactionById(@PathVariable Integer fileId,
+    public ResponseEntity<Transaction>  getTransactionById(@PathVariable Integer fileId,
                                           @PathVariable Integer transactionId)
             throws JsonProcessingException {
-        return fileSearchService.getTransactionById(fileId, transactionId).orElseThrow(FileNotFoundException::new);
+        return ok(fileSearchService.getTransactionById(fileId, transactionId)
+                .orElseThrow(FileNotFoundException::new));
     }
 
     @GetMapping("error/{errorCode}")
     public ResponseEntity<ErrorDetail> getErrorDetailsByCode(@PathVariable String errorCode) throws JsonProcessingException {
-        return ok(propertyService.getErrorDetailsByCode(errorCode));
+        return ok(propertyService.getErrorDetailsByCode(errorCode)
+                .orElseThrow(ErrorDetailsNotFoundException::new));
     }
 
     @GetMapping("file-criteria-data")

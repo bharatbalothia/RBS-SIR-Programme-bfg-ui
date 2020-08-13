@@ -40,6 +40,8 @@ export class FileSearchComponent implements OnInit {
 
   selectedData: string[];
 
+  criteriaFilterObject = { direction: '', service: '' };
+
   files: FilesWithPagination;
   displayedColumns: string[] = [
     'status',
@@ -84,10 +86,17 @@ export class FileSearchComponent implements OnInit {
       from: [this.defaultSelectedData],
       to: [this.defaultSelectedData]
     });
+    this.criteriaFilterObject = { direction: '', service: '' };
   }
 
-  getFileCriteriaData = (params?: { outbound?, service?: string }) =>
-    this.fileService.getFileCriteriaData(removeEmpties(params))
+  getFileCriteriaData = () => {
+    const filterObject = {
+      ...this.criteriaFilterObject,
+      outbound: this.criteriaFilterObject.direction === '' ? '' : this.getDirectionValue(this.criteriaFilterObject.direction.toUpperCase())
+    };
+    filterObject.direction = null;
+
+    this.fileService.getFileCriteriaData(removeEmpties(filterObject))
       .pipe(data => this.setLoading(data))
       .subscribe((data: FileCriteriaData) => {
         this.isLoading = false;
@@ -97,14 +106,13 @@ export class FileSearchComponent implements OnInit {
         error => {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
-        })
-
+        });
+}
   persistSelectedFileStatus() {
     const contol = this.searchingParametersFormGroup.controls.fileStatus;
     const initialStatus = contol.value;
     const valueInData = this.fileCriteriaData.fileStatus.find((val) => JSON.stringify(val) === JSON.stringify(initialStatus));
     if (valueInData) {
-      console.log(valueInData);
       contol.setValue(valueInData);
     } else{
       contol.setValue('');
@@ -163,9 +171,15 @@ export class FileSearchComponent implements OnInit {
     this.getFileCriteriaData();
   }
 
-  onServiceSelect = (event) => this.getFileCriteriaData({ service: event.value });
+  onServiceSelect = (event) => {
+    this.criteriaFilterObject.service = event.value;
+    this.getFileCriteriaData();
+  }
 
-  onDirectionSelect = (event) => this.getFileCriteriaData({ outbound: this.getDirectionValue(event.value.toUpperCase()) });
+  onDirectionSelect = (event) => {
+    this.criteriaFilterObject.direction = event.value;
+    this.getFileCriteriaData();
+  }
 
   onStatusSelect = (event) => {
     this.setServiceAndDirectionFromStatus(event.value);
@@ -186,10 +200,6 @@ export class FileSearchComponent implements OnInit {
       const initialService = serviceControl.value;
       const directionControl = this.searchingParametersFormGroup.controls.direction;
       const initialDirection = directionControl.value;
-      const filterObject = {
-        outbound: this.getDirectionValue(initialDirection.toUpperCase()),
-        service: initialService
-       };
 
       const newService = this.fileCriteriaData.service.find((element) =>
         element.toUpperCase() === fromStatus.service.toUpperCase()
@@ -202,15 +212,15 @@ export class FileSearchComponent implements OnInit {
       if ( newDirection && (initialDirection !== newDirection) ){
         directionControl.setValue(newDirection);
         refreshRequired = true;
-        filterObject.outbound = this.getDirectionValue(newDirection.toUpperCase());
+        this.criteriaFilterObject.direction = newDirection.toUpperCase();
       }
       if ( newService && (initialService !== newService) ){
         serviceControl.setValue(newService);
         refreshRequired = true;
-        filterObject.service = newService;
+        this.criteriaFilterObject.service = newService;
       }
       if (refreshRequired){
-        this.getFileCriteriaData(filterObject);
+        this.getFileCriteriaData();
       }
     }
   }

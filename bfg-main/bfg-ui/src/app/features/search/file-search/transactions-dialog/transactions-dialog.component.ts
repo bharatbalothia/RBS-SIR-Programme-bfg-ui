@@ -51,9 +51,10 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   getTransactions(pageIndex: number, pageSize: number) {
-    this.isLoading = true;
     this.fileService.getTransactionListByFileId(this.fileId, { page: pageIndex.toString(), size: pageSize.toString() })
-      .pipe(take(1)).subscribe((data: TransactionsWithPagination) => {
+      .pipe(take(1))
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: TransactionsWithPagination) => {
         this.isLoading = false;
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;

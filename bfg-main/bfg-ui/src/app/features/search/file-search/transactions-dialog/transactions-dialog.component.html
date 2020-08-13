@@ -67,8 +67,8 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
 
-        <app-table-paginator [value]="pageIndex + 1" [getRows]="getTransactions.bind(this)" [min]="1"
-            [max]="transactions && transactions.totalPages" [length]="transactions.totalElements"
+        <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1" [getRows]="getTransactions.bind(this)"
+            [min]="1" [max]="transactions.totalPages" [length]="transactions.totalElements"
             [pageIndex]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
             [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
         </app-table-paginator>

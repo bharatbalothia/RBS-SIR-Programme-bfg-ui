@@ -42,9 +42,9 @@
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
                     <mat-label>{{getFileSearchDisplayName('fileStatus')}}
                     </mat-label>
-                    <mat-select formControlName="status">
+                    <mat-select formControlName="fileStatus" (selectionChange)="onStatusSelect($event)">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus.status">
+                        <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
                             {{fileStatus.label}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -100,8 +100,8 @@
                 {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
             </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
-            <div class="mat-elevation-z8" *ngIf="files">
-                <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+            <div class="mat-elevation-z8">
+                <mat-table [dataSource]="dataSource">
 
                     <ng-container matColumnDef="status">
                         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
@@ -166,14 +166,19 @@
                     <ng-container matColumnDef="error">
                         <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.errorCode}}
+                            <button mat-button (click)="openErrorDetailsDialog(element)">
+                                {{element.errorCode}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="transactions">
                         <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-icon inline>info</mat-icon>&nbsp;info
+                            <button mat-button (click)="openTransactionsDialog(element)">
+                                <mat-icon inline>info</mat-icon>&nbsp;info
+                            </button>
+
                         </mat-cell>
                     </ng-container>
 
@@ -189,7 +194,7 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator [value]="pageIndex + 1" [getRows]="getFileList.bind(this)" [min]="1"
+                <app-table-paginator *ngIf="files" [value]="pageIndex + 1" [getRows]="getFileList.bind(this)" [min]="1"
                     [max]="files && files.totalPages" [length]="files.totalElements"
                     [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
                     [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>

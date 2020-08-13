@@ -82,7 +82,7 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
 
-            <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1"
+            <app-table-paginator *ngIf="trustedCertificates" [value]="pageIndex + 1"
                 [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
                 [max]="trustedCertificates && trustedCertificates.totalPages"
                 [length]="trustedCertificates.totalElements" [pageIndex]="trustedCertificates.pageable.pageNumber"

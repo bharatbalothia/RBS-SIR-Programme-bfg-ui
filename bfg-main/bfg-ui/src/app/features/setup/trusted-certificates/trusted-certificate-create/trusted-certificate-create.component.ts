@@ -111,7 +111,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
   })
 
   handleFileInput(files: FileList) {
-    this.errorMessage = null;
     this.trustedCertificateFile = files.item(0);
     const formData: FormData = new FormData();
     formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
@@ -138,6 +137,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   })
 
   setLoading(data) {
+    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -190,7 +190,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
       yesCaption: 'Create',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
-      this.errorMessage = null;
       const formData: FormData = new FormData();
       formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
       formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);

@@ -41,18 +41,18 @@ export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
-        { fieldName: getTrustedCertificateDisplayName('certificateName'), fieldValue: trustedCertificate.certificateName },
-        { fieldName: getTrustedCertificateDisplayName('serialNumber'), fieldValue: trustedCertificate.serialNumber },
-        { fieldName: getTrustedCertificateDisplayName('thumbprint'), fieldValue: trustedCertificate.thumbprint },
-        { fieldName: getTrustedCertificateDisplayName('thumbprint256'), fieldValue: trustedCertificate.thumbprint256 },
-        { fieldName: getTrustedCertificateDisplayName('startDate'), fieldValue: trustedCertificate.startDate },
-        { fieldName: getTrustedCertificateDisplayName('endDate'), fieldValue: trustedCertificate.endDate },
+        { fieldName: 'certificateName', fieldValue: trustedCertificate.certificateName },
+        { fieldName: 'serialNumber', fieldValue: trustedCertificate.serialNumber },
+        { fieldName: 'thumbprint', fieldValue: trustedCertificate.thumbprint },
+        { fieldName: 'thumbprint256', fieldValue: trustedCertificate.thumbprint256 },
+        { fieldName: 'startDate', fieldValue: trustedCertificate.startDate },
+        { fieldName: 'endDate', fieldValue: trustedCertificate.endDate },
         {
-            fieldName: getTrustedCertificateDisplayName('issuer'),
+            fieldName: 'issuer',
             fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.issuer)
         },
         {
-            fieldName: getTrustedCertificateDisplayName('subject'),
+            fieldName: 'subject',
             fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.subject)
         },
     ],
@@ -70,15 +70,15 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
         tabTitle: DIALOG_TABS.CHANGE_DETAILS,
         tabSections: [{
             sectionItems: [
-                { fieldName: getTrustedCertificateDisplayName('changeID'), fieldValue: changeControl.changeID },
-                { fieldName: getTrustedCertificateDisplayName('objectType'), fieldValue: changeControl.objectType },
-                { fieldName: getTrustedCertificateDisplayName('operation'), fieldValue: changeControl.operation },
-                { fieldName: getTrustedCertificateDisplayName('status'), fieldValue: changeControl.status },
-                { fieldName: getTrustedCertificateDisplayName('changer'), fieldValue: changeControl.changer },
-                { fieldName: getTrustedCertificateDisplayName('dateChanged'), fieldValue: changeControl.dateChanged },
-                { fieldName: getTrustedCertificateDisplayName('changerComments'), fieldValue: changeControl.changerComments },
-                { fieldName: getTrustedCertificateDisplayName('approver'), fieldValue: changeControl.approver },
-                { fieldName: getTrustedCertificateDisplayName('approverComments'), fieldValue: changeControl.approverComments },
+                { fieldName: 'changeID', fieldValue: changeControl.changeID },
+                { fieldName: 'objectType', fieldValue: changeControl.objectType },
+                { fieldName: 'operation', fieldValue: changeControl.operation },
+                { fieldName: 'status', fieldValue: changeControl.status },
+                { fieldName: 'changer', fieldValue: changeControl.changer },
+                { fieldName: 'dateChanged', fieldValue: changeControl.dateChanged },
+                { fieldName: 'changerComments', fieldValue: changeControl.changerComments },
+                { fieldName: 'approver', fieldValue: changeControl.approver },
+                { fieldName: 'approverComments', fieldValue: changeControl.approverComments },
             ],
         }]
     },

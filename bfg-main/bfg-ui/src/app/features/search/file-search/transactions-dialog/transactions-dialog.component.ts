@@ -60,7 +60,11 @@ export class TransactionsDialogComponent implements OnInit {
         this.pageSize = pageSize;
         this.transactions = data;
         this.updateTable();
-      });
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   updateTable() {

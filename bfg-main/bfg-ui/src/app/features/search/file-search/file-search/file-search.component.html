@@ -100,8 +100,8 @@
                 {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
             </h3>
             <ng-template matStepLabel>Searching Results</ng-template>
-            <div class="mat-elevation-z8" *ngIf="files">
-                <mat-table [dataSource]="dataSource">
+            <div class="mat-elevation-z8">
+                <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
 
                     <ng-container matColumnDef="status">
                         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
@@ -194,7 +194,7 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator [value]="pageIndex + 1" [getRows]="getFileList.bind(this)" [min]="1"
+                <app-table-paginator *ngIf="files" [value]="pageIndex + 1" [getRows]="getFileList.bind(this)" [min]="1"
                     [max]="files && files.totalPages" [length]="files.totalElements"
                     [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
                     [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>

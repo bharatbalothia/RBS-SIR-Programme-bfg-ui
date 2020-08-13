@@ -16,6 +16,7 @@ import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
+import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-entity-search',
@@ -31,6 +32,8 @@ export class EntitySearchComponent implements OnInit {
   serviceSearchingValue = '';
 
   isLoading = true;
+  errorMessage: ErrorMessage;
+
   entities: EntitiesWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
   dataSource: MatTableDataSource<Entity | ChangeControl>;
@@ -65,7 +68,11 @@ export class EntitySearchComponent implements OnInit {
       this.pageSize = pageSize;
       this.entities = data;
       this.updateTable();
-    });
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
   }
 
   updateTable() {

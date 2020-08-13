@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
+import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
@@ -48,11 +49,10 @@ public class FileSearchController {
         return fileSearchService.getTransactionsList(fileId, size, page);
     }
 
-    @GetMapping("{fileId}/transactions/{transactionId}")
-    public Transaction getTransactionById(@PathVariable Integer fileId,
-                                          @PathVariable Integer transactionId)
-            throws JsonProcessingException {
-        return fileSearchService.getTransactionById(fileId, transactionId).orElseThrow(FileNotFoundException::new);
+    @GetMapping("{fileId}/transactions/{id}")
+    public ResponseEntity<Transaction> getTransactionById(@PathVariable Integer fileId,
+                                                          @PathVariable Integer id) throws JsonProcessingException {
+        return ok(fileSearchService.getTransactionById(fileId, id).orElseThrow(FileTransactionNotFoundException::new));
     }
 
     @GetMapping("file-criteria-data")

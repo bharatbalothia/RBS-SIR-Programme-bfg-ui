@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
+import com.ibm.sterling.bfg.app.model.file.TransactionDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -69,11 +70,13 @@ public class FileSearchService {
         List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
         Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
-
     }
 
-    public Optional<Transaction> getTransactionById(Integer fileId, Integer transactionId) {
-        return Optional.empty();
+    public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
+        JsonNode root = getFileListFromSBI(new FileSearchCriteria(),
+                fileSearchUrl + "/" + fileId + "/transactions/" + id);
+        Transaction transactionDetails = objectMapper.convertValue(root, TransactionDetails.class);
+        return Optional.ofNullable(transactionDetails);
     }
 
     private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {

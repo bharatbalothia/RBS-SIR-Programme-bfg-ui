@@ -3,6 +3,7 @@
     <mat-card-title>Entity pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
+    <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <div class="mat-elevation-z8">
       <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
 
@@ -50,8 +51,8 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       </mat-table>
 
-      <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1" [getRows]="getPendingChanges.bind(this)" [min]="1"
-        [max]="changeControls && changeControls.totalPages" [length]="changeControls.totalElements"
+      <app-table-paginator *ngIf="changeControls" [value]="pageIndex + 1" [getRows]="getPendingChanges.bind(this)"
+        [min]="1" [max]="changeControls && changeControls.totalPages" [length]="changeControls.totalElements"
         [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
     </div>

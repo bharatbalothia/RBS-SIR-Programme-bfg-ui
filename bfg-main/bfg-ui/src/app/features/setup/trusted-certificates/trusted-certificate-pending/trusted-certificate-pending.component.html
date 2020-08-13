@@ -3,9 +3,7 @@
     <mat-card-title>Trusted Certificate pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
-    <div class="top-error-message">
-      <app-error-template [errorMessage]="errorMessage"></app-error-template>
-    </div>
+    <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <div class="mat-elevation-z8">
       <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
 
@@ -61,8 +59,8 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       </mat-table>
-      <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1" [getRows]="getPendingChanges.bind(this)" [min]="1"
-        [max]="changeControls && changeControls.totalPages" [length]="changeControls.totalElements"
+      <app-table-paginator *ngIf="changeControls" [value]="pageIndex + 1" [getRows]="getPendingChanges.bind(this)"
+        [min]="1" [max]="changeControls && changeControls.totalPages" [length]="changeControls.totalElements"
         [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
 

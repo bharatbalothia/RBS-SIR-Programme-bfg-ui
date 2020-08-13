@@ -19,6 +19,7 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
+import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 
 @Component({
   selector: 'app-file-search',
@@ -106,6 +107,7 @@ export class FileSearchComponent implements OnInit {
         })
 
   setLoading(data) {
+    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -173,39 +175,16 @@ export class FileSearchComponent implements OnInit {
       }
     }))
 
-  openTransactionsDialog = (file: File) => this.fileService.getTransactionListByFileId(file.id)
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: TransactionsWithPagination) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Transactions for ${file.filename} [${file.id}]`,
-        tabs: getFileTransactionsTabs(data, {
-          transactionID: (transactionId) => this.openTransactionDetailsDialog(file.id, transactionId)
-        }),
-        displayName: getFileSearchDisplayName,
-        isDragable: true,
-      }));
-    },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
-
-  openTransactionDetailsDialog = (fileId: number, transactionId: number) => this.fileService.getTransactionById(fileId, transactionId)
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: Transaction) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Transaction Details of ${data.transactionID}`,
-        tabs: getTransactionDetailsTabs(data),
-        displayName: getFileSearchDisplayName,
-        isDragable: true
-      }));
-    },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
+  openTransactionsDialog = (file: File) =>
+    this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
+      title: `Transactions for ${file.filename} [${file.id}]`,
+      tabs: [],
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        fileId: file.id
+      }
+    }))
 
   openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
     .pipe(data => this.setLoading(data))

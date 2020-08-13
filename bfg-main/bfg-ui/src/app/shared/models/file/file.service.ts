@@ -26,12 +26,12 @@ export class FileService {
         return this.http.post<FilesWithPagination>(this.apiUrl, params);
     }
 
-    getFileById(fileId: string) {
+    getFileById(fileId: number) {
         return this.http.get<File>(this.apiUrl + fileId);
     }
 
-    getTransactionListByFileId(fileId: number) {
-        return this.http.get<TransactionsWithPagination>(this.apiUrl + fileId + '/transactions');
+    getTransactionListByFileId(fileId: number, params?: { page?: string, size?: string }) {
+        return this.http.get<TransactionsWithPagination>(this.apiUrl + fileId + '/transactions', { params });
     }
 
     getTransactionById(fileId: number, transactionId: number) {

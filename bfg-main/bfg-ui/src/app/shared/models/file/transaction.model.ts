@@ -6,4 +6,5 @@ export interface Transaction {
     transactionID: string;
     type: string;
     workflowID: number;
+    fileID: number;
 }

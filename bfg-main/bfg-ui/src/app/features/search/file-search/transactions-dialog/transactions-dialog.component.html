@@ -1,0 +1,79 @@
+<h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
+<app-dragable-dialog-wrapper *ngIf="data.isDragable">
+    <mat-dialog-content>
+        <mat-table [dataSource]="dataSource">
+
+            <ng-container matColumnDef="id">
+                <mat-header-cell *matHeaderCellDef> {{displayName('id')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.id}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="transactionID">
+                <mat-header-cell *matHeaderCellDef> {{displayName('transactionID')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.transactionID)">
+                        {{element.transactionID}}
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="settleDate">
+                <mat-header-cell *matHeaderCellDef> {{displayName('settleDate')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.settleDate}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="settleAmount">
+                <mat-header-cell *matHeaderCellDef> {{displayName('settleAmount')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.settleAmount}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef> {{displayName('type')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.type}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef> {{displayName('status')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.status}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="workflowID">
+                <mat-header-cell *matHeaderCellDef> {{displayName('workflowID')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.workflowID}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="noData">
+                <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                    No records found.
+                </mat-footer-cell>
+            </ng-container>
+
+            <mat-footer-row *matFooterRowDef="['noData']" [hidden]="dataSource && dataSource.data.length > 0">
+            </mat-footer-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <app-table-paginator [value]="pageIndex + 1" [getRows]="getTransactions.bind(this)" [min]="1"
+            [max]="transactions && transactions.totalPages" [length]="transactions.totalElements"
+            [pageIndex]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
+            [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        </app-table-paginator>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-dialog-actions>
+</app-dragable-dialog-wrapper>

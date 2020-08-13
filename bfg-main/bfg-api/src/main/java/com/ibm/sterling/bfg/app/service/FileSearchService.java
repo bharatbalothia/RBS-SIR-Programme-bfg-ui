@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
@@ -18,6 +19,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -73,10 +75,14 @@ public class FileSearchService {
     }
 
     public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
-        JsonNode root = getFileListFromSBI(new FileSearchCriteria(),
-                fileSearchUrl + "/" + fileId + "/transactions/" + id);
-        Transaction transactionDetails = objectMapper.convertValue(root, TransactionDetails.class);
-        return Optional.ofNullable(transactionDetails);
+        JsonNode root;
+        try {
+            root = getFileListFromSBI(new FileSearchCriteria(),
+                    fileSearchUrl + "/" + fileId + "/transactions/" + id);
+        } catch (HttpStatusCodeException e) {
+            throw new FileTransactionNotFoundException(e.getMessage());
+        }
+        return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
     }
 
     private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {

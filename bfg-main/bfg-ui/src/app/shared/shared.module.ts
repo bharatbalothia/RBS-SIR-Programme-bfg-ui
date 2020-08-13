@@ -130,7 +130,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE } from
     TooltipComponent
   ],
   providers: [
-    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en' },
+    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })
 export class SharedModule { }

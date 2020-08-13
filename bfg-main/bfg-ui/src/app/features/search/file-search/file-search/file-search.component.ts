@@ -35,7 +35,7 @@ export class FileSearchComponent implements OnInit {
 
   defaultSelectedData: string[] = [
     moment().subtract(1, 'months').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
-    moment().add(1, 'days').hours(11).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
+    moment().add(1, 'days').hours(23).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
   ];
 
   selectedData: string[];

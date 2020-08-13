@@ -37,9 +37,11 @@ import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE  } from 'ng-pick-datetime';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
+
+
 
 @NgModule({
   declarations: [
@@ -136,6 +138,10 @@ import { DragableDialogWrapperComponent } from './components/dragable-dialog-wra
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    TooltipComponent
+  ],
+  providers: [
+    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })
 export class SharedModule { }

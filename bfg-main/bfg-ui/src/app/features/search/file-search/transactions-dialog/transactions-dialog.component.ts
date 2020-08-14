@@ -77,12 +77,12 @@ export class TransactionsDialogComponent implements OnInit {
     return data;
   }
 
-  openTransactionDetailsDialog = (fileId: number, transactionId: number) => this.fileService.getTransactionById(fileId, transactionId)
+  openTransactionDetailsDialog = (fileId: number, id: number) => this.fileService.getTransactionById(fileId, id)
     .pipe(data => this.setLoading(data))
     .subscribe((data: Transaction) => {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Transaction Details of ${data.transactionID}`,
+        title: `Transaction Details of ${data.id}`,
         tabs: getTransactionDetailsTabs(data),
         displayName: getFileSearchDisplayName,
         isDragable: true

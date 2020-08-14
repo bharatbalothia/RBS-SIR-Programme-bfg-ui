@@ -7,16 +7,16 @@
             <ng-container matColumnDef="id">
                 <mat-header-cell *matHeaderCellDef> {{displayName('id')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.id}}
+                    <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
+                        {{element.id}}
+                    </button>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="transactionID">
                 <mat-header-cell *matHeaderCellDef> {{displayName('transactionID')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.transactionID)">
-                        {{element.transactionID}}
-                    </button>
+                    {{element.transactionID}}
                 </mat-cell>
             </ng-container>
 

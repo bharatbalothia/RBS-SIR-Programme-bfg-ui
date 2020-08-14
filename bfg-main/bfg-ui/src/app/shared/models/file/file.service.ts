@@ -34,8 +34,8 @@ export class FileService {
         return this.http.get<TransactionsWithPagination>(this.apiUrl + fileId + '/transactions', { params });
     }
 
-    getTransactionById(fileId: number, transactionId: number) {
-        return this.http.get<Transaction>(this.apiUrl + fileId + '/transactions/' + transactionId);
+    getTransactionById(fileId: number, id: number) {
+        return this.http.get<Transaction>(this.apiUrl + fileId + '/transactions/' + id);
     }
 
     getErrorDetailsByCode(errorCode: string) {

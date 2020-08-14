@@ -37,7 +37,7 @@ const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'id', fieldValue: file.id },
         { fieldName: 'entityID', fieldValue: file.entityID },
-        { fieldName: 'filename', fieldValue: file.filename },
+        { fieldName: 'fileName', fieldValue: file.filename },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },

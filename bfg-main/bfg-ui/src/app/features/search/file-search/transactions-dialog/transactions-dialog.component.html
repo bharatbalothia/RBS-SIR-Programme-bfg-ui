@@ -23,7 +23,7 @@
             <ng-container matColumnDef="settleDate">
                 <mat-header-cell *matHeaderCellDef> {{displayName('settleDate')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.settleDate}}
+                    {{element.settleDate | date:'dd/MM/yyyy, HH:mm'}}
                 </mat-cell>
             </ng-container>
 

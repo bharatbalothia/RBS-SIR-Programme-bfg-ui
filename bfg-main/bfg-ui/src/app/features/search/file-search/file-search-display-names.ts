@@ -4,6 +4,7 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
+import { formatDate } from '@angular/common';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     entityID: 'Entity',
@@ -45,7 +46,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
         { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound) },
-        { fieldName: 'timestamp', fieldValue: file.timestamp },
+        { fieldName: 'timestamp', fieldValue: formatDate(file.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
         { fieldName: 'workflowID', fieldValue: file.workflowID },
         { fieldName: 'messageID', fieldValue: file.messageID },
         { fieldName: 'status', fieldValue: file.status },
@@ -80,7 +81,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'settleDate', fieldValue: transaction.settleDate },
+                { fieldName: 'settleDate', fieldValue:  formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB')},
                 { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },

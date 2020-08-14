@@ -175,7 +175,7 @@
                     <ng-container matColumnDef="transactions">
                         <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <button mat-button (click)="openTransactionsDialog(element)">
+                            <button [disabled]="element.transactionTotal <= 0" mat-button (click)="openTransactionsDialog(element)">
                                 <mat-icon inline>info</mat-icon>&nbsp;info
                             </button>
 

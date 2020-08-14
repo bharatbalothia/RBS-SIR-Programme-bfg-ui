@@ -3,6 +3,7 @@ export interface DetailsDialogData {
     tabs?: Tab[];
     yesCaption?: string;
     actionData?: any;
+    isDragable?: boolean;
     displayName: (fieldName: string) => string;
 }
 
@@ -21,7 +22,12 @@ export interface Table {
     tableColumns: string[];
     tableDataSource: any[];
     tableTitle?: string;
+    tableActions?: TableActions;
     formatRow?: (el: any) => string;
+}
+
+export interface TableActions {
+    [key: string]: (e) => any;
 }
 
 export interface SectionItem {

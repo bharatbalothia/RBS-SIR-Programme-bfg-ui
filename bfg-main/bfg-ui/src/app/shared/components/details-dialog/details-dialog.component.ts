@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DetailsDialogData, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { isUndefined } from 'lodash';
+import { isUndefined, get } from 'lodash';
 
 @Component({
   selector: 'app-details-dialog',
@@ -15,12 +15,16 @@ export class DetailsDialogComponent implements OnInit {
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];
 
+  actions;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
+
+    this.actions = get(this.data, 'actionData.actions');
   }
 
   ngOnInit() {

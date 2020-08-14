@@ -37,6 +37,11 @@ import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE  } from 'ng-pick-datetime';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
+
+
 
 @NgModule({
   declarations: [
@@ -49,10 +54,11 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,
+    TooltipComponent,
+    DragableDialogWrapperComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
-    TooltipComponent,
   ],
   imports: [
     CommonModule,
@@ -81,11 +87,15 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatPaginatorModule,
-    MatTabsModule
+    MatTabsModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
+    DragDropModule
   ],
   exports: [
     // Modules
     CommonModule,
+    LayoutModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
@@ -103,6 +113,7 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     MatChipsModule,
     MatAutocompleteModule,
     MatRadioModule,
+    HttpClientModule,
     MatDialogModule,
     MatTableModule,
     MatProgressBarModule,
@@ -110,6 +121,9 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     MatTooltipModule,
     MatPaginatorModule,
     MatTabsModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
+    DragDropModule,
 
     // Components
     ConfirmDialogComponent,
@@ -119,10 +133,15 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,
+    TooltipComponent,
+    DragableDialogWrapperComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent
+  ],
+  providers: [
+    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })
 export class SharedModule { }

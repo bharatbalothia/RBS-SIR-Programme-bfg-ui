@@ -3,6 +3,7 @@
         <mat-card-title>Entities</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
+        <app-error-template [errorMessage]="errorMessage"></app-error-template>
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
             <mat-form-field class="search-by-field">
@@ -73,8 +74,8 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <app-table-paginator *ngIf="!isLoading" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)"
-                [min]="1" [max]="entities && entities.totalPages" [length]="entities.totalElements"
+            <app-table-paginator *ngIf="entities" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)" [min]="1"
+                [max]="entities && entities.totalPages" [length]="entities.totalElements"
                 [pageIndex]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize"
                 [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
         </div>

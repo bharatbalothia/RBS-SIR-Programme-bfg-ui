@@ -7,8 +7,7 @@
             <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
-            </mat-error>
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
             <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
                 <section>
                     <mat-form-field>
@@ -24,10 +23,10 @@
                     <mat-form-field>
                         <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password"
                             name="password" #password="ngModel" required>
-                            <mat-error *ngFor="let validation of validationMessages.password">
-                                <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
-                                    {{validation.message}}</mat-error>
-                            </mat-error>
+                        <mat-error *ngFor="let validation of validationMessages.password">
+                            <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
                     </mat-form-field>
                 </section>
                 <section>

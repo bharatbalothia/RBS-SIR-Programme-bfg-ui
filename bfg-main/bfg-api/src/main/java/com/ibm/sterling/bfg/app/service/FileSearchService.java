@@ -69,7 +69,7 @@ public class FileSearchService {
     public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setRows(size);
-//        fileSearchCriteria.setStart(page * size);
+        fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);

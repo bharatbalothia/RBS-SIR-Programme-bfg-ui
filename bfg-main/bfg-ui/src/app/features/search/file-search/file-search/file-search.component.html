@@ -11,7 +11,7 @@
     <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
-                <ng-template matStepLabel>Searching Parameters</ng-template>
+                <ng-template matStepLabel>Search parameters</ng-template>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entityID">
                     <mat-label>{{getFileSearchDisplayName('entityID')}}
                     </mat-label>
@@ -99,7 +99,7 @@
             <h3 *ngIf="files && files.totalElements">
                 {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
             </h3>
-            <ng-template matStepLabel>Searching Results</ng-template>
+            <ng-template matStepLabel>Search results</ng-template>
             <div class="mat-elevation-z8">
                 <mat-table [dataSource]="dataSource">
 

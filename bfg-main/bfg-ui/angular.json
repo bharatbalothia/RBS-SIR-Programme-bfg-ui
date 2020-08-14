@@ -69,6 +69,14 @@
                   "with": "src/environments/environment.test.ts"
                 }
               ]
+            },
+            "poc": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.poc.ts"
+                }
+              ]
             }
           }
         },
@@ -83,6 +91,9 @@
             },
             "testing": {
               "browserTarget": "bfg-ui:build:testing"
+            },
+            "poc": {
+              "browserTarget": "bfg-ui:build:poc"
             }
           }
         },

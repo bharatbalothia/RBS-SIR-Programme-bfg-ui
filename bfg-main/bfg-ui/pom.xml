@@ -22,6 +22,12 @@
 				<build.settings>-testing</build.settings>
 			</properties>
 		</profile>
+		<profile>
+			<id>poc</id>
+			<properties>
+				<build.settings>-poc</build.settings>
+			</properties>
+		</profile>
 	</profiles>
 	<build>
 		<plugins>

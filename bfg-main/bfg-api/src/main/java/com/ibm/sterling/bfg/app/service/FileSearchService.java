@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
+import com.ibm.sterling.bfg.app.model.file.TransactionDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -40,10 +43,13 @@ public class FileSearchService {
     private ObjectMapper objectMapper;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        Integer page = fileSearchCriteria.getStart();
+        Integer size = fileSearchCriteria.getRows();
+        fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
+        Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
     }
 
@@ -63,17 +69,23 @@ public class FileSearchService {
     public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setRows(size);
-        fileSearchCriteria.setStart(page);
+        fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
         Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
-
     }
 
-    public Optional<Transaction> getTransactionById(Integer fileId, Integer transactionId) {
-        return Optional.empty();
+    public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
+        JsonNode root;
+        try {
+            root = getFileListFromSBI(new FileSearchCriteria(),
+                    fileSearchUrl + "/" + fileId + "/transactions/" + id);
+        } catch (HttpStatusCodeException e) {
+            throw new FileTransactionNotFoundException(e.getMessage());
+        }
+        return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
     }
 
     private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {

@@ -4,6 +4,7 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
+import { formatDate } from '@angular/common';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     entityID: 'Entity',
@@ -11,12 +12,13 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     direction: 'Direction',
     fileStatus: 'File Status',
     bpState: 'BP State',
-    fileName: 'Filename',
+    filename: 'Filename',
     reference: 'Reference',
     type: 'Type',
     from: 'From',
     to: 'To',
-    id: 'File ID',
+    id: 'ID',
+    fileID: 'File ID',
     timestamp: 'Timestamp',
     workflowID: 'WFID',
     errorCode: 'Error',
@@ -28,7 +30,9 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     transactionID: 'Transaction ID',
     code: 'Error Code',
     name: 'Name',
-    description: 'Description'
+    description: 'Description',
+    paymentBIC: 'Payment BIC',
+    entity: 'Entity'
 };
 
 export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAMES[key] || key;
@@ -42,7 +46,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
         { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound) },
-        { fieldName: 'timestamp', fieldValue: file.timestamp },
+        { fieldName: 'timestamp', fieldValue: formatDate(file.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
         { fieldName: 'workflowID', fieldValue: file.workflowID },
         { fieldName: 'messageID', fieldValue: file.messageID },
         { fieldName: 'status', fieldValue: file.status },
@@ -77,8 +81,14 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'settleDate', fieldValue: transaction.settleDate },
+                { fieldName: 'settleDate', fieldValue:  formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB')},
                 { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
+                { fieldName: 'entity', fieldValue: transaction.entity },
+                { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
+                { fieldName: 'filename', fieldValue: transaction.filename },
+                { fieldName: 'fileID', fieldValue: transaction.fileID },
+                { fieldName: 'reference', fieldValue: transaction.reference },
+                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'type', fieldValue: transaction.type },
                 { fieldName: 'status', fieldValue: transaction.status },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },

@@ -11,7 +11,7 @@
     <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
-                <ng-template matStepLabel>Searching Parameters</ng-template>
+                <ng-template matStepLabel>Search parameters</ng-template>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entityID">
                     <mat-label>{{getFileSearchDisplayName('entityID')}}
                     </mat-label>
@@ -60,8 +60,8 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field>
-                    <mat-label>{{getFileSearchDisplayName('fileName')}}</mat-label>
-                    <input matInput formControlName="fileName">
+                    <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
+                    <input matInput formControlName="filename">
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
@@ -99,7 +99,7 @@
             <h3 *ngIf="files && files.totalElements">
                 {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
             </h3>
-            <ng-template matStepLabel>Searching Results</ng-template>
+            <ng-template matStepLabel>Search results</ng-template>
             <div class="mat-elevation-z8">
                 <mat-table [dataSource]="dataSource">
 
@@ -120,7 +120,7 @@
                         </mat-cell>
                     </ng-container>
 
-                    <ng-container matColumnDef="fileName">
+                    <ng-container matColumnDef="filename">
                         <mat-header-cell *matHeaderCellDef> FileName </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element.filename}}
@@ -152,7 +152,7 @@
                     <ng-container matColumnDef="timestamp">
                         <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.timestamp}}
+                            {{element.timestamp | date:'dd/MM/yyyy, HH:mm'}}
                         </mat-cell>
                     </ng-container>
 
@@ -175,7 +175,7 @@
                     <ng-container matColumnDef="transactions">
                         <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <button mat-button (click)="openTransactionsDialog(element)">
+                            <button [disabled]="element.transactionTotal <= 0" mat-button (click)="openTransactionsDialog(element)">
                                 <mat-icon inline>info</mat-icon>&nbsp;info
                             </button>
 

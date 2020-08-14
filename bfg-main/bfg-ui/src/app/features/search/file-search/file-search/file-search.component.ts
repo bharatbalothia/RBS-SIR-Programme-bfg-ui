@@ -41,7 +41,7 @@ export class FileSearchComponent implements OnInit {
   fileCriteriaData: FileCriteriaData;
 
   defaultSelectedData: string[] = [
-    moment().subtract(1, 'months').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
+    moment().subtract(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
     moment().add(1, 'days').hours(23).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
   ];
 
@@ -53,7 +53,7 @@ export class FileSearchComponent implements OnInit {
   displayedColumns: string[] = [
     'status',
     'id',
-    'fileName',
+    'filename',
     'reference',
     'type',
     'service',
@@ -88,7 +88,7 @@ export class FileSearchComponent implements OnInit {
       direction: [''],
       fileStatus: [''],
       bpState: [''],
-      fileName: [''],
+      filename: [''],
       reference: [''],
       type: [''],
       from: [this.defaultSelectedData],

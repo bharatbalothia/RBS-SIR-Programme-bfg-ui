@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.model.file;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Transaction {
     private Integer id;
@@ -10,7 +10,7 @@ public class Transaction {
     private String transactionID;
     private String type;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDate settleDate;
+    private LocalDateTime settleDate;
     private Double settleAmount;
     private Integer workflowID;
 
@@ -46,11 +46,11 @@ public class Transaction {
         this.transactionID = transactionID;
     }
 
-    public LocalDate getSettleDate() {
+    public LocalDateTime getSettleDate() {
         return settleDate;
     }
 
-    public void setSettleDate(LocalDate settleDate) {
+    public void setSettleDate(LocalDateTime settleDate) {
         this.settleDate = settleDate;
     }
 

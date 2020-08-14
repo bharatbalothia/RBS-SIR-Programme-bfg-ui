@@ -1,14 +1,10 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 public class File {
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LogManager.getLogger(File.class);
-
     private Integer id;
     private Integer status;
     private String filename;
@@ -145,4 +141,5 @@ public class File {
     public void setOverride(Boolean override) {
         this.override = override;
     }
+
 }

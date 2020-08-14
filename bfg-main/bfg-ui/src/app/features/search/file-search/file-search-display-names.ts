@@ -11,12 +11,13 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     direction: 'Direction',
     fileStatus: 'File Status',
     bpState: 'BP State',
-    fileName: 'Filename',
+    filename: 'Filename',
     reference: 'Reference',
     type: 'Type',
     from: 'From',
     to: 'To',
-    id: 'File ID',
+    id: 'ID',
+    fileID: 'File ID',
     timestamp: 'Timestamp',
     workflowID: 'WFID',
     errorCode: 'Error',
@@ -28,7 +29,9 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     transactionID: 'Transaction ID',
     code: 'Error Code',
     name: 'Name',
-    description: 'Description'
+    description: 'Description',
+    paymentBIC: 'Payment BIC',
+    entity: 'Entity'
 };
 
 export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAMES[key] || key;
@@ -37,7 +40,7 @@ const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'id', fieldValue: file.id },
         { fieldName: 'entityID', fieldValue: file.entityID },
-        { fieldName: 'fileName', fieldValue: file.filename },
+        { fieldName: 'filename', fieldValue: file.filename },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
@@ -79,6 +82,12 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID },
                 { fieldName: 'settleDate', fieldValue: transaction.settleDate },
                 { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
+                { fieldName: 'entity', fieldValue: transaction.entity },
+                { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
+                { fieldName: 'filename', fieldValue: transaction.filename },
+                { fieldName: 'fileID', fieldValue: transaction.fileID },
+                { fieldName: 'reference', fieldValue: transaction.reference },
+                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'type', fieldValue: transaction.type },
                 { fieldName: 'status', fieldValue: transaction.status },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },

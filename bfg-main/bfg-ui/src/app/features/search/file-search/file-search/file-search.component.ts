@@ -53,7 +53,7 @@ export class FileSearchComponent implements OnInit {
   displayedColumns: string[] = [
     'status',
     'id',
-    'fileName',
+    'filename',
     'reference',
     'type',
     'service',
@@ -88,7 +88,7 @@ export class FileSearchComponent implements OnInit {
       direction: [''],
       fileStatus: [''],
       bpState: [''],
-      fileName: [''],
+      filename: [''],
       reference: [''],
       type: [''],
       from: [this.defaultSelectedData],

@@ -60,8 +60,8 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field>
-                    <mat-label>{{getFileSearchDisplayName('fileName')}}</mat-label>
-                    <input matInput formControlName="fileName">
+                    <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
+                    <input matInput formControlName="filename">
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
@@ -120,7 +120,7 @@
                         </mat-cell>
                     </ng-container>
 
-                    <ng-container matColumnDef="fileName">
+                    <ng-container matColumnDef="filename">
                         <mat-header-cell *matHeaderCellDef> FileName </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element.filename}}

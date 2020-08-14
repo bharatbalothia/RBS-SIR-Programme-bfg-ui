@@ -43,10 +43,13 @@ public class FileSearchService {
     private ObjectMapper objectMapper;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        Integer page = fileSearchCriteria.getStart();
+        Integer size = fileSearchCriteria.getRows();
+        fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(fileSearchCriteria.getStart(), fileSearchCriteria.getRows());
+        Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
     }
 
@@ -66,7 +69,7 @@ public class FileSearchService {
     public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setRows(size);
-        fileSearchCriteria.setStart(page);
+//        fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);

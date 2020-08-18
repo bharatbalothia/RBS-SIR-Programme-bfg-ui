@@ -60,5 +60,22 @@ mat-form-field {
     .mat-cell {
         word-break: break-all;
         word-wrap: break-word;
+
+        .mat-button {
+            padding: 0;
+            min-width: 10px;
+        }
+    }
+}
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+
+    /* IE10+ CSS styles go here */
+    .mat-header-row,
+    .mat-row {
+        -ms-flex-align: stretch;
+        -ms-flex-pack: center;
+        justify-content: center;
     }
 }

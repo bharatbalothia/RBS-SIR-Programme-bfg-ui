@@ -22,7 +22,6 @@ export interface Table {
     tableColumns: string[];
     tableDataSource: any[];
     tableTitle?: string;
-    tableActions?: TableActions;
     formatRow?: (el: any) => string;
 }
 

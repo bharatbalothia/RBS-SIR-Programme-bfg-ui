@@ -16,6 +16,9 @@ public class File {
     private LocalDateTime timestamp;
     private Integer workflowID;
     private String entityID;
+
+    private Entity entity;
+
     private Integer messageID;
     private Integer docID;
     private Integer transactionTotal;

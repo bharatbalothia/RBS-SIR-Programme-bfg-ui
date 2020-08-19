@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
@@ -80,6 +81,13 @@ public class EntityServiceImpl implements EntityService {
     public Optional<Entity> findById(int id) {
         LOG.info("entity by id {}", id);
         return entityRepository.findById(id);
+    }
+
+    @Override
+    public String findNameById(int id) {
+        LOG.info("entity by id {}", id);
+        return entityRepository.findById(id).map(Entity::getEntity)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

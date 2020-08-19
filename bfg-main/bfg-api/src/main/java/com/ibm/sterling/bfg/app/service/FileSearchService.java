@@ -98,7 +98,7 @@ public class FileSearchService {
                 new HttpEntity<>(getHttpHeaders()),
                 String.class);
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody())).get("response");
-        return Collections.singletonMap("Document", jsonNode.asText());
+        return Collections.singletonMap("document", jsonNode.asText());
     }
 
     private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {

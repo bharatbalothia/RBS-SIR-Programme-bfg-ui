@@ -5,11 +5,44 @@
     margin: 3px !important;
 }
 
-.mat-cell {
+.mat-table {
+    width: 100%;
 
-    .mat-button {
-        padding: 0 !important;
+    .mat-cell {
+        word-wrap: break-word !important;
+        white-space: unset !important;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
     }
+
+    .mat-column-type,
+    .mat-column-id,
+    .mat-column-status,
+    .mat-column-workflowID {
+        flex: 0 0 11% !important;
+        width: 11% !important;
+    }
+
+    .mat-column-settleAmount {
+        flex: 0 0 15% !important;
+        width: 15% !important;
+    }
+
+    .mat-column-transactionID {
+        flex: 0 0 16% !important;
+        width: 16% !important;
+    }
+
+    .mat-column-settleDate {
+        flex: 0 0 18% !important;
+        width: 18% !important;
+    }
+
 }
 
 .mat-dialog-actions {

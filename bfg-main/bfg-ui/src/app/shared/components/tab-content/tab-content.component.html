@@ -23,7 +23,7 @@
     <ng-container matColumnDef="fieldValue">
         <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <button mat-button *ngIf="element.isActionButton"
+            <button mat-button class="button-value" *ngIf="element.isActionButton"
                 (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
             <app-display-table-cell *ngIf="!element.isActionButton"
                 [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
@@ -49,9 +49,7 @@
             {{displayName(item)}}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <button mat-button *ngIf="isTableCellHasAction(item)"
-                (click)="getTableCellClickAction(item, element[item])">{{element[item]}}</button>
-            <app-display-table-cell *ngIf="!isTableCellHasAction(item)" [value]="element[item]">
+            <app-display-table-cell [value]="element[item]">
             </app-display-table-cell>
         </mat-cell>
     </ng-container>

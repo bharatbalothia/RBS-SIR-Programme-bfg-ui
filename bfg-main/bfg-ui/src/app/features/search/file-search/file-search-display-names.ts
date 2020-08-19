@@ -62,18 +62,6 @@ export const getFileDetailsTabs = (file: File): Tab[] => [
     }
 ].filter(el => el);
 
-export const getFileTransactionsTabs = (transactionList: TransactionsWithPagination, tableActions: TableActions): Tab[] => [
-    {
-        tabTitle: 'Transactions',
-        tabSections: [],
-        tableObject: {
-            tableColumns: ['id', 'transactionID', 'settleDate', 'settleAmount', 'type', 'status', 'workflowID'],
-            tableDataSource: transactionList.content,
-            tableActions
-        }
-    }
-].filter(el => el);
-
 export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
     {
         tabTitle: 'Transaction Details',
@@ -81,7 +69,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'settleDate', fieldValue:  formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB')},
+                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },

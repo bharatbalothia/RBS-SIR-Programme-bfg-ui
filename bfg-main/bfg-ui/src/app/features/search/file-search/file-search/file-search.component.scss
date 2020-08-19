@@ -59,6 +59,57 @@
         }
     }
 
+    .mat-table {
+        width: 100%;
+
+        .mat-cell {
+            word-wrap: break-word !important;
+            white-space: unset !important;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
+
+        .mat-column-service {
+            flex: 0 0 5% !important;
+            width: 5% !important;
+        }
+
+        .mat-column-error {
+            flex: 0 0 6% !important;
+            width: 6% !important;
+        }
+
+        .mat-column-type,
+        .mat-column-status,
+        .mat-column-WFID,
+        .mat-column-id {
+            flex: 0 0 7% !important;
+            width: 7% !important;
+        }
+
+        .mat-column-transactions {
+            flex: 0 0 8% !important;
+            width: 8% !important;
+        }
+
+        .mat-column-filename {
+            flex: 0 0 19% !important;
+            width: 19% !important;
+        }
+
+        .mat-column-timestamp,
+        .mat-column-reference {
+            flex: 0 0 14% !important;
+            width: 14% !important;
+        }
+
+    }
+
     .value-table-cell {
         width: 100%;
     }

@@ -12,4 +12,5 @@ export interface Transaction {
     type: string;
     workflowID: number;
     fileID: number;
+    docID: string;
 }

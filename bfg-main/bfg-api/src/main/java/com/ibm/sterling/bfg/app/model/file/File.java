@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,12 +16,9 @@ public class File {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
     private Integer workflowID;
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer entityID;
-
     private Entity entity;
-
     private Integer messageID;
     private Integer docID;
     private Integer transactionTotal;
@@ -156,4 +152,5 @@ public class File {
     public void setEntity(Entity entity) {
         this.entity = entity;
     }
+
 }

@@ -2,7 +2,7 @@ import { Schedule } from '../schedule/schedule.model';
 
 export interface Entity {
     entityLogId?: number;
-    entityId?: number;
+    entityId?: string;
     entity: string;
     service: string;
     requestorDN: string;

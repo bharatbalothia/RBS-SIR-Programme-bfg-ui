@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
-import com.ibm.sterling.bfg.app.model.file.File;
-import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
-import com.ibm.sterling.bfg.app.model.file.Transaction;
-import com.ibm.sterling.bfg.app.model.file.TransactionDetails;
+import com.ibm.sterling.bfg.app.model.file.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -42,15 +39,26 @@ public class FileSearchService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private EntityService entityService;
+
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         Integer page = fileSearchCriteria.getStart();
         Integer size = fileSearchCriteria.getRows();
         fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
+        setEntityOfFile(fileList);
         Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+    }
+
+    private void setEntityOfFile(List<File> fileList) {
+        fileList.forEach(file -> {
+            Integer entityId = file.getEntityID();
+            file.setEntity(new Entity(entityId, entityService.findNameById(entityId)));
+        });
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
@@ -59,7 +67,8 @@ public class FileSearchService {
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         if (totalElements == 1) {
-            List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
+            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
+            setEntityOfFile(fileList);
             return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
         } else {
             return Optional.empty();

@@ -4,6 +4,14 @@ public class Entity {
     private Integer entityId;
     private String entity;
 
+    public Entity() {
+    }
+
+    public Entity(Integer entityId, String entity) {
+        this.entityId = entityId;
+        this.entity = entity;
+    }
+
     public Integer getEntityId() {
         return entityId;
     }

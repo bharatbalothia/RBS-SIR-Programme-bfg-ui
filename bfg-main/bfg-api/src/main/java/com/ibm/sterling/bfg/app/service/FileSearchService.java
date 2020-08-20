@@ -51,7 +51,7 @@ public class FileSearchService {
         List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
         setEntityOfFile(fileList);
         Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+        return new PageImpl<>(fileList, pageable, totalElements);
     }
 
     private void setEntityOfFile(List<File> fileList) {
@@ -119,6 +119,5 @@ public class FileSearchService {
 
         return objectMapper.readTree(Objects.requireNonNull(response.getBody()));
     }
-
 
 }

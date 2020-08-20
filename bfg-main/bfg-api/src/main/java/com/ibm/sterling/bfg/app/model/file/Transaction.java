@@ -13,6 +13,7 @@ public class Transaction {
     private LocalDateTime settleDate;
     private Double settleAmount;
     private Integer workflowID;
+    private String docID;
 
     public Integer getId() {
         return id;
@@ -68,6 +69,14 @@ public class Transaction {
 
     public void setWorkflowID(Integer workflowID) {
         this.workflowID = workflowID;
+    }
+
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
     }
 
 }

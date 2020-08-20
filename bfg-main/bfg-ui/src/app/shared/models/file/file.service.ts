@@ -41,4 +41,9 @@ export class FileService {
     getErrorDetailsByCode(errorCode: string) {
         return this.http.get<FileError>(this.apiUrl + 'error/' + errorCode);
     }
+
+
+    getTransactionDocumentContent(docId: string) {
+        return this.http.get<FileError>(this.apiUrl + 'transaction-document/', { params: { id: docId } });
+    }
 }

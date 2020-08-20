@@ -16,7 +16,9 @@
             <ng-container matColumnDef="transactionID">
                 <mat-header-cell *matHeaderCellDef> {{displayName('transactionID')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
+                     <button mat-button (click)="openTransactionDocumentInfo(element)">
                     {{element.transactionID}}
+                    </button>
                 </mat-cell>
             </ng-container>
 

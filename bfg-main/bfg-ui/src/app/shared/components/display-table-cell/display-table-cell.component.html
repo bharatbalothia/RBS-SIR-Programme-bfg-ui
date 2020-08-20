@@ -1,5 +1,5 @@
-<div *ngIf="!_array.isArray(value)">
-    {{value}}
+<div *ngIf="!_array.isArray(value)" [attr.xml]="xml">
+    {{xml ? (value | xml) : value}}
 </div>
 <ul class="list-group" *ngIf="_array.isArray(value)">
     <li *ngFor="let item of value" class="list-group-item">

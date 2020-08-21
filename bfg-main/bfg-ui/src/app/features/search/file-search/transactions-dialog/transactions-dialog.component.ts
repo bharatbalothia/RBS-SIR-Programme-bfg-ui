@@ -86,7 +86,12 @@ export class TransactionsDialogComponent implements OnInit {
         title: `Transaction Details of ${data.id}`,
         tabs: getTransactionDetailsTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
+        isDragable: true,
+        actionData: {
+          actions: {
+            transactionID: () => this.openTransactionDocumentInfo(data)
+          }
+        }
       }));
     },
       error => {

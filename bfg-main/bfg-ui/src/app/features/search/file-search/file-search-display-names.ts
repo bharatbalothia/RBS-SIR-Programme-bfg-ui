@@ -71,7 +71,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
         tabSections: [{
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
+                { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: true },
                 { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
                 { fieldName: 'entity', fieldValue: transaction.entity },

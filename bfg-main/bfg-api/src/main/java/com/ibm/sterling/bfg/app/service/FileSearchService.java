@@ -91,7 +91,7 @@ public class FileSearchService {
         return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
     }
 
-    public Map<String, String> getTransactionDocumentContent(String documentId) throws JsonProcessingException {
+    public Map<String, String> getDocumentContent(String documentId) throws JsonProcessingException {
         ResponseEntity<String> responseEntity = new RestTemplate().exchange(
                 documentUrl + documentId + "/actions/getpayload?isPlainText=true",
                 HttpMethod.POST,

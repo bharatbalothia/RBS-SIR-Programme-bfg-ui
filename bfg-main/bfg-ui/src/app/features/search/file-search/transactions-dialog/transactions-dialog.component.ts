@@ -99,7 +99,7 @@ export class TransactionsDialogComponent implements OnInit {
         this.errorMessage = getApiErrorMessage(error);
       })
 
-  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getTransactionDocumentContent(transaction.docID)
+  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
     .pipe(data => this.setLoading(data))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;

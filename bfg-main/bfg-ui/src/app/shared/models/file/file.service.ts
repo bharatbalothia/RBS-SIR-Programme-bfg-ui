@@ -43,7 +43,7 @@ export class FileService {
     }
 
 
-    getTransactionDocumentContent(docId: string) {
-        return this.http.get<FileError>(this.apiUrl + 'transaction-document/', { params: { id: docId } });
+    getDocumentContent(docId: string) {
+        return this.http.get<FileError>(this.apiUrl + 'document-content/', { params: { id: docId } });
     }
 }

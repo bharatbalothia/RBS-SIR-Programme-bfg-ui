@@ -3,7 +3,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -20,6 +20,7 @@ import { TransactionsWithPagination } from 'src/app/shared/models/file/transacti
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
+import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 
 @Component({
   selector: 'app-file-search',
@@ -115,14 +116,14 @@ export class FileSearchComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
-}
+  }
   persistSelectedFileStatus() {
     const contol = this.searchingParametersFormGroup.controls.fileStatus;
     const initialStatus = contol.value;
     const valueInData = this.fileCriteriaData.fileStatus.find((val) => JSON.stringify(val) === JSON.stringify(initialStatus));
     if (valueInData) {
       contol.setValue(valueInData);
-    } else{
+    } else {
       contol.setValue('');
     }
   }
@@ -210,10 +211,27 @@ export class FileSearchComponent implements OnInit {
       actionData: {
         actions: {
           errorCode: () => this.openErrorDetailsDialog(file),
-          transactionTotal: () => this.openTransactionsDialog(file)
+          transactionTotal: () => this.openTransactionsDialog(file),
+          filename: () => this.openFileDocumentInfo(file)
         }
       }
     }))
+
+  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: DocumentContent) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `File Document Information`,
+        tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 
   openTransactionsDialog = (file: File) =>
     this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
@@ -242,8 +260,8 @@ export class FileSearchComponent implements OnInit {
         this.errorMessage = getApiErrorMessage(error);
       })
 
-  setServiceAndDirectionFromStatus(fromStatus){
-    if (fromStatus !== ''){
+  setServiceAndDirectionFromStatus(fromStatus) {
+    if (fromStatus !== '') {
       let refreshRequired = false;
       const serviceControl = this.searchingParametersFormGroup.controls.service;
       const initialService = serviceControl.value;
@@ -258,17 +276,17 @@ export class FileSearchComponent implements OnInit {
         element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
       );
 
-      if ( newDirection && (initialDirection !== newDirection) ){
+      if (newDirection && (initialDirection !== newDirection)) {
         directionControl.setValue(newDirection);
         refreshRequired = true;
         this.criteriaFilterObject.direction = newDirection.toUpperCase();
       }
-      if ( newService && (initialService !== newService) ){
+      if (newService && (initialService !== newService)) {
         serviceControl.setValue(newService);
         refreshRequired = true;
         this.criteriaFilterObject.service = newService;
       }
-      if (refreshRequired){
+      if (refreshRequired) {
         this.getFileCriteriaData();
       }
     }

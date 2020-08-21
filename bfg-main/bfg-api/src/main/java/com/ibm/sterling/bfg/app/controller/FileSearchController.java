@@ -71,10 +71,10 @@ public class FileSearchController {
         return ok(propertyService.getFileCriteriaData(service, outbound));
     }
 
-    @GetMapping("transaction-document")
-    public ResponseEntity<Map<String, String>> getTransactionDocumentContent(
+    @GetMapping("document-content")
+    public ResponseEntity<Map<String, String>> getDocumentContent(
             @RequestParam(value = "id") String documentId) throws JsonProcessingException {
-        return ok(fileSearchService.getTransactionDocumentContent(documentId));
+        return ok(fileSearchService.getDocumentContent(documentId));
     }
 
 }

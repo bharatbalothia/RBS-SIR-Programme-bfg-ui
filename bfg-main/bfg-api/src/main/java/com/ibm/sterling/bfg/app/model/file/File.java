@@ -17,7 +17,7 @@ public class File {
     private Integer workflowID;
     private String entityID;
     private Integer messageID;
-    private Integer docID;
+    private String docID;
     private Integer transactionTotal;
     private Boolean outbound;
     private Boolean override;
@@ -110,11 +110,11 @@ public class File {
         this.messageID = messageID;
     }
 
-    public Integer getDocID() {
+    public String getDocID() {
         return docID;
     }
 
-    public void setDocID(Integer docID) {
+    public void setDocID(String docID) {
         this.docID = docID;
     }
 

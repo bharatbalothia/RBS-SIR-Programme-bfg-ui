@@ -49,9 +49,9 @@ public class FileSearchService {
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
-        setEntityOfFile(fileList);
+        Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
         Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>(fileList, pageable, totalElements);
+        return new PageImpl<>( Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
     }
 
     private void setEntityOfFile(List<File> fileList) {
@@ -68,7 +68,7 @@ public class FileSearchService {
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         if (totalElements == 1) {
             List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
-            setEntityOfFile(fileList);
+            Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
             return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
         } else {
             return Optional.empty();

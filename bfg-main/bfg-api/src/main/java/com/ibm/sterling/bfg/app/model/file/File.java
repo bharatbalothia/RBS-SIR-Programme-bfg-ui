@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -15,9 +16,11 @@ public class File {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
     private Integer workflowID;
-    private String entityID;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Integer entityID;
+    private Entity entity;
     private Integer messageID;
-    private Integer docID;
+    private String docID;
     private Integer transactionTotal;
     private Boolean outbound;
     private Boolean override;
@@ -94,11 +97,11 @@ public class File {
         this.workflowID = workflowID;
     }
 
-    public String getEntityID() {
+    public Integer getEntityID() {
         return entityID;
     }
 
-    public void setEntityID(String entityID) {
+    public void setEntityID(Integer entityID) {
         this.entityID = entityID;
     }
 
@@ -110,11 +113,11 @@ public class File {
         this.messageID = messageID;
     }
 
-    public Integer getDocID() {
+    public String getDocID() {
         return docID;
     }
 
-    public void setDocID(Integer docID) {
+    public void setDocID(String docID) {
         this.docID = docID;
     }
 
@@ -140,6 +143,14 @@ public class File {
 
     public void setOverride(Boolean override) {
         this.override = override;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
 }

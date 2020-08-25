@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
-import com.ibm.sterling.bfg.app.model.file.File;
-import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
-import com.ibm.sterling.bfg.app.model.file.Transaction;
-import com.ibm.sterling.bfg.app.model.file.TransactionDetails;
+import com.ibm.sterling.bfg.app.model.file.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -24,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -42,15 +40,35 @@ public class FileSearchService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private EntityService entityService;
+
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         Integer page = fileSearchCriteria.getStart();
         Integer size = fileSearchCriteria.getRows();
         fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>(Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
+        });
+        return new PageImpl<>(Optional.ofNullable(fileList).map(this::setEntityOfFile).orElseGet(ArrayList::new),
+                PageRequest.of(page, size), totalElements);
+    }
+
+    private List<File> setEntityOfFile(List<File> fileList) {
+        return fileList.stream().peek(file -> {
+            Integer entityId = file.getEntityID();
+            Entity entity = new Entity();
+            entity.setEntityId(entityId);
+            entity.setEntity(entityService.findById(entityId)
+                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
+                    .orElseGet(() -> {
+                        entity.setError("no such entity");
+                        return null;
+                    })
+            );
+            file.setEntity(entity);
+        }).collect(Collectors.toList());
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
@@ -59,8 +77,14 @@ public class FileSearchService {
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         if (totalElements == 1) {
-            List<File> fileList = objectMapper.convertValue(root.get("results"), List.class);
-            return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
+            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
+            });
+            return Optional.ofNullable(objectMapper.convertValue(Optional.ofNullable(fileList)
+                            .map(list -> {
+                                setEntityOfFile(list);
+                                return list.get(0);
+                            }).orElse(null),
+                    File.class));
         } else {
             return Optional.empty();
         }
@@ -110,6 +134,5 @@ public class FileSearchService {
 
         return objectMapper.readTree(Objects.requireNonNull(response.getBody()));
     }
-
 
 }

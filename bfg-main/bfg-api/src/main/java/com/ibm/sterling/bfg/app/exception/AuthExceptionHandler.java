@@ -34,7 +34,7 @@ public class AuthExceptionHandler extends ResponseEntityExceptionHandler {
             errorMessage = errorConfig.getErrorMessage(AuthErrorCode.valueOf(errorName));
         else {
             errorMessage = errorConfig.getErrorMessage(AuthErrorCode.FAIL,
-                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()));
+                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
         }
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }

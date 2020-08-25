@@ -1,6 +1,8 @@
+import { Entity } from '../entity/entity.model';
+
 export interface File {
     docID: string;
-    entityID: number;
+    entity: Entity;
     errorCode: string;
     filename: string;
     id: number;

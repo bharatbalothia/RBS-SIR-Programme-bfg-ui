@@ -26,12 +26,10 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        ErrorMessage errorMessage =
-                errorConfig.getErrorMessage(AuthErrorCode.BadCredentialsException,
-                        Optional.ofNullable(exception.getCause())
-                                .map(Throwable::getLocalizedMessage)
-                                .orElse(exception.getLocalizedMessage())
-                );
+        ErrorMessage errorMessage = errorConfig.getErrorMessage(AuthErrorCode.BadCredentialsException,
+                Optional.ofNullable(exception.getCause())
+                        .map(Throwable::getLocalizedMessage)
+                        .orElse(exception.getLocalizedMessage()), null);
         response.setStatus(errorMessage.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         mapper.writeValue(response.getWriter(), errorMessage);

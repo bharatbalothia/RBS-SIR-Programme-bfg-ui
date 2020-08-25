@@ -115,7 +115,7 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
             errorMessage = errorConfig.getErrorMessage(CertificateErrorCode.valueOf(errorName));
         else
             errorMessage = errorConfig.getErrorMessage(CertificateErrorCode.FAIL,
-                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()));
+                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -48,17 +49,26 @@ public class FileSearchService {
         fileSearchCriteria.setStart(page * size);
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
-        Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
-        Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>( Optional.ofNullable(fileList).orElse(new ArrayList<>()), pageable, totalElements);
+        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
+        });
+        return new PageImpl<>(Optional.ofNullable(fileList).map(this::setEntityOfFile).orElseGet(ArrayList::new),
+                PageRequest.of(page, size), totalElements);
     }
 
-    private void setEntityOfFile(List<File> fileList) {
-        fileList.forEach(file -> {
+    private List<File> setEntityOfFile(List<File> fileList) {
+        return fileList.stream().peek(file -> {
             Integer entityId = file.getEntityID();
-            file.setEntity(new Entity(entityId, entityService.findNameById(entityId)));
-        });
+            Entity entity = new Entity();
+            entity.setEntityId(entityId);
+            entity.setEntity(entityService.findById(entityId)
+                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
+                    .orElseGet(() -> {
+                        entity.setError("no such entity");
+                        return null;
+                    })
+            );
+            file.setEntity(entity);
+        }).collect(Collectors.toList());
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
@@ -67,9 +77,14 @@ public class FileSearchService {
         JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         if (totalElements == 1) {
-            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() { });
-            Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
-            return Optional.ofNullable(objectMapper.convertValue(fileList.get(0), File.class));
+            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
+            });
+            return Optional.ofNullable(objectMapper.convertValue(Optional.ofNullable(fileList)
+                            .map(list -> {
+                                setEntityOfFile(list);
+                                return list.get(0);
+                            }).orElse(null),
+                    File.class));
         } else {
             return Optional.empty();
         }

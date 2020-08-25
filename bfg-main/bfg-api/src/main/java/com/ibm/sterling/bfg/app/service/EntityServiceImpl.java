@@ -87,7 +87,7 @@ public class EntityServiceImpl implements EntityService {
     public String findNameById(int id) {
         LOG.info("entity by id {}", id);
         return entityRepository.findById(id).map(Entity::getEntity)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("There is no such entity by id " + id));
     }
 
     @Override

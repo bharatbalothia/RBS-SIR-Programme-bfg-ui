@@ -8,7 +8,6 @@ import { DocumentContent } from 'src/app/shared/models/file/document-content.mod
 import { formatDate } from '@angular/common';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
-    entityID: 'Entity',
     service: 'Service',
     direction: 'Direction',
     fileStatus: 'File Status',
@@ -43,8 +42,8 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'id', fieldValue: file.id },
-        { fieldName: 'entityID', fieldValue: file.entityID },
         { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
+        { fieldName: 'entity', fieldValue: file.entity.entity, isActionButton: true },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },

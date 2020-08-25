@@ -21,6 +21,9 @@ import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
+import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
 
 @Component({
   selector: 'app-file-search',
@@ -72,7 +75,8 @@ export class FileSearchComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private fileService: FileService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private entityService: EntityService
   ) {
     this.selectedData = this.defaultSelectedData;
   }
@@ -210,6 +214,7 @@ export class FileSearchComponent implements OnInit {
       isDragable: true,
       actionData: {
         actions: {
+          entity: () => this.openEntityDetailsDialog(file),
           errorCode: () => this.openErrorDetailsDialog(file),
           transactionTotal: () => this.openTransactionsDialog(file),
           filename: () => this.openFileDocumentInfo(file)
@@ -226,6 +231,23 @@ export class FileSearchComponent implements OnInit {
         tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
         displayName: getFileSearchDisplayName,
         isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
+
+  openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
+    .pipe(data => this.setLoading(data))
+    .subscribe((entity: Entity) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${entity.service}: ${entity.entity}`,
+        tabs: getEntityDetailsTabs(entity),
+        displayName: getEntityDisplayName,
+        isDragable: true,
+
       }));
     },
       error => {

@@ -21,10 +21,11 @@ public class ErrorMessage {
         this.setHttpStatus(HttpStatus.valueOf(environment.getProperty(code.status())));
     }
 
-    public ErrorMessage(Environment environment, ErrorCode code, String message) {
+    public ErrorMessage(Environment environment, ErrorCode code, String message, List<Object> data) {
         this.setCode(environment.getProperty(code.val()));
         this.setMessage(message);
         this.setHttpStatus(HttpStatus.valueOf(environment.getProperty(code.status())));
+        this.setErrors(data);
     }
 
     public ErrorMessage(Environment environment, ErrorCode code, List<Object> data) {

@@ -90,7 +90,7 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
         if (Arrays.stream(FileErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
             errorMessage = errorConfig.getErrorMessage(FileErrorCode.valueOf(errorName));
         else errorMessage = errorConfig.getErrorMessage(FileErrorCode.FAIL,
-                Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()));
+                Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

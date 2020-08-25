@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import javax.validation.*;
 import java.util.*;
 
@@ -101,7 +102,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         if (Arrays.stream(EntityErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
             errorMessage = errorConfig.getErrorMessage(EntityErrorCode.valueOf(errorName));
         else
-            errorMessage = errorConfig.getErrorMessage(EntityErrorCode.FAIL, Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()));
+            errorMessage = errorConfig.getErrorMessage(EntityErrorCode.FAIL,
+                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

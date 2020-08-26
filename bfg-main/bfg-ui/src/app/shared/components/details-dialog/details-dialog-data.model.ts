@@ -1,9 +1,12 @@
+import { EventEmitter } from '@angular/core';
+import { ErrorMessage } from 'src/app/core/utils/error-template';
 export interface DetailsDialogData {
     title: string;
     tabs?: Tab[];
     yesCaption?: string;
     actionData?: any;
     isDragable?: boolean;
+    parentError?: EventEmitter<ErrorMessage>;
     displayName: (fieldName: string) => string;
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
@@ -35,6 +35,8 @@ export class FileSearchComponent implements OnInit {
   getFileSearchDisplayName = getFileSearchDisplayName;
   getFileStatusIcon = getFileStatusIcon;
   FILE_STATUS_ICON = FILE_STATUS_ICON;
+
+  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
 
   isLinear = true;
 
@@ -207,20 +209,24 @@ export class FileSearchComponent implements OnInit {
   }
 
   openFileDetailsDialog = (file: File) =>
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `File - ${file.id}`,
-      tabs: getFileDetailsTabs(file),
-      displayName: getFileSearchDisplayName,
-      isDragable: true,
-      actionData: {
-        actions: {
-          entity: () => this.openEntityDetailsDialog(file),
-          errorCode: () => this.openErrorDetailsDialog(file),
-          transactionTotal: () => this.openTransactionsDialog(file),
-          filename: () => this.openFileDocumentInfo(file)
-        }
-      }
-    }))
+      {
+        this.createErrorMesageEmitter(file.id);
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `File - ${file.id}`,
+        tabs: getFileDetailsTabs(file),
+        displayName: getFileSearchDisplayName,
+        isDragable: true,
+        actionData: {
+          actions: {
+            entity: () => this.openEntityDetailsDialog(file),
+            errorCode: () => this.openErrorDetailsDialog(file),
+            transactionTotal: () => this.openTransactionsDialog(file),
+            filename: () => this.openFileDocumentInfo(file)
+          }
+        },
+        parentError: this.errorMesageEmitters[file.id]
+      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
+    }
 
   openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
     .pipe(data => this.setLoading(data))
@@ -236,6 +242,7 @@ export class FileSearchComponent implements OnInit {
       error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
+        this.emitErrorMesageEvent(file.id);
       })
 
   openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
@@ -281,6 +288,23 @@ export class FileSearchComponent implements OnInit {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
       })
+
+
+  createErrorMesageEmitter(id: number){
+    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
+  }
+
+  deleteErrorMesageEmitter(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id] = null;
+    }
+  }
+
+  emitErrorMesageEvent(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id].emit(this.errorMessage);
+    }
+  }
 
   setServiceAndDirectionFromStatus(fromStatus) {
     if (fromStatus !== '') {

@@ -18,6 +18,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -32,10 +33,32 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private ErrorConfig errorConfig;
 
+    @Autowired
+    private RestTemplateExceptionHandler restTemplateExceptionHandler;
+
+    @ExceptionHandler(HttpStatusCodeException.class)
+    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+        return restTemplateExceptionHandler.handleRestTemplateException(ex);
+    }
+
+    @ExceptionHandler(DocumentContentNotFoundException.class)
+    public ResponseEntity handleDocumentContentNotFoundException(DocumentContentNotFoundException ex) {
+        ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.DocumentContentNotFoundException);
+        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "errorDescription"))
+                .ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
     @ExceptionHandler(FileTransactionNotFoundException.class)
     public ResponseEntity handleFileTransactionNotFoundException(FileTransactionNotFoundException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.FileTransactionNotFoundException);
-        String message = Optional.ofNullable(ex.getMessage())
+        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "message"))
+                .ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
+    private String extractErrorMessage(String message, String messageKey) {
+        return Optional.ofNullable(message)
                 .map(errMessage -> {
                             String errorMapString = errMessage.substring(errMessage.indexOf("[") + 1, errMessage.indexOf("]"));
                             Map<String, Object> errorMap = new HashMap<>();
@@ -45,11 +68,9 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }
-                            return (String) errorMap.get("message");
+                            return (String) errorMap.get(messageKey);
                         }
                 ).orElse(null);
-        Optional.ofNullable(message).ifPresent(error::setMessage);
-        return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
     @Override

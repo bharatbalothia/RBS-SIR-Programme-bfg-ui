@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
@@ -34,14 +33,12 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
     @Autowired
     private ErrorConfig errorConfig;
 
+    @Autowired
+    private RestTemplateExceptionHandler restTemplateExceptionHandler;
+
     @ExceptionHandler(HttpStatusCodeException.class)
     public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
-        String message = ex.getMessage();
-        return ResponseEntity.status(ex.getStatusCode())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Optional.ofNullable(message)
-                        .map(errMessage -> errMessage.substring(message.indexOf("[")))
-                        .orElse(message));
+        return restTemplateExceptionHandler.handleRestTemplateException(ex);
     }
 
     @Override

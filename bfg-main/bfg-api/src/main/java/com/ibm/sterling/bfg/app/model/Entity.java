@@ -5,8 +5,8 @@ import com.ibm.sterling.bfg.app.model.validation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
-import com.ibm.sterling.bfg.app.model.validation.unique.EntityValid;
-import com.ibm.sterling.bfg.app.model.validation.unique.EntityValidPut;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityUpdateUniqueness;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityServiceUniquenessConstraint;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
@@ -26,8 +26,8 @@ import java.util.List;
 
 import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
-@EntityValid(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
-@EntityValidPut(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
+@EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+@EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
 @MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")

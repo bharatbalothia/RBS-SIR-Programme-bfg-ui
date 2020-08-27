@@ -80,8 +80,9 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'reference', fieldValue: transaction.reference },
                 { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'status', fieldValue: transaction.status },
-                { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+                /*TODO TO DO !!!!!!!!!! Switch field workflowID and status*/
+                { fieldName: 'workflowID', fieldValue: transaction.status },
+                { fieldName: 'status', fieldValue: transaction.workflowID },
             ]
         }]
     }

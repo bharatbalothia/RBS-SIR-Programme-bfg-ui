@@ -7,10 +7,11 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import { get } from 'lodash';
 import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { getFileSearchDisplayName, getTransactionDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -85,7 +86,12 @@ export class TransactionsDialogComponent implements OnInit {
         title: `Transaction Details of ${data.id}`,
         tabs: getTransactionDetailsTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
+        isDragable: true,
+        actionData: {
+          actions: {
+            transactionID: () => this.openTransactionDocumentInfo(data)
+          }
+        }
       }));
     },
       error => {
@@ -93,4 +99,19 @@ export class TransactionsDialogComponent implements OnInit {
         this.errorMessage = getApiErrorMessage(error);
       })
 
+  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: DocumentContent) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Transaction Document Information`,
+        tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 }

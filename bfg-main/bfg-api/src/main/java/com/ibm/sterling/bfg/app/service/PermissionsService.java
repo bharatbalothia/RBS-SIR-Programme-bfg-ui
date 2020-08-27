@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
@@ -28,7 +28,8 @@ public class PermissionsService {
     @Value("${permissions.password}")
     private String password;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public List<String> getPermissionList(LoginRequest loginRequest) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
@@ -44,13 +45,12 @@ public class PermissionsService {
                 .queryParam("searchFor", loginRequest.getLogin());
 
         HttpEntity request = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity =
-                new RestTemplate().exchange(
-                        uriBuilder.toUriString(),
-                        HttpMethod.GET,
-                        request,
-                        String.class
-                );
+        ResponseEntity<String> responseEntity = new RestTemplate().exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                String.class
+        );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
         List<Map<String, String>> authorityList = objectMapper.convertValue(root, List.class);
         return authorityList.stream()
@@ -64,4 +64,5 @@ public class PermissionsService {
                         }
                 ).collect(Collectors.toList());
     }
+
 }

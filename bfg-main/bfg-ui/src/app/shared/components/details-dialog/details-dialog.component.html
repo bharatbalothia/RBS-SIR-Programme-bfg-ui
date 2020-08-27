@@ -1,4 +1,5 @@
 <h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
+<app-error-template [errorMessage]="errorMessage"></app-error-template>
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
     <mat-dialog-content>
         <mat-tab-group>

@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service.certificate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ public class CertificateChainValidationService {
     @Value("${certificate.chain.url}")
     private String certificateChainUrl;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public List<Map<String, String>> getCertificateChain(String issuerDN) throws JsonProcessingException {
         ResponseEntity<String> response;

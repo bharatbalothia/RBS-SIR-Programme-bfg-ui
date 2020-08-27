@@ -25,7 +25,7 @@
         <mat-cell *matCellDef="let element">
             <button mat-button class="button-value" *ngIf="element.isActionButton"
                 (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
-            <app-display-table-cell *ngIf="!element.isActionButton"
+            <app-display-table-cell *ngIf="!element.isActionButton" [xml]="element.isXML"
                 [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
             </app-display-table-cell>
         </mat-cell>
@@ -35,7 +35,7 @@
     <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
         [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
     </mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [attr.xml]="row.isXML"></mat-row>
 </mat-table>
 
 <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">

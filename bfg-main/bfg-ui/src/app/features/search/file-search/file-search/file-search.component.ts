@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -20,6 +20,7 @@ import { TransactionsWithPagination } from 'src/app/shared/models/file/transacti
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
+import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
@@ -34,6 +35,8 @@ export class FileSearchComponent implements OnInit {
   getFileSearchDisplayName = getFileSearchDisplayName;
   getFileStatusIcon = getFileStatusIcon;
   FILE_STATUS_ICON = FILE_STATUS_ICON;
+
+  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
 
   isLinear = true;
 
@@ -206,19 +209,41 @@ export class FileSearchComponent implements OnInit {
   }
 
   openFileDetailsDialog = (file: File) =>
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `File - ${file.id}`,
-      tabs: getFileDetailsTabs(file),
-      displayName: getFileSearchDisplayName,
-      isDragable: true,
-      actionData: {
-        actions: {
-          entity: () => this.openEntityDetailsDialog(file),
-          errorCode: () => this.openErrorDetailsDialog(file),
-          transactionTotal: () => this.openTransactionsDialog(file)
-        }
-      }
-    }))
+      {
+        this.createErrorMesageEmitter(file.id);
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `File - ${file.id}`,
+        tabs: getFileDetailsTabs(file),
+        displayName: getFileSearchDisplayName,
+        isDragable: true,
+        actionData: {
+          actions: {
+            entity: () => this.openEntityDetailsDialog(file),
+            errorCode: () => this.openErrorDetailsDialog(file),
+            transactionTotal: () => this.openTransactionsDialog(file),
+            filename: () => this.openFileDocumentInfo(file)
+          }
+        },
+        parentError: this.errorMesageEmitters[file.id]
+      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
+    }
+
+  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: DocumentContent) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `File Document Information`,
+        tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
+        displayName: getFileSearchDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+        this.emitErrorMesageEvent(file.id);
+      })
 
   openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
     .pipe(data => this.setLoading(data))
@@ -229,6 +254,7 @@ export class FileSearchComponent implements OnInit {
         tabs: getEntityDetailsTabs(entity),
         displayName: getEntityDisplayName,
         isDragable: true,
+
       }));
     },
       error => {
@@ -262,6 +288,23 @@ export class FileSearchComponent implements OnInit {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
       })
+
+
+  createErrorMesageEmitter(id: number){
+    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
+  }
+
+  deleteErrorMesageEmitter(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id] = null;
+    }
+  }
+
+  emitErrorMesageEvent(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id].emit(this.errorMessage);
+    }
+  }
 
   setServiceAndDirectionFromStatus(fromStatus) {
     if (fromStatus !== '') {

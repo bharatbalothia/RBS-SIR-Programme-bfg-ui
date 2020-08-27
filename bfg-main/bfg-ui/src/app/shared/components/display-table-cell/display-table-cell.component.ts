@@ -10,6 +10,8 @@ export class DisplayTableCellComponent implements OnInit {
   _array = Array;
   @Input() value;
 
+  @Input() xml;
+
   constructor() { }
 
   ngOnInit(): void {

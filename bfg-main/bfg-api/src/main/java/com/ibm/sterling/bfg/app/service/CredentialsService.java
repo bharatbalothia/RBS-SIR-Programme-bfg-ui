@@ -29,7 +29,8 @@ public class CredentialsService {
     @Autowired
     private PermissionsService permissionsService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public UserCredentials getSBIAuthResponse(LoginRequest loginRequest) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();

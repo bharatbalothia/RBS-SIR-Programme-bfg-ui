@@ -40,6 +40,7 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE  } from 'ng-pick-datetime';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
+import { XmlPipe } from './pipes/xml/xml.pipe';
 
 
 
@@ -59,6 +60,7 @@ import { DragableDialogWrapperComponent } from './components/dragable-dialog-wra
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
+    XmlPipe,
   ],
   imports: [
     CommonModule,

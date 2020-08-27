@@ -260,6 +260,7 @@ export class FileSearchComponent implements OnInit {
       error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
+        this.emitErrorMesageEvent(file.id);
       })
 
   openTransactionsDialog = (file: File) =>

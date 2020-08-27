@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, EventEmitter } from '@angular/core';
 import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
@@ -23,6 +23,8 @@ export class TransactionsDialogComponent implements OnInit {
   getFileSearchDisplayName = getFileSearchDisplayName;
 
   displayName: (fieldName: string) => string;
+
+  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
 
   isLoading = true;
   errorMessage: ErrorMessage;
@@ -78,7 +80,10 @@ export class TransactionsDialogComponent implements OnInit {
     return data;
   }
 
-  openTransactionDetailsDialog = (fileId: number, id: number) => this.fileService.getTransactionById(fileId, id)
+  openTransactionDetailsDialog = (fileId: number, id: number) =>
+  {
+    this.createErrorMesageEmitter(id);
+    this.fileService.getTransactionById(fileId, id)
     .pipe(data => this.setLoading(data))
     .subscribe((data: Transaction) => {
       this.isLoading = false;
@@ -91,13 +96,15 @@ export class TransactionsDialogComponent implements OnInit {
           actions: {
             transactionID: () => this.openTransactionDocumentInfo(data)
           }
-        }
-      }));
+        },
+        parentError: this.errorMesageEmitters[id]
+      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
     },
       error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
-      })
+      });
+  }
 
   openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
     .pipe(data => this.setLoading(data))
@@ -113,5 +120,22 @@ export class TransactionsDialogComponent implements OnInit {
       error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
+        this.emitErrorMesageEvent(transaction.id);
       })
+
+  createErrorMesageEmitter(id: number){
+    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
+  }
+
+  deleteErrorMesageEmitter(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id] = null;
+    }
+  }
+
+  emitErrorMesageEvent(id: number){
+    if (this.errorMesageEmitters[id]){
+      this.errorMesageEmitters[id].emit(this.errorMessage);
+    }
+  }
 }

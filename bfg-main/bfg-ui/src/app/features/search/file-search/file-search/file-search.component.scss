@@ -62,7 +62,7 @@
     .mat-table {
         width: 100%;
 
-        .mat-cell {
+        .mat-cell, .mat-cell > button {
             word-wrap: break-word !important;
             white-space: unset !important;
             overflow-wrap: break-word;
@@ -72,6 +72,8 @@
             -moz-hyphens: auto;
             -webkit-hyphens: auto;
             hyphens: auto;
+            padding-left: 4px;
+            padding-right: 4px;
         }
 
         .mat-column-service {

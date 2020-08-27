@@ -4,25 +4,34 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
+import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
+
 public class TimeUtil {
     public static final String DEFAULT_DATE_FORMAT = "dd'/'MM'/'yyyy HH':'mm':'ss";
 
     public static Integer convertTimeToMinutes(String time) {
-        LocalTime localTime = LocalTime.parse(time);
-        Integer minutes = localTime.get(ChronoField.MINUTE_OF_DAY);
-        return minutes;
+        if (time == null) return 0;
+        return LocalTime.parse(formatToHHmm(time)).get(MINUTE_OF_DAY);
+    }
+
+    private static String formatToHHmm(String time) {
+        if (time == null) return null;
+        String[] array = time.split(":", 2);
+        int hour = Integer.parseInt(array[0]);
+        int min = Integer.parseInt(array[1]);
+        time = String.format("%02d:%02d", hour, min);
+        return time;
     }
 
     public static String convertMinutesToTime(Integer minutes) {
         Duration duration = Duration.ofMinutes(minutes);
-        String time = String.format("%02d:%02d", duration.toHours(), duration.toMinutes() - TimeUnit.HOURS.toMinutes(duration.toHours()));
-        return time;
+        return String.format("%02d:%02d", duration.toHours(),
+                duration.toMinutes() - TimeUnit.HOURS.toMinutes(duration.toHours()));
     }
 
     public static Date convertTimeToDate(String time) {
@@ -50,8 +59,8 @@ public class TimeUtil {
     public static LocalDateTime convertTimeToLocalDateTime(String time) {
         if (time == null) return null;
         String[] array = time.split(":", 2);
-        int hour = Integer.valueOf(array[0]);
-        int min = Integer.valueOf(array[1]);
+        int hour = Integer.parseInt(array[0]);
+        int min = Integer.parseInt(array[1]);
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime dateOfSchedule = LocalDateTime.now().withHour(hour).withMinute(min).withSecond(0);
         if (dateOfSchedule.isBefore(today)) {
@@ -62,12 +71,10 @@ public class TimeUtil {
 
     public static String formatLocalDateTimeToString(LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
-        String formatDateTime = date.format(formatter);
-        return formatDateTime;
+        return date.format(formatter);
     }
 
     public static LocalDateTime formatStringToLocalDateTime(String date) {
-        LocalDateTime formatDateTime = LocalDateTime.parse(date);
-        return formatDateTime;
+        return LocalDateTime.parse(date);
     }
 }

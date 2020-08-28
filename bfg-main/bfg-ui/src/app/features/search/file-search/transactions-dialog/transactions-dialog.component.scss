@@ -7,8 +7,12 @@
 
 .mat-table {
     width: 100%;
+    
+    .mat-header-cell {
+        padding-right: 8px;
+    }
 
-    .mat-cell {
+    .mat-cell, .mat-cell > button {
         word-wrap: break-word !important;
         white-space: unset !important;
         overflow-wrap: break-word;
@@ -18,6 +22,7 @@
         -moz-hyphens: auto;
         -webkit-hyphens: auto;
         hyphens: auto;
+        padding-right: 8px;
     }
 
     .mat-column-type,

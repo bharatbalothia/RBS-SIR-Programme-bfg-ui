@@ -156,6 +156,7 @@ export class FileSearchComponent implements OnInit {
     formData.fileStatus = null;
     formData.direction = null;
 
+    this.isLoading = true;
     this.fileService.getFileList(removeEmpties(formData)).pipe(take(1)).subscribe((data: FilesWithPagination) => {
       this.isLoading = false;
       this.pageIndex = pageIndex;

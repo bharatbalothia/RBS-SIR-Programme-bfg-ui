@@ -86,10 +86,14 @@ public class EntityController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@entityPermissionEvaluator.checkEditPermission(#entity, #id)")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPermission(#id)")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
-                .map(record -> ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE)))
+                .map(record -> {
+                    entity.setEntity(record.getEntity());
+                    entity.setService(record.getService());
+                    return ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE));
+                })
                 .orElseThrow(EntityNotFoundException::new);
     }
 

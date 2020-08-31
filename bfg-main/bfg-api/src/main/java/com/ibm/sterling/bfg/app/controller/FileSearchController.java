@@ -72,9 +72,9 @@ public class FileSearchController {
     }
 
     @GetMapping("document-content")
-    public ResponseEntity<Map<String, String>> getDocumentContent(
-            @RequestParam(value = "id") String documentId) throws JsonProcessingException {
-        return ok(fileSearchService.getDocumentContent(documentId));
+    public ResponseEntity<Map<String, String>> getDocumentContent(@RequestParam(value = "id") String documentId)
+            throws JsonProcessingException {
+        return ok(fileSearchService.getDocumentContent(documentId.isEmpty() ? null : documentId));
     }
 
 }

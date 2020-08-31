@@ -5,7 +5,7 @@ import { TransactionsWithPagination } from 'src/app/shared/models/file/transacti
 import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
-import { formatDate } from '@angular/common';
+import { formatDate, formatNumber } from '@angular/common';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -72,7 +72,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'id', fieldValue: transaction.id },
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: true },
                 { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'settleAmount', fieldValue: transaction.settleAmount },
+                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
                 { fieldName: 'filename', fieldValue: transaction.filename },
@@ -80,8 +80,9 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'reference', fieldValue: transaction.reference },
                 { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'status', fieldValue: transaction.status },
-                { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+                /*TODO TO DO !!!!!!!!!! Switch field workflowID and status*/
+                { fieldName: 'workflowID', fieldValue: transaction.status },
+                { fieldName: 'status', fieldValue: transaction.workflowID },
             ]
         }]
     }

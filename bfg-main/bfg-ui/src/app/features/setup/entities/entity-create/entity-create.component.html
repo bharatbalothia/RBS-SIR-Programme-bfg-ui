@@ -15,7 +15,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
                             <mat-select formControlName="service" (selectionChange)="onServiceSelect($event.value)"
-                                required>
+                                required [appDisableControl]="isEditing()">
                                 <mat-option *ngFor="let service of getEntityServicesArray()" [value]="service">{{service}}
                                 </mat-option>
                             </mat-select>

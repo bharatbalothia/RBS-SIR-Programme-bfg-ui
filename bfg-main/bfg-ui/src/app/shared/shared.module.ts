@@ -41,6 +41,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_LOCALE  } fro
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DragableDialogWrapperComponent } from './components/dragable-dialog-wrapper/dragable-dialog-wrapper.component';
 import { XmlPipe } from './pipes/xml/xml.pipe';
+import { DisableControlDirective } from './directives/disable-control.directive';
 
 
 
@@ -61,6 +62,7 @@ import { XmlPipe } from './pipes/xml/xml.pipe';
     InputLowercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
+    DisableControlDirective,
   ],
   imports: [
     CommonModule,
@@ -140,7 +142,8 @@ import { XmlPipe } from './pipes/xml/xml.pipe';
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
-    TooltipComponent
+    TooltipComponent,
+    DisableControlDirective
   ],
   providers: [
     { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },

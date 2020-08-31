@@ -4,7 +4,6 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
-import com.ibm.sterling.bfg.app.repository.EntityLogRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -24,9 +22,6 @@ public class ChangeControlService {
 
     @Autowired
     private ChangeControlRepository changeControlRepository;
-
-    @Autowired
-    private EntityLogRepository entityLogRepository;
 
     public List<ChangeControl> listAll() {
         return changeControlRepository.findAll();
@@ -71,15 +66,9 @@ public class ChangeControlService {
     }
 
     public List<ChangeControl> findAllPending() {
-        return convertStreamToList(changeControlRepository
-                .findByStatus(ChangeControlStatus.PENDING)
-                .stream());
-    }
-
-    private List<ChangeControl> convertStreamToList(Stream<ChangeControl> stream) {
-        return stream
-                .sorted()
-                .collect(Collectors.toList());
+        List<ChangeControl> pendingChangeControlList = changeControlRepository.findByStatus(ChangeControlStatus.PENDING);
+        Collections.sort(pendingChangeControlList);
+        return pendingChangeControlList;
     }
 
     public List<ChangeControl> findAllPending(String entity, String service) {
@@ -91,8 +80,7 @@ public class ChangeControlService {
                 .and(
                         GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
                 );
-        return convertStreamToList(changeControlRepository
-                .findAll(specification)
-                .stream());
+        return changeControlRepository.findAll(specification);
     }
+
 }

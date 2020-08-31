@@ -39,10 +39,9 @@ public class EntityPermissionEvaluator {
         return isAllowed(permission.apply("DELETE", entityToDelete.getService()));
     }
 
-    public boolean checkEditPermission(Entity entity, int id) {
+    public boolean checkEditPermission(int id) {
         Entity entityToEdit = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
-        return isAllowed(permission.apply("EDIT", entity.getService())) &
-                isAllowed(permission.apply("EDIT", entityToEdit.getService()));
+        return isAllowed(permission.apply("EDIT", entityToEdit.getService()));
     }
 
     public boolean checkApprovePermission(Map<String, String> approve) {

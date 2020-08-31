@@ -24,26 +24,26 @@ public class MQDetailsValidator implements ConstraintValidator<MQValid, Entity> 
                            ConstraintValidatorContext constraintValidatorContext) {
         LOG.info("MQ Details validation");
         boolean isPositiveFields = isValidMQDetails(MQDetailsFieldName.MQ_PORT.fieldName(), entity.getMqPort(),
-                "The " + MQDetailsFieldName.MQ_PORT.name() + " should be positive",
+                MQDetailsFieldName.MQ_PORT.name() + " should be positive",
                 constraintValidatorContext, (Integer mqPort) -> Optional.ofNullable(mqPort)
                         .map(port -> port <= 0).orElse(false)
         )
                 & isValidMQDetails(MQDetailsFieldName.MQ_SESSIONTIMEOUT.fieldName(), entity.getMqSessionTimeout(),
-                "The " + MQDetailsFieldName.MQ_SESSIONTIMEOUT.name() + " should be positive",
+                MQDetailsFieldName.MQ_SESSIONTIMEOUT.name() + " should be positive",
                 constraintValidatorContext, (Integer mqSessionTimeout) -> Optional.ofNullable(mqSessionTimeout)
                         .map(sessionTimeout -> sessionTimeout <= 0).orElse(false)
         );
 
         BiFunction<String, String, String> emptyFieldMessage =
                 (fieldName, directParticipant) ->
-                        new Formatter().format("The %s cannot be empty because the Entity Participant " +
+                        new Formatter().format("%s cannot be empty because the Entity Participant " +
                                         "Type has the value %s",
                                 fieldName, directParticipant).toString();
 
         String entityParticipantType = entity.getEntityParticipantType();
         boolean isEntityParticipantTypeNotNull = isValidMQDetails(MQDetailsFieldName.ENTITY_PARTICIPANT_TYPE.fieldName(),
                 entityParticipantType,
-                "The " + MQDetailsFieldName.ENTITY_PARTICIPANT_TYPE.name() + " cannot be empty",
+                MQDetailsFieldName.ENTITY_PARTICIPANT_TYPE.name() + " cannot be empty",
                 constraintValidatorContext, StringUtils::isEmpty);
 
         if (isEntityParticipantTypeNotNull) {

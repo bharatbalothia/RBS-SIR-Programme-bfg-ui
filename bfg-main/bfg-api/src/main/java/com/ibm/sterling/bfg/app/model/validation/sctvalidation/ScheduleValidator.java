@@ -24,12 +24,12 @@ public class ScheduleValidator implements ConstraintValidator<ScheduleValid, Sch
         LOG.info("Schedule validation");
         BiFunction<String, String, String> emptyFieldMessage =
                 (fieldName, directParticipant) ->
-                        new Formatter().format("The %s cannot be empty because the Type has the value %s",
+                        new Formatter().format("%s cannot be empty because the Type has the value %s",
                                 fieldName, directParticipant).toString();
 
         Boolean isWindow = schedule.getIsWindow();
         boolean isWindowNotNull = isValidSchedule(ScheduleFieldName.ISWINDOW.fieldName(), isWindow,
-                "The " + ScheduleFieldName.ISWINDOW.name() + " cannot be empty",
+                ScheduleFieldName.ISWINDOW.name() + " cannot be empty",
                 constraintValidatorContext, StringUtils::isEmpty);
 
         if (isWindowNotNull) {

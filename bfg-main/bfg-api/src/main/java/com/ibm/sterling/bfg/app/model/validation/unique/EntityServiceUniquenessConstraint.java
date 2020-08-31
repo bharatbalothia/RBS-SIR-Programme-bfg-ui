@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = EntityServiceUniquenessConstraintValidation.class)
 public @interface EntityServiceUniquenessConstraint {
 
-    String message() default "The Entity or Service has to be unique";
+    String message() default "ENTITY or SERVICE has to be unique";
 
     Class<?>[] groups() default {};
 

@@ -51,7 +51,6 @@ public class FileSearchController {
         return fileSearchService.getTransactionsList(fileId, size, page);
     }
 
-
     @GetMapping("{fileId}/transactions/{id}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable Integer fileId,
                                                           @PathVariable Integer id) throws JsonProcessingException {

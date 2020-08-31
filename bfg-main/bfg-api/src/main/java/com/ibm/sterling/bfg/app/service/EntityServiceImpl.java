@@ -1,5 +1,7 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
@@ -10,6 +12,7 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.validation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +61,6 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public boolean existsByServiceAndEntityPut(Entity entity) {
         LOG.info("Checking uniqueness entity and service for {}", entity);
-        List<Entity> entities = entityRepository.findByDeleted(false);
         boolean isUnique = getEntitiesExceptCurrent(entity).stream()
                 .anyMatch(ent -> ent.getService().equals(entity.getService()) &
                         ent.getEntity().equals(entity.getEntity()));
@@ -237,20 +239,36 @@ public class EntityServiceImpl implements EntityService {
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
-        if (fieldName.equals("MQQUEUEOUT"))
+        if (EntityFieldName.MQQUEUEOUT.name().equals(fieldName))
             return entityRepository.existsByMqQueueOut(String.valueOf(value));
-        if (fieldName.equals("MAILBOXPATHOUT"))
+        if (EntityFieldName.MAILBOXPATHOUT.name().equals(fieldName))
             return entityRepository.existsByMailboxPathOut(String.valueOf(value));
         return false;
     }
 
     @Override
+    public boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException {
+        if (EntityFieldName.MQQUEUEOUT.name().equals(fieldName)) {
+            return entityRepository.existsByMqQueueOutAndDeletedAndEntityIdNot(String.valueOf(value), false, entityId);
+        }
+        if (EntityFieldName.MAILBOXPATHOUT.name().equals(fieldName)) {
+            return entityRepository.existsByMailboxPathOutAndDeletedAndEntityIdNot(String.valueOf(value), false, entityId);
+        }
+        if (EntityFieldName.ENTITY_SERVICE.name().equals(fieldName)) {
+            Map<String, String> entityServiceMap = new ObjectMapper().convertValue(value, new TypeReference<Map<String, String>>() {
+            });
+            return entityRepository.existsByEntityAndServiceAndDeletedAndEntityIdNot(
+                    entityServiceMap.get("entity"), entityServiceMap.get("service"), false, entityId);
+        }
+        return false;
+    }
+
+    @Override
     public boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException {
-        return getEntitiesExceptCurrent(entity)
-                .stream()
-                .anyMatch(ent ->
-                        Optional.ofNullable(ent.getMqQueueOut()).map(mqOut -> mqOut.equals(entity.getMqQueueOut())).orElse(false)
-                );
+        return getEntitiesExceptCurrent(entity).stream()
+                .anyMatch(ent -> Optional.ofNullable(ent.getMqQueueOut())
+                        .map(mqOut -> mqOut.equals(entity.getMqQueueOut()))
+                        .orElse(false));
     }
 
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {

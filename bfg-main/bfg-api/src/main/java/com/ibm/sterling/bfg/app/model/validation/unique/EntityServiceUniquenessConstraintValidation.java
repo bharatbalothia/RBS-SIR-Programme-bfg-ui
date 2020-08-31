@@ -5,13 +5,14 @@ import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class EntityUniqueValidationByServiceAndEntity implements ConstraintValidator<EntityValid, Entity> {
+public class EntityServiceUniquenessConstraintValidation implements ConstraintValidator<EntityServiceUniquenessConstraint, Entity> {
 
-    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidationByServiceAndEntity.class);
+    private static final Logger LOG = LogManager.getLogger(EntityServiceUniquenessConstraintValidation.class);
 
     @Autowired
     private EntityService entityService;

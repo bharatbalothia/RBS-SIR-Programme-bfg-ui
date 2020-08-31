@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
@@ -19,4 +20,11 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
     List<Entity> findAll(Specification<Entity> specification);
 
     List<Entity> findByDeleted(boolean deleted);
+
+    boolean existsByMqQueueOutAndDeletedAndEntityIdNot(String mqQueueOut, Boolean deleted, Integer entityId);
+
+    boolean existsByMailboxPathOutAndDeletedAndEntityIdNot(String mailboxPathOut, Boolean deleted, Integer entityId);
+
+    boolean existsByEntityAndServiceAndDeletedAndEntityIdNot(String entity, String service, Boolean deleted, Integer entityId);
+
 }

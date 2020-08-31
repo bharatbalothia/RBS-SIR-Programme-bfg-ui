@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -34,5 +35,7 @@ public interface EntityService extends FieldValueExists {
     Page<EntityType> findEntities(Pageable pageable, String entity, String service);
 
     boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException;
+
+    boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException;
 
 }

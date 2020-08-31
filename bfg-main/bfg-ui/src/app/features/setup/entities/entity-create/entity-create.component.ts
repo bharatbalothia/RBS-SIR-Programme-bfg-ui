@@ -170,7 +170,7 @@ export class EntityCreateComponent implements OnInit {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{value : entity.entity, disabled: !!this.editableEntity}, {
+          entity: [{value : entity.entity, disabled: this.isEditing()}, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -252,7 +252,7 @@ export class EntityCreateComponent implements OnInit {
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{value : entity.entity, disabled: !!this.editableEntity}, {
+          entity: [{value : entity.entity, disabled: this.isEditing()}, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)

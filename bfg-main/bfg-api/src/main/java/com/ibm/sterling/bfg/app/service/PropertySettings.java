@@ -20,6 +20,7 @@ public class PropertySettings {
     private String fileSearchPrefixKey;
     private String fileUrl;
     private String fileStatusPrefixKey;
+    private String transactionStatusPrefixKey;
     private String[] fileSearchPostfixKey;
     private String fileErrorUrl;
     private String[] fileErrorPostfixKey;
@@ -169,4 +170,13 @@ public class PropertySettings {
     public void setTransactionSearchPostfixKey(String[] transactionSearchPostfixKey) {
         this.transactionSearchPostfixKey = transactionSearchPostfixKey;
     }
+
+    public String getTransactionStatusPrefixKey() {
+        return transactionStatusPrefixKey;
+    }
+
+    public void setTransactionStatusPrefixKey(String transactionStatusPrefixKey) {
+        this.transactionStatusPrefixKey = transactionStatusPrefixKey;
+    }
+
 }

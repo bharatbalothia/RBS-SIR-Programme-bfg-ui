@@ -28,13 +28,15 @@ public class SCTTransactionSearchController {
     private PropertyService propertyService;
 
     @PostMapping
-    public Page<Transaction> getSCTTransactions(@Valid @RequestBody(required = false) TransactionSearchCriteria transactionSearchCriteria) throws JsonProcessingException {
-        return searchService.getSCTTransactionList(Optional.ofNullable(transactionSearchCriteria).orElse(new TransactionSearchCriteria()));
+    public Page<Transaction> getSCTTransactions(@Valid @RequestBody(required = false) TransactionSearchCriteria transactionSearchCriteria)
+            throws JsonProcessingException {
+        return searchService.getSCTTransactionList(
+                Optional.ofNullable(transactionSearchCriteria).orElse(new TransactionSearchCriteria()));
     }
 
     @GetMapping("transaction-criteria-data")
     public ResponseEntity<Map<String, List<Object>>> getFileCriteriaData(
-            @RequestParam(value = "direction", required = false) String direction) {
+            @RequestParam(value = "direction", required = false) String direction) throws JsonProcessingException {
         return ok(propertyService.getTransactionCriteriaData(direction));
     }
 

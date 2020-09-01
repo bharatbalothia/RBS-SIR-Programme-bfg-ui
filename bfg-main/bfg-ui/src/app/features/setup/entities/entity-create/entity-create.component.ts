@@ -108,16 +108,15 @@ export class EntityCreateComponent implements OnInit {
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
         validators: [
-          Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
       responderDN: [entity.responderDN, {
         validators: [
-          Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
+      serviceName: [entity.serviceName],
       requestType: [entity.requestType],
       trace: [entity.trace || false],
       snF: [entity.snF || false],
@@ -148,6 +147,7 @@ export class EntityCreateComponent implements OnInit {
     inboundRoutingRule: true,
     requestorDN: '',
     responderDN: '',
+    serviceName: '',
     trace: false,
     snF: false,
     deliveryNotification: false,
@@ -245,6 +245,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.resetMqWalidators(this.entityPageFormGroup.controls.entityParticipantType.value);
+        this.resetSwiftWalidators(value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqWalidators(value);
         });
@@ -263,13 +264,11 @@ export class EntityCreateComponent implements OnInit {
           routeInbound: [entity.routeInbound, Validators.required],
           inboundRequestorDN: [entity.inboundRequestorDN, {
             validators: [
-              Validators.required,
               Validators.pattern(SWIFT_DN)
             ]
           }],
           inboundResponderDN: [entity.inboundResponderDN, {
             validators: [
-              Validators.required,
               Validators.pattern(SWIFT_DN)
             ]
           }],
@@ -287,6 +286,7 @@ export class EntityCreateComponent implements OnInit {
         });
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
+        this.resetSwiftWalidators(value);
         break;
     }
   }
@@ -318,6 +318,33 @@ export class EntityCreateComponent implements OnInit {
       sessionTimeout.validator == null ?
         Validators.pattern(NON_NEGATIVE_INT) :
         [sessionTimeout.validator, Validators.pattern(NON_NEGATIVE_INT)]
+    );
+  }
+
+  resetSwiftWalidators(value) {
+    const reqDn = this.SWIFTDetailsFormGroup.controls.requestorDN;
+    const resDn = this.SWIFTDetailsFormGroup.controls.responderDN;
+    const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
+    if (value === ENTITY_SERVICE_TYPE.GPL) {
+      reqDn.setValidators(Validators.required);
+      resDn.setValidators(Validators.required);
+      serviceName.setValidators(Validators.required);
+    } else {
+      reqDn.clearValidators();
+      resDn.clearValidators();
+      serviceName.clearValidators();
+    }
+
+    reqDn.setValidators(
+      reqDn.validator == null ?
+        Validators.pattern(SWIFT_DN) :
+        [reqDn.validator, Validators.pattern(SWIFT_DN)]
+    );
+
+    resDn.setValidators(
+      resDn.validator == null ?
+        Validators.pattern(SWIFT_DN) :
+        [resDn.validator, Validators.pattern(SWIFT_DN)]
     );
   }
 

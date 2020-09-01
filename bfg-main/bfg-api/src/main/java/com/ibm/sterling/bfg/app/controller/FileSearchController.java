@@ -8,7 +8,7 @@ import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.model.file.File;
 import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
-import com.ibm.sterling.bfg.app.service.FileSearchService;
+import com.ibm.sterling.bfg.app.service.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class FileSearchController {
 
     @Autowired
-    private FileSearchService fileSearchService;
+    private SearchService fileSearchService;
 
     @Autowired
     private PropertyService propertyService;

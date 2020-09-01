@@ -6,7 +6,7 @@ import com.ibm.sterling.bfg.app.model.validation.DateValid;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 
 @JsonInclude(NON_NULL)
-public class FileSearchCriteria {
+public class FileSearchCriteria implements SearchCriteria{
     private Integer id;
     private String service;
     private String reference;

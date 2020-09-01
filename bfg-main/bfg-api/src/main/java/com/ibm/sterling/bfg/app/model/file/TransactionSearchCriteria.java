@@ -6,7 +6,7 @@ import com.ibm.sterling.bfg.app.model.validation.DateValid;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
-public class TransactionSearchCriteria {
+public class TransactionSearchCriteria implements SearchCriteria{
     private String type;
     private String entity;
     private String service;

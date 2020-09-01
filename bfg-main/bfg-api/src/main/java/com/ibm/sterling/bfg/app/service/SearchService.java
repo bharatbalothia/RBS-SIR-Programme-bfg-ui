@@ -27,10 +27,13 @@ import java.util.stream.Collectors;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
-public class FileSearchService {
+public class SearchService {
 
     @Value("${file.search.url}")
     private String fileSearchUrl;
+
+    @Value("${transaction.search.url}")
+    private String transactionSearchUrl;
 
     @Value("${document.url}")
     private String documentUrl;
@@ -51,7 +54,7 @@ public class FileSearchService {
         Integer page = fileSearchCriteria.getStart();
         Integer size = fileSearchCriteria.getRows();
         fileSearchCriteria.setStart(page * size);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
+        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
         });
@@ -78,7 +81,7 @@ public class FileSearchService {
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setId(id);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
+        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl);
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         if (totalElements == 1) {
             List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
@@ -98,17 +101,28 @@ public class FileSearchService {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setRows(size);
         fileSearchCriteria.setStart(page * size);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
+        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
+        return getTransactions(size, page, root);
+    }
+
+    public Page<Transaction> getSCTTransactionList(TransactionSearchCriteria searchCriteria) throws JsonProcessingException {
+        Integer page = searchCriteria.getStart();
+        Integer size = searchCriteria.getRows();
+        searchCriteria.setStart(page * size);
+        JsonNode root = getListFromSBI(searchCriteria, transactionSearchUrl);
+        return getTransactions(size, page, root);
+    }
+
+    private PageImpl<Transaction> getTransactions(Integer size, Integer page, JsonNode root) {
         Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
         List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
         Pageable pageable = PageRequest.of(page, size);
         return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
     }
-
     public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
         JsonNode root;
         try {
-            root = getFileListFromSBI(new FileSearchCriteria(),
+            root = getListFromSBI(new FileSearchCriteria(),
                     fileSearchUrl + "/" + fileId + "/transactions/" + id);
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
@@ -131,9 +145,9 @@ public class FileSearchService {
         return Collections.singletonMap("document", jsonNode.asText());
     }
 
-    private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {
+    private JsonNode getListFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
-        objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
+        objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
         }).forEach(fileSearchCriteriaMultiValueMap::add);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)

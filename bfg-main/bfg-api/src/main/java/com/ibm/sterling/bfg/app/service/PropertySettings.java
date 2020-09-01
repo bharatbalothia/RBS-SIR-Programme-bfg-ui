@@ -23,6 +23,8 @@ public class PropertySettings {
     private String[] fileSearchPostfixKey;
     private String fileErrorUrl;
     private String[] fileErrorPostfixKey;
+    private String transactionSearchPrefixKey;
+    private String[] transactionSearchPostfixKey;
 
     public String getUserName() {
         return userName;
@@ -150,5 +152,21 @@ public class PropertySettings {
 
     public void setFileErrorPostfixKey(String[] fileErrorPostfixKey) {
         this.fileErrorPostfixKey = fileErrorPostfixKey;
+    }
+
+    public String getTransactionSearchPrefixKey() {
+        return transactionSearchPrefixKey;
+    }
+
+    public void setTransactionSearchPrefixKey(String transactionSearchPrefixKey) {
+        this.transactionSearchPrefixKey = transactionSearchPrefixKey;
+    }
+
+    public String[] getTransactionSearchPostfixKey() {
+        return transactionSearchPostfixKey;
+    }
+
+    public void setTransactionSearchPostfixKey(String[] transactionSearchPostfixKey) {
+        this.transactionSearchPostfixKey = transactionSearchPostfixKey;
     }
 }

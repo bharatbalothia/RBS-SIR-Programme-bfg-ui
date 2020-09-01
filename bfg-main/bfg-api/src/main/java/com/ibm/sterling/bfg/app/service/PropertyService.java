@@ -175,4 +175,23 @@ public class PropertyService {
         return objectMapper.convertValue(root, List.class);
     }
 
+    public Map<String, List<Object>> getTransactionCriteriaData(String direction) {
+        Map<String, List<Object>> transactionCriteriaData = new HashMap<>();
+        Function<String, String> queryStringToGetDataByKey = attributeValue ->
+                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
+        Arrays.asList(settings.getTransactionSearchPostfixKey())
+                .forEach(value -> {
+                    try {
+                        transactionCriteriaData.put(value, getPropertyList(settings.getFileUrl() +
+                                queryStringToGetDataByKey.apply(
+                                        settings.getTransactionSearchPrefixKey() + value)
+                        ).stream()
+                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                                .collect(Collectors.toList()));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
+        return transactionCriteriaData;
+    }
 }

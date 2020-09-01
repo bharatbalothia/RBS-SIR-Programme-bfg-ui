@@ -103,6 +103,7 @@
                 <server.host>*</server.host>
                 <server.port>13357</server.port>
                 <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+                <warname>bfgui</warname>
             </properties>
         </profile>
     </profiles>
@@ -149,6 +150,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <webappDirectory>${project.basedir}/target/build</webappDirectory>
+                    <warName>${warname}</warName>
                 </configuration>
             </plugin>
             <plugin>

@@ -14,6 +14,8 @@ import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/co
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
   selector: 'app-entity-pending',
@@ -37,7 +39,8 @@ export class EntityPendingComponent implements OnInit {
 
   constructor(
     private entityService: EntityService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -101,6 +104,10 @@ export class EntityPendingComponent implements OnInit {
         actionData: {
           changeID: changeControl.changeID,
           changer: changeControl.changer,
+          errorMessage: {
+            message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
+            errors: get(changeCtrl, 'errors')
+          },
           approveAction:
             (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
         }

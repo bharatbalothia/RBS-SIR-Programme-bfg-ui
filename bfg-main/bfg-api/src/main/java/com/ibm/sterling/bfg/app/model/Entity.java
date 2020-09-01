@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.validation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
@@ -881,6 +882,11 @@ public class Entity implements EntityType {
     @Override
     public String nameForSorting() {
         return entity;
+    }
+
+    @Override
+    public int statusForSorting() {
+        return ChangeControlStatus.ACCEPTED.getStatusValue();
     }
 
     @Override

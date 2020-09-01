@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,7 +29,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),
-                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d") })
+                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     @NotNull
     private String changeID; //pkey for the record
 
@@ -277,17 +278,17 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         return entityFromLog;
     }
 
-    public String getShortType(){
+    public String getShortType() {
         String shortType = "Unknown";
         try {
             ChangeViewer changeViewer = (ChangeViewer) Class.forName(objectType).newInstance();
             shortType = changeViewer.getObjectType();
-        } catch(Exception e){
+        } catch (Exception e) {
         }
         return shortType;
     }
 
-    public boolean isPending(){
+    public boolean isPending() {
         return status == ChangeControlStatus.PENDING;
     }
 
@@ -328,12 +329,18 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     }
 
     @Override
-    public int compareTo(ChangeControl сс) {
-        return resultMeta1.toLowerCase().compareTo(сс.getResultMeta1().toLowerCase());
+    public int compareTo(ChangeControl changeControl) {
+        return resultMeta1.toLowerCase().compareTo(changeControl.getResultMeta1().toLowerCase());
     }
 
     @Override
     public String nameForSorting() {
         return resultMeta1;
     }
+
+    @Override
+    public int statusForSorting() {
+        return status.getStatusValue();
+    }
+
 }

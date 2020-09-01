@@ -231,10 +231,9 @@ public class EntityServiceImpl implements EntityService {
                 .and(
                         GenericSpecification.filter("false", "deleted")
                 );
-        entities.addAll(
-                entityRepository
-                        .findAll(specification));
-        entities.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+        entities.addAll(entityRepository.findAll(specification));
+        entities.sort(Comparator.comparing(EntityType::statusForSorting)
+                .thenComparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
         return ListToPageConverter.convertListToPage(entities, pageable);
     }
 

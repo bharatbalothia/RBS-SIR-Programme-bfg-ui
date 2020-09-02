@@ -449,14 +449,14 @@ export class EntityCreateComponent implements OnInit {
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
   getSummaryFieldsSource() {
-    const entity = removeEmpties({
+    const entity = {
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
-    });
+    };
     this.summaryPageDataSource = Object.keys(entity)
       .map((key) => ({
         field: key,

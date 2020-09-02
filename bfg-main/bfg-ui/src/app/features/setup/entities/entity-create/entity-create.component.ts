@@ -335,7 +335,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   sendEntity(isEditing: boolean) {
-    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `${isEditing ? 'Edit' : 'Create'} ${entityName} entity`,
       text: `Are you sure to ${isEditing ? 'edit' : 'create'} ${entityName} entity?`,
@@ -397,7 +397,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   cancelEntity() {
-    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
       text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,

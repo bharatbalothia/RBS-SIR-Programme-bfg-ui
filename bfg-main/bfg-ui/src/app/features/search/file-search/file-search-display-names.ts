@@ -70,12 +70,12 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
         tabSections: [{
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: true },
+                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
                 { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'filename', fieldValue: transaction.filename },
+                { fieldName: 'filename', fieldValue: transaction.filename, isActionButton: true },
                 { fieldName: 'fileID', fieldValue: transaction.fileID },
                 { fieldName: 'reference', fieldValue: transaction.reference },
                 { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },

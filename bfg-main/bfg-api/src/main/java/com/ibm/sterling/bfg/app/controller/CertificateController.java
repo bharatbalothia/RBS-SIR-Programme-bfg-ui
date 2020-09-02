@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotValidException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,15 +96,16 @@ public class CertificateController {
     @PostMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
     public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
-        ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
-        String changeId = (String) approve.get("changeID");
-        return Optional.ofNullable(
-                certificateService.getTrustedCertificateAfterApprove(
-                        changeControlCertService.findById(changeId).orElseThrow(CertificateNotFoundException::new),
-                        (String) approve.get("approverComments"),
-                        status))
-                .map(record -> ok()
-                        .body(record))
+        ChangeControlCert changeControlCert = changeControlCertService.findById(String.valueOf(approve.get("changeID")))
+                .orElseThrow(CertificateNotFoundException::new);
+        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControlCert.getChanger()))
+            throw new InvalidUserForApprovalException();
+        return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
+                changeControlCert,
+                String.valueOf(approve.get("approverComments")),
+                ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
+        ).map(record -> ok()
+                .body(record))
                 .orElseThrow(CertificateNotFoundException::new);
     }
 

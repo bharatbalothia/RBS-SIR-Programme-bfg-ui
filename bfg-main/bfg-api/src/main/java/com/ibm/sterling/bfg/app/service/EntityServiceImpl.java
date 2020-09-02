@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
@@ -151,7 +152,7 @@ public class EntityServiceImpl implements EntityService {
 
     public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception {
         if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
-            throw new Exception("Status is not pending and therefore no action can be taken");
+            throw new StatusNotPendingException();
         }
         Entity entity = new Entity();
         switch (status) {

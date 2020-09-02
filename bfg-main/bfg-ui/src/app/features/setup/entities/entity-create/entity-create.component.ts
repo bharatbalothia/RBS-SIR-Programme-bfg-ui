@@ -245,7 +245,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.resetMqWalidators(this.entityPageFormGroup.controls.entityParticipantType.value);
-        this.resetSwiftWalidators(value);
+        this.resetSwiftValidators(value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqWalidators(value);
         });
@@ -286,7 +286,7 @@ export class EntityCreateComponent implements OnInit {
         });
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
-        this.resetSwiftWalidators(value);
+        this.resetSwiftValidators(value);
         break;
     }
   }
@@ -321,7 +321,7 @@ export class EntityCreateComponent implements OnInit {
     );
   }
 
-  resetSwiftWalidators(value) {
+  resetSwiftValidators(value) {
     const reqDn = this.SWIFTDetailsFormGroup.controls.requestorDN;
     const resDn = this.SWIFTDetailsFormGroup.controls.responderDN;
     const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
@@ -371,22 +371,22 @@ export class EntityCreateComponent implements OnInit {
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
-        const entity = removeEmpties({
+        const entity = {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
           ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
-        });
+        };
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
-          entityAction = this.entityService.editEntity({ ...editableEntity, ...entity });
+          entityAction = this.entityService.editEntity(removeEmpties({ ...editableEntity, ...entity }));
         }
         else {
-          entityAction = this.entityService.createEntity(entity);
+          entityAction = this.entityService.createEntity(removeEmpties(entity));
         }
         entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {

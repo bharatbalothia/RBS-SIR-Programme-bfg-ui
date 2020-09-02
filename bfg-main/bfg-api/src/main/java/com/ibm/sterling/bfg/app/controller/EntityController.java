@@ -3,8 +3,10 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -59,15 +62,16 @@ public class EntityController {
     @PostMapping("pending")
     @PreAuthorize("@entityPermissionEvaluator.checkApprovePermission(#approve)")
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
-        ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
-        String changeId = (String) approve.get("changeID");
-        return Optional.ofNullable(
-                entityService.getEntityAfterApprove(
-                        changeControlService.findById(changeId).orElseThrow(EntityNotFoundException::new),
-                        (String) approve.get("approverComments"),
-                        status))
-                .map(record -> ok()
-                        .body(record))
+        ChangeControl changeControl = changeControlService.findById(String.valueOf(approve.get("changeID")))
+                .orElseThrow(EntityNotFoundException::new);
+        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
+            throw new InvalidUserForApprovalException();
+        return Optional.ofNullable(entityService.getEntityAfterApprove(
+                changeControl,
+                String.valueOf(approve.get("approverComments")),
+                ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
+        ).map(record -> ok()
+                .body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
 

@@ -69,6 +69,10 @@ export class AuthService {
     return null;
   }
 
+  isTheSameUser(user: string){
+    return this.getUserName() === user;
+  }
+
   getUserPermissions(): string[] {
     if (this.isAuthenticated()) {
       return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).permissions;

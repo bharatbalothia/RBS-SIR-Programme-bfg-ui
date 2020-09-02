@@ -271,8 +271,11 @@ export class FileSearchComponent implements OnInit {
       displayName: getFileSearchDisplayName,
       isDragable: true,
       actionData: {
-        fileId: file.id
-      }
+        fileId: file.id,
+        actions: {
+          filename: () => this.openFileDetailsDialog(file)
+        }
+      },
     }))
 
   openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)

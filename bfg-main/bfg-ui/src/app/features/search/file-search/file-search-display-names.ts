@@ -13,6 +13,7 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     fileStatus: 'File Status',
     bpState: 'BP State',
     filename: 'Filename',
+    file: 'File',
     reference: 'Reference',
     type: 'Type',
     from: 'From',
@@ -21,7 +22,7 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     fileID: 'File ID',
     timestamp: 'Timestamp',
     workflowID: 'WFID',
-    errorCode: 'Error',
+    errorCode: 'Error Code',
     transactionTotal: 'Transactions',
     messageID: 'Message ID',
     status: 'Status',
@@ -41,9 +42,9 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
-        { fieldName: 'id', fieldValue: file.id },
-        { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
+        { fieldName: 'fileID', fieldValue: file.id },
         { fieldName: 'entity', fieldValue: file.entity.entity, isActionButton: true },
+        { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
@@ -66,22 +67,21 @@ export const getFileDetailsTabs = (file: File): Tab[] => [
 
 export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
     {
-        tabTitle: 'Transaction Details',
+        tabTitle: 'SCT Transaction',
         tabSections: [{
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'filename', fieldValue: transaction.filename, isActionButton: true },
-                { fieldName: 'fileID', fieldValue: transaction.fileID },
+                { fieldName: 'file', fieldValue: transaction.filename, isActionButton: true },
                 { fieldName: 'reference', fieldValue: transaction.reference },
-                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
+                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
                 { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'status', fieldValue: transaction.status },
+                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
+                { fieldName: 'status', fieldValue: transaction.status },
             ]
         }]
     }

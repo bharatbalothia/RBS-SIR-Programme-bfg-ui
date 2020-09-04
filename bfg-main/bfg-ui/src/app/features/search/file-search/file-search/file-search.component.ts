@@ -273,7 +273,7 @@ export class FileSearchComponent implements OnInit {
       actionData: {
         fileId: file.id,
         actions: {
-          filename: () => this.openFileDetailsDialog(file)
+          file: () => this.openFileDetailsDialog(file)
         }
       },
     }))

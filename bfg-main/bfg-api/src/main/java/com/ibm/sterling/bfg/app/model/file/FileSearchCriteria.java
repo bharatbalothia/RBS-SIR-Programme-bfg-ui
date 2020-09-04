@@ -19,9 +19,11 @@ public class FileSearchCriteria extends SearchCriteria{
     private String filename;
     @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for from")
     private String from;
-    private String type;
     @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for to")
     private String to;
+
+    public FileSearchCriteria() {
+    }
 
     public Integer getId() {
         return id;
@@ -85,16 +87,6 @@ public class FileSearchCriteria extends SearchCriteria{
 
     public void setFrom(String from) {
         this.from = from;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getTo() {

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,9 +45,10 @@ public class FileSearchController {
     }
 
     @GetMapping("{fileId}/transactions")
-    public Page<Transaction> getTransactionsForFiles(@PathVariable Integer fileId,
-                                                     @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                     @RequestParam(value = "page", defaultValue = "0", required = false) Integer page)
+    public Page<Transaction> getTransactionsForFiles(
+            @PathVariable Integer fileId,
+            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page)
             throws JsonProcessingException {
         return fileSearchService.getTransactionsList(fileId, size, page);
     }

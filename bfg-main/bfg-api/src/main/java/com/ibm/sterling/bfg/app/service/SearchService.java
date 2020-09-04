@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,7 +19,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,42 +48,19 @@ public class SearchService {
     @Autowired
     private EntityService entityService;
 
-    public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
-        Integer page = fileSearchCriteria.getStart();
-        Integer size = fileSearchCriteria.getRows();
-        fileSearchCriteria.setStart(page * size);
-        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl);
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
-        });
-        return new PageImpl<>(Optional.ofNullable(fileList).map(this::setEntityOfFile).orElseGet(ArrayList::new),
-                PageRequest.of(page, size), totalElements);
-    }
-
-    private List<File> setEntityOfFile(List<File> fileList) {
-        return fileList.stream().peek(file -> {
-            Integer entityId = file.getEntityID();
-            Entity entity = new Entity();
-            entity.setEntityId(entityId);
-            entity.setEntity(entityService.findById(entityId)
-                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
-                    .orElseGet(() -> {
-                        entity.setError("no such entity");
-                        return null;
-                    })
-            );
-            file.setEntity(entity);
-        }).collect(Collectors.toList());
+    public Page<File> getFilesList(FileSearchCriteria searchCriteria) throws JsonProcessingException {
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(searchCriteria, fileSearchUrl),
+                new TypeReference<List<File>>() { });
+        Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
+        return convertListToPage(searchCriteria, fileList);
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setId(id);
-        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl);
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        if (totalElements == 1) {
-            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
-            });
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl),
+                new TypeReference<List<File>>() { });
+        if (fileList.size() == 1) {
             return Optional.ofNullable(objectMapper.convertValue(Optional.ofNullable(fileList)
                             .map(list -> {
                                 setEntityOfFile(list);
@@ -98,31 +73,17 @@ public class SearchService {
     }
 
     public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
-        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
-        fileSearchCriteria.setRows(size);
-        fileSearchCriteria.setStart(page * size);
-        JsonNode root = getListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
-        return getTransactions(size, page, root);
+        return getPageOfSearchingResults(new SearchCriteria(page, size), fileSearchUrl + "/" + fileId + "/transactions");
     }
 
     public Page<Transaction> getSCTTransactionList(TransactionSearchCriteria searchCriteria) throws JsonProcessingException {
-        Integer page = searchCriteria.getStart();
-        Integer size = searchCriteria.getRows();
-        searchCriteria.setStart(page * size);
-        JsonNode root = getListFromSBI(searchCriteria, transactionSearchUrl);
-        return getTransactions(size, page, root);
+        return getPageOfSearchingResults(searchCriteria, transactionSearchUrl);
     }
 
-    private PageImpl<Transaction> getTransactions(Integer size, Integer page, JsonNode root) {
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
-    }
     public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
         JsonNode root;
         try {
-            root = getListFromSBI(new FileSearchCriteria(),
+            root = getJsonNodeFromSBI(new FileSearchCriteria(),
                     fileSearchUrl + "/" + fileId + "/transactions/" + id);
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
@@ -145,7 +106,40 @@ public class SearchService {
         return Collections.singletonMap("document", jsonNode.asText());
     }
 
-    private JsonNode getListFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
+    private <T extends Object> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
+        searchCriteria.setStart(searchCriteria.getPage() * searchCriteria.getSize());
+        JsonNode root = getJsonNodeFromSBI(searchCriteria, searchingUrl);
+        searchCriteria.setTotalRows(objectMapper.convertValue(root.get("totalRows"), Integer.class));
+        return objectMapper.convertValue(root.get("results"), List.class);
+    }
+
+    private List<File> setEntityOfFile(List<File> fileList) {
+        return fileList.stream().peek(file -> {
+            Integer entityId = file.getEntityID();
+            Entity entity = new Entity();
+            entity.setEntityId(entityId);
+            entity.setEntity(entityService.findById(entityId)
+                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
+                    .orElseGet(() -> {
+                        entity.setError("no such entity");
+                        return null;
+                    })
+            );
+            file.setEntity(entity);
+        }).collect(Collectors.toList());
+    }
+
+    private <T> Page<T> getPageOfSearchingResults(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
+        List<T> list = getListFromSBI(searchCriteria, searchingUrl);
+        return convertListToPage(searchCriteria, list);
+    }
+
+    private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
+        return new PageImpl<>(Optional.ofNullable(results).orElseGet(ArrayList::new),
+                PageRequest.of(searchCriteria.getPage(), searchCriteria.getSize()), searchCriteria.getTotalRows());
+    }
+
+    private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
         objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
         }).forEach(fileSearchCriteriaMultiValueMap::add);
@@ -170,5 +164,6 @@ public class SearchService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
     }
-
 }
+
+

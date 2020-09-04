@@ -1,8 +1,8 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.*;
+
+import javax.validation.constraints.Min;
 
 public class SearchCriteria {
     private String type;
@@ -10,12 +10,26 @@ public class SearchCriteria {
     private String reference;
     private Boolean outbound;
     private Integer wfid;
-    @JsonAlias("page")
     @JsonSetter(nulls = Nulls.SKIP)
-    private Integer start = 0;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Integer page = 0;
     @JsonAlias("size")
     @JsonSetter(nulls = Nulls.SKIP)
-    private Integer rows = 10;
+    @Min(1)
+    @JsonProperty("rows")
+    private Integer size = 10;
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Integer start = 0;
+    @JsonIgnore
+    private Integer totalRows;
+
+    public SearchCriteria() {
+    }
+
+    public SearchCriteria(Integer page, @Min(1) Integer size) {
+        this.page = page;
+        this.size = size;
+    }
 
     public String getType() {
         return type;
@@ -65,11 +79,27 @@ public class SearchCriteria {
         this.start = start;
     }
 
-    public Integer getRows() {
-        return rows;
+    public Integer getSize() {
+        return size;
     }
 
-    public void setRows(Integer rows) {
-        this.rows = rows;
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getTotalRows() {
+        return totalRows;
+    }
+
+    public void setTotalRows(Integer totalRows) {
+        this.totalRows = totalRows;
     }
 }

@@ -13,12 +13,11 @@ public class SearchCriteria {
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer page = 0;
-    @JsonAlias("size")
-    @JsonSetter(nulls = Nulls.SKIP)
     @Min(1)
-    @JsonProperty("rows")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Integer size = 10;
     @JsonSetter(nulls = Nulls.SKIP)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer start = 0;
     @JsonIgnore
     private Integer totalRows;
@@ -26,7 +25,7 @@ public class SearchCriteria {
     public SearchCriteria() {
     }
 
-    public SearchCriteria(Integer page, @Min(1) Integer size) {
+    public SearchCriteria(Integer page, Integer size) {
         this.page = page;
         this.size = size;
     }
@@ -79,10 +78,12 @@ public class SearchCriteria {
         this.start = start;
     }
 
+    @JsonProperty(value = "rows", access = JsonProperty.Access.READ_ONLY)
     public Integer getSize() {
         return size;
     }
 
+    @JsonProperty(value = "size", access = JsonProperty.Access.WRITE_ONLY)
     public void setSize(Integer size) {
         this.size = size;
     }
@@ -102,4 +103,5 @@ public class SearchCriteria {
     public void setTotalRows(Integer totalRows) {
         this.totalRows = totalRows;
     }
+
 }

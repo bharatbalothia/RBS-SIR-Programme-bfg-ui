@@ -19,8 +19,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -48,36 +48,34 @@ public class SearchService {
     @Autowired
     private EntityService entityService;
 
-    public Page<File> getFilesList(FileSearchCriteria searchCriteria) throws JsonProcessingException {
-        List<File> fileList = objectMapper.convertValue(getListFromSBI(searchCriteria, fileSearchUrl),
-                new TypeReference<List<File>>() { });
+    public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
+        });
         Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
-        return convertListToPage(searchCriteria, fileList);
+        return convertListToPage(fileSearchCriteria, fileList);
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setId(id);
-        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl),
-                new TypeReference<List<File>>() { });
-        if (fileList.size() == 1) {
-            return Optional.ofNullable(objectMapper.convertValue(Optional.ofNullable(fileList)
-                            .map(list -> {
-                                setEntityOfFile(list);
-                                return list.get(0);
-                            }).orElse(null),
-                    File.class));
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
+        });
+        List<File> files = Optional.ofNullable(fileList).orElseGet(ArrayList::new);
+        if (files.size() == 1) {
+            setEntityOfFile(files);
+            return Optional.ofNullable(files.get(0));
         } else {
             return Optional.empty();
         }
     }
 
-    public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
-        return getPageOfSearchingResults(new SearchCriteria(page, size), fileSearchUrl + "/" + fileId + "/transactions");
+    public Page<Transaction> getTransactionsList(Integer fileId, Integer page, Integer size) throws JsonProcessingException {
+        SearchCriteria searchCriteria = new SearchCriteria(page, size);
+        return convertListToPage(searchCriteria, getListFromSBI(searchCriteria, fileSearchUrl + "/" + fileId + "/transactions"));
     }
 
-    public Page<Transaction> getSCTTransactionList(TransactionSearchCriteria searchCriteria) throws JsonProcessingException {
-        return getPageOfSearchingResults(searchCriteria, transactionSearchUrl);
+    public Page<Transaction> getSCTTransactionList(TransactionSearchCriteria transactionSearchCriteria) throws JsonProcessingException {
+        return convertListToPage(transactionSearchCriteria, getListFromSBI(transactionSearchCriteria, transactionSearchUrl));
     }
 
     public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
@@ -106,15 +104,15 @@ public class SearchService {
         return Collections.singletonMap("document", jsonNode.asText());
     }
 
-    private <T extends Object> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
+    private <T> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
         searchCriteria.setStart(searchCriteria.getPage() * searchCriteria.getSize());
         JsonNode root = getJsonNodeFromSBI(searchCriteria, searchingUrl);
         searchCriteria.setTotalRows(objectMapper.convertValue(root.get("totalRows"), Integer.class));
         return objectMapper.convertValue(root.get("results"), List.class);
     }
 
-    private List<File> setEntityOfFile(List<File> fileList) {
-        return fileList.stream().peek(file -> {
+    private void setEntityOfFile(List<File> fileList) {
+        fileList.forEach(file -> {
             Integer entityId = file.getEntityID();
             Entity entity = new Entity();
             entity.setEntityId(entityId);
@@ -126,12 +124,7 @@ public class SearchService {
                     })
             );
             file.setEntity(entity);
-        }).collect(Collectors.toList());
-    }
-
-    private <T> Page<T> getPageOfSearchingResults(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
-        List<T> list = getListFromSBI(searchCriteria, searchingUrl);
-        return convertListToPage(searchCriteria, list);
+        });
     }
 
     private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
@@ -164,6 +157,5 @@ public class SearchService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
     }
+
 }
-
-

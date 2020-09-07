@@ -330,17 +330,12 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
 
     @Override
     public int compareTo(ChangeControl changeControl) {
-        return resultMeta1.toLowerCase().compareTo(changeControl.getResultMeta1().toLowerCase());
+        return resultMeta1.compareToIgnoreCase(changeControl.getResultMeta1());
     }
 
     @Override
     public String nameForSorting() {
         return resultMeta1;
-    }
-
-    @Override
-    public int statusForSorting() {
-        return status.getStatusValue();
     }
 
 }

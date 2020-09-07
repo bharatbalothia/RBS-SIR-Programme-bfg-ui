@@ -893,11 +893,6 @@ public class Entity implements EntityType {
     }
 
     @Override
-    public int statusForSorting() {
-        return ChangeControlStatus.ACCEPTED.getStatusValue();
-    }
-
-    @Override
     public String toString() {
         return "Entity{" +
                 "entityId=" + entityId +

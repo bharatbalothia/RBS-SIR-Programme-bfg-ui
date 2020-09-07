@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -882,11 +883,6 @@ public class Entity implements EntityType {
     @Override
     public String nameForSorting() {
         return entity;
-    }
-
-    @Override
-    public int statusForSorting() {
-        return ChangeControlStatus.ACCEPTED.getStatusValue();
     }
 
     @Override

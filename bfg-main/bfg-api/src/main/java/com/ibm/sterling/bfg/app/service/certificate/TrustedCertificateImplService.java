@@ -173,11 +173,10 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                 .and(
                         GenericSpecification.filter(thumbprint, "thumbprint"))
                 .and(
-                        GenericSpecification.filter(thumbprint256, "thumbprint256"));
-        certificates.addAll(
-                trustedCertificateRepository
-                        .findAll(specification));
-        certificates.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+                        GenericSpecification.filter(thumbprint256, "thumbprint256")
+                );
+        certificates.addAll(trustedCertificateRepository.findAll(specification));
+        certificates.sort(Comparator.comparing(CertType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
         return ListToPageConverter.convertListToPage(certificates, pageable);
     }
 

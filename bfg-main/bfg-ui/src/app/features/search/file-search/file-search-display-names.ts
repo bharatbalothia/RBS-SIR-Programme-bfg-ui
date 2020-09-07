@@ -79,6 +79,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'type', fieldValue: transaction.type },
                 { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+                { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                 { fieldName: 'status', fieldValue: transaction.status },

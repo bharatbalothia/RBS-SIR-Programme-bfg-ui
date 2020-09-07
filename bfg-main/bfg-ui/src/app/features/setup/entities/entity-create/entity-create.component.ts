@@ -424,7 +424,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   cancelEntity() {
-    const entityName = this.entityPageFormGroup.get('entity').value || 'new';
+    const entityName = this.entityPageFormGroup.get('entity.value') || 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
       text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
@@ -438,9 +438,7 @@ export class EntityCreateComponent implements OnInit {
           this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
         }
         else {
-          this.errorMessage = null;
-          this.stepper.reset();
-          this.resetAllForms();
+          this.router.navigate(['/' + ROUTING_PATHS.ENTITIES]);
         }
       }
     });

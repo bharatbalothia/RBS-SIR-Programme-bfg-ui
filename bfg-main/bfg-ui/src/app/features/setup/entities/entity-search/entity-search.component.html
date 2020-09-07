@@ -31,7 +31,10 @@
                         </button>
                         <a mat-icon-button *ngIf="!element.entityLog"
                             [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
-                            [state]="{ pageIndex: pageIndex, pageSize: pageSize }">
+                            [state]="{ pageIndex: pageIndex,
+                                pageSize: pageSize,
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue }">
                             <mat-icon inline>edit</mat-icon>
                         </a>
                         <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">

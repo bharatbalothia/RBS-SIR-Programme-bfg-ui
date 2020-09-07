@@ -55,6 +55,10 @@ export class EntitySearchComponent implements OnInit {
       this.pageIndex = window.history.state.pageIndex;
       this.pageSize = window.history.state.pageSize;
     }
+
+    this.entityNameSearchingValue = window.history.state.entityNameSearchingValue || '';
+    this.serviceSearchingValue = window.history.state.serviceSearchingValue || '';
+
     this.getEntityList(this.pageIndex, this.pageSize);
   }
 

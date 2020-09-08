@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject, EventEmitter } from '@angular/core';
-import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
+import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
+import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 
 @Component({
   selector: 'app-transactions-dialog',

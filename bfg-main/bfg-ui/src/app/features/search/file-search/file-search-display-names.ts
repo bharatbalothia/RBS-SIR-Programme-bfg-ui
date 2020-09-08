@@ -1,11 +1,10 @@
 import { Tab, TableActions } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { File } from 'src/app/shared/models/file/file.model';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
-import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { formatDate, formatNumber } from '@angular/common';
+import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',

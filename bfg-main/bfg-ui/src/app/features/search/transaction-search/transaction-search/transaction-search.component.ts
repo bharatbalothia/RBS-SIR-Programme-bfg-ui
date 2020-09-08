@@ -164,11 +164,6 @@ export class TransactionSearchComponent implements OnInit {
     this.getTransactionCriteriaData();
   }
 
-  onServiceSelect = (event) => {
-    this.criteriaFilterObject.service = event.value;
-    this.getTransactionCriteriaData();
-  }
-
   onDirectionSelect = (event) => {
     this.criteriaFilterObject.direction = event.value;
     this.getTransactionCriteriaData();

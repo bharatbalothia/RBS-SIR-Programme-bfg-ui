@@ -25,6 +25,9 @@ public class PropertyService {
     @Autowired
     private PropertySettings settings;
 
+    @Autowired
+    private EntityService entityService;
+
     public List<String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
         return getPropertyList(settings.getGplUrl()).stream()
@@ -104,6 +107,7 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
+        transactionCriteriaData.put("entities", entityService.findEntitiesBySCTService());
         return transactionCriteriaData;
     }
 

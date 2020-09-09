@@ -38,4 +38,5 @@ public interface EntityService extends FieldValueExists {
 
     boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException;
 
+    List<Object> findEntitiesBySCTService();
 }

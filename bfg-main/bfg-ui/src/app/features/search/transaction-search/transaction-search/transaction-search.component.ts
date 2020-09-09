@@ -16,6 +16,7 @@ import { getStatusIcon } from 'src/app/core/constants/status-icon';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { FileService } from 'src/app/shared/models/file/file.service';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-search',
@@ -30,6 +31,8 @@ export class TransactionSearchComponent implements OnInit {
   errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLinear = true;
+
+  autoRefreshing: Subscription;
 
   errorMessage: ErrorMessage;
   isLoading = false;
@@ -80,6 +83,7 @@ export class TransactionSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
+      entity: [''],
       service: [''],
       direction: [''],
       trxStatus: [''],
@@ -160,6 +164,7 @@ export class TransactionSearchComponent implements OnInit {
   onStepChange(event) {
     if (event.selectedIndex === 1) {
       this.getTransactionList(this.pageIndex, this.pageSize);
+      this.autoRefreshChange(true);
     }
   }
 
@@ -214,4 +219,14 @@ export class TransactionSearchComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  autoRefreshChange = (value) => {
+    if (value) {
+      this.autoRefreshing = interval(60000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
+    }
+    else {
+      this.autoRefreshing.unsubscribe();
+    }
+  }
+
 }

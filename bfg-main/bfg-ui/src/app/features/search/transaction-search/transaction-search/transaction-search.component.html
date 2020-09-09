@@ -12,6 +12,15 @@
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Search parameters</ng-template>
+                <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
+                    <mat-label>{{getTransactionSearchDisplayName('entity')}}
+                    </mat-label>
+                    <mat-select formControlName="entity">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option *ngFor="let entity of transactionCriteriaData.entity" [value]="entity">
+                            {{entity}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.direction">
                     <mat-label>{{getTransactionSearchDisplayName('direction')}}
                     </mat-label>
@@ -71,6 +80,9 @@
             </form>
         </mat-step>
         <mat-step>
+            <mat-slide-toggle class="refresh-toggle" [checked]="autoRefreshing" (change)="autoRefreshChange($event.checked)">
+                Automatically refresh every minute
+            </mat-slide-toggle>
             <h3 *ngIf="transactions && transactions.totalElements">
                 {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize, transactions.pageable.pageNumber + 1)}}
             </h3>

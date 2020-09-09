@@ -263,6 +263,12 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    public List<Object> findEntitiesBySCTService() {
+        return entityRepository.findByDeletedAndService(false, "SCT")
+                .stream().map(Entity::getEntity).collect(Collectors.toList());
+    }
+
+    @Override
     public boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException {
         return getEntitiesExceptCurrent(entity).stream()
                 .anyMatch(ent -> Optional.ofNullable(ent.getMqQueueOut())

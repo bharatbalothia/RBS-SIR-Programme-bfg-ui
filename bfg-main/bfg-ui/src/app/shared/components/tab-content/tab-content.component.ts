@@ -40,4 +40,7 @@ export class TabContentComponent implements OnInit {
 
   getClickAction = (fieldName) => get(this.actions, fieldName, (e) => e)();
 
+  isAllTabEmpty = () => this.tab.tabSections.filter(el => el.sectionItems && el.sectionItems.length > 0).length === 0;
+
+  getNoDataLabel = (value: string) => `No ${value.toLowerCase()} detected.`;
 }

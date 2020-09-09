@@ -1,3 +1,4 @@
+<div class="no-data" *ngIf="this.isAllTabEmpty()">{{getNoDataLabel(tab.tabTitle)}}</div>
 <mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
     [dataSource]="dataSource.sectionItems">
     <ng-container matColumnDef="tableTitle">
@@ -30,7 +31,8 @@
             </app-display-table-cell>
         </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="tabSectionIndex > 0">
+    <mat-header-row *matHeaderRowDef="displayedColumns"
+        [hidden]="(dataSource.sectionItems && dataSource.sectionItems.length === 0) || tabSectionIndex > 0">
     </mat-header-row>
     <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
         [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
@@ -53,9 +55,18 @@
             </app-display-table-cell>
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="noData">
+        <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+            {{getNoDataLabel(tab.tableObject.tableTitle)}}
+        </mat-footer-cell>
+    </ng-container>
+
+    <mat-footer-row *matFooterRowDef="['noData']" [hidden]="tab.tableObject.tableDataSource.length > 0">
+    </mat-footer-row>
     <mat-header-row *matHeaderRowDef="['tableTitle']" [hidden]="!tab.tableObject.tableTitle">
     </mat-header-row>
-    <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns">
+    <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns"
+        [hidden]="tab.tableObject.tableDataSource.length === 0">
     </mat-header-row>
     <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>
 </mat-table>

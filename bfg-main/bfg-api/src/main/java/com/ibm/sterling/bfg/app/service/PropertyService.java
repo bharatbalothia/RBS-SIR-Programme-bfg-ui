@@ -107,7 +107,7 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
-        transactionCriteriaData.put("entities", entityService.findEntitiesBySCTService());
+        transactionCriteriaData.put("entity", entityService.findEntitiesBySCTService());
         return transactionCriteriaData;
     }
 

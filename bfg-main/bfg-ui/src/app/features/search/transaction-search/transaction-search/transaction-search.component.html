@@ -81,7 +81,9 @@
                     <ng-container matColumnDef="id">
                         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
+                            <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
                                 {{element.id}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 
@@ -92,7 +94,7 @@
                             &nbsp;{{element.status}}
                         </mat-cell>
                     </ng-container>
-                   
+
                     <ng-container matColumnDef="transactionID">
                         <mat-header-cell *matHeaderCellDef> Transaction ID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -148,10 +150,11 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </mat-table>
 
-                <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1" [getRows]="getTransactionList.bind(this)" [min]="1"
-                    [max]="transactions && transactions.totalPages" [length]="transactions.totalElements"
-                    [pageIndex]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
-                    [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+                <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1"
+                    [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+                    [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+                    [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+                    showFirstLastButtons>
                 </app-table-paginator>
 
             </div>

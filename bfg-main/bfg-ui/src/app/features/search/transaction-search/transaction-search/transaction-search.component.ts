@@ -7,12 +7,15 @@ import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-templ
 import * as moment from 'moment';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TransactionCriteriaData } from 'src/app/shared/models/transaction/transaction-criteria.model';
-import { getTransactionSearchDisplayName } from '../transaction-search-display-names';
+import { getTransactionSearchDisplayName, getTransactionDetailsTabs } from '../transaction-search-display-names';
 import { MatTableDataSource } from '@angular/material/table';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { FileService } from 'src/app/shared/models/file/file.service';
 
 @Component({
   selector: 'app-transaction-search',
@@ -64,6 +67,7 @@ export class TransactionSearchComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private transactionService: TransactionService,
+    private fileService: FileService,
     private dialog: MatDialog
   ) {
     this.selectedData = this.defaultSelectedData;
@@ -191,4 +195,23 @@ export class TransactionSearchComponent implements OnInit {
     }
   }
 
+  openTransactionDetailsDialog = (fileId: number, id: number) => {
+    this.createErrorMesageEmitter(id);
+    this.fileService.getTransactionById(fileId, id)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: Transaction) => {
+        this.isLoading = false;
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          title: `Transaction Details of ${data.id}`,
+          tabs: getTransactionDetailsTabs(data),
+          displayName: getTransactionSearchDisplayName,
+          isDragable: true,
+          parentError: this.errorMessageEmitters[id]
+        })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+  }
 }

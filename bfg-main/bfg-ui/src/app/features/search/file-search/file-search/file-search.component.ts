@@ -3,7 +3,7 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
@@ -22,6 +22,7 @@ import { DocumentContent } from 'src/app/shared/models/file/document-content.mod
 import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
+import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 
 @Component({
   selector: 'app-file-search',

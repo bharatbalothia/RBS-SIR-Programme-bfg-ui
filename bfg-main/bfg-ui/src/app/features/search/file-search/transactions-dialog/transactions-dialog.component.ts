@@ -6,12 +6,13 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import { get } from 'lodash';
 import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { getFileSearchDisplayName, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName } from '../file-search-display-names';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
+import { getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -24,7 +25,7 @@ export class TransactionsDialogComponent implements OnInit {
 
   displayName: (fieldName: string) => string;
 
-  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
+  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLoading = true;
   errorMessage: ErrorMessage;
@@ -80,30 +81,29 @@ export class TransactionsDialogComponent implements OnInit {
     return data;
   }
 
-  openTransactionDetailsDialog = (fileId: number, id: number) =>
-  {
+  openTransactionDetailsDialog = (fileId: number, id: number) => {
     this.createErrorMesageEmitter(id);
     this.fileService.getTransactionById(fileId, id)
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: Transaction) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Transaction Details of ${data.id}`,
-        tabs: getTransactionDetailsTabs(data),
-        displayName: getFileSearchDisplayName,
-        isDragable: true,
-        actionData: {
-          actions: {
-            transactionID: () => this.openTransactionDocumentInfo(data)
-          }
-        },
-        parentError: this.errorMesageEmitters[id]
-      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
-    },
-      error => {
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: Transaction) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          title: `Transaction Details of ${data.id}`,
+          tabs: getTransactionDetailsTabs(data),
+          displayName: getFileSearchDisplayName,
+          isDragable: true,
+          actionData: {
+            actions: {
+              transactionID: () => this.openTransactionDocumentInfo(data)
+            }
+          },
+          parentError: this.errorMesageEmitters[id]
+        })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
@@ -123,18 +123,18 @@ export class TransactionsDialogComponent implements OnInit {
         this.emitErrorMesageEvent(transaction.id);
       })
 
-  createErrorMesageEmitter(id: number){
+  createErrorMesageEmitter(id: number) {
     this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
   }
 
-  deleteErrorMesageEmitter(id: number){
-    if (this.errorMesageEmitters[id]){
+  deleteErrorMesageEmitter(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id] = null;
     }
   }
 
-  emitErrorMesageEvent(id: number){
-    if (this.errorMesageEmitters[id]){
+  emitErrorMesageEvent(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id].emit(this.errorMessage);
     }
   }

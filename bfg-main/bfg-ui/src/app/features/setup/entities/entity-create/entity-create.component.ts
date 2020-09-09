@@ -108,16 +108,15 @@ export class EntityCreateComponent implements OnInit {
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
         validators: [
-          Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
       responderDN: [entity.responderDN, {
         validators: [
-          Validators.required,
           Validators.pattern(SWIFT_DN)
         ]
       }],
+      serviceName: [entity.serviceName],
       requestType: [entity.requestType],
       trace: [entity.trace || false],
       snF: [entity.snF || false],
@@ -148,6 +147,7 @@ export class EntityCreateComponent implements OnInit {
     inboundRoutingRule: true,
     requestorDN: '',
     responderDN: '',
+    serviceName: '',
     trace: false,
     snF: false,
     deliveryNotification: false,
@@ -245,6 +245,7 @@ export class EntityCreateComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
         this.resetMqWalidators(this.entityPageFormGroup.controls.entityParticipantType.value);
+        this.resetSwiftValidators(value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqWalidators(value);
         });
@@ -263,13 +264,11 @@ export class EntityCreateComponent implements OnInit {
           routeInbound: [entity.routeInbound, Validators.required],
           inboundRequestorDN: [entity.inboundRequestorDN, {
             validators: [
-              Validators.required,
               Validators.pattern(SWIFT_DN)
             ]
           }],
           inboundResponderDN: [entity.inboundResponderDN, {
             validators: [
-              Validators.required,
               Validators.pattern(SWIFT_DN)
             ]
           }],
@@ -287,6 +286,7 @@ export class EntityCreateComponent implements OnInit {
         });
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
+        this.resetSwiftValidators(value);
         break;
     }
   }
@@ -321,6 +321,33 @@ export class EntityCreateComponent implements OnInit {
     );
   }
 
+  resetSwiftValidators(value) {
+    const reqDn = this.SWIFTDetailsFormGroup.controls.requestorDN;
+    const resDn = this.SWIFTDetailsFormGroup.controls.responderDN;
+    const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
+    if (value === ENTITY_SERVICE_TYPE.GPL) {
+      reqDn.setValidators(Validators.required);
+      resDn.setValidators(Validators.required);
+      serviceName.setValidators(Validators.required);
+    } else {
+      reqDn.clearValidators();
+      resDn.clearValidators();
+      serviceName.clearValidators();
+    }
+
+    reqDn.setValidators(
+      reqDn.validator == null ?
+        Validators.pattern(SWIFT_DN) :
+        [reqDn.validator, Validators.pattern(SWIFT_DN)]
+    );
+
+    resDn.setValidators(
+      resDn.validator == null ?
+        Validators.pattern(SWIFT_DN) :
+        [resDn.validator, Validators.pattern(SWIFT_DN)]
+    );
+  }
+
   onInboundRequestTypeRemoved(inboundRequestType: string) {
     const inboundRequestTypeList = this.entityPageFormGroup.get('inboundRequestType').value as string[];
     this.removeFirst(inboundRequestTypeList, inboundRequestType);
@@ -335,7 +362,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   sendEntity(isEditing: boolean) {
-    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `${isEditing ? 'Edit' : 'Create'} ${entityName} entity`,
       text: `Are you sure to ${isEditing ? 'edit' : 'create'} ${entityName} entity?`,
@@ -344,22 +371,22 @@ export class EntityCreateComponent implements OnInit {
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
-        const entity = removeEmpties({
+        const entity = {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
           ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
-        });
+        };
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
-          entityAction = this.entityService.editEntity({ ...editableEntity, ...entity });
+          entityAction = this.entityService.editEntity(removeEmpties({ ...editableEntity, ...entity }));
         }
         else {
-          entityAction = this.entityService.createEntity(entity);
+          entityAction = this.entityService.createEntity(removeEmpties(entity));
         }
         entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {
@@ -397,7 +424,8 @@ export class EntityCreateComponent implements OnInit {
   }
 
   cancelEntity() {
-    const entityName = this.entityTypeFormGroup.get('service').value || 'new';
+    const entity = this.entityPageFormGroup.get('entity');
+    const entityName = entity ? entity.value : 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
       text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
@@ -411,9 +439,7 @@ export class EntityCreateComponent implements OnInit {
           this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
         }
         else {
-          this.errorMessage = null;
-          this.stepper.reset();
-          this.resetAllForms();
+          this.router.navigate(['/' + ROUTING_PATHS.ENTITIES]);
         }
       }
     });
@@ -422,14 +448,14 @@ export class EntityCreateComponent implements OnInit {
   getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
   getSummaryFieldsSource() {
-    const entity = removeEmpties({
+    const entity = {
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value
-    });
+    };
     this.summaryPageDataSource = Object.keys(entity)
       .map((key) => ({
         field: key,

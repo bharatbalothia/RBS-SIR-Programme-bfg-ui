@@ -15,4 +15,5 @@ export interface Transaction {
     workflowID: number;
     fileID: number;
     docID: string;
+    timestamp: string;
 }

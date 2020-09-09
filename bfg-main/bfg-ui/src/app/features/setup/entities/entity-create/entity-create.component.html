@@ -32,6 +32,8 @@
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
                     </div>
                 </form>
             </mat-step>
@@ -619,7 +621,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestorDN'] || 'requestorDN'}}</mat-label>
-                            <input matInput formControlName="requestorDN" appInputLowercase required>
+                            <input matInput formControlName="requestorDN" appInputLowercase>
                             <mat-error *ngFor="let validation of entityValidationMessages.requestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
@@ -634,7 +636,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['responderDN'] || 'responderDN'}}</mat-label>
-                            <input matInput formControlName="responderDN" appInputLowercase required>
+                            <input matInput formControlName="responderDN" appInputLowercase>
                             <mat-error *ngFor="let validation of entityValidationMessages.responderDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
@@ -645,6 +647,21 @@
                             </mat-error>
                         </mat-form-field>
                         <app-tooltip [tip]="getTooltip('responderDN', 'swift')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['serviceName'] || 'serviceName'}}</mat-label>
+                            <input matInput formControlName="serviceName">
+                            <mat-error *ngFor="let validation of entityValidationMessages.serviceName">
+                                <mat-error class="error-message"
+                                    *ngIf="SWIFTDetailsFormGroup.get('serviceName').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('serviceName')">
+                                {{getErrorByField('serviceName')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('serviceName', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>

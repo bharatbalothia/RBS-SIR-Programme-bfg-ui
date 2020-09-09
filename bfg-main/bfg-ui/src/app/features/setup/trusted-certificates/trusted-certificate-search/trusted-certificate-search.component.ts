@@ -130,10 +130,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
     return promise;
   }
 
-  isTheSameUser(user: string) {
-    return this.authService.getUserName() === user;
-  }
-
   openInfoDialog(changeControl: ChangeControl) {
     this.addCertificateBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
@@ -164,12 +160,13 @@ export class TrustedCertificateSearchComponent implements OnInit {
             changer: changeCtrl.changer,
             errorMessage: {
               message: (get(changeCtrl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'])
-                || (this.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
+                || (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
               warnings: get(changeCtrl, 'warnings'),
               errors: get(changeCtrl, 'errors')
             },
             approveAction:
-              (params: { changeID: string, status: string, approverComments: string }) => this.trustedCertificateService.resolveChange(params)
+              (params: { changeID: string, status: string, approverComments: string }) =>
+                this.trustedCertificateService.resolveChange(params)
           }
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {

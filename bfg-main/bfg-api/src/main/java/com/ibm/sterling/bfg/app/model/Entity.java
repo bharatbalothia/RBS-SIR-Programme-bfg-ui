@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -61,23 +62,30 @@ public class Entity implements EntityType {
     private String service;
 
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
             message = "Please match the requested format for RequestorDN",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @NotBlank(message = "REQUESTORDN has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "REQUESTORDN")
     private String requestorDN;
 
     @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
             message = "Please match the requested format for ResponderDN",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @NotBlank(message = "RESPONDERDN has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "RESPONDERDN")
     private String responderDN;
 
+    @NotBlank(message = "SERVICENAME has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "SERVICENAME")
     private String serviceName;
+
     @Column(name = "REQUESTTYPE")
     private String requestType;
 
@@ -882,11 +890,6 @@ public class Entity implements EntityType {
     @Override
     public String nameForSorting() {
         return entity;
-    }
-
-    @Override
-    public int statusForSorting() {
-        return ChangeControlStatus.ACCEPTED.getStatusValue();
     }
 
     @Override

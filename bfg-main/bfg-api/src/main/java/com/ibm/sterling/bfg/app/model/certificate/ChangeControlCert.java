@@ -237,7 +237,7 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
 
     @Override
     public int compareTo(ChangeControlCert changeControlCert) {
-        return resultMeta1.toLowerCase().compareTo(changeControlCert.getResultMeta1().toLowerCase());
+        return resultMeta1.compareToIgnoreCase(changeControlCert.getResultMeta1());
     }
 
     @Override

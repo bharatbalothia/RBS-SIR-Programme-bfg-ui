@@ -148,7 +148,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
             changer: changeCtrl.changer,
             errorMessage: {
               message: (get(changeCtrl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'])
-                || (this.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
+                || (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
               warnings: get(changeCtrl, 'warnings'),
               errors: get(changeCtrl, 'errors')
             },

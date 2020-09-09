@@ -17,6 +17,8 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 
 @Component({
   selector: 'app-entity-search',
@@ -44,7 +46,8 @@ export class EntitySearchComponent implements OnInit {
 
   constructor(
     private entityService: EntityService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -52,6 +55,10 @@ export class EntitySearchComponent implements OnInit {
       this.pageIndex = window.history.state.pageIndex;
       this.pageSize = window.history.state.pageSize;
     }
+
+    this.entityNameSearchingValue = window.history.state.entityNameSearchingValue || '';
+    this.serviceSearchingValue = window.history.state.serviceSearchingValue || '';
+
     this.getEntityList(this.pageIndex, this.pageSize);
   }
 
@@ -116,6 +123,10 @@ export class EntitySearchComponent implements OnInit {
         actionData: {
           changeID: changeControl.changeID,
           changer: changeControl.changer,
+          errorMessage: {
+            message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
+            errors: get(changeCtrl, 'errors')
+          },
           approveAction:
             (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
         }

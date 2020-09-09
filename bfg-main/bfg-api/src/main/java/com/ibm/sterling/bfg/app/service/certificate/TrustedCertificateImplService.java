@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service.certificate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
+import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
@@ -132,7 +133,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
                                                                 String approverComments, ChangeControlStatus status) throws Exception {
         if (changeControlCert.getStatus() != PENDING) {
-            throw new Exception("Status is not pending and therefore no action can be taken");
+            throw new StatusNotPendingException();
         }
         TrustedCertificate cert = new TrustedCertificate();
         if (ACCEPTED.equals(status))
@@ -173,11 +174,10 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                 .and(
                         GenericSpecification.filter(thumbprint, "thumbprint"))
                 .and(
-                        GenericSpecification.filter(thumbprint256, "thumbprint256"));
-        certificates.addAll(
-                trustedCertificateRepository
-                        .findAll(specification));
-        certificates.sort(Comparator.comparing(o -> o.nameForSorting().toLowerCase()));
+                        GenericSpecification.filter(thumbprint256, "thumbprint256")
+                );
+        certificates.addAll(trustedCertificateRepository.findAll(specification));
+        certificates.sort(Comparator.comparing(CertType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
         return ListToPageConverter.convertListToPage(certificates, pageable);
     }
 

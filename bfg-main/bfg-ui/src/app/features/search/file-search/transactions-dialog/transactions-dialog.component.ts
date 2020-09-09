@@ -38,6 +38,7 @@ export class TransactionsDialogComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   fileId: number;
+  actions;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private fileService: FileService,
@@ -47,6 +48,7 @@ export class TransactionsDialogComponent implements OnInit {
     this.displayName = this.data.displayName;
 
     this.fileId = get(this.data, 'actionData.fileId');
+    this.actions = this.actions = get(this.data, 'actionData.actions');
   }
 
   ngOnInit() {
@@ -94,7 +96,7 @@ export class TransactionsDialogComponent implements OnInit {
         isDragable: true,
         actionData: {
           actions: {
-            transactionID: () => this.openTransactionDocumentInfo(data)
+            ...this.actions
           }
         },
         parentError: this.errorMesageEmitters[id]

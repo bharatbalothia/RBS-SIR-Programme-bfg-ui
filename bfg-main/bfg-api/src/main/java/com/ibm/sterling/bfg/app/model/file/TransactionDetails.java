@@ -1,9 +1,5 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
-
 public class TransactionDetails extends Transaction {
     private String entity;
     private String paymentBIC;
@@ -12,8 +8,6 @@ public class TransactionDetails extends Transaction {
     private Boolean isoutbound;
     private String fileID;
     private String service;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime timestamp;
 
     public String getEntity() {
         return entity;
@@ -69,14 +63,6 @@ public class TransactionDetails extends Transaction {
 
     public void setService(String service) {
         this.service = service;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
 }

@@ -15,6 +15,8 @@ public class Transaction {
     private Integer workflowID;
     private String fileId;
     private String docID;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timestamp;
 
     public Integer getId() {
         return id;
@@ -87,4 +89,13 @@ public class Transaction {
     public void setFileId(String fileId) {
         this.fileId = fileId;
     }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

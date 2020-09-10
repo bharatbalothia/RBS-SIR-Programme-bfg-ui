@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,7 +72,8 @@ public class PropertyService {
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
+                .filter(property -> Pattern.compile(Pattern.quote(statusPropertyKey), Pattern.CASE_INSENSITIVE)
+                        .matcher(property.get(PROPERTY_KEY)).find())
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
         return fileCriteriaData;

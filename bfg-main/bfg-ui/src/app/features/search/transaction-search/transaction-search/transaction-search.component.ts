@@ -254,7 +254,7 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     if (value) {
       this.autoRefreshing = interval(60000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
     }
-    else {
+    else if (this.autoRefreshing) {
       this.autoRefreshing.unsubscribe();
     }
   }

@@ -167,6 +167,9 @@ export class TransactionSearchComponent implements OnInit {
       this.getTransactionList(this.pageIndex, this.pageSize);
       this.autoRefreshChange(true);
     }
+    else {
+      this.autoRefreshChange(false);
+    }
   }
 
   resetSearchParameters = () => {
@@ -211,10 +214,9 @@ export class TransactionSearchComponent implements OnInit {
       const directionControl = this.searchingParametersFormGroup.controls.direction;
       const initialDirection = directionControl.value;
 
-      const newDirection = this.transactionCriteriaData.direction.find((element) =>
-        {
-          return element.toUpperCase() === getDirectionStringValue(fromStatus.outbound);
-        }
+      const newDirection = this.transactionCriteriaData.direction.find((element) => {
+        return element.toUpperCase() === getDirectionStringValue(fromStatus.outbound);
+      }
       );
 
       if (newDirection && (initialDirection !== newDirection)) {
@@ -250,7 +252,7 @@ export class TransactionSearchComponent implements OnInit {
 
   autoRefreshChange = (value) => {
     if (value) {
-      this.autoRefreshing = interval(60000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
+      this.autoRefreshing = interval(6000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
     }
     else {
       this.autoRefreshing.unsubscribe();

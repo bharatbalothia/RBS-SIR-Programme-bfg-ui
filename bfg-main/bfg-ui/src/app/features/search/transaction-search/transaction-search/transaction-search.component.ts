@@ -17,6 +17,7 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { Subscription, interval } from 'rxjs';
+import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 
 @Component({
   selector: 'app-transaction-search',
@@ -47,7 +48,7 @@ export class TransactionSearchComponent implements OnInit {
 
   selectedData: string[];
 
-  criteriaFilterObject = { direction: '', service: '' };
+  criteriaFilterObject = { direction: '', trxStatus: '' };
 
   transactions: TransactionsWithPagination;
   displayedColumns: string[] = [
@@ -94,7 +95,7 @@ export class TransactionSearchComponent implements OnInit {
       from: [this.defaultSelectedData],
       to: [this.defaultSelectedData]
     });
-    this.criteriaFilterObject = { direction: '', service: 'SCT' };
+    this.criteriaFilterObject = { direction: '', trxStatus: '' };
   }
 
   getTransactionCriteriaData = () =>
@@ -178,6 +179,10 @@ export class TransactionSearchComponent implements OnInit {
     this.getTransactionCriteriaData();
   }
 
+  onStatusSelect = (event) => {
+    this.setDirectionFromStatus(event.value);
+  }
+
   getSearchingTableHeader(totalElements: number, pageSize: number, page: number) {
     const start = (page * pageSize) - (pageSize - 1);
     const end = Math.min(start + pageSize - 1, totalElements);
@@ -197,6 +202,29 @@ export class TransactionSearchComponent implements OnInit {
   emitErrorMesageEvent(id: number) {
     if (this.errorMessageEmitters[id]) {
       this.errorMessageEmitters[id].emit(this.errorMessage);
+    }
+  }
+
+  setDirectionFromStatus(fromStatus) {
+    if (fromStatus !== '') {
+      let refreshRequired = false;
+      const directionControl = this.searchingParametersFormGroup.controls.direction;
+      const initialDirection = directionControl.value;
+
+      const newDirection = this.transactionCriteriaData.direction.find((element) =>
+        {
+          return element.toUpperCase() === getDirectionStringValue(fromStatus.outbound);
+        }
+      );
+
+      if (newDirection && (initialDirection !== newDirection)) {
+        directionControl.setValue(newDirection);
+        refreshRequired = true;
+        this.criteriaFilterObject.direction = newDirection;
+      }
+      if (refreshRequired) {
+        this.getTransactionCriteriaData();
+      }
     }
   }
 

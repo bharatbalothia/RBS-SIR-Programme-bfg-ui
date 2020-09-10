@@ -96,7 +96,7 @@ export class TransactionsDialogComponent implements OnInit {
           isDragable: true,
           actionData: {
             actions: {
-              transactionID: () => this.openTransactionDocumentInfo(data)
+              ...this.actions
             }
           },
           parentError: this.errorMesageEmitters[id]

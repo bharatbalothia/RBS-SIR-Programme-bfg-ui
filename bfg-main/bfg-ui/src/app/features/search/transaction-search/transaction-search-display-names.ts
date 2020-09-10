@@ -36,7 +36,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
                 { fieldName: 'id', fieldValue: transaction.id },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'file', fieldValue: transaction.filename },
+                { fieldName: 'file', fieldValue: transaction.filename, isActionButton: true },
                 { fieldName: 'reference', fieldValue: transaction.reference },
                 { fieldName: 'transactionID', fieldValue: transaction.transactionID },
                 { fieldName: 'type', fieldValue: transaction.type },

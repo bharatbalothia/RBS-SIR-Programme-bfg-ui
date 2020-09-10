@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, OnDestroy } from '@angular/core';
 import { get } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
@@ -24,7 +24,7 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
   templateUrl: './transaction-search.component.html',
   styleUrls: ['./transaction-search.component.scss']
 })
-export class TransactionSearchComponent implements OnInit {
+export class TransactionSearchComponent implements OnInit, OnDestroy {
 
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
   getTransactionStatusIcon = getStatusIcon;

@@ -13,11 +13,12 @@ public class Transaction {
     private LocalDateTime settleDate;
     private Double settleAmount;
     private Integer workflowID;
+    private Boolean isoutbound;
+    private String direction;
     private String fileId;
     private String docID;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
-    private Boolean isoutbound;
 
     public Integer getId() {
         return id;
@@ -107,4 +108,11 @@ public class Transaction {
         this.isoutbound = isoutbound;
     }
 
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 }

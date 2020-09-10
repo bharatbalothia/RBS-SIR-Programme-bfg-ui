@@ -1,11 +1,8 @@
-import { Tab, TableActions } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { File } from 'src/app/shared/models/file/file.model';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
-import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
-import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
-import { formatDate, formatNumber } from '@angular/common';
+import { formatDate } from '@angular/common';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -65,29 +62,6 @@ export const getFileDetailsTabs = (file: File): Tab[] => [
     }
 ].filter(el => el);
 
-export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
-    {
-        tabTitle: 'SCT Transaction',
-        tabSections: [{
-            sectionItems: [
-                { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'entity', fieldValue: transaction.entity },
-                { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'file', fieldValue: transaction.filename, isActionButton: true },
-                { fieldName: 'reference', fieldValue: transaction.reference },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
-                { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'workflowID', fieldValue: transaction.workflowID },
-                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
-                { fieldName: 'status', fieldValue: transaction.status },
-            ]
-        }]
-    }
-].filter(el => el);
-
 export const getErrorDetailsTabs = (fileError: FileError): Tab[] => [
     {
         tabTitle: 'Error Details',
@@ -96,18 +70,6 @@ export const getErrorDetailsTabs = (fileError: FileError): Tab[] => [
                 { fieldName: 'code', fieldValue: fileError.code },
                 { fieldName: 'name', fieldValue: fileError.name },
                 { fieldName: 'description', fieldValue: fileError.description },
-            ]
-        }]
-    }
-].filter(el => el);
-
-export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent): Tab[] => [
-    {
-        tabTitle: 'Document Info',
-        tabSections: [{
-            sectionItems: [
-                { fieldName: 'processID', fieldValue: documentContent.processID },
-                { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
             ]
         }]
     }

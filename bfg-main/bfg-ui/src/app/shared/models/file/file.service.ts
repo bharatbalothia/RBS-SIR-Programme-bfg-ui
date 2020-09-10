@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
 import { FileCriteriaData } from './file-criteria.model';
 import { Observable } from 'rxjs';
 import { FilesWithPagination } from './files-with-pagination.model';
-import { TransactionsWithPagination } from './transactions-with-pagination.model';
-import { Transaction } from './transaction.model';
+import { TransactionsWithPagination } from '../transaction/transactions-with-pagination.model';
 import { FileError } from './file-error.model';
+import { Transaction } from '../transaction/transaction.model';
 
 @Injectable({
     providedIn: 'root'
@@ -41,7 +41,6 @@ export class FileService {
     getErrorDetailsByCode(errorCode: string) {
         return this.http.get<FileError>(this.apiUrl + 'error/' + errorCode);
     }
-
 
     getDocumentContent(docId: string) {
         return this.http.get<FileError>(this.apiUrl + 'document-content/', { params: { id: docId } });

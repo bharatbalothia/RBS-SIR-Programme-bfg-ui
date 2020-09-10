@@ -58,7 +58,9 @@ mat-form-field {
 
 .mat-table {
 
-    .mat-header-cell, .mat-cell, .mat-cell > .mat-button {
+    .mat-header-cell,
+    .mat-cell,
+    .mat-cell>.mat-button {
         word-break: break-all;
         word-wrap: break-word;
         white-space: normal;
@@ -69,10 +71,9 @@ mat-form-field {
         line-height: normal;
         text-align: left;
         min-width: 10px;
-        padding-right: 8px;
     }
 
-    .mat-cell > .mat-button {
+    .mat-cell>.mat-button {
         padding: 0;
     }
 }

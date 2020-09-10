@@ -13,7 +13,12 @@ public class Transaction {
     private LocalDateTime settleDate;
     private Double settleAmount;
     private Integer workflowID;
+    private Boolean isoutbound;
+    private String direction;
+    private String fileId;
     private String docID;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timestamp;
 
     public Integer getId() {
         return id;
@@ -79,4 +84,35 @@ public class Transaction {
         this.docID = docID;
     }
 
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Boolean getIsoutbound() {
+        return isoutbound;
+    }
+
+    public void setIsoutbound(Boolean isoutbound) {
+        this.isoutbound = isoutbound;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 }

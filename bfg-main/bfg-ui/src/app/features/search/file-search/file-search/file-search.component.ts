@@ -3,27 +3,26 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getTransactionDetailsTabs, getErrorDetailsTabs, getTransactionDocumentInfoTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName, getFileDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { getFileStatusIcon, FILE_STATUS_ICON } from 'src/app/shared/models/file/file-status-icon';
+import { getStatusIcon, STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { TransactionsWithPagination } from 'src/app/shared/models/file/transactions-with-pagination.model';
-import { Transaction } from 'src/app/shared/models/file/transaction.model';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
+import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 
 @Component({
   selector: 'app-file-search',
@@ -33,8 +32,8 @@ import { Entity } from 'src/app/shared/models/entity/entity.model';
 export class FileSearchComponent implements OnInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
-  getFileStatusIcon = getFileStatusIcon;
-  FILE_STATUS_ICON = FILE_STATUS_ICON;
+  getFileStatusIcon = getStatusIcon;
+  FILE_STATUS_ICON = STATUS_ICON;
 
   errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
 

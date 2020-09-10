@@ -1,8 +1,10 @@
+import { Entity } from '../entity/entity.model';
+
 export interface Transaction {
     id: number;
     settleAmount: number;
     settleDate: string;
-    entity: string;
+    entity: Entity;
     paymentBIC: string;
     filename: string;
     reference: string;
@@ -14,4 +16,5 @@ export interface Transaction {
     fileID: number;
     docID: string;
     timestamp: string;
+    direction: string;
 }

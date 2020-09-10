@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,15 +21,17 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
-public class FileSearchService {
+public class SearchService {
 
     @Value("${file.search.url}")
     private String fileSearchUrl;
+
+    @Value("${transaction.search.url}")
+    private String transactionSearchUrl;
 
     @Value("${document.url}")
     private String documentUrl;
@@ -48,67 +49,39 @@ public class FileSearchService {
     private EntityService entityService;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
-        Integer page = fileSearchCriteria.getStart();
-        Integer size = fileSearchCriteria.getRows();
-        fileSearchCriteria.setStart(page * size);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
         });
-        return new PageImpl<>(Optional.ofNullable(fileList).map(this::setEntityOfFile).orElseGet(ArrayList::new),
-                PageRequest.of(page, size), totalElements);
-    }
-
-    private List<File> setEntityOfFile(List<File> fileList) {
-        return fileList.stream().peek(file -> {
-            Integer entityId = file.getEntityID();
-            Entity entity = new Entity();
-            entity.setEntityId(entityId);
-            entity.setEntity(entityService.findById(entityId)
-                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
-                    .orElseGet(() -> {
-                        entity.setError("no such entity");
-                        return null;
-                    })
-            );
-            file.setEntity(entity);
-        }).collect(Collectors.toList());
+        Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
+        return convertListToPage(fileSearchCriteria, fileList);
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         fileSearchCriteria.setId(id);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl);
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        if (totalElements == 1) {
-            List<File> fileList = objectMapper.convertValue(root.get("results"), new TypeReference<List<File>>() {
-            });
-            return Optional.ofNullable(objectMapper.convertValue(Optional.ofNullable(fileList)
-                            .map(list -> {
-                                setEntityOfFile(list);
-                                return list.get(0);
-                            }).orElse(null),
-                    File.class));
+        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
+        });
+        List<File> files = Optional.ofNullable(fileList).orElseGet(ArrayList::new);
+        if (files.size() == 1) {
+            setEntityOfFile(files);
+            return Optional.ofNullable(files.get(0));
         } else {
             return Optional.empty();
         }
     }
 
-    public Page<Transaction> getTransactionsList(Integer fileId, Integer size, Integer page) throws JsonProcessingException {
-        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
-        fileSearchCriteria.setRows(size);
-        fileSearchCriteria.setStart(page * size);
-        JsonNode root = getFileListFromSBI(fileSearchCriteria, fileSearchUrl + "/" + fileId + "/transactions");
-        Integer totalElements = objectMapper.convertValue(root.get("totalRows"), Integer.class);
-        List<Transaction> transactionList = objectMapper.convertValue(root.get("results"), List.class);
-        Pageable pageable = PageRequest.of(page, size);
-        return new PageImpl<>(Optional.ofNullable(transactionList).orElse(new ArrayList<>()), pageable, totalElements);
+    public Page<Transaction> getTransactionsList(Integer fileId, Integer page, Integer size) throws JsonProcessingException {
+        SearchCriteria searchCriteria = new SearchCriteria(page, size);
+        return convertListToPage(searchCriteria, getListFromSBI(searchCriteria, fileSearchUrl + "/" + fileId + "/transactions"));
+    }
+
+    public Page<Transaction> getSCTTransactionList(TransactionSearchCriteria transactionSearchCriteria) throws JsonProcessingException {
+        return convertListToPage(transactionSearchCriteria, getListFromSBI(transactionSearchCriteria, transactionSearchUrl));
     }
 
     public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
         JsonNode root;
         try {
-            root = getFileListFromSBI(new FileSearchCriteria(),
+            root = getJsonNodeFromSBI(new FileSearchCriteria(),
                     fileSearchUrl + "/" + fileId + "/transactions/" + id);
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
@@ -131,9 +104,37 @@ public class FileSearchService {
         return Collections.singletonMap("document", jsonNode.asText());
     }
 
-    private JsonNode getFileListFromSBI(FileSearchCriteria fileSearchCriteria, String fileSearchUrl) throws JsonProcessingException {
+    private <T> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
+        searchCriteria.setStart(searchCriteria.getPage() * searchCriteria.getSize());
+        JsonNode root = getJsonNodeFromSBI(searchCriteria, searchingUrl);
+        searchCriteria.setTotalRows(objectMapper.convertValue(root.get("totalRows"), Integer.class));
+        return objectMapper.convertValue(root.get("results"), List.class);
+    }
+
+    private void setEntityOfFile(List<File> fileList) {
+        fileList.forEach(file -> {
+            Integer entityId = file.getEntityID();
+            Entity entity = new Entity();
+            entity.setEntityId(entityId);
+            entity.setEntity(entityService.findById(entityId)
+                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
+                    .orElseGet(() -> {
+                        entity.setError("no such entity");
+                        return null;
+                    })
+            );
+            file.setEntity(entity);
+        });
+    }
+
+    private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
+        return new PageImpl<>(Optional.ofNullable(results).orElseGet(ArrayList::new),
+                PageRequest.of(searchCriteria.getPage(), searchCriteria.getSize()), searchCriteria.getTotalRows());
+    }
+
+    private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
-        objectMapper.convertValue(fileSearchCriteria, new TypeReference<Map<String, String>>() {
+        objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
         }).forEach(fileSearchCriteriaMultiValueMap::add);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)

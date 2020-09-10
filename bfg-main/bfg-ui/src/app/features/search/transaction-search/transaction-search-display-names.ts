@@ -28,28 +28,31 @@ export const TRANSACTION_SEARCH_DISPLAY_NAMES = {
 
 export const getTransactionSearchDisplayName = (key: string) => TRANSACTION_SEARCH_DISPLAY_NAMES[key] || key;
 
-export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
-    {
-        tabTitle: 'Transaction Details',
-        tabSections: [{
-            sectionItems: [
-                { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'entity', fieldValue: transaction.entity },
-                { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'file', fieldValue: transaction.filename, isActionButton: true },
-                { fieldName: 'reference', fieldValue: transaction.reference },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
-                { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
-                { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'workflowID', fieldValue: transaction.workflowID },
-                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
-                { fieldName: 'status', fieldValue: transaction.status },
-            ]
-        }]
-    }
-].filter(el => el);
+export const getTransactionDetailsTabs = (transaction: Transaction, actionMapping?: {[id: string]: any}): Tab[] => {
+    const mapping = actionMapping || {};
+    return [
+        {
+            tabTitle: 'Transaction Details',
+            tabSections: [{
+                sectionItems: [
+                    { fieldName: 'id', fieldValue: transaction.id },
+                    { fieldName: 'entity', fieldValue: transaction.entity },
+                    { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
+                    { fieldName: 'file', fieldValue: transaction.filename, isActionButton: 'file' in mapping },
+                    { fieldName: 'reference', fieldValue: transaction.reference },
+                    { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: 'transactionID' in mapping },
+                    { fieldName: 'type', fieldValue: transaction.type },
+                    { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
+                    { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                    { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
+                    { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                    { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
+                    { fieldName: 'status', fieldValue: transaction.status },
+                ]
+            }]
+        }
+    ].filter(el => el);
+};
 
 export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent): Tab[] => [
     {

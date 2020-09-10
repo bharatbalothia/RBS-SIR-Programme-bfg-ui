@@ -10,6 +10,7 @@ public class SearchCriteria {
     private String reference;
     private Boolean outbound;
     private Integer wfid;
+    private Integer status;
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer page = 0;
@@ -68,6 +69,14 @@ public class SearchCriteria {
 
     public void setWfid(Integer wfid) {
         this.wfid = wfid;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Integer getStart() {

@@ -6,7 +6,7 @@ import com.ibm.sterling.bfg.app.model.validation.DateValid;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
-public class TransactionSearchCriteria extends SearchCriteria{
+public class TransactionSearchCriteria extends SearchCriteria {
     private String entity;
     private String direction;
     private String paymentbic;
@@ -68,4 +68,5 @@ public class TransactionSearchCriteria extends SearchCriteria{
     public void setSettlementTo(String settlementTo) {
         this.settlementTo = settlementTo;
     }
+
 }

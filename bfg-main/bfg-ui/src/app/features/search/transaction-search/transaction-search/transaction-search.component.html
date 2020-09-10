@@ -33,7 +33,7 @@
                 <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.trxStatus">
                     <mat-label>{{getTransactionSearchDisplayName('trxStatus')}}
                     </mat-label>
-                    <mat-select formControlName="trxStatus">
+                    <mat-select formControlName="trxStatus" (selectionChange)="onStatusSelect($event)">
                         <mat-option value="">ALL</mat-option>
                         <mat-option *ngFor="let trxStatus of transactionCriteriaData.trxStatus" [value]="trxStatus">
                             {{trxStatus.label}}</mat-option>

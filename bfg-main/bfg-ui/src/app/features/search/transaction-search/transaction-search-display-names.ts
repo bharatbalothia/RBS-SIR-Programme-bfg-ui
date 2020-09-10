@@ -20,8 +20,10 @@ export const TRANSACTION_SEARCH_DISPLAY_NAMES = {
     settleAmount: 'Settle Amount',
     status: 'Status',
     filename: 'Filename',
+    file: 'File',
     fileID: 'File ID',
     workflowID: 'WFID',
+    timestamp: 'Timestamp'
 };
 
 export const getTransactionSearchDisplayName = (key: string) => TRANSACTION_SEARCH_DISPLAY_NAMES[key] || key;
@@ -32,18 +34,18 @@ export const getTransactionDetailsTabs = (transaction: Transaction): Tab[] => [
         tabSections: [{
             sectionItems: [
                 { fieldName: 'id', fieldValue: transaction.id },
-                { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: true },
-                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                 { fieldName: 'entity', fieldValue: transaction.entity },
                 { fieldName: 'paymentBIC', fieldValue: transaction.paymentBIC },
-                { fieldName: 'filename', fieldValue: transaction.filename },
-                { fieldName: 'fileID', fieldValue: transaction.fileID },
+                { fieldName: 'file', fieldValue: transaction.filename },
                 { fieldName: 'reference', fieldValue: transaction.reference },
-                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
+                { fieldName: 'transactionID', fieldValue: transaction.transactionID },
                 { fieldName: 'type', fieldValue: transaction.type },
-                { fieldName: 'status', fieldValue: transaction.status },
+                { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
+                { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                 { fieldName: 'workflowID', fieldValue: transaction.workflowID },
+                { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
+                { fieldName: 'status', fieldValue: transaction.status },
             ]
         }]
     }

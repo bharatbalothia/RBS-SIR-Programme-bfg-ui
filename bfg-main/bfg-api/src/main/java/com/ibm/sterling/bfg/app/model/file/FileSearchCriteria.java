@@ -11,6 +11,7 @@ public class FileSearchCriteria {
     private String service;
     private String reference;
     private Long messageid;
+    @JsonAlias("entityId")
     private Integer entityid;
     private Boolean override;
     private Boolean outbound;

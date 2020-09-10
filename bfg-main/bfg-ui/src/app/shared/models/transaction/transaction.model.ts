@@ -16,4 +16,5 @@ export interface Transaction {
     fileID: number;
     docID: string;
     timestamp: string;
+    direction: string;
 }

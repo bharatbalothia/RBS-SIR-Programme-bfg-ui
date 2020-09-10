@@ -42,7 +42,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'reference', fieldValue: transaction.reference },
                     { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: 'transactionID' in mapping },
                     { fieldName: 'type', fieldValue: transaction.type },
-                    { fieldName: 'direction', fieldValue: getDirectionStringValue(transaction.isoutbound) },
+                    { fieldName: 'direction', fieldValue: transaction.direction },
                     { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
                     { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },

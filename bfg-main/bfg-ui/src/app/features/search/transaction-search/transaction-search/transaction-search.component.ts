@@ -259,6 +259,10 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDirectionIcon(direction: string){
+    return direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';
+  }
+
   ngOnDestroy(): void {
     this.autoRefreshChange(false);
   }

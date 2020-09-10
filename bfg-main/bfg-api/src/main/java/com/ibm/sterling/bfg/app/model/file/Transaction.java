@@ -17,6 +17,7 @@ public class Transaction {
     private String docID;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
+    private Boolean isoutbound;
 
     public Integer getId() {
         return id;
@@ -96,6 +97,14 @@ public class Transaction {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Boolean getIsoutbound() {
+        return isoutbound;
+    }
+
+    public void setIsoutbound(Boolean isoutbound) {
+        this.isoutbound = isoutbound;
     }
 
 }

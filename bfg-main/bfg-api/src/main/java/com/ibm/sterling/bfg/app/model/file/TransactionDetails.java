@@ -5,7 +5,6 @@ public class TransactionDetails extends Transaction {
     private String paymentBIC;
     private String filename;
     private String reference;
-    private Boolean isoutbound;
     private String fileID;
     private String service;
 
@@ -39,14 +38,6 @@ public class TransactionDetails extends Transaction {
 
     public void setReference(String reference) {
         this.reference = reference;
-    }
-
-    public Boolean getIsoutbound() {
-        return isoutbound;
-    }
-
-    public void setIsoutbound(Boolean isoutbound) {
-        this.isoutbound = isoutbound;
     }
 
     public String getFileID() {

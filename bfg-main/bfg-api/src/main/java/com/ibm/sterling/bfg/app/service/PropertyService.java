@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -108,7 +109,8 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
-        transactionCriteriaData.put("entity", entityService.findEntitiesBySCTService());
+        transactionCriteriaData.put("entity", entityService.findEntitiesByService("SCT")
+                .stream().map(Entity::getEntity).collect(Collectors.toList()));
         return transactionCriteriaData;
     }
 

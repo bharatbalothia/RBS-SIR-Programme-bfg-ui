@@ -91,7 +91,7 @@ export class TransactionsDialogComponent implements OnInit {
         this.isLoading = false;
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `Transaction Details of ${data.id}`,
-          tabs: getTransactionDetailsTabs(data),
+          tabs: getTransactionDetailsTabs(data, ...this.actions),
           displayName: getFileSearchDisplayName,
           isDragable: true,
           actionData: {

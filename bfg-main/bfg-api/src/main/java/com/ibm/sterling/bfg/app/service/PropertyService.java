@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,7 +53,8 @@ public class PropertyService {
         String[] fileSearchPostfixKey = settings.getFileSearchPostfixKey();
         String fileSearchPrefixKey = settings.getFileSearchPrefixKey();
         String typePropertyKey = fileSearchPrefixKey + "types." + Optional.ofNullable(service).orElse("");
-        String statusPropertyKey = Optional.ofNullable(service).orElse("") + settings.getFileStatusPrefixKey() +
+        String statusPropertyKey = Optional.ofNullable(service).map(String::toLowerCase).orElse("") +
+                settings.getFileStatusPrefixKey() +
                 Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse("");
 
         List<String> propertyKeys = new ArrayList<>(Arrays.asList(typePropertyKey, statusPropertyKey));
@@ -72,8 +72,7 @@ public class PropertyService {
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
-                .filter(property -> Pattern.compile(Pattern.quote(statusPropertyKey), Pattern.CASE_INSENSITIVE)
-                        .matcher(property.get(PROPERTY_KEY)).find())
+                .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
         return fileCriteriaData;

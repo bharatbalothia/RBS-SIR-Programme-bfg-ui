@@ -21,8 +21,6 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
 
     List<Entity> findByDeleted(boolean deleted);
 
-    List<Entity> findByDeletedAndService(boolean deleted, String service);
-
     boolean existsByMqQueueOutAndDeletedAndEntityIdNot(String mqQueueOut, Boolean deleted, Integer entityId);
 
     boolean existsByMailboxPathOutAndDeletedAndEntityIdNot(String mailboxPathOut, Boolean deleted, Integer entityId);

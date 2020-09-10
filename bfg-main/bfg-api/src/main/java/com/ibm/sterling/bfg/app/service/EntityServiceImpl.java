@@ -263,9 +263,16 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public List<Object> findEntitiesBySCTService() {
-        return entityRepository.findByDeletedAndService(false, "SCT")
-                .stream().map(Entity::getEntity).collect(Collectors.toList());
+    public List<Entity> findEntitiesByService(String service) {
+        List<Entity> entities = new ArrayList<>();
+        Specification<Entity> specification = Specification
+                .where(
+                        GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse("") , "service"))
+                .and(
+                        GenericSpecification.filter("false", "deleted"));
+        entities.addAll(entityRepository.findAll(specification));
+        entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
+        return entities;
     }
 
     @Override

@@ -252,11 +252,15 @@ export class TransactionSearchComponent implements OnInit {
 
   autoRefreshChange = (value) => {
     if (value) {
-      this.autoRefreshing = interval(6000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
+      this.autoRefreshing = interval(1000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
     }
     else {
       this.autoRefreshing.unsubscribe();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.autoRefreshChange(false);
   }
 
 }

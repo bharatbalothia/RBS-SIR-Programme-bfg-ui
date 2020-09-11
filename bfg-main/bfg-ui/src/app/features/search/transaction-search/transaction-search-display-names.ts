@@ -1,5 +1,5 @@
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-import { formatDate, formatNumber } from '@angular/common';
+import { formatDate, formatNumber, TitleCasePipe } from '@angular/common';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
@@ -42,10 +42,10 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'reference', fieldValue: transaction.reference },
                     { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: 'transactionID' in mapping },
                     { fieldName: 'type', fieldValue: transaction.type },
-                    { fieldName: 'direction', fieldValue: transaction.direction },
-                    { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                    { fieldName: 'direction', fieldValue: titleCase(transaction.direction) },
+                    { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm:ss', 'en-GB') },
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
-                    { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy, HH:mm', 'en-GB') },
+                    { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy', 'en-GB') },
                     { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
                     { fieldName: 'status', fieldValue: transaction.status },
                 ]
@@ -65,3 +65,5 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
         }]
     }
 ].filter(el => el);
+
+const titleCase = (str: string): string => str ? str[0].toUpperCase() + str.slice(1) : '';

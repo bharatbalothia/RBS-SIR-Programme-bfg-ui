@@ -9,6 +9,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class TransactionSearchCriteria extends SearchCriteria {
     private String entity;
     private String direction;
+    @JsonAlias("paymentBIC")
     private String paymentbic;
     @JsonAlias("transactionID")
     private String transactionid;

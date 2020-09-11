@@ -130,6 +130,19 @@ public class PropertyService {
         return statusMap;
     }
 
+    public String getStatusLabel(String statusPrefixKey, String service, Boolean outbound, Integer status) {
+        try {
+            return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
+                    service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + status
+            ).stream()
+                    .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]"
+                    ).collect(Collectors.joining(", "));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Optional<ErrorDetail> getErrorDetailsByCode(String errorCode) {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("code", errorCode);

@@ -10,8 +10,8 @@ public class TransactionSearchCriteria extends SearchCriteria {
     private String entity;
     private String direction;
     private String paymentbic;
-    @JsonAlias("transactionid")
-    private String transactionId;
+    @JsonAlias("transactionID")
+    private String transactionid;
     @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for from")
     @JsonProperty("settlement-from")
     @JsonAlias("from")
@@ -45,12 +45,12 @@ public class TransactionSearchCriteria extends SearchCriteria {
         this.paymentbic = paymentbic;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getTransactionid() {
+        return transactionid;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setTransactionid(String transactionid) {
+        this.transactionid = transactionid;
     }
 
     public String getSettlementFrom() {

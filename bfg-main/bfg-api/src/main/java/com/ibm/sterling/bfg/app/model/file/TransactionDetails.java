@@ -5,7 +5,6 @@ public class TransactionDetails extends Transaction {
     private String paymentBIC;
     private String filename;
     private String reference;
-    private String fileID;
     private String service;
 
     public String getEntity() {
@@ -38,14 +37,6 @@ public class TransactionDetails extends Transaction {
 
     public void setReference(String reference) {
         this.reference = reference;
-    }
-
-    public String getFileID() {
-        return fileID;
-    }
-
-    public void setFileID(String fileID) {
-        this.fileID = fileID;
     }
 
     public String getService() {

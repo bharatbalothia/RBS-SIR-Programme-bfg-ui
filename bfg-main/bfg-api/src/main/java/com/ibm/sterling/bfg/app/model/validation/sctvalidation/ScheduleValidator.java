@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.validation.sctvalidation;
 
-import com.ibm.sterling.bfg.app.model.Schedule;
+import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;

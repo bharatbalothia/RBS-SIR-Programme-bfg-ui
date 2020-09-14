@@ -117,7 +117,7 @@ public class SearchService {
             Entity entity = new Entity();
             entity.setEntityId(entityId);
             entity.setEntity(entityService.findById(entityId)
-                    .map(com.ibm.sterling.bfg.app.model.Entity::getEntity)
+                    .map(com.ibm.sterling.bfg.app.model.entity.Entity::getEntity)
                     .orElseGet(() -> {
                         entity.setError("no such entity");
                         return null;

@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.repository;
 
-import com.ibm.sterling.bfg.app.model.Schedule;
+import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

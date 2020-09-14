@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.validation.unique;
 
-import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 

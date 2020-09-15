@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';

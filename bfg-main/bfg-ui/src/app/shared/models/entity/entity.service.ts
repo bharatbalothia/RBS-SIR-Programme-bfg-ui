@@ -67,4 +67,8 @@ export class EntityService {
   getMQDetails() {
     return this.http.get<MQDetails>(this.apiUrl + 'mq-details');
   }
+
+  transmtEntity(entityId: string, fileType: string){
+    return this.http.post(this.apiUrl + 'transmit', {entityId, fileType});
+  }
 }

@@ -43,6 +43,7 @@ import { DragableDialogWrapperComponent } from './components/dragable-dialog-wra
 import { XmlPipe } from './pipes/xml/xml.pipe';
 import { DisableControlDirective } from './directives/disable-control.directive';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
+    TransmitDialogComponent
   ],
   imports: [
     CommonModule,
@@ -145,7 +147,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
-    DisableControlDirective
+    DisableControlDirective,
+    TransmitDialogComponent
   ],
   providers: [
     { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },

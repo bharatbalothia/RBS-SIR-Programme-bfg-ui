@@ -167,7 +167,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     @Override
     public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256) {
         LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}", certName, thumbprint, thumbprint256);
-        List<CertType> certificates = new ArrayList<>(changeControlCertService.findAllPending(certName, thumbprint, thumbprint256));
+        List<CertType> certificates = new ArrayList<>();
         Specification<TrustedCertificate> specification = Specification
                 .where(
                         GenericSpecification.<TrustedCertificate>filter(certName, "certificateName"))
@@ -176,7 +176,13 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                 .and(
                         GenericSpecification.filter(thumbprint256, "thumbprint256")
                 );
-        certificates.addAll(trustedCertificateRepository.findAll(specification));
+        List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
+        List<ChangeControlCert> ccList = changeControlCertService.findAllPending(certName, thumbprint, thumbprint256);
+        certificateList.removeIf(cert -> {
+            return ccList.stream().anyMatch(control -> control.getResultMeta1().equals(cert.getCertificateName()));
+        });
+        certificates.addAll(certificateList);
+        certificates.addAll(ccList);
         certificates.sort(Comparator.comparing(CertType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
         return ListToPageConverter.convertListToPage(certificates, pageable);
     }

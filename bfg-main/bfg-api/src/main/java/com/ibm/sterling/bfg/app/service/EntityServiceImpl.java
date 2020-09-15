@@ -25,7 +25,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -223,7 +222,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
         LOG.info("Search entities by entity name {} and service {}", entity, service);
-        List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
+        List<EntityType> entityResults = new ArrayList<>();
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
@@ -232,9 +231,15 @@ public class EntityServiceImpl implements EntityService {
                 .and(
                         GenericSpecification.filter("false", "deleted")
                 );
-        entities.addAll(entityRepository.findAll(specification));
-        entities.sort(Comparator.comparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
-        return ListToPageConverter.convertListToPage(entities, pageable);
+        List<Entity> entities = entityRepository.findAll(specification);
+        List<ChangeControl> controls = changeControlService.findAllPending(entity, service);
+        entities.removeIf(entity1 -> {
+            return controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(entity1.getEntity()));
+        });
+        entityResults.addAll(entities);
+        entityResults.addAll(controls);
+        entityResults.sort(Comparator.comparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
+        return ListToPageConverter.convertListToPage(entityResults, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {

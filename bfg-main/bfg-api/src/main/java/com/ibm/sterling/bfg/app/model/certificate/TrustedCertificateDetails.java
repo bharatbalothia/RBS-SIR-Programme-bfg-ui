@@ -104,9 +104,9 @@ public class TrustedCertificateDetails {
                 .findFirst();
         if (changeControlCertRepository.existsByResultMeta2AndStatus(this.thumbprint, ChangeControlStatus.PENDING))
             if (listThumbprint.isPresent())
-                listThumbprint.get().get("thumbprint").add("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert");
+                listThumbprint.get().get("thumbprint").add("A Trusted certificate with this SHA-1 Thumbprint is pending approval for update/insert");
             else errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(
-                    Collections.singletonList("A Trusted certificate with that SHA-1 Thumbprint is pending approval for update/insert"))));
+                    Collections.singletonList("A Trusted certificate with this SHA-1 Thumbprint is pending approval for update/insert"))));
     }
 
     public String getSerialNumber() {

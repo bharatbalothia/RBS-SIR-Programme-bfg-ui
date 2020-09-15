@@ -1,8 +1,10 @@
 package com.ibm.sterling.bfg.app.security;
 
+import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,12 @@ public class EntityPermissionEvaluator {
     public boolean checkEditPermission(int id) {
         Entity entityToEdit = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
         return isAllowed(permission.apply("EDIT", entityToEdit.getService()));
+    }
+
+    public boolean checkEditPendingPermission(String id) {
+        ChangeControl changeControl = controlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        return isAllowed(permission.apply(changeControl.getOperation().getOperationPerm(), changeControl.getResultMeta2()));
     }
 
     public boolean checkApprovePermission(Map<String, String> approve) {

@@ -100,6 +100,7 @@ public class EntityController {
     }
 
     @PutMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingPermission(#id)")
     public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);

@@ -90,6 +90,16 @@ public class ChangeControlService {
                 && (changeControl.getOperation().equals(Operation.CREATE) ||
                 changeControl.getOperation().equals(Operation.UPDATE))) {
             EntityLog entityLog = new EntityLog(entity);
+            switch (changeControl.getOperation()) {
+                case CREATE:
+                    changeControl.setResultMeta1(entityLog.getEntity());
+                    changeControl.setResultMeta2(entityLog.getService());
+                    break;
+                case UPDATE:
+                    entityLog.setEntity(changeControl.getResultMeta1());
+                    entityLog.setService(changeControl.getResultMeta2());
+                    break;
+            }
             entityLog.setEntityLogId(changeControl.getEntityLog().getEntityLogId());
             changeControl.setEntityLog(entityLog);
             save(changeControl);

@@ -73,10 +73,4 @@ public class FileSearchController {
         return ok(fileSearchService.getDocumentContent(documentId.isEmpty() ? null : documentId));
     }
 
-    @GetMapping("workflow-steps")
-    public ResponseEntity<List<WorkflowStep>> getWorkflowSteps(@RequestParam(value = "id") Integer workFlowId)
-            throws JsonProcessingException {
-        return ok(fileSearchService.getWorkflowSteps(workFlowId));
-    }
-
 }

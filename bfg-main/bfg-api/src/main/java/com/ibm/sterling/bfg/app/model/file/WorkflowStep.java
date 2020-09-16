@@ -1,17 +1,32 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDateTime;
+
 public class WorkflowStep {
+    private Integer stepId;
     private String serviceName;
     private String exeState;
     private String advStatus;
-    private String startTime;
-    private String endTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.S")
+    private LocalDateTime startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.S")
+    private LocalDateTime endTime;
     private String nodeExecuted;
     private String statusRpt;
     private String docId;
     private String wfcId;
     private Integer wfdId;
     private Integer wfdVersion;
+
+    public Integer getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(Integer stepId) {
+        this.stepId = stepId;
+    }
 
     public String getServiceName() {
         return serviceName;
@@ -37,19 +52,19 @@ public class WorkflowStep {
         this.advStatus = advStatus;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

@@ -18,10 +18,9 @@ public class WorkflowController {
     @Autowired
     private SearchService searchService;
 
-    @GetMapping("workflow-steps")
-    public ResponseEntity<List<WorkflowStep>> getWorkflowSteps(@RequestParam(value = "id") Integer workFlowId)
-            throws JsonProcessingException {
-        return ok(searchService.getWorkflowSteps(workFlowId));
+    @GetMapping("{id}/steps")
+    public ResponseEntity<List<WorkflowStep>> getWorkflowSteps(@PathVariable Integer id) throws JsonProcessingException {
+        return ok(searchService.getWorkflowSteps(id));
     }
 
 }

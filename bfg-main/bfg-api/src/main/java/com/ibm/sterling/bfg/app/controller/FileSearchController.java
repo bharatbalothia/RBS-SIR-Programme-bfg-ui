@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.ErrorDetailsNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
-import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
-import com.ibm.sterling.bfg.app.model.file.File;
-import com.ibm.sterling.bfg.app.model.file.FileSearchCriteria;
-import com.ibm.sterling.bfg.app.model.file.Transaction;
+import com.ibm.sterling.bfg.app.model.file.*;
 import com.ibm.sterling.bfg.app.service.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +71,12 @@ public class FileSearchController {
     public ResponseEntity<Map<String, String>> getDocumentContent(@RequestParam(value = "id") String documentId)
             throws JsonProcessingException {
         return ok(fileSearchService.getDocumentContent(documentId.isEmpty() ? null : documentId));
+    }
+
+    @GetMapping("workflow-steps")
+    public ResponseEntity<List<WorkflowStep>> getWorkflowSteps(@RequestParam(value = "id") Integer workFlowId)
+            throws JsonProcessingException {
+        return ok(fileSearchService.getWorkflowSteps(workFlowId));
     }
 
 }

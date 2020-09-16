@@ -36,6 +36,9 @@ public class SearchService {
     @Value("${document.url}")
     private String documentUrl;
 
+    @Value("${workflowSteps.url}")
+    private String workflowStepsUrl;
+
     @Value("${file.userName}")
     private String userName;
 
@@ -130,6 +133,17 @@ public class SearchService {
     private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
         return new PageImpl<>(Optional.ofNullable(results).orElseGet(ArrayList::new),
                 PageRequest.of(searchCriteria.getPage(), searchCriteria.getSize()), searchCriteria.getTotalRows());
+    }
+
+    public List<WorkflowStep> getWorkflowSteps(Integer workFlowId) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowStepsUrl + "?fieldList=Full&workFlowId=" + workFlowId,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
+                new TypeReference<List<WorkflowStep>>() {
+                });
     }
 
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {

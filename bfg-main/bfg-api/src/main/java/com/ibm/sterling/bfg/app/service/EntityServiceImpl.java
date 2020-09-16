@@ -233,9 +233,9 @@ public class EntityServiceImpl implements EntityService {
                 );
         List<Entity> entities = entityRepository.findAll(specification);
         List<ChangeControl> controls = changeControlService.findAllPending(entity, service);
-        entities.removeIf(entity1 -> {
-            return controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(entity1.getEntity()));
-        });
+        entities.removeIf(dbEntity ->
+            controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
+        );
         entityResults.addAll(entities);
         entityResults.addAll(controls);
         entityResults.sort(Comparator.comparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));

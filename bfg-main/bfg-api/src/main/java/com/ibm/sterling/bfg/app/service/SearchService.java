@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -38,6 +40,9 @@ public class SearchService {
 
     @Value("${workflowSteps.url}")
     private String workflowStepsUrl;
+
+    @Value("${workflows.url}")
+    private String workflowsUrl;
 
     @Value("${file.userName}")
     private String userName;
@@ -146,6 +151,25 @@ public class SearchService {
                 });
     }
 
+    public String getBPHeader(Integer wfdVersion, Integer wfdID) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowsUrl + "?_include=wfdVersion,wfdID&_range=0-999&fieldList=brief",
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        List<BPName> objects = objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
+                new TypeReference<List<BPName>>() {
+                });
+        BPName bpName = objects.stream().filter(
+                wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion))
+                .findAny()
+                .orElseThrow(BPHeaderNotFoundException::new);
+        return bpName.getName();
+//        return objects.stream().filter(
+//                wf -> wf.getWfdID() == wfdID && wf.getWfdVersion() == wfdVersion).findAny().map(BPName::getName)
+//                .orElseThrow(BPHeaderNotFoundException::new);
+    }
+
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
         MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
         objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
@@ -171,5 +195,6 @@ public class SearchService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
     }
+
 
 }

@@ -6,7 +6,6 @@ import com.ibm.sterling.bfg.app.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -21,6 +20,11 @@ public class WorkflowController {
     @GetMapping("{id}/steps")
     public ResponseEntity<List<WorkflowStep>> getWorkflowSteps(@PathVariable Integer id) throws JsonProcessingException {
         return ok(searchService.getWorkflowSteps(id));
+    }
+
+    @GetMapping("bp-header")
+    public ResponseEntity<String> getBPHeader(@RequestParam Integer wfdVersion, @RequestParam Integer wfdID) throws JsonProcessingException {
+        return ok(searchService.getBPHeader(wfdVersion, wfdID));
     }
 
 }

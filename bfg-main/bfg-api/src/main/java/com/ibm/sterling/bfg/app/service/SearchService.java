@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -144,7 +145,15 @@ public class SearchService {
         List<WorkflowStep> workflowSteps = objectMapper.convertValue(
                 objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
                 });
-        workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
+        if (!CollectionUtils.isEmpty(workflowSteps)) {
+            workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
+            workflowSteps.forEach(workflowStep -> {
+                if (!workflowSteps.get(0).getWfdId().equals(workflowStep.getWfdId()) ||
+                        !workflowSteps.get(0).getWfdVersion().equals(workflowStep.getWfdVersion())) {
+                    workflowStep.setInlineInvocation(true);
+                }
+            });
+        }
         return workflowSteps;
     }
 

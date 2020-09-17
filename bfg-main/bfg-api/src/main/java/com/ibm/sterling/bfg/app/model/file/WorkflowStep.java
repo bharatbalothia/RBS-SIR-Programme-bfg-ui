@@ -1,6 +1,8 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +21,8 @@ public class WorkflowStep {
     private String wfcId;
     private Integer wfdId;
     private Integer wfdVersion;
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Boolean isInlineInvocation = false;
 
     public Integer getStepId() {
         return stepId;
@@ -114,6 +118,14 @@ public class WorkflowStep {
 
     public void setWfdVersion(Integer wfdVersion) {
         this.wfdVersion = wfdVersion;
+    }
+
+    public Boolean getInlineInvocation() {
+        return isInlineInvocation;
+    }
+
+    public void setInlineInvocation(Boolean inlineInvocation) {
+        isInlineInvocation = inlineInvocation;
     }
 
 }

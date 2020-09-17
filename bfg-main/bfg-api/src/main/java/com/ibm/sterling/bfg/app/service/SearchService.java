@@ -160,14 +160,9 @@ public class SearchService {
         List<BPName> objects = objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
                 new TypeReference<List<BPName>>() {
                 });
-        BPName bpName = objects.stream().filter(
-                wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion))
-                .findAny()
+        return objects.stream().filter(
+               wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion)).findAny().map(BPName::getName)
                 .orElseThrow(BPHeaderNotFoundException::new);
-        return bpName.getName();
-//        return objects.stream().filter(
-//                wf -> wf.getWfdID() == wfdID && wf.getWfdVersion() == wfdVersion).findAny().map(BPName::getName)
-//                .orElseThrow(BPHeaderNotFoundException::new);
     }
 
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {

@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.model.file;
 
 import java.util.Optional;
 
-public class BPDetail {
+public class BPDetails {
     private String name;
     private String startMode;
     private BPDetailFormat documentTracking;

@@ -27,7 +27,7 @@ public class WorkflowController {
     }
 
     @GetMapping("bp-details")
-    public BPDetail getBPDetails(@RequestParam String identifier) throws JsonProcessingException {
+    public BPDetails getBPDetails(@RequestParam String identifier) throws JsonProcessingException {
         return searchService.getBPDetails(identifier);
     }
 

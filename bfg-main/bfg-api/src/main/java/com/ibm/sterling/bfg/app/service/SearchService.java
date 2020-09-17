@@ -160,14 +160,14 @@ public class SearchService {
         return workflowSteps;
     }
 
-    public BPDetail getBPDetails(String identifier) throws JsonProcessingException {
+    public BPDetails getBPDetails(String identifier) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowsUrl + identifier,
                 HttpMethod.GET,
                 new HttpEntity<>(getHttpHeaders()),
                 String.class);
         return objectMapper.convertValue(objectMapper.readTree(
-                Objects.requireNonNull(response.getBody())), new TypeReference<BPDetail>() {
+                Objects.requireNonNull(response.getBody())), new TypeReference<BPDetails>() {
         });
     }
 

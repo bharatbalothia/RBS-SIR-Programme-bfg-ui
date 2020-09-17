@@ -26,4 +26,9 @@ public class WorkflowController {
                 new ArrayList<>(searchService.getWorkflowSteps(id)), PageRequest.of(page, size));
     }
 
+    @GetMapping("bp-details")
+    public BPDetail getBPDetails(@RequestParam String identifier) throws JsonProcessingException {
+        return searchService.getBPDetails(identifier);
+    }
+
 }

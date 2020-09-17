@@ -40,6 +40,9 @@ public class SearchService {
     @Value("${workflowSteps.url}")
     private String workflowStepsUrl;
 
+    @Value("${workflows.url}")
+    private String workflowsUrl;
+
     @Value("${file.userName}")
     private String userName;
 
@@ -155,6 +158,17 @@ public class SearchService {
             });
         }
         return workflowSteps;
+    }
+
+    public BPDetail getBPDetails(String identifier) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowsUrl + identifier,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        return objectMapper.convertValue(objectMapper.readTree(
+                Objects.requireNonNull(response.getBody())), new TypeReference<BPDetail>() {
+        });
     }
 
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {

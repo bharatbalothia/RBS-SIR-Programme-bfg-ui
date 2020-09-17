@@ -179,7 +179,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
         List<ChangeControlCert> ccList = changeControlCertService.findAllPending(certName, thumbprint, thumbprint256);
         certificateList.removeIf(cert ->
-            ccList.stream().anyMatch(control -> control.getResultMeta1().equals(cert.getCertificateName())));
+            ccList.stream().anyMatch(control -> control.getResultMeta3().equals(cert.getThumbprint256())));
         certificates.addAll(certificateList);
         certificates.addAll(ccList);
         certificates.sort(Comparator.comparing(CertType::nameForSorting, String.CASE_INSENSITIVE_ORDER));

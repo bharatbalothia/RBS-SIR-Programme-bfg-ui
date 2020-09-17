@@ -141,9 +141,11 @@ public class SearchService {
                 HttpMethod.GET,
                 new HttpEntity<>(getHttpHeaders()),
                 String.class);
-        return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
-                new TypeReference<List<WorkflowStep>>() {
+        List<WorkflowStep> workflowSteps = objectMapper.convertValue(
+                objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
                 });
+        workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
+        return workflowSteps;
     }
 
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {

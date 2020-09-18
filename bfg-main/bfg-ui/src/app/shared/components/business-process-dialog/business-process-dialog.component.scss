@@ -1,0 +1,81 @@
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+    min-width: 0 !important;
+    padding: 0 10px !important;
+    margin: 3px !important;
+}
+
+.mat-table {
+    border-collapse: collapse;
+
+    .mat-header-cell,
+    .mat-cell,
+    .mat-cell>.mat-button {
+        word-wrap: initial;
+        display: table-cell;
+        padding-right: 15px;
+        line-break: unset;
+        white-space: nowrap;
+        overflow: hidden;
+        vertical-align: middle;
+
+    }
+
+    .mat-cell>.mat-button {
+        padding: 0;
+    }
+
+    .mat-cell>.mat-icon {
+        vertical-align: inherit;
+    }
+
+    .mat-header-row,
+    .mat-row {
+        display: table-row;
+    }
+
+    .mat-column-stepId {
+        flex: 0 0 7% !important;
+        width: 7% !important;
+    }
+
+    .mat-column-exeState {
+        flex: 0 0 10% !important;
+        width: 10% !important;
+    }
+
+    .mat-column-advStatus {
+        flex: 0 0 10% !important;
+        width: 10% !important;
+
+    }
+
+    .mat-column-startTime,
+    .mat-column-endTime {
+        flex: 0 0 18% !important;
+        width: 18% !important;
+    }
+
+    .mat-column-serviceName {
+        flex: 0 0 24% !important;
+        width: 24% !important;
+    }
+
+    .mat-column-nodeExecuted,
+    .mat-column-statusReport,
+    .mat-column-docId {
+        flex: 0 0 8% !important;
+        width: 8% !important;
+
+    }
+
+}
+
+.mat-dialog-actions {
+
+    display: block;
+
+    .close-button {
+        float: right;
+    }
+}

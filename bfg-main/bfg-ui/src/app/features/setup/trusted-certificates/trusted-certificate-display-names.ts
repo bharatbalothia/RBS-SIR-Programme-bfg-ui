@@ -6,6 +6,7 @@ import { ChangeControl } from 'src/app/shared/models/changeControl/change-contro
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
+    name: 'Name',
     serialNumber: 'Serial Number',
     thumbprint: 'SHA-1 Thumbprint',
     thumbprint256: 'SHA-2 Thumbprint',

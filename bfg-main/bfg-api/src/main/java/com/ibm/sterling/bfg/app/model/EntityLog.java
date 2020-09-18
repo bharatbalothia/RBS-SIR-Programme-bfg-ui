@@ -842,4 +842,13 @@ public class EntityLog {
         this.e2eSigning = e2eSigning;
     }
 
+    @Override
+    public String toString() {
+        return "EntityLog{" +
+                "entityLogId='" + entityLogId + '\'' +
+                ", entityId=" + entityId +
+                ", entity='" + entity + '\'' +
+                ", service='" + service + '\'' +
+                '}';
+    }
 }

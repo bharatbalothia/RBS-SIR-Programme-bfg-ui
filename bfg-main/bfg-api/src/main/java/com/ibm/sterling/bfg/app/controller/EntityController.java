@@ -2,8 +2,9 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
+import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
@@ -64,8 +65,6 @@ public class EntityController {
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControl changeControl = changeControlService.findById(String.valueOf(approve.get("changeID")))
                 .orElseThrow(EntityNotFoundException::new);
-        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForApprovalException();
         return Optional.ofNullable(entityService.getEntityAfterApprove(
                 changeControl,
                 String.valueOf(approve.get("approverComments")),
@@ -83,10 +82,29 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    @GetMapping("pending/{id}")
+    public ResponseEntity<Entity> getPendingEntityById(@PathVariable(name = "id") String id) {
+        return changeControlService.findById(id)
+                .map(record -> ok()
+                        .body(record.convertEntityLogToEntity()))
+                .orElseThrow(ChangeControlNotFoundException::new);
+    }
+
     @PostMapping
     @PreAuthorize("@entityPermissionEvaluator.checkCreatePermission(#entity)")
     public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
         return ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
+    }
+
+    @PutMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingPermission(#id, #entity.getService())")
+    public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
+        ChangeControl changeControl = changeControlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
+            throw new InvalidUserForUpdatePendingEntityException();
+        changeControlService.updateChangeControl(changeControl, entity);
+        return ok(changeControl);
     }
 
     @PutMapping("/{id}")

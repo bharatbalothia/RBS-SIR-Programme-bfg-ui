@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
 import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
@@ -66,8 +65,6 @@ public class EntityController {
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControl changeControl = changeControlService.findById(String.valueOf(approve.get("changeID")))
                 .orElseThrow(EntityNotFoundException::new);
-        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForApprovalException();
         return Optional.ofNullable(entityService.getEntityAfterApprove(
                 changeControl,
                 String.valueOf(approve.get("approverComments")),

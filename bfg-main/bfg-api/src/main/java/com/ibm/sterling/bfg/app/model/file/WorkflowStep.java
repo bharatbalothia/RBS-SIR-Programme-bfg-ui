@@ -56,6 +56,7 @@ public class WorkflowStep {
         this.advStatus = advStatus;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -64,6 +65,7 @@ public class WorkflowStep {
         this.startTime = startTime;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getEndTime() {
         return endTime;
     }

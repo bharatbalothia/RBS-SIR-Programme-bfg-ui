@@ -31,6 +31,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   errorMessage: ErrorMessage;
   isLoading = false;
+  shouldShowErrorMessage = true;
 
   trustedCertificateFile;
 
@@ -124,9 +125,19 @@ export class TrustedCertificateCreateComponent implements OnInit {
         }
       }, error => {
         this.isLoading = false;
+        this.shouldShowErrorMessage = true;
         this.errorMessage = getApiErrorMessage(error);
         this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setErrors({ invalid: true });
       });
+  }
+
+  onStepChange = (stepIndex) => {
+    if (stepIndex === 0) {
+      this.shouldShowErrorMessage = false;
+    }
+    else {
+      this.shouldShowErrorMessage = true;
+    }
   }
 
   getErrorsAndWarnings = (trustedCertificate: TrustedCertificate) => removeEmpties({

@@ -161,7 +161,9 @@
                     <ng-container matColumnDef="WFID">
                         <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.workflowID}}
+                            <button mat-button (click)="openBusinessProcessDialog(element)">
+                                {{element.workflowID}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 

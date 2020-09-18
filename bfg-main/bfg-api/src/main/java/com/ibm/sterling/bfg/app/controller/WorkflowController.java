@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -23,7 +24,7 @@ public class WorkflowController {
     }
 
     @GetMapping("bp-header")
-    public ResponseEntity<String> getBPHeader(@RequestParam Integer wfdVersion, @RequestParam Integer wfdID) throws JsonProcessingException {
+    public ResponseEntity<Map<String, String>> getBPHeader(@RequestParam Integer wfdVersion, @RequestParam Integer wfdID) throws JsonProcessingException {
         return ok(searchService.getBPHeader(wfdVersion, wfdID));
     }
 

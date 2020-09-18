@@ -4,9 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BPName {
     @JsonProperty("_id")
+    private String id;
     private String name;
     private Integer wfdVersion;
     private Integer wfdID;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

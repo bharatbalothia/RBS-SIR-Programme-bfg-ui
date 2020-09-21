@@ -7,9 +7,13 @@ import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/workflow")
@@ -29,6 +33,12 @@ public class WorkflowController {
     @GetMapping("bp-details")
     public BPDetails getBPDetails(@RequestParam String identifier) throws JsonProcessingException {
         return searchService.getBPDetails(identifier);
+    }
+
+    @GetMapping("bp-header")
+    public ResponseEntity<Map<String, String>> getBPHeader(@RequestParam Integer wfdVersion, @RequestParam Integer wfdID)
+            throws JsonProcessingException {
+        return ok(searchService.getBPHeader(wfdVersion, wfdID));
     }
 
 }

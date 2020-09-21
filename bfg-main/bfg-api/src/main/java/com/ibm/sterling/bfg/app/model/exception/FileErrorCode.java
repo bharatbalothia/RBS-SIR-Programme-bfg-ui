@@ -11,6 +11,7 @@ public enum FileErrorCode implements ErrorCode {
     FileTransactionNotFoundException("FILE_TRANSACT_NOT_FOUND_CODE", "FILE_TRANSACT_NOT_FOUND_MSG", "FILE_TRANSACT_NOT_FOUND_STATUS"),
     DocumentContentNotFoundException("FILE_DOC_NOT_FOUND_CODE", "FILE_DOC_NOT_FOUND_MSG", "FILE_DOC_NOT_FOUND_STATUS"),
     ErrorDetailsNotFoundException("FILE_ERROR_NOT_FOUND_CODE", "FILE_ERROR_NOT_FOUND_MSG", "FILE_ERROR_NOT_FOUND_STATUS"),
+    BPHeaderNotFoundException("FILE_BP_HEADER_NOT_FOUND_CODE", "FILE_BP_HEADER_NOT_FOUND_MSG", "FILE_BP_HEADER_NOT_FOUND_STATUS"),
     AccessDeniedException("FILE_ACCESS_DENIED_CODE", "FILE_ACCESS_DENIED_MSG", "FILE_ACCESS_DENIED_STATUS");
 
     FileErrorCode(String value, String msg, String status) {

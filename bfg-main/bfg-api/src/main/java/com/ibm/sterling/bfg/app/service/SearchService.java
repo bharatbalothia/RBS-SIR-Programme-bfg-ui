@@ -4,16 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -36,6 +39,12 @@ public class SearchService {
     @Value("${document.url}")
     private String documentUrl;
 
+    @Value("${workflowSteps.url}")
+    private String workflowStepsUrl;
+
+    @Value("${workflows.url}")
+    private String workflowsUrl;
+
     @Value("${file.userName}")
     private String userName;
 
@@ -47,6 +56,9 @@ public class SearchService {
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private SearchService searchService;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
@@ -130,6 +142,61 @@ public class SearchService {
     private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
         return new PageImpl<>(Optional.ofNullable(results).orElseGet(ArrayList::new),
                 PageRequest.of(searchCriteria.getPage(), searchCriteria.getSize()), searchCriteria.getTotalRows());
+    }
+
+    public List<WorkflowStep> getWorkflowSteps(Integer workFlowId) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowStepsUrl + "?fieldList=Full&workFlowId=" + workFlowId,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        List<WorkflowStep> workflowSteps = objectMapper.convertValue(
+                objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
+                });
+        if (!CollectionUtils.isEmpty(workflowSteps)) {
+            workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
+            workflowSteps.forEach(workflowStep -> {
+                if (!workflowSteps.get(0).getWfdId().equals(workflowStep.getWfdId()) ||
+                        !workflowSteps.get(0).getWfdVersion().equals(workflowStep.getWfdVersion())) {
+                    workflowStep.setInlineInvocation(true);
+                }
+            });
+        }
+        return workflowSteps;
+    }
+
+    public BPDetails getBPDetails(String identifier) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowsUrl + identifier,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        return objectMapper.convertValue(objectMapper.readTree(
+                Objects.requireNonNull(response.getBody())), new TypeReference<BPDetails>() {
+        });
+    }
+
+    public Map<String, String> getBPHeader(Integer wfdVersion, Integer wfdID) throws JsonProcessingException {
+        List<BPName> objects = searchService.getBPNames();
+        BPName bpName = objects.stream().filter(
+                wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion)).findAny()
+                .orElseThrow(BPHeaderNotFoundException::new);
+        Map<String, String> header = new HashMap<>();
+        header.put("bpName", bpName.getName());
+        header.put("bpRef", bpName.getId());
+        return header;
+    }
+
+    @Cacheable("bpNames")
+    public List<BPName> getBPNames() throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
+                new TypeReference<List<BPName>>() {
+                });
     }
 
     private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
 import { take } from 'rxjs/operators';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { BusinessProcessHeader } from '../../models/business-process/business-process-header.model';
 import { BusinessProcessService } from '../../models/business-process/business-process.service';
 import { WorkflowStepWithPagination } from '../../models/business-process/workflow-step-with-pagination.model';
 import { WorkflowStep } from '../../models/business-process/workflow-step.model';
@@ -22,6 +23,8 @@ export class BusinessProcessDialogComponent implements OnInit {
 
   isLoading = true;
   errorMessage: ErrorMessage;
+
+  bpHeader: BusinessProcessHeader;
 
   workflowSteps: WorkflowStepWithPagination;
   displayedColumns: string[] = [
@@ -70,12 +73,24 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.pageSize = pageSize;
         this.workflowSteps = data;
         this.updateTable();
+        this.getBPHeader(data.content[0].wfdId, data.content[0].wfdVersion);
       },
         error => {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  getBPHeader = (wfdID, wfdVersion) => this.businessProcessService.getBPHeader({ wfdID, wfdVersion })
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: BusinessProcessHeader) => {
+      this.isLoading = false;
+      this.bpHeader = data;
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.workflowSteps.content);

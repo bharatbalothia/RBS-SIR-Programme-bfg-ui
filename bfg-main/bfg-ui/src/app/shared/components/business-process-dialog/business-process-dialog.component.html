@@ -2,6 +2,14 @@
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
     <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <mat-dialog-content>
+        <div class="bp-details">
+            <div class="pb-details-section">
+                <div *ngIf="bpHeader" class="dp-details-item">
+                    <label class="item-label">Name: </label>
+                    {{bpHeader.bpName}}
+                </div>
+            </div>
+        </div>
         <mat-table [dataSource]="dataSource">
 
             <ng-container matColumnDef="stepId">

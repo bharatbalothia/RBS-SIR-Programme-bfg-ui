@@ -5,6 +5,22 @@
     margin: 3px !important;
 }
 
+.bp-details {
+
+    display: flex;
+
+    .pb-details-section {
+        padding-right: 15px;
+
+        .dp-details-item {
+
+            .item-label {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
 .mat-table {
     border-collapse: collapse;
 
@@ -47,7 +63,6 @@
     .mat-column-advStatus {
         flex: 0 0 10% !important;
         width: 10% !important;
-
     }
 
     .mat-column-startTime,

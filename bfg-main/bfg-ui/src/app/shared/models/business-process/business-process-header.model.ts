@@ -1,4 +1,4 @@
 export interface BusinessProcessHeader {
     bpName: string;
-bpRef: string;
+    bpRef: string;
 }

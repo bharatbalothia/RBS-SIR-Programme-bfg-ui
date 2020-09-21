@@ -51,6 +51,10 @@ export class BusinessProcessDialogComponent implements OnInit {
 
   id: number;
   actions;
+
+  wfdId;
+  wfdVersion;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialog,
@@ -77,7 +81,13 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.pageSize = pageSize;
         this.workflowSteps = data;
         this.updateTable();
-        this.getBPHeader(data.content[0].wfdId, data.content[0].wfdVersion);
+
+        if (!(this.wfdId && this.wfdVersion)) {
+          this.wfdId = data.content[0].wfdId;
+          this.wfdVersion = data.content[0].wfdVersion;
+          this.getBPHeader(this.wfdId, this.wfdVersion);
+        }
+
       },
         error => {
           this.isLoading = false;

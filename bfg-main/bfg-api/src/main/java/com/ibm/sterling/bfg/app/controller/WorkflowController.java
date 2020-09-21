@@ -41,4 +41,10 @@ public class WorkflowController {
         return ok(searchService.getBPHeader(wfdVersion, wfdID));
     }
 
+    @GetMapping("document-content")
+    public ResponseEntity<Document> getDocumentContent(@RequestParam(value = "id") String documentId)
+            throws JsonProcessingException {
+        return ok(searchService.getDocumentById(documentId.isEmpty() ? null : documentId));
+    }
+
 }

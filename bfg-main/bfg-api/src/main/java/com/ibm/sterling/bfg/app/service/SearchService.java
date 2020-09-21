@@ -101,7 +101,7 @@ public class SearchService {
         return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
     }
 
-    public Map<String, String> getDocumentContent(String documentId) throws JsonProcessingException {
+    public Map<String, String> getDocumentPayload(String documentId) throws JsonProcessingException {
         ResponseEntity<String> responseEntity;
         try {
             responseEntity = new RestTemplate().exchange(
@@ -114,6 +114,25 @@ public class SearchService {
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody())).get("response");
         return Collections.singletonMap("document", jsonNode.asText());
+    }
+
+    public Document getDocumentById(String documentId) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                documentUrl + "?documentId=" + documentId,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        List<Document> documents = Optional.ofNullable(
+                objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
+                        new TypeReference<List<Document>>() {
+                        })
+        ).orElseGet(ArrayList::new);
+        Document document;
+        if (documents.size() == 1) {
+            document = documents.get(0);
+            document.setDocumentPayload(getDocumentPayload(documentId).get("document"));
+        } else throw new DocumentContentNotFoundException();
+        return document;
     }
 
     private <T> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
@@ -178,8 +197,9 @@ public class SearchService {
 
     public Map<String, String> getBPHeader(Integer wfdVersion, Integer wfdID) throws JsonProcessingException {
         List<BPName> objects = searchService.getBPNames();
-        BPName bpName = objects.stream().filter(
-                wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion)).findAny()
+        BPName bpName = objects.stream()
+                .filter(wf -> wf.getWfdID().equals(wfdID) && wf.getWfdVersion().equals(wfdVersion))
+                .findAny()
                 .orElseThrow(BPHeaderNotFoundException::new);
         Map<String, String> header = new HashMap<>();
         header.put("bpName", bpName.getName());

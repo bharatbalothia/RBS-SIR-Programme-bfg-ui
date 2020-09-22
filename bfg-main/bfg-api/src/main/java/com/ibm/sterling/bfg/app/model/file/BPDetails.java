@@ -206,7 +206,7 @@ public class BPDetails {
     }
 
     public String getCommitStepsUponError() {
-        return Optional.ofNullable(commitStepsUponError).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(commitStepsUponError).map(BPDetailFormat::getCode).orElse("");
     }
 
     public void setCommitStepsUponError(BPDetailFormat commitStepsUponError) {

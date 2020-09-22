@@ -4,11 +4,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
 import { take } from 'rxjs/operators';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
+import { getBusinessProcessDetailsTabs, getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
 import { BusinessProcessHeader } from '../../models/business-process/business-process-header.model';
+import { BusinessProcess } from '../../models/business-process/business-process.model';
 import { BusinessProcessService } from '../../models/business-process/business-process.service';
 import { WorkflowStepWithPagination } from '../../models/business-process/workflow-step-with-pagination.model';
 import { WorkflowStep } from '../../models/business-process/workflow-step.model';
+import { DetailsDialogConfig } from '../details-dialog/details-dialog-config.model';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
+import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 @Component({
   selector: 'app-business-process-dialog',
@@ -48,6 +52,10 @@ export class BusinessProcessDialogComponent implements OnInit {
 
   id: number;
   actions;
+
+  wfdId;
+  wfdVersion;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialog,
@@ -74,7 +82,13 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.pageSize = pageSize;
         this.workflowSteps = data;
         this.updateTable();
-        this.getBPHeader(data.content[0].wfdId, data.content[0].wfdVersion);
+
+        if (!(this.wfdId && this.wfdVersion)) {
+          this.wfdId = data.content[0].wfdId;
+          this.wfdVersion = data.content[0].wfdVersion;
+          this.getBPHeader(this.wfdId, this.wfdVersion);
+        }
+
       },
         error => {
           this.isLoading = false;
@@ -92,6 +106,26 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
       })
+
+  openBPDetails = (bpRef) => {
+    this.businessProcessService.getBPDetails(bpRef)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: BusinessProcess) => {
+        this.isLoading = false;
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          title: `Business Process Details`,
+          tabs: getBusinessProcessDetailsTabs(data),
+          displayName: getBusinessProcessDisplayName,
+          isDragable: true,
+          actionData: {
+          },
+        }));
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+  }
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.workflowSteps.content);

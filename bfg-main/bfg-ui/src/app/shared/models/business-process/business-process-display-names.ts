@@ -1,3 +1,6 @@
+import { Tab } from '../../components/details-dialog/details-dialog-data.model';
+import { BusinessProcess } from './business-process.model';
+
 export const BUSINESS_PROCESS_DISPLAY_NAMES = {
     advStatus: 'Advanced Status',
     docId: 'Document',
@@ -8,7 +11,72 @@ export const BUSINESS_PROCESS_DISPLAY_NAMES = {
     serviceName: 'Service',
     startTime: 'Started',
     statusRpt: 'Status Report',
-    stepId: 'Step'
+    stepId: 'Step',
+    name: 'Business Process Name',
+    documentTracking: 'Document Tracking',
+    startMode: 'Start Mode',
+    queue: 'Queue',
+    recoveryLevel: 'Recovery Level',
+    softstopRecoveryLevel: 'Softstop Recovery Level',
+    lifespanDays: 'Lifespan Days',
+    lifespanHours: 'Lifespan Hours',
+    eventReportingLevel: 'Event Reporting Level',
+    wfdVersion: 'Version',
+    onfaultProcessing: 'Set onfault processing',
+    enableTransaction: 'Transaction',
+    persistenceLevel: 'Persistence Level',
+    documentStorage: 'Document Storage Type',
+    expedite: 'Expedite',
+    deadline: 'Complete by - Deadline',
+    secondNotification: 'Second Notification',
+    firstNotification: 'First Notification',
+    commitStepsUponError: 'Commit On Error',
+    description: 'Description',
+    businessProcess: 'Business Process Definition'
 };
 
 export const getBusinessProcessDisplayName = (key: string) => BUSINESS_PROCESS_DISPLAY_NAMES[key] || key;
+
+const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess) => ({
+    'Business Process Details': [
+        { fieldName: 'name', fieldValue: businessProcess.name },
+        { fieldName: 'documentTracking', fieldValue: businessProcess.documentTracking },
+        { fieldName: 'startMode', fieldValue: businessProcess.startMode },
+        { fieldName: 'queue', fieldValue: businessProcess.queue },
+        { fieldName: 'recoveryLevel', fieldValue: businessProcess.recoveryLevel },
+        { fieldName: 'softstopRecoveryLevel', fieldValue: businessProcess.softstopRecoveryLevel },
+        { fieldName: 'lifespanDays', fieldValue: businessProcess.lifespanDays },
+        { fieldName: 'lifespanHours', fieldValue: businessProcess.lifespanHours },
+        { fieldName: 'eventReportingLevel', fieldValue: businessProcess.eventReportingLevel },
+        { fieldName: 'wfdVersion', fieldValue: businessProcess.wfdVersion },
+        { fieldName: 'onfaultProcessing', fieldValue: businessProcess.onfaultProcessing },
+        { fieldName: 'enableTransaction', fieldValue: businessProcess.enableTransaction },
+        { fieldName: 'persistenceLevel', fieldValue: businessProcess.persistenceLevel },
+        { fieldName: 'documentStorage', fieldValue: businessProcess.documentStorage },
+        { fieldName: 'expedite', fieldValue: businessProcess.expedite },
+        {
+            fieldName: 'deadline', fieldValue: `${businessProcess.deadlineHours ? `${businessProcess.deadlineHours} Hours ` : ''}
+            ${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}`
+        },
+        {
+            fieldName: 'secondNotification',
+            fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}
+            ${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
+        },
+        {
+            fieldName: 'firstNotification',
+            fieldValue: `${businessProcess.firstNotificationHours ? `${businessProcess.firstNotificationHours} Hours ` : ''}
+            ${businessProcess.firstNotificationMinutes ? ` ${businessProcess.firstNotificationMinutes} Minutes` : ''}`
+        },
+        { fieldName: 'commitStepsUponError', fieldValue: businessProcess.commitStepsUponError },
+        { fieldName: 'description', fieldValue: businessProcess.description },
+        { fieldName: 'businessProcess', fieldValue: businessProcess.businessProcess, isXML: true },
+    ],
+});
+
+export const getBusinessProcessDetailsTabs = (businessProcess: BusinessProcess): Tab[] => [
+    {
+        tabTitle: 'Business Process Details',
+        tabSections: [{ sectionItems: getBusinessProcessDetailsSectionItems(businessProcess)['Business Process Details'] }]
+    }
+].filter(el => el);

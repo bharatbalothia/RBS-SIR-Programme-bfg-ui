@@ -6,7 +6,7 @@
             <div class="pb-details-section">
                 <div *ngIf="bpHeader" class="dp-details-item">
                     <label class="item-label">Name: </label>
-                    {{bpHeader.bpName}}
+                    <button mat-button (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</button>
                 </div>
             </div>
         </div>

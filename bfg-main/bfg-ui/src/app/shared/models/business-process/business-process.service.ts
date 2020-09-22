@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { BusinessProcessHeader } from './business-process-header.model';
+import { BusinessProcess } from './business-process.model';
 import { WorkflowStepWithPagination } from './workflow-step-with-pagination.model';
 
 @Injectable({
@@ -22,4 +23,7 @@ export class BusinessProcessService {
         return this.http.get<BusinessProcessHeader>(this.apiUrl + 'bp-header', { params });
     }
 
+    getBPDetails(identifier: string) {
+        return this.http.get<BusinessProcess>(this.apiUrl + 'bp-details', { params: { identifier } });
+    }
 }

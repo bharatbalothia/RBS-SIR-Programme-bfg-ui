@@ -4,6 +4,7 @@ import { BusinessProcess } from './business-process.model';
 export const BUSINESS_PROCESS_DISPLAY_NAMES = {
     advStatus: 'Advanced Status',
     docId: 'Document',
+    instanceData: 'Instance Data',
     endTime: 'Ended',
     exeState: 'Status',
     nodeExecuted: 'Execution Node',

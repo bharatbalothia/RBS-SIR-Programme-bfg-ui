@@ -222,7 +222,8 @@ export class FileSearchComponent implements OnInit {
           entity: () => this.openEntityDetailsDialog(file),
           errorCode: () => this.openErrorDetailsDialog(file),
           transactionTotal: () => this.openTransactionsDialog(file),
-          filename: () => this.openFileDocumentInfo(file)
+          filename: () => this.openFileDocumentInfo(file),
+          workflowID: () => this.openBusinessProcessDialog(file)
         }
       },
       parentError: this.errorMesageEmitters[file.id]
@@ -286,7 +287,8 @@ export class FileSearchComponent implements OnInit {
       actionData: {
         fileId: file.id,
         actions: {
-          file: () => this.openFileDetailsDialog(file)
+          file: () => this.openFileDetailsDialog(file),
+          workflowID: () => this.openBusinessProcessDialog(file)
         }
       },
     }))

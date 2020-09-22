@@ -47,7 +47,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'type', fieldValue: file.type },
         { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound) },
         { fieldName: 'timestamp', fieldValue: formatDate(file.timestamp, 'dd/MM/yyyy, HH:mm', 'en-GB') },
-        { fieldName: 'workflowID', fieldValue: file.workflowID },
+        { fieldName: 'workflowID', fieldValue: file.workflowID, isActionButton: true },
         { fieldName: 'messageID', fieldValue: file.messageID },
         { fieldName: 'status', fieldValue: file.status },
         { fieldName: 'errorCode', fieldValue: file.errorCode, isActionButton: true },

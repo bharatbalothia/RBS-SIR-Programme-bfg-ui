@@ -1,4 +1,5 @@
 import { Tab } from '../../components/details-dialog/details-dialog-data.model';
+import { capitalizeFirstLetter } from '../../utils/utils';
 import { BusinessProcessDocumentContent } from './business-process-document-content.model';
 import { BusinessProcess } from './business-process.model';
 
@@ -47,7 +48,7 @@ export const getBusinessProcessDisplayName = (key: string) => BUSINESS_PROCESS_D
 const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess) => ({
     'Business Process Details': [
         { fieldName: 'name', fieldValue: businessProcess.name },
-        { fieldName: 'documentTracking', fieldValue: businessProcess.documentTracking },
+        { fieldName: 'documentTracking', fieldValue: capitalizeFirstLetter(businessProcess.documentTracking) },
         { fieldName: 'startMode', fieldValue: businessProcess.startMode },
         { fieldName: 'queue', fieldValue: businessProcess.queue },
         { fieldName: 'recoveryLevel', fieldValue: businessProcess.recoveryLevel },
@@ -56,8 +57,8 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
         { fieldName: 'lifespanHours', fieldValue: businessProcess.lifespanHours },
         { fieldName: 'eventReportingLevel', fieldValue: businessProcess.eventReportingLevel },
         { fieldName: 'wfdVersion', fieldValue: businessProcess.wfdVersion },
-        { fieldName: 'onfaultProcessing', fieldValue: businessProcess.onfaultProcessing },
-        { fieldName: 'enableTransaction', fieldValue: businessProcess.enableTransaction },
+        { fieldName: 'onfaultProcessing', fieldValue: capitalizeFirstLetter(businessProcess.onfaultProcessing) },
+        { fieldName: 'enableTransaction', fieldValue: capitalizeFirstLetter(businessProcess.enableTransaction) },
         { fieldName: 'persistenceLevel', fieldValue: businessProcess.persistenceLevel },
         { fieldName: 'documentStorage', fieldValue: businessProcess.documentStorage },
         { fieldName: 'expedite', fieldValue: businessProcess.expedite },
@@ -66,16 +67,16 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
             ${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}`
         },
         {
-            fieldName: 'secondNotification',
-            fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}
-            ${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
-        },
-        {
             fieldName: 'firstNotification',
             fieldValue: `${businessProcess.firstNotificationHours ? `${businessProcess.firstNotificationHours} Hours ` : ''}
             ${businessProcess.firstNotificationMinutes ? ` ${businessProcess.firstNotificationMinutes} Minutes` : ''}`
         },
-        { fieldName: 'commitStepsUponError', fieldValue: businessProcess.commitStepsUponError },
+        {
+            fieldName: 'secondNotification',
+            fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}
+            ${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
+        },
+        { fieldName: 'commitStepsUponError', fieldValue: capitalizeFirstLetter(businessProcess.commitStepsUponError) },
         { fieldName: 'description', fieldValue: businessProcess.description },
         { fieldName: 'businessProcess', fieldValue: businessProcess.businessProcess, isXML: true },
     ],

@@ -27,7 +27,7 @@ export class BusinessProcessDialogComponent implements OnInit {
   errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLoading = true;
-  isBPHeaderLoading = true;
+  isBPHeaderLoading = false;
 
   errorMessage: ErrorMessage;
 
@@ -56,8 +56,8 @@ export class BusinessProcessDialogComponent implements OnInit {
   id: number;
   actions;
 
-  wfdId;
-  wfdVersion;
+  wfdId: number = null;
+  wfdVersion: number = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -86,7 +86,7 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.workflowSteps = data;
         this.updateTable();
 
-        if (!(this.wfdId && this.wfdVersion)) {
+        if (!(this.wfdId && this.wfdVersion) && data.content.length > 0) {
           this.wfdId = data.content[0].wfdId;
           this.wfdVersion = data.content[0].wfdVersion;
           this.getBPHeader(this.wfdId, this.wfdVersion);
@@ -100,15 +100,18 @@ export class BusinessProcessDialogComponent implements OnInit {
         });
   }
 
-  getBPHeader = (wfdID, wfdVersion) => this.businessProcessService.getBPHeader({ wfdID, wfdVersion })
-    .subscribe((data: BusinessProcessHeader) => {
-      this.isBPHeaderLoading = false;
-      this.bpHeader = data;
-    },
-      error => {
+  getBPHeader = (wfdID, wfdVersion) => {
+    this.isBPHeaderLoading = true;
+    this.businessProcessService.getBPHeader({ wfdID, wfdVersion })
+      .subscribe((data: BusinessProcessHeader) => {
         this.isBPHeaderLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
+        this.bpHeader = data;
+      },
+        error => {
+          this.isBPHeaderLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+  }
 
   openBPDetails = (bpRef) => {
     this.businessProcessService.getBPDetails(bpRef)

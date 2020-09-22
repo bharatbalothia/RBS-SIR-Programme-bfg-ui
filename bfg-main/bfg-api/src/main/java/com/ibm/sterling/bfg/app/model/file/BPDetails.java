@@ -118,7 +118,7 @@ public class BPDetails {
     }
 
     public String getOnfaultProcessing() {
-        return Optional.ofNullable(onfaultProcessing).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(onfaultProcessing).map(BPDetailFormat::getCode).orElse("");
     }
 
     public void setOnfaultProcessing(BPDetailFormat onfaultProcessing) {
@@ -126,7 +126,7 @@ public class BPDetails {
     }
 
     public String getEnableTransaction() {
-        return Optional.ofNullable(enableTransaction).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(enableTransaction).map(BPDetailFormat::getCode).orElse("");
     }
 
     public void setEnableTransaction(BPDetailFormat enableTransaction) {
@@ -206,7 +206,7 @@ public class BPDetails {
     }
 
     public String getCommitStepsUponError() {
-        return Optional.ofNullable(commitStepsUponError).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(commitStepsUponError).map(BPDetailFormat::getCode).orElse("");
     }
 
     public void setCommitStepsUponError(BPDetailFormat commitStepsUponError) {

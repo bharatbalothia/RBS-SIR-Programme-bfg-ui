@@ -38,7 +38,7 @@ public class BPDetails {
     }
 
     public String getDocumentTracking() {
-        return Optional.ofNullable(documentTracking).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(documentTracking).map(BPDetailFormat::getCode).orElse("");
     }
 
     public void setDocumentTracking(BPDetailFormat documentTracking) {

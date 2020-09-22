@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { BusinessProcessDocumentContent } from './business-process-document-content.model';
 import { BusinessProcessHeader } from './business-process-header.model';
 import { BusinessProcess } from './business-process.model';
 import { WorkflowStepWithPagination } from './workflow-step-with-pagination.model';
@@ -25,5 +26,9 @@ export class BusinessProcessService {
 
     getBPDetails(identifier: string) {
         return this.http.get<BusinessProcess>(this.apiUrl + 'bp-details', { params: { identifier } });
+    }
+
+    getDocumentContent(id: string) {
+        return this.http.get<BusinessProcessDocumentContent>(this.apiUrl + 'document-content', { params: { id } });
     }
 }

@@ -1,4 +1,5 @@
 import { Tab } from '../../components/details-dialog/details-dialog-data.model';
+import { BusinessProcessDocumentContent } from './business-process-document-content.model';
 import { BusinessProcess } from './business-process.model';
 
 export const BUSINESS_PROCESS_DISPLAY_NAMES = {
@@ -32,7 +33,13 @@ export const BUSINESS_PROCESS_DISPLAY_NAMES = {
     firstNotification: 'First Notification',
     commitStepsUponError: 'Commit On Error',
     description: 'Description',
-    businessProcess: 'Business Process Definition'
+    businessProcess: 'Business Process Definition',
+    instanceId: 'Instance ID',
+    processName: 'Process Name',
+    documentName: 'Document Name',
+    storageType: 'Document Store',
+    documentId: 'Document ID',
+    documentPayload: 'Document in the message from service'
 };
 
 export const getBusinessProcessDisplayName = (key: string) => BUSINESS_PROCESS_DISPLAY_NAMES[key] || key;
@@ -78,5 +85,22 @@ export const getBusinessProcessDetailsTabs = (businessProcess: BusinessProcess):
     {
         tabTitle: 'Business Process Details',
         tabSections: [{ sectionItems: getBusinessProcessDetailsSectionItems(businessProcess)['Business Process Details'] }]
+    }
+].filter(el => el);
+
+export const getBusinessProcessDocumentInfoTabs = (documentContent: BusinessProcessDocumentContent): Tab[] => [
+    {
+        tabTitle: 'Document Details',
+        tabSections: [{
+            sectionItems: [
+                { fieldName: 'processName', fieldValue: documentContent.processName },
+                { fieldName: 'instanceId', fieldValue: documentContent.workflowId },
+                { fieldName: 'serviceName', fieldValue: documentContent.serviceName },
+                { fieldName: 'documentName', fieldValue: documentContent.documentName },
+                { fieldName: 'storageType', fieldValue: documentContent.storageType },
+                { fieldName: 'documentId', fieldValue: documentContent.documentId },
+                { fieldName: 'documentPayload', fieldValue: documentContent.documentPayload, isXML: true },
+            ]
+        }]
     }
 ].filter(el => el);

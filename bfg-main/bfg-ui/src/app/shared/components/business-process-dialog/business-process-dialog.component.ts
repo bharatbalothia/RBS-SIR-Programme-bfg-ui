@@ -4,7 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
 import { take } from 'rxjs/operators';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { getBusinessProcessDetailsTabs, getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
+import { getBusinessProcessDetailsTabs, getBusinessProcessDisplayName, getBusinessProcessDocumentInfoTabs } from '../../models/business-process/business-process-display-names';
+import { BusinessProcessDocumentContent } from '../../models/business-process/business-process-document-content.model';
 import { BusinessProcessHeader } from '../../models/business-process/business-process-header.model';
 import { BusinessProcess } from '../../models/business-process/business-process.model';
 import { BusinessProcessService } from '../../models/business-process/business-process.service';
@@ -26,6 +27,8 @@ export class BusinessProcessDialogComponent implements OnInit {
   errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLoading = true;
+  isBPHeaderLoading = true;
+
   errorMessage: ErrorMessage;
 
   bpHeader: BusinessProcessHeader;
@@ -92,18 +95,18 @@ export class BusinessProcessDialogComponent implements OnInit {
       },
         error => {
           this.isLoading = false;
+          this.isBPHeaderLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
   }
 
   getBPHeader = (wfdID, wfdVersion) => this.businessProcessService.getBPHeader({ wfdID, wfdVersion })
-    .pipe(data => this.setLoading(data))
     .subscribe((data: BusinessProcessHeader) => {
-      this.isLoading = false;
+      this.isBPHeaderLoading = false;
       this.bpHeader = data;
     },
       error => {
-        this.isLoading = false;
+        this.isBPHeaderLoading = false;
         this.errorMessage = getApiErrorMessage(error);
       })
 
@@ -126,6 +129,22 @@ export class BusinessProcessDialogComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  openStepDocumentInfo = (step: WorkflowStep) => this.businessProcessService.getDocumentContent(step.docId)
+    .pipe(data => this.setLoading(data))
+    .subscribe((data: BusinessProcessDocumentContent) => {
+      this.isLoading = false;
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Primary Document`,
+        tabs: getBusinessProcessDocumentInfoTabs({ ...data, processName: this.bpHeader.bpName, serviceName: step.serviceName }),
+        displayName: getBusinessProcessDisplayName,
+        isDragable: true
+      }));
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.workflowSteps.content);

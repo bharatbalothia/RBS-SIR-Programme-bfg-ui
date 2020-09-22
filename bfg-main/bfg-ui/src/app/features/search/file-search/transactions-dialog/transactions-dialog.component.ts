@@ -13,6 +13,8 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 import { getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
+import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
+import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -124,6 +126,19 @@ export class TransactionsDialogComponent implements OnInit {
         this.errorMessage = getApiErrorMessage(error);
         this.emitErrorMesageEvent(transaction.id);
       })
+
+  openBusinessProcessDialog = (transaction: Transaction) =>
+    this.dialog.open(BusinessProcessDialogComponent, new DetailsDialogConfig({
+      title: `Business Process Detail`,
+      tabs: [],
+      displayName: getBusinessProcessDisplayName,
+      isDragable: true,
+      actionData: {
+        id: transaction.workflowID,
+        actions: {
+        }
+      },
+    }))
 
   createErrorMesageEmitter(id: number) {
     this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();

@@ -74,6 +74,13 @@
                 </mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="instanceData">
+                <mat-header-cell *matHeaderCellDef> {{displayName('instanceData')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    None
+                </mat-cell>
+            </ng-container>
+
             <ng-container matColumnDef="noData">
                 <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
                     No records found.

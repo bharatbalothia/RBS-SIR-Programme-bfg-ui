@@ -34,6 +34,7 @@ export class BusinessProcessDialogComponent implements OnInit {
     'nodeExecuted',
     'statusRpt',
     'docId',
+    'instanceData'
   ];
 
   dataSource: MatTableDataSource<WorkflowStep>;

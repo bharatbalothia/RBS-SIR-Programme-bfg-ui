@@ -22,10 +22,10 @@ export class TransmitDialogComponent {
   errorMessage: ErrorMessage;
 
   entity: Entity;
-  fileType: string;
+  fileType: string = ENTITY_TRANSMIT_FILE_TYPE.ICF;
 
   displayName: (fieldName: string) => string;
-  transmitAction: (id: string, changerComments: string) => any;
+  transmitAction: (id: string, type: string) => any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,

@@ -50,7 +50,7 @@ export class BusinessProcessDialogComponent implements OnInit {
   dataSource: MatTableDataSource<WorkflowStep>;
 
   pageIndex = 0;
-  pageSize = 100;
+  pageSize = 10;
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   id: number;

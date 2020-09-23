@@ -2,15 +2,45 @@
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
     <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <mat-dialog-content>
-        <div class="bp-details">
+        <div *ngIf="bpHeader" class="bp-details">
             <div class="pb-details-section">
-                <div *ngIf="bpHeader" class="dp-details-item">
+                <div class="dp-details-item">
                     <label class="item-label">Name: </label>
                     <button mat-button (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</button>
                 </div>
+                <div class="dp-details-item">
+                    <label class="item-label">Deadline: </label>
+                    None
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">Instance ID: </label>
+                    {{id}}
+                </div>
+                <div class="dp-details-item">
+                    <label class="item-label">Contract ID: </label>
+                    None
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">Status: </label>
+                    
+                </div>
+                <div class="dp-details-item">
+                    <label class="item-label">State: </label>
+                    None
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">User: </label>
+                    admin
+                </div>
             </div>
         </div>
-        <mat-table [dataSource]="dataSource" *ngIf="!isBPHeaderLoading">
+        <mat-table [dataSource]="dataSource" *ngIf="workflowSteps && !isBPHeaderLoading">
 
             <ng-container matColumnDef="stepId">
                 <mat-header-cell *matHeaderCellDef> {{displayName('stepId')}} </mat-header-cell>
@@ -101,7 +131,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
 
-        <app-table-paginator *ngIf="!isBPHeaderLoading && workflowSteps" [value]="pageIndex + 1"
+        <app-table-paginator *ngIf="workflowSteps && !isBPHeaderLoading" [value]="pageIndex + 1"
             [getRows]="getWorkflowSteps.bind(this)" [min]="1" [max]="workflowSteps.totalPages"
             [length]="workflowSteps.totalElements" [pageIndex]="workflowSteps.pageable.pageNumber"
             [pageSize]="workflowSteps.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>

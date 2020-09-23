@@ -56,6 +56,7 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
         { fieldName: 'softstopRecoveryLevel', fieldValue: businessProcess.softstopRecoveryLevel },
         { fieldName: 'lifespanDays', fieldValue: businessProcess.lifespanDays },
         { fieldName: 'lifespanHours', fieldValue: businessProcess.lifespanHours },
+        { fieldName: 'lifespanType', fieldValue: businessProcess.lifespanType },
         { fieldName: 'removalMethod', fieldValue: businessProcess.removalMethod },
         { fieldName: 'eventReportingLevel', fieldValue: businessProcess.eventReportingLevel },
         { fieldName: 'wfdVersion', fieldValue: businessProcess.wfdVersion },
@@ -66,7 +67,7 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
         { fieldName: 'expedite', fieldValue: businessProcess.expedite },
         {
             fieldName: 'deadline', fieldValue: `${businessProcess.deadlineHours ? `${businessProcess.deadlineHours} Hours ` : ''}` +
-                `${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}`
+                `${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}` || 'None Available'
         },
         {
             fieldName: 'firstNotification',

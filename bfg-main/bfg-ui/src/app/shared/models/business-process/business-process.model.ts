@@ -13,6 +13,7 @@ export interface BusinessProcess {
     firstNotificationMinutes: string;
     lifespanDays: string;
     lifespanHours: string;
+    lifespanType: string;
     name: string;
     onfaultProcessing: string;
     persistenceLevel: string;

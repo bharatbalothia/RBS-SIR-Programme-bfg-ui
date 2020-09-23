@@ -3,6 +3,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
 import { take } from 'rxjs/operators';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { getBusinessProcessDetailsTabs, getBusinessProcessDisplayName, getBusinessProcessDocumentInfoTabs } from '../../models/business-process/business-process-display-names';
 import { BusinessProcessDocumentContent } from '../../models/business-process/business-process-document-content.model';
@@ -30,6 +31,8 @@ export class BusinessProcessDialogComponent implements OnInit {
   isBPHeaderLoading = false;
 
   errorMessage: ErrorMessage;
+
+  stepsWarnings: ErrorMessage;
 
   bpHeader: BusinessProcessHeader;
 
@@ -106,6 +109,14 @@ export class BusinessProcessDialogComponent implements OnInit {
       .subscribe((data: BusinessProcessHeader) => {
         this.isBPHeaderLoading = false;
         this.bpHeader = data;
+
+        if (!this.workflowSteps.fullTracking) {
+          this.stepsWarnings = {
+            warnings: [{ warning: ERROR_MESSAGES.fullTrackingSteps }],
+            code: null,
+            message: null
+          };
+        }
       },
         error => {
           this.isBPHeaderLoading = false;

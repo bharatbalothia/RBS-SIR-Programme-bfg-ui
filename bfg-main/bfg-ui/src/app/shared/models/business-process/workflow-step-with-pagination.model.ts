@@ -4,6 +4,9 @@ export interface WorkflowStepWithPagination {
     content: [
         WorkflowStep
     ];
+    status: string;
+    state: string;
+    fullTracking: string;
     pageable: {
         pageSize: number;
         pageNumber: number;

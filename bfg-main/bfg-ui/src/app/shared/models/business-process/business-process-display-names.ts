@@ -1,5 +1,5 @@
 import { Tab } from '../../components/details-dialog/details-dialog-data.model';
-import { capitalizeFirstLetter } from '../../utils/utils';
+import { capitalizeFirstLetter, removeEmpties } from '../../utils/utils';
 import { BusinessProcessDocumentContent } from './business-process-document-content.model';
 import { BusinessProcess } from './business-process.model';
 
@@ -40,7 +40,8 @@ export const BUSINESS_PROCESS_DISPLAY_NAMES = {
     documentName: 'Document Name',
     storageType: 'Document Store',
     documentId: 'Document ID',
-    documentPayload: 'Document in the message from service'
+    documentPayload: 'Document in the message from service',
+    removalMethod: 'Removal Method'
 };
 
 export const getBusinessProcessDisplayName = (key: string) => BUSINESS_PROCESS_DISPLAY_NAMES[key] || key;
@@ -55,6 +56,7 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
         { fieldName: 'softstopRecoveryLevel', fieldValue: businessProcess.softstopRecoveryLevel },
         { fieldName: 'lifespanDays', fieldValue: businessProcess.lifespanDays },
         { fieldName: 'lifespanHours', fieldValue: businessProcess.lifespanHours },
+        { fieldName: 'removalMethod', fieldValue: businessProcess.removalMethod },
         { fieldName: 'eventReportingLevel', fieldValue: businessProcess.eventReportingLevel },
         { fieldName: 'wfdVersion', fieldValue: businessProcess.wfdVersion },
         { fieldName: 'onfaultProcessing', fieldValue: capitalizeFirstLetter(businessProcess.onfaultProcessing) },
@@ -63,23 +65,23 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
         { fieldName: 'documentStorage', fieldValue: businessProcess.documentStorage },
         { fieldName: 'expedite', fieldValue: businessProcess.expedite },
         {
-            fieldName: 'deadline', fieldValue: `${businessProcess.deadlineHours ? `${businessProcess.deadlineHours} Hours ` : ''}
-            ${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}`
+            fieldName: 'deadline', fieldValue: `${businessProcess.deadlineHours ? `${businessProcess.deadlineHours} Hours ` : ''}` +
+                `${businessProcess.deadlineMinutes ? ` ${businessProcess.deadlineMinutes} Minutes` : ''}`
         },
         {
             fieldName: 'firstNotification',
-            fieldValue: `${businessProcess.firstNotificationHours ? `${businessProcess.firstNotificationHours} Hours ` : ''}
-            ${businessProcess.firstNotificationMinutes ? ` ${businessProcess.firstNotificationMinutes} Minutes` : ''}`
+            fieldValue: `${businessProcess.firstNotificationHours ? `${businessProcess.firstNotificationHours} Hours ` : ''}` +
+                `${businessProcess.firstNotificationMinutes ? ` ${businessProcess.firstNotificationMinutes} Minutes` : ''}`
         },
         {
             fieldName: 'secondNotification',
-            fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}
-            ${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
+            fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}` +
+                `${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
         },
         { fieldName: 'commitStepsUponError', fieldValue: capitalizeFirstLetter(businessProcess.commitStepsUponError) },
         { fieldName: 'description', fieldValue: businessProcess.description },
         { fieldName: 'businessProcess', fieldValue: businessProcess.businessProcess, isXML: true },
-    ],
+    ].map(el => removeEmpties(el))
 });
 
 export const getBusinessProcessDetailsTabs = (businessProcess: BusinessProcess): Tab[] => [

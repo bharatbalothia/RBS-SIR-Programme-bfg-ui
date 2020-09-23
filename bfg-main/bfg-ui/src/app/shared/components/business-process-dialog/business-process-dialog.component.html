@@ -1,8 +1,9 @@
 <h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
     <app-error-template [errorMessage]="errorMessage"></app-error-template>
+    <app-error-template [errorMessage]="stepsWarnings"></app-error-template>
     <mat-dialog-content>
-        <div *ngIf="bpHeader" class="bp-details">
+        <div *ngIf="bpHeader && workflowSteps" class="bp-details">
             <div class="pb-details-section">
                 <div class="dp-details-item">
                     <label class="item-label">Name: </label>
@@ -26,11 +27,11 @@
             <div class="pb-details-section">
                 <div class="dp-details-item">
                     <label class="item-label">Status: </label>
-                    
+                    {{workflowSteps.status}}
                 </div>
                 <div class="dp-details-item">
                     <label class="item-label">State: </label>
-                    None
+                    {{workflowSteps.state}}
                 </div>
             </div>
             <div class="pb-details-section">

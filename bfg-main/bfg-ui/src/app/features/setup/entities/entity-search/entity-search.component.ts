@@ -175,7 +175,7 @@ export class EntitySearchComponent implements OnInit {
       title: `Transmit File for the Entity ID ${entity.entity}`,
       actionData: {
         entity,
-        transmitAction: (id: string, fileType: string) => this.entityService.transmtEntity(id, fileType)
+        transmitAction: (id: string, fileType: string) => this.entityService.transmitEntity(id, fileType)
       }
     }));
   }

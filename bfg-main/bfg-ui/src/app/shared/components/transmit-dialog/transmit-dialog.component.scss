@@ -5,6 +5,17 @@
     margin: 3px !important;
 }
 
+.radio-group-section {
+    margin-top: 10px;
+    height: 30px;
+
+    .radio-group-label,
+    .mat-radio-button {
+        padding-right: 10px;
+    }
+
+}
+
 .mat-form-field {
     width: 100%;
 }
@@ -14,6 +25,7 @@
     display: block;
 
     .transmit-actions {
+        padding-bottom: 10px;
 
         .mat-button-base {
             margin-left: 0px !important;

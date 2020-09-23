@@ -9,8 +9,9 @@ public class BPDetails {
     private BPDetailFormat queue;
     private BPDetailFormat recoveryLevel;
     private BPDetailFormat softstopRecoveryLevel;
-    private String lifespanDays;
-    private String lifespanHours;
+    private String lifespanDays = "Default";
+    private String lifespanHours = "Default";
+    private String lifespanType = "System Level";
     private BPDetailFormat removalMethod;
     private BPDetailFormat eventReportingLevel;
     private String wfdVersion;
@@ -91,6 +92,14 @@ public class BPDetails {
 
     public void setLifespanHours(String lifespanHours) {
         this.lifespanHours = lifespanHours;
+    }
+
+    public String getLifespanType() {
+        return lifespanType;
+    }
+
+    public void setLifespanType(String lifespanType) {
+        this.lifespanType = lifespanType;
     }
 
     public String getRemovalMethod() {

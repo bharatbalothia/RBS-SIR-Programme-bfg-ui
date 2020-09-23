@@ -17,6 +17,12 @@
             .item-label {
                 font-weight: bold;
             }
+
+        }
+
+        .dp-details-item>.mat-button {
+            padding: 0;
+            line-height: normal;
         }
     }
 }

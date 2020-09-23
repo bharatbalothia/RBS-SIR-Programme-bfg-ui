@@ -26,8 +26,7 @@ public class WorkflowController {
     public Page<WorkflowStep> getWorkflowSteps(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
                                                @PathVariable Integer id) throws JsonProcessingException {
-        return ListToPageConverter.convertListToPage(
-                new ArrayList<>(searchService.getWorkflowSteps(id)), PageRequest.of(page, size));
+        return searchService.getWorkflowSteps(id, page, size);
     }
 
     @GetMapping("bp-details")

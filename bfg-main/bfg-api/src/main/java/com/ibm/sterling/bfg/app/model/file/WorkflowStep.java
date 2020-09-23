@@ -130,4 +130,12 @@ public class WorkflowStep {
         isInlineInvocation = inlineInvocation;
     }
 
+    @Override
+    public String toString() {
+        return "WorkflowStep{" +
+                "stepId=" + stepId +
+                ", exeState='" + exeState + '\'' +
+                ", wfdId=" + wfdId +
+                '}';
+    }
 }

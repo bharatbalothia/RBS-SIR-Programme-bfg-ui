@@ -165,14 +165,14 @@ public class SearchService {
 
     public Page<WorkflowStep> getWorkflowSteps(Integer workFlowId, Integer page, Integer size) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
-                workflowStepsUrl + "?_sort=stepId&fieldList=Full&workFlowId=" + workFlowId,
+                workflowStepsUrl + "?fieldList=Full&workFlowId=" + workFlowId,
                 HttpMethod.GET,
                 new HttpEntity<>(getHttpHeaders()),
                 String.class);
         List<WorkflowStep> workflowSteps = Optional.ofNullable(objectMapper.convertValue(
                 objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
                 })).orElseGet(ArrayList::new);
-        Collections.reverse(workflowSteps);
+        workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
         Page<WorkflowStep> workflows = ListToPageConverter.convertListToPage(workflowSteps, of(page, size));
         WFPage<WorkflowStep> wfPage = new WFPage<>(workflows.getContent(), workflows.getPageable(), workflows.getTotalElements());
         if (!workflowSteps.isEmpty()) {

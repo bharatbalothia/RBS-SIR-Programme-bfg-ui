@@ -14,6 +14,8 @@ export interface BusinessProcess {
     lifespanDays: string;
     lifespanHours: string;
     lifespanType: string;
+    node: string;
+    nodePreference: string;
     name: string;
     onfaultProcessing: string;
     persistenceLevel: string;

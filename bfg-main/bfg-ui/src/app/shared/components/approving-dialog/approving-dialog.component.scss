@@ -9,19 +9,19 @@
     width: 100%;
 }
 
-.mat-dialog-actions {
 
-    display: block;
+.approve-actions {
 
-    .approve-actions {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
 
-        .mat-button-base {
-            margin-left: 0px !important;
-            margin-right: 8px;
-        }
+    .mat-button-base {
+        margin-right: 8px;
     }
+}
 
-    .close-button {
-        float: right;
-    }
+.close-button {
+    float: right;
+    margin-left: auto;
 }

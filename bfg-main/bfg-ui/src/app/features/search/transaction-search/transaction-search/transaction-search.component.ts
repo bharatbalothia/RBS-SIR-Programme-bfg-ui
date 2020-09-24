@@ -20,6 +20,7 @@ import { Subscription, interval } from 'rxjs';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 
 @Component({
   selector: 'app-transaction-search',
@@ -258,7 +259,7 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   }
 
   openBusinessProcessDialog = (transaction: Transaction) =>
-    this.dialog.open(BusinessProcessDialogComponent, new DetailsDialogConfig({
+    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,

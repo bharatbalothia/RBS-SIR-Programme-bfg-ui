@@ -25,6 +25,7 @@ import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 
 @Component({
   selector: 'app-file-search',
@@ -91,11 +92,11 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entityID: [''],
+      entityId: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],
-      bpState: [''],
+      bpstate: [''],
       filename: [''],
       reference: [''],
       type: [''],
@@ -266,7 +267,7 @@ export class FileSearchComponent implements OnInit {
       })
 
   openBusinessProcessDialog = (file: File) =>
-    this.dialog.open(BusinessProcessDialogComponent, new DetailsDialogConfig({
+    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,

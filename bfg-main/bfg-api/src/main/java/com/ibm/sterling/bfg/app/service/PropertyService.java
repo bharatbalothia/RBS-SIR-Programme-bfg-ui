@@ -76,6 +76,17 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
                 .map(this::getStatusLabelData)
                 .collect(Collectors.toList()));
+        fileCriteriaData.put("entity",
+                entityService.findEntitiesByService(service)
+                        .stream()
+                        .map(entity -> {
+                                    Map<String, Object> entityMap = new HashMap<>();
+                                    entityMap.put("entityId", entity.getEntityId());
+                                    entityMap.put("entityName", entity.getEntity() + "(" + entity.getService() + ")");
+                                    return entityMap;
+                                }
+                        )
+                        .collect(Collectors.toList()));
         return fileCriteriaData;
     }
 

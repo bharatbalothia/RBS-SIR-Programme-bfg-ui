@@ -9,6 +9,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 public class FileSearchCriteria extends SearchCriteria {
     private Integer id;
     private Long messageid;
+    @JsonAlias("entityId")
     private Integer entityid;
     private Boolean override;
     @JsonProperty("bp-state")

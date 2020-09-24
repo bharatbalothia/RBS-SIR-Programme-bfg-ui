@@ -292,6 +292,19 @@ public class EntityServiceImpl implements EntityService {
                         .orElse(false));
     }
 
+    @Override
+    public List<Entity> findEntitiesByService(String service) {
+        List<Entity> entities = new ArrayList<>();
+        Specification<Entity> specification = Specification
+                .where(
+                        GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse("") , "service"))
+                .and(
+                        GenericSpecification.filter("false", "deleted"));
+        entities.addAll(entityRepository.findAll(specification));
+        entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
+        return entities;
+    }
+
     private List<Entity> getEntitiesExceptCurrent(Entity entity) {
         List<Entity> entities = entityRepository.findByDeleted(false);
         Entity editedEntity = entityRepository.findById(entity.getEntityId()).orElse(entity);

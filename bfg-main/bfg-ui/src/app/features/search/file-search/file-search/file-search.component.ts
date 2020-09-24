@@ -91,7 +91,7 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entityID: [''],
+      entityId: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],

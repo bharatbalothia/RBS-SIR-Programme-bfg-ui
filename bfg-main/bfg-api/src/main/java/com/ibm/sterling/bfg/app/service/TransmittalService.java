@@ -37,10 +37,10 @@ public class TransmittalService {
             );
         } catch (HttpStatusCodeException e) {
             Optional.ofNullable(e.getMessage()).ifPresent(errorMessage -> {
-                String errorMap = errorMessage.substring(errorMessage.indexOf("[") + 1, errorMessage.indexOf("]") + 1);
+                String parsedErrorMessageList = "[" + errorMessage.replaceAll("(^[\\w:\\[\\s]+)|([]\\s]+$)", "") + "]";
                 List<Map<String, Object>> errors = null;
                 try {
-                    errors = new ObjectMapper().readValue(errorMap, new TypeReference<List<Map<String, Object>>>() {
+                    errors = new ObjectMapper().readValue(parsedErrorMessageList, new TypeReference<List<Map<String, Object>>>() {
                     });
                 } catch (JsonProcessingException ex) {
                     ex.printStackTrace();

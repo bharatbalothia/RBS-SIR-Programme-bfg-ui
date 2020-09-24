@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -24,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 import static org.springframework.data.domain.PageRequest.of;
@@ -167,46 +165,41 @@ public class SearchService {
 
     public Page<WorkflowStep> getWorkflowSteps(Integer workFlowId, Integer page, Integer size) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
-                workflowStepsUrl + "?fieldList=Full&workFlowId=" + workFlowId,
+                workflowStepsUrl + "?_sort=stepId&fieldList=Full&workFlowId=" + workFlowId,
                 HttpMethod.GET,
                 new HttpEntity<>(getHttpHeaders()),
                 String.class);
-        List<WorkflowStep> workflowSteps = objectMapper.convertValue(
+        List<WorkflowStep> workflowSteps = Optional.ofNullable(objectMapper.convertValue(
                 objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
-                });
-        if (!CollectionUtils.isEmpty(workflowSteps)) {
-            workflowSteps.sort(Comparator.comparing(WorkflowStep::getStepId));
-            workflowSteps.forEach(workflowStep -> {
-                if (!workflowSteps.get(0).getWfdId().equals(workflowStep.getWfdId()) ||
-                        !workflowSteps.get(0).getWfdVersion().equals(workflowStep.getWfdVersion())) {
-                    workflowStep.setInlineInvocation(true);
-                }
-            });
-        }
+                })).orElseGet(ArrayList::new);
+        Collections.reverse(workflowSteps);
         Page<WorkflowStep> workflows = ListToPageConverter.convertListToPage(workflowSteps, of(page, size));
         WFPage<WorkflowStep> wfPage = new WFPage<>(workflows.getContent(), workflows.getPageable(), workflows.getTotalElements());
-        long success = workflowSteps.stream().filter(workflowStep -> workflowStep.getExeState().equals("Success")).count();
-        if (success == workflowSteps.size()) {
-            wfPage.setState("");
-            wfPage.setState("Success");
-        } else {
-            wfPage.setState("Halted");
-            wfPage.setStatus("Error");
-        }
-        if(isListWithMissedValues(workflowSteps.stream().map(WorkflowStep::getStepId).collect(Collectors.toList()))) {
-            wfPage.setFullTracking(false);
+        if (!workflowSteps.isEmpty()) {
+            int iteration = 0;
+            boolean isStatusSuccessful = true;
+            boolean isListFull = true;
+            WorkflowStep firstWorkflowStep = workflowSteps.get(0);
+            for (WorkflowStep workflowStep : workflowSteps) {
+                if (!firstWorkflowStep.getWfdId().equals(workflowStep.getWfdId()) ||
+                        !firstWorkflowStep.getWfdVersion().equals(workflowStep.getWfdVersion())) {
+                    workflowStep.setInlineInvocation(true);
+                }
+                isStatusSuccessful = isStatusSuccessful & workflowStep.getExeState().equals("Success");
+                isListFull = isListFull & workflowStep.getStepId() == iteration++;
+            }
+            if (isStatusSuccessful) {
+                wfPage.setState("");
+                wfPage.setState("Success");
+            } else {
+                wfPage.setState("Halted");
+                wfPage.setStatus("Error");
+            }
+            if (!isListFull) {
+                wfPage.setFullTracking(false);
+            }
         }
         return wfPage;
-    }
-
-    private boolean isListWithMissedValues(List<Integer> steps) {
-        if (!steps.isEmpty()) {
-            int sum = steps.stream().mapToInt(Integer::intValue).sum();
-            int size = steps.size() - 1;
-            int expectedSum = size * (size + 1) / 2;
-            if (expectedSum != sum) return true;
-        }
-        return false;
     }
 
     public BPDetails getBPDetails(String identifier) throws JsonProcessingException {

@@ -16,7 +16,7 @@
         <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
             [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)">Accept</button>
         <button mat-raised-button color="warn" (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
+        <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
     </div>
-    <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
 </mat-dialog-actions>

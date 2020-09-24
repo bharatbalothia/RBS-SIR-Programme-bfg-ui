@@ -95,7 +95,7 @@ export class FileSearchComponent implements OnInit {
       service: [''],
       direction: [''],
       fileStatus: [''],
-      bpState: [''],
+      bpstate: [''],
       filename: [''],
       reference: [''],
       type: [''],

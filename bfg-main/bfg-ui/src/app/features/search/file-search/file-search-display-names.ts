@@ -8,7 +8,7 @@ export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
     direction: 'Direction',
     fileStatus: 'File Status',
-    bpState: 'BP State',
+    bpstate: 'BP State',
     filename: 'Filename',
     file: 'File',
     reference: 'Reference',

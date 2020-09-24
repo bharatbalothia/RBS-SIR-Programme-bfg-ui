@@ -48,14 +48,14 @@
                             {{fileStatus.label}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpState">
-                    <mat-label>{{getFileSearchDisplayName('bpState')}}
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+                    <mat-label>{{getFileSearchDisplayName('bpstate')}}
                     </mat-label>
-                    <mat-select formControlName="bpState">
+                    <mat-select formControlName="bpstate">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let bpState of fileCriteriaData.bpState" [value]="bpState">
-                            <mat-icon [svgIcon]="FILE_STATUS_ICON[bpState | uppercase]"></mat-icon>
-                            {{bpState}}
+                        <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
+                            <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
+                            {{bpstate}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

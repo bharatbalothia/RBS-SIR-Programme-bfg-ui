@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
@@ -32,6 +33,8 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
 
@@ -150,23 +153,23 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception {
-        if (changeControl.getStatus() != ChangeControlStatus.PENDING) {
+    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) {
+        if (!PENDING.equals(changeControl.getStatus())) {
             throw new StatusNotPendingException();
         }
         Entity entity = new Entity();
-        switch (status) {
-            case ACCEPTED:
-                entity = saveEntityAfterApprove(changeControl);
-                break;
-            case FAILED:
-            case REJECTED:
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (ACCEPTED.equals(status)) {
+            if (userName.equals(changeControl.getChanger()))
+                throw new InvalidUserForApprovalException();
+            entity = saveEntityAfterApprove(changeControl);
         }
         changeControlService.setApproveInfo(
                 changeControl,
-                SecurityContextHolder.getContext().getAuthentication().getName(),
+                userName,
                 approverComments,
-                status);
+                status
+        );
         return entity;
     }
 
@@ -223,7 +226,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
         LOG.info("Search entities by entity name {} and service {}", entity, service);
-        List<EntityType> entities = new ArrayList<>(changeControlService.findAllPending(entity, service));
+        List<EntityType> entityResults = new ArrayList<>();
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(entity, "entity"))
@@ -232,9 +235,15 @@ public class EntityServiceImpl implements EntityService {
                 .and(
                         GenericSpecification.filter("false", "deleted")
                 );
-        entities.addAll(entityRepository.findAll(specification));
-        entities.sort(Comparator.comparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
-        return ListToPageConverter.convertListToPage(entities, pageable);
+        List<Entity> entities = entityRepository.findAll(specification);
+        List<ChangeControl> controls = changeControlService.findAllPending(entity, service);
+        entities.removeIf(dbEntity ->
+                controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
+        );
+        entityResults.addAll(entities);
+        entityResults.addAll(controls);
+        entityResults.sort(Comparator.comparing(EntityType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
+        return ListToPageConverter.convertListToPage(entityResults, pageable);
     }
 
     public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
@@ -267,7 +276,7 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = new ArrayList<>();
         Specification<Entity> specification = Specification
                 .where(
-                        GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse("") , "service"))
+                        GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse(""), "service"))
                 .and(
                         GenericSpecification.filter("false", "deleted"));
         entities.addAll(entityRepository.findAll(specification));

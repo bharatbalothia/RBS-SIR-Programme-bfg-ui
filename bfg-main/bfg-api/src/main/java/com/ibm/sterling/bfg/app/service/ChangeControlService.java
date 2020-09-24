@@ -1,5 +1,7 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.EntityLog;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
@@ -10,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -83,4 +85,24 @@ public class ChangeControlService {
         return changeControlRepository.findAll(specification);
     }
 
+    public void updateChangeControl(ChangeControl changeControl, Entity entity) {
+        if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)
+                && (changeControl.getOperation().equals(Operation.CREATE) ||
+                changeControl.getOperation().equals(Operation.UPDATE))) {
+            EntityLog entityLog = new EntityLog(entity);
+            switch (changeControl.getOperation()) {
+                case CREATE:
+                    changeControl.setResultMeta1(entityLog.getEntity());
+                    changeControl.setResultMeta2(entityLog.getService());
+                    break;
+                case UPDATE:
+                    entityLog.setEntity(changeControl.getResultMeta1());
+                    entityLog.setService(changeControl.getResultMeta2());
+                    break;
+            }
+            entityLog.setEntityLogId(changeControl.getEntityLog().getEntityLogId());
+            changeControl.setEntityLog(entityLog);
+            save(changeControl);
+        }
+    }
 }

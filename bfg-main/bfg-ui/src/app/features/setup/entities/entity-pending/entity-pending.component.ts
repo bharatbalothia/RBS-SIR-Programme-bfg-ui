@@ -99,7 +99,7 @@ export class EntityPendingComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
-        tabs: getPendingChangesTabs(changeCtrl),
+        tabs: getPendingChangesTabs(changeCtrl, true),
         displayName: getEntityDisplayName,
         actionData: {
           changeID: changeControl.changeID,

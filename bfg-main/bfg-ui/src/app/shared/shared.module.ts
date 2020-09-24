@@ -44,6 +44,7 @@ import { XmlPipe } from './pipes/xml/xml.pipe';
 import { DisableControlDirective } from './directives/disable-control.directive';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
+import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 
 
 @NgModule({
@@ -59,12 +60,13 @@ import { TransmitDialogComponent } from './components/transmit-dialog/transmit-d
     DeleteDialogComponent,
     TooltipComponent,
     DragableDialogWrapperComponent,
+    TransmitDialogComponent,
+    BusinessProcessDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
-    DisableControlDirective,
-    TransmitDialogComponent
+    DisableControlDirective
   ],
   imports: [
     CommonModule,
@@ -143,12 +145,12 @@ import { TransmitDialogComponent } from './components/transmit-dialog/transmit-d
     DeleteDialogComponent,
     TooltipComponent,
     DragableDialogWrapperComponent,
+    TransmitDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
-    DisableControlDirective,
-    TransmitDialogComponent
+    DisableControlDirective
   ],
   providers: [
     { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },

@@ -2,10 +2,10 @@ import { getTrustedCertificateDisplayName } from './trusted-certificate-display-
 
 export const TRUSTED_CERTIFICATE_VALIDATION_MESSAGES = {
     name: [
-        { type: 'required', message: `${getTrustedCertificateDisplayName('name')} is required` },
+        { type: 'required', message: `A ${getTrustedCertificateDisplayName('name')} is required for the Trusted Certificate` },
         {
             type: 'pattern',
-            message: `${getTrustedCertificateDisplayName('name')} can only contain the following characters: a-zA-Z0-9 -_:`
+            message: `The Trusted Certificate ${getTrustedCertificateDisplayName('name')} can only contain the following characters: a-z A-Z 0-9 -_:. {space}`
         },
     ]
 };

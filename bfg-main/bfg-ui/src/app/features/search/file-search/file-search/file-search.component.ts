@@ -23,6 +23,9 @@ import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/set
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
+import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
+import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 
 @Component({
   selector: 'app-file-search',
@@ -35,7 +38,7 @@ export class FileSearchComponent implements OnInit {
   getFileStatusIcon = getStatusIcon;
   FILE_STATUS_ICON = STATUS_ICON;
 
-  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
+  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLinear = true;
 
@@ -89,11 +92,11 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entityID: [''],
+      entityId: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],
-      bpState: [''],
+      bpstate: [''],
       filename: [''],
       reference: [''],
       type: [''],
@@ -208,25 +211,25 @@ export class FileSearchComponent implements OnInit {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  openFileDetailsDialog = (file: File) =>
-      {
-        this.createErrorMesageEmitter(file.id);
-        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `File - ${file.id}`,
-        tabs: getFileDetailsTabs(file),
-        displayName: getFileSearchDisplayName,
-        isDragable: true,
-        actionData: {
-          actions: {
-            entity: () => this.openEntityDetailsDialog(file),
-            errorCode: () => this.openErrorDetailsDialog(file),
-            transactionTotal: () => this.openTransactionsDialog(file),
-            filename: () => this.openFileDocumentInfo(file)
-          }
-        },
-        parentError: this.errorMesageEmitters[file.id]
-      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
-    }
+  openFileDetailsDialog = (file: File) => {
+    this.createErrorMesageEmitter(file.id);
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `File - ${file.id}`,
+      tabs: getFileDetailsTabs(file),
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        actions: {
+          entity: () => this.openEntityDetailsDialog(file),
+          errorCode: () => this.openErrorDetailsDialog(file),
+          transactionTotal: () => this.openTransactionsDialog(file),
+          filename: () => this.openFileDocumentInfo(file),
+          workflowID: () => this.openBusinessProcessDialog(file)
+        }
+      },
+      parentError: this.errorMesageEmitters[file.id]
+    })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
+  }
 
   openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
     .pipe(data => this.setLoading(data))
@@ -263,6 +266,19 @@ export class FileSearchComponent implements OnInit {
         this.emitErrorMesageEvent(file.id);
       })
 
+  openBusinessProcessDialog = (file: File) =>
+    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
+      title: `Business Process Detail`,
+      tabs: [],
+      displayName: getBusinessProcessDisplayName,
+      isDragable: true,
+      actionData: {
+        id: file.workflowID,
+        actions: {
+        }
+      },
+    }))
+
   openTransactionsDialog = (file: File) =>
     this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
       title: `Transactions for ${file.filename} [${file.id}]`,
@@ -272,7 +288,8 @@ export class FileSearchComponent implements OnInit {
       actionData: {
         fileId: file.id,
         actions: {
-          file: () => this.openFileDetailsDialog(file)
+          file: () => this.openFileDetailsDialog(file),
+          workflowID: () => this.openBusinessProcessDialog(file)
         }
       },
     }))
@@ -294,18 +311,18 @@ export class FileSearchComponent implements OnInit {
       })
 
 
-  createErrorMesageEmitter(id: number){
+  createErrorMesageEmitter(id: number) {
     this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
   }
 
-  deleteErrorMesageEmitter(id: number){
-    if (this.errorMesageEmitters[id]){
+  deleteErrorMesageEmitter(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id] = null;
     }
   }
 
-  emitErrorMesageEvent(id: number){
-    if (this.errorMesageEmitters[id]){
+  emitErrorMesageEvent(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id].emit(this.errorMessage);
     }
   }

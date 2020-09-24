@@ -166,7 +166,7 @@ export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
   }
 ].filter(el => el);
 
-export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
+export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingAction?: boolean): Tab[] => [
   {
     tabTitle: DIALOG_TABS.CHANGE_DETAILS,
     tabSections: [{
@@ -179,7 +179,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
         { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
         { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
         { fieldName: 'Approver', fieldValue: changeControl.approver },
-        { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
+        !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
       ],
     }]
   },

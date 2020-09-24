@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service.certificate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
@@ -131,16 +132,20 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Override
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
-                                                                String approverComments, ChangeControlStatus status) throws Exception {
-        if (changeControlCert.getStatus() != PENDING) {
+                                                                String approverComments, ChangeControlStatus status) {
+        if (!PENDING.equals(changeControlCert.getStatus())) {
             throw new StatusNotPendingException();
         }
         TrustedCertificate cert = new TrustedCertificate();
-        if (ACCEPTED.equals(status))
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (ACCEPTED.equals(status)) {
+            if (userName.equals(changeControlCert.getChanger()))
+                throw new InvalidUserForApprovalException();
             cert = saveTrustedCertificateAfterApprove(changeControlCert);
+        }
         changeControlCertService.setApproveInfo(
                 changeControlCert,
-                SecurityContextHolder.getContext().getAuthentication().getName(),
+                userName,
                 approverComments,
                 status
         );
@@ -167,7 +172,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     @Override
     public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256) {
         LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}", certName, thumbprint, thumbprint256);
-        List<CertType> certificates = new ArrayList<>(changeControlCertService.findAllPending(certName, thumbprint, thumbprint256));
+        List<CertType> certificates = new ArrayList<>();
         Specification<TrustedCertificate> specification = Specification
                 .where(
                         GenericSpecification.<TrustedCertificate>filter(certName, "certificateName"))
@@ -176,7 +181,12 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
                 .and(
                         GenericSpecification.filter(thumbprint256, "thumbprint256")
                 );
-        certificates.addAll(trustedCertificateRepository.findAll(specification));
+        List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
+        List<ChangeControlCert> ccList = changeControlCertService.findAllPending(certName, thumbprint, thumbprint256);
+        certificateList.removeIf(cert ->
+                ccList.stream().anyMatch(control -> control.getResultMeta3().equals(cert.getThumbprint256())));
+        certificates.addAll(certificateList);
+        certificates.addAll(ccList);
         certificates.sort(Comparator.comparing(CertType::nameForSorting, String.CASE_INSENSITIVE_ORDER));
         return ListToPageConverter.convertListToPage(certificates, pageable);
     }

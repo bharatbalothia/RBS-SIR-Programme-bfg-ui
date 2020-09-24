@@ -18,6 +18,9 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { Subscription, interval } from 'rxjs';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
+import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
+import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 
 @Component({
   selector: 'app-transaction-search',
@@ -238,9 +241,14 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `Transaction Details of ${data.id}`,
-          tabs: getTransactionDetailsTabs(data),
+          tabs: getTransactionDetailsTabs(data, { workflowID: () => this.openBusinessProcessDialog(data) }),
           displayName: getTransactionSearchDisplayName,
           isDragable: true,
+          actionData: {
+            actions: {
+              workflowID: () => this.openBusinessProcessDialog(data)
+            }
+          },
           parentError: this.errorMessageEmitters[id]
         })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
       },
@@ -249,6 +257,19 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  openBusinessProcessDialog = (transaction: Transaction) =>
+    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
+      title: `Business Process Detail`,
+      tabs: [],
+      displayName: getBusinessProcessDisplayName,
+      isDragable: true,
+      actionData: {
+        id: transaction.workflowID,
+        actions: {
+        }
+      },
+    }))
 
   autoRefreshChange = (value) => {
     if (value) {
@@ -259,7 +280,7 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDirectionIcon(direction: string){
+  getDirectionIcon(direction: string) {
     return direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';
   }
 

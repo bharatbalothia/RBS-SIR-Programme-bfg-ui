@@ -41,7 +41,7 @@ public class TrustedCertificate implements CertType {
             fieldName = "CERTIFICATE_NAME",
             message = "CERTIFICATE_NAME has to be unique")
     @NotBlank(message = "CERTIFICATE_NAME has to be present")
-    @Pattern(regexp = "^[0-9a-zA-Z _\\-:]+$",
+    @Pattern(regexp = "^[0-9a-zA-Z _\\-:.]+$",
             message = "Please match the requested format for certificateName")
     @Column(name = "CERTIFICATE_NAME")
     private String certificateName;

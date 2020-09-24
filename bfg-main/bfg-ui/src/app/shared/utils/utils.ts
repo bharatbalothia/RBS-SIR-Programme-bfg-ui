@@ -19,3 +19,5 @@ export const difference = (object, base) => {
     };
     return changes(object, base);
 };
+
+export const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);

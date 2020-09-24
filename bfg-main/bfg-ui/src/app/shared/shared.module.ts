@@ -43,6 +43,7 @@ import { DragableDialogWrapperComponent } from './components/dragable-dialog-wra
 import { XmlPipe } from './pipes/xml/xml.pipe';
 import { DisableControlDirective } from './directives/disable-control.directive';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
+    BusinessProcessDialogComponent,
   ],
   imports: [
     CommonModule,

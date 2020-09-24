@@ -80,7 +80,8 @@
             </form>
         </mat-step>
         <mat-step>
-            <mat-slide-toggle class="refresh-toggle" [checked]="autoRefreshing" (change)="autoRefreshChange($event.checked)">
+            <mat-slide-toggle class="refresh-toggle" [checked]="autoRefreshing"
+                (change)="autoRefreshChange($event.checked)">
                 Automatically refresh every minute
             </mat-slide-toggle>
             <h3 *ngIf="transactions && transactions.totalElements">
@@ -132,7 +133,9 @@
                     <ng-container matColumnDef="WFID">
                         <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.workflowID}}
+                            <button mat-button (click)="openBusinessProcessDialog(element)">
+                                {{element.workflowID}}
+                            </button>
                         </mat-cell>
                     </ng-container>
 

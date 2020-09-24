@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.controller.FileSearchController;
 import com.ibm.sterling.bfg.app.controller.SCTTransactionSearchController;
+import com.ibm.sterling.bfg.app.controller.WorkflowController;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import com.ibm.sterling.bfg.app.model.exception.FileErrorCode;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.*;
 
-@RestControllerAdvice(assignableTypes = {FileSearchController.class, SCTTransactionSearchController.class})
+@RestControllerAdvice(assignableTypes = {FileSearchController.class, SCTTransactionSearchController.class, WorkflowController.class})
 public class FileExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LogManager.getLogger(FileExceptionHandler.class);

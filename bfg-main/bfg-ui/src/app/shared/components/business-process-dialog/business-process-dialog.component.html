@@ -1,0 +1,145 @@
+<h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
+<app-dragable-dialog-wrapper *ngIf="data.isDragable">
+    <app-error-template [errorMessage]="errorMessage"></app-error-template>
+    <app-error-template [errorMessage]="stepsWarnings"></app-error-template>
+    <mat-dialog-content>
+        <div *ngIf="bpHeader && workflowSteps" class="bp-details">
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">Name: </label>
+                    <button mat-button (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</button>
+                </div>
+                <div class="dp-details-item">
+                    <label class="item-label">Deadline: </label>
+                    None
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">Instance ID: </label>
+                    {{id}}
+                </div>
+                <div class="dp-details-item">
+                    <label class="item-label">Contract ID: </label>
+                    None
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">Status: </label>
+                    {{workflowSteps.status}}
+                </div>
+                <div class="dp-details-item">
+                    <label class="item-label">State: </label>
+                    {{workflowSteps.state}}
+                </div>
+            </div>
+            <div class="pb-details-section">
+                <div class="dp-details-item">
+                    <label class="item-label">User: </label>
+                    admin
+                </div>
+            </div>
+        </div>
+        <mat-table [dataSource]="dataSource" *ngIf="workflowSteps && !isBPHeaderLoading">
+
+            <ng-container matColumnDef="stepId">
+                <mat-header-cell *matHeaderCellDef> {{displayName('stepId')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <b *ngIf="element.inlineInvocation">{{element.stepId}}*</b>
+                    <div *ngIf="!element.inlineInvocation">{{element.stepId}}</div>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="serviceName">
+                <mat-header-cell *matHeaderCellDef> {{displayName('serviceName')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.serviceName}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="exeState">
+                <mat-header-cell *matHeaderCellDef> {{displayName('exeState')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.exeState}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="advStatus">
+                <mat-header-cell *matHeaderCellDef> {{displayName('advStatus')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.advStatus}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="startTime">
+                <mat-header-cell *matHeaderCellDef> {{displayName('startTime')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.startTime}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="endTime">
+                <mat-header-cell *matHeaderCellDef> {{displayName('endTime')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.endTime}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="nodeExecuted">
+                <mat-header-cell *matHeaderCellDef> {{displayName('nodeExecuted')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.nodeExecuted}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="statusRpt">
+                <mat-header-cell *matHeaderCellDef> {{displayName('statusRpt')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button *ngIf="element.statusRpt" mat-button>
+                        <mat-icon inline>info</mat-icon>&nbsp;info
+                    </button>
+                    <div *ngIf="!element.statusRpt">None</div>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="docId">
+                <mat-header-cell *matHeaderCellDef> {{displayName('docId')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button *ngIf="element.docId" mat-button (click)="openStepDocumentInfo(element)">
+                        <mat-icon inline>info</mat-icon>&nbsp;info
+                    </button>
+                    <div *ngIf="!element.docId">None</div>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="instanceData">
+                <mat-header-cell *matHeaderCellDef> {{displayName('instanceData')}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    None
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="noData">
+                <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                    No records found.
+                </mat-footer-cell>
+            </ng-container>
+
+            <mat-footer-row *matFooterRowDef="['noData']" [hidden]="dataSource && dataSource.data.length > 0">
+            </mat-footer-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <app-table-paginator *ngIf="workflowSteps && !isBPHeaderLoading" [value]="pageIndex + 1"
+            [getRows]="getWorkflowSteps.bind(this)" [min]="1" [max]="workflowSteps.totalPages"
+            [length]="workflowSteps.totalElements" [pageIndex]="workflowSteps.pageable.pageNumber"
+            [pageSize]="workflowSteps.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        </app-table-paginator>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading || isBPHeaderLoading"></mat-progress-bar>
+        <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
+    </mat-dialog-actions>
+</app-dragable-dialog-wrapper>

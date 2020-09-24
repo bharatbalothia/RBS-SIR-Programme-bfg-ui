@@ -36,7 +36,7 @@ export class FileSearchComponent implements OnInit {
   getFileStatusIcon = getFileStatusIcon;
   FILE_STATUS_ICON = FILE_STATUS_ICON;
 
-  errorMesageEmitters: {[id: number]: EventEmitter<ErrorMessage>} = {};
+  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLinear = true;
 
@@ -90,7 +90,7 @@ export class FileSearchComponent implements OnInit {
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
-      entityID: [''],
+      entityId: [''],
       service: [''],
       direction: [''],
       fileStatus: [''],
@@ -209,25 +209,24 @@ export class FileSearchComponent implements OnInit {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  openFileDetailsDialog = (file: File) =>
-      {
-        this.createErrorMesageEmitter(file.id);
-        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `File - ${file.id}`,
-        tabs: getFileDetailsTabs(file),
-        displayName: getFileSearchDisplayName,
-        isDragable: true,
-        actionData: {
-          actions: {
-            entity: () => this.openEntityDetailsDialog(file),
-            errorCode: () => this.openErrorDetailsDialog(file),
-            transactionTotal: () => this.openTransactionsDialog(file),
-            filename: () => this.openFileDocumentInfo(file)
-          }
-        },
-        parentError: this.errorMesageEmitters[file.id]
-      })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
-    }
+  openFileDetailsDialog = (file: File) => {
+    this.createErrorMesageEmitter(file.id);
+    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `File - ${file.id}`,
+      tabs: getFileDetailsTabs(file),
+      displayName: getFileSearchDisplayName,
+      isDragable: true,
+      actionData: {
+        actions: {
+          entity: () => this.openEntityDetailsDialog(file),
+          errorCode: () => this.openErrorDetailsDialog(file),
+          transactionTotal: () => this.openTransactionsDialog(file),
+          filename: () => this.openFileDocumentInfo(file)
+        }
+      },
+      parentError: this.errorMesageEmitters[file.id]
+    })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
+  }
 
   openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
     .pipe(data => this.setLoading(data))
@@ -295,18 +294,18 @@ export class FileSearchComponent implements OnInit {
       })
 
 
-  createErrorMesageEmitter(id: number){
+  createErrorMesageEmitter(id: number) {
     this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
   }
 
-  deleteErrorMesageEmitter(id: number){
-    if (this.errorMesageEmitters[id]){
+  deleteErrorMesageEmitter(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id] = null;
     }
   }
 
-  emitErrorMesageEvent(id: number){
-    if (this.errorMesageEmitters[id]){
+  emitErrorMesageEvent(id: number) {
+    if (this.errorMesageEmitters[id]) {
       this.errorMesageEmitters[id].emit(this.errorMessage);
     }
   }

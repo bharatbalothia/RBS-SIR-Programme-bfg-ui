@@ -12,13 +12,13 @@
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Search parameters</ng-template>
-                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entityID">
-                    <mat-label>{{getFileSearchDisplayName('entityID')}}
+                <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
+                    <mat-label>{{getFileSearchDisplayName('entity')}}
                     </mat-label>
-                    <mat-select formControlName="entityID">
+                    <mat-select formControlName="entityId">
                         <mat-option value="">ALL</mat-option>
-                        <mat-option *ngFor="let entityID of fileCriteriaData.entityID" [value]="entityID">
-                            {{entityID}}</mat-option>
+                        <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity.entityId">
+                            {{entity.entityName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">

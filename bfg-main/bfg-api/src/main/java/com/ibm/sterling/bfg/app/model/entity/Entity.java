@@ -1,78 +1,111 @@
-package com.ibm.sterling.bfg.app.model;
+package com.ibm.sterling.bfg.app.model.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityUpdateUniqueness;
+import com.ibm.sterling.bfg.app.model.validation.unique.EntityServiceUniquenessConstraint;
+import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
-import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
-import com.ibm.sterling.bfg.app.utils.TimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Entity;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
-@Entity
-@Table(name = "SCT_ENTITY_LOG")
-public class EntityLog {
-    private static final Logger LOG = LogManager.getLogger(EntityLog.class);
+@EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+@EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
+@MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+@javax.persistence.Entity
+@Table(name = "SCT_ENTITY")
+public class Entity implements EntityType {
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = LogManager.getLogger(Entity.class);
 
     @Id
-    @Column(name = "ENTITY_LOG_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_LOG_IDSEQ")
-    @GenericGenerator(
-            name = "SCT_ENTITY_LOG_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
-            parameters = {
-                    @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
-                    @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),
-                    @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
-    private String entityLogId;
     @Column(name = "ENTITY_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_IDSEQ")
+    @SequenceGenerator(sequenceName = "SCT_ENTITY_IDSEQ", name = "SCT_ENTITY_IDSEQ", allocationSize = 1)
     private Integer entityId;
-    @NotBlank(message = "ENTITY has to be present")
+
+    @NotBlank(message = "ENTITY has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Pattern.List({
+            @Pattern(regexp = "^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})$",
+                    message = "Entity should be in BIC11 format",
+                    groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class}),
+            @Pattern(regexp = "^[A-Z]{6}[A-Z2-9][A-NP-Z0-9]$",
+                    message = "Entity should be in BIC8 format",
+                    groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})})
+    @Column
     private String entity;
-    @NotBlank(message = "SERVICE has to be present")
+
+    @NotBlank(message = "SERVICE has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Column
     private String service;
-    @Column(name = "MAILBOXPATHOUT")
-    @NotBlank(message = "MAILBOXPATHOUT has to be present")
-    private String mailboxPathOut;
-    @Column(name = "MQQUEUEOUT")
-    private String mqQueueOut;
-    @Column(name = "ROUTE_INBOUND")
-    private Boolean routeInbound;
-    @Column(name = "ROUTE_OUTBOUND")
-    private Boolean routeOutbound;
-    @Column(name = "INBOUND_DIR")
-    private Boolean inboundDir;
-    @Column(name = "INBOUND_ROUTING_RULE")
-    private Boolean inboundRoutingRule;
-    @Column(name = "ISDELETED")
-    private Boolean deleted;
+
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
+            message = "Please match the requested format for RequestorDN",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @NotBlank(message = "REQUESTORDN has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "REQUESTORDN")
     private String requestorDN;
+
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
+            message = "Please match the requested format for ResponderDN",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @NotBlank(message = "RESPONDERDN has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "RESPONDERDN")
     private String responderDN;
+
+    @NotBlank(message = "SERVICENAME has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "SERVICENAME")
     private String serviceName;
+
     @Column(name = "REQUESTTYPE")
     private String requestType;
+
     @Column(name = "SNF")
-    @NotNull(message = "SNF has to be present")
-    private Boolean snF = Boolean.FALSE;
-    @NotNull(message = "TRACE has to be present")
+    @NotNull(message = "SNF has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    private Boolean SnF = Boolean.FALSE;
+
+    @NotNull(message = "TRACE has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean trace = Boolean.FALSE;
+
+    @NotNull(message = "DELIVERYNOTIF has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "DELIVERYNOTIF")
-    @NotNull(message = "DELIVERYNOTIF has to be present")
     private Boolean deliveryNotification = Boolean.FALSE;
+
     @Column(name = "DELIVERYNOTIFDN")
     private String deliveryNotifDN;
     @Column(name = "DELIVERYNOTIFRT")
@@ -87,32 +120,70 @@ public class EntityLog {
     private String transferDesc;
     @Column(name = "TRANSFERINFO")
     private String transferInfo;
+    @NotNull(message = "COMPRESSION has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "COMPRESSION")
-    @NotNull(message = "COMPRESSION has to be present")
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
-    @NotBlank(message = "MAILBOXPATHIN has to be present")
-    private String mailboxPathIn;
+    private String mailboxPathIn = "";
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MAILBOXPATHOUT",
+            message = "MAILBOXPATHOUT has to be unique",
+            groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+    @Column(name = "MAILBOXPATHOUT")
+    private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
+    @EntityUnique(
+            service = EntityService.class,
+            fieldName = "MQQUEUEOUT",
+            message = "MQQUEUEOUT has to be unique",
+            groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+    @Column(name = "MQQUEUEOUT")
+    private String mqQueueOut;
+
     @Column(name = "ENTITY_PARTICIPANT_TYPE")
     private String entityParticipantType;
     @Column(name = "DIRECT_PARTICIPANT")
     private String directParticipant;
+
+    @NotNull(message = "MAXTRANSPERBULK has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAXTRANSPERBULK")
-    @NotNull(message = "MAXTRANSPERBULK has to be present")
-    private Integer maxTransfersPerBulk;
+    private Integer maxTransfersPerBulk = 0;
+    @NotNull(message = "MAXBULKSPERFILE has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAXBULKSPERFILE")
-    @NotNull(message = "MAXBULKSPERFILE has to be present")
-    private Integer maxBulksPerFile;
+    private Integer maxBulksPerFile = 0;
+
+    @NotNull(message = "STARTOFDAY has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "Start of day should be in hh:mm format",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
     @Column(name = "STARTOFDAY")
-    @NotNull(message = "STARTOFDAY has to be present")
+    private String startOfDay = "00:00";
+
+    @Pattern(
+            regexp = "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            message = "End of day should be in hh:mm format",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+    @NotNull(message = "ENDOFDAY has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Convert(converter = StringTimeToIntegerMinuteConverter.class)
-    private String startOfDay;
     @Column(name = "ENDOFDAY")
-    @NotNull(message = "ENDOFDAY has to be present")
-    @Convert(converter = StringTimeToIntegerMinuteConverter.class)
-    private String endOfDay;
+    private String endOfDay = "00:00";
+
     @Column(name = "CDNODE")
     private String cdNode;
     @Column(name = "IDF_WTOMSGID")
@@ -137,6 +208,7 @@ public class EntityLog {
     private String rtfWTOMsgId;
     @Column(name = "MBP_WTOMSGID")
     private String mbpWTOMsgId;
+
     @Column(name = "MQ_HOST")
     private String mqHost;
     @Column(name = "MQ_PORT")
@@ -166,111 +238,68 @@ public class EntityLog {
     private String mqHeader;
     @Column(name = "MQ_SESSIONTIMEOUT")
     private Integer mqSessionTimeout;
+
+    @Transient
+    private Boolean routeInbound = Boolean.TRUE;
+    @Transient
+    private Boolean routeOutbound = Boolean.TRUE;
+    @Transient
+    private Boolean inboundDir = Boolean.FALSE;
+    @Transient
+    private Boolean inboundRoutingRule = Boolean.FALSE;
+
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound RequestorDN",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_REQUESTORDN")
     private String inboundRequestorDN = "";
+
+    @Pattern(
+            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
+            message = "Please match the requested format for Inbound ResponderDN",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_RESPONDERDN")
     private String inboundResponderDN = "";
+
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
+    @Convert(converter = StringToListConverter.class)
+    @Column(name = "ROUTE_REQUESTTYPE")
+    private List<String> inboundRequestType = new ArrayList<>();
+    @NotNull(message = "NONREPUDIATION has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "NONREPUDIATION")
-    @NotNull(message = "NONREPUDIATION has to be present")
-    private Boolean nonRepudiation;
+    private Boolean nonRepudiation = Boolean.FALSE;
+    @NotNull(message = "PAUSE_INBOUND has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "PAUSE_INBOUND")
-    @NotNull(message = "PAUSE_INBOUND has to be present")
-    private Boolean pauseInbound;
+    private Boolean pauseInbound = Boolean.FALSE;
+    @NotNull(message = "PAUSE_OUTBOUND has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "PAUSE_OUTBOUND")
-    @NotNull(message = "PAUSE_OUTBOUND has to be present")
-    private Boolean pauseOutbound;
+    private Boolean pauseOutbound = Boolean.FALSE;
+    @Column(name = "ISDELETED")
+    private Boolean deleted = Boolean.FALSE;
+    @Transient
+    private String changeID = "";
+    @Transient
+    private String changerComments = "";
+    @Transient
+    private Boolean irishStep2 = Boolean.FALSE;
     @Column(name = "E2ESIGNING")
     private String e2eSigning;
-
-    @Convert(converter = StringToListConverter.class)
-    @Column(name = "INBOUND_REQUEST_TYPE", columnDefinition = "varchar2(2255)", nullable = false)
-    private List<String> inboundRequestType = new ArrayList<>();
-
-    @Column(name = "IRISH_STEP2")
-    private Boolean irishStep2;
-
-    @Convert(converter = StringToScheduleListConverter.class)
-    @Column(name = "SCHEDULES", columnDefinition = "varchar2(4000)")
-    private List<Schedule> schedules;
-
-    public EntityLog() {
-    }
-
-    public EntityLog(com.ibm.sterling.bfg.app.model.Entity entity) {
-        this.entity = entity.getEntity();
-        this.entityId = entity.getEntityId();
-        this.requestorDN = entity.getRequestorDN();
-        this.responderDN = entity.getResponderDN();
-        this.serviceName = entity.getServiceName();
-        this.requestType = entity.getRequestType();
-        this.snF = entity.getSnF();
-        this.trace = entity.getTrace();
-        this.deliveryNotification = entity.getDeliveryNotification();
-        this.deliveryNotifDN = entity.getDeliveryNotifDN();
-        this.deliveryNotifRT = entity.getDeliveryNotifRT();
-        this.requestRef = entity.getRequestRef();
-        this.fileDesc = entity.getFileDesc();
-        this.fileInfo = entity.getFileInfo();
-        this.transferDesc = entity.getTransferDesc();
-        this.transferInfo = entity.getTransferInfo();
-        this.compression = entity.getCompression();
-        this.mailboxPathIn = entity.getMailboxPathIn();
-        this.mqQueueIn = entity.getMqQueueIn();
-        this.entityParticipantType = entity.getEntityParticipantType();
-        this.directParticipant = entity.getDirectParticipant();
-        this.maxTransfersPerBulk = entity.getMaxTransfersPerBulk();
-        this.maxBulksPerFile = entity.getMaxBulksPerFile();
-        this.startOfDay = entity.getStartOfDay();
-        this.endOfDay = entity.getEndOfDay();
-        this.cdNode = entity.getCdNode();
-        this.idfWTOMsgId = entity.getIdfWTOMsgId();
-        this.cdfWTOMsgId = entity.getCdfWTOMsgId();
-        this.sdfWTOMsgId = entity.getSdfWTOMsgId();
-        this.rsfWTOMsgId = entity.getRsfWTOMsgId();
-        this.dnfWTOMsgId = entity.getDnfWTOMsgId();
-        this.dvfWTOMsgId = entity.getDvfWTOMsgId();
-        this.msrWTOMsgId = entity.getMsrWTOMsgId();
-        this.psrWTOMsgId = entity.getPsrWTOMsgId();
-        this.drrWTOMsgId = entity.getDrrWTOMsgId();
-        this.rtfWTOMsgId = entity.getRtfWTOMsgId();
-        this.mbpWTOMsgId = entity.getMbpWTOMsgId();
-        this.mqHost = entity.getMqHost();
-        this.mqPort = entity.getMqPort();
-        this.mqQManager = entity.getMqQManager();
-        this.mqChannel = entity.getMqChannel();
-        this.mqQueueName = entity.getMqQueueName();
-        this.mqQueueBinding = entity.getMqQueueBinding();
-        this.mqQueueContext = entity.getMqQueueContext();
-        this.mqDebug = entity.getMqDebug();
-        this.mqSSLOptions = entity.getMqSSLOptions();
-        this.mqSSLCiphers = entity.getMqSSLCiphers();
-        this.mqSSLKeyCert = entity.getMqSSLKeyCert();
-        this.mqSSLCaCert = entity.getMqSSLCaCert();
-        this.mqHeader = entity.getMqHeader();
-        this.mqSessionTimeout = entity.getMqSessionTimeout();
-        this.inboundRequestorDN = entity.getInboundRequestorDN();
-        this.inboundResponderDN = entity.getInboundResponderDN();
-        this.inboundService = entity.getInboundService();
-        this.nonRepudiation = entity.getNonRepudiation();
-        this.pauseInbound = entity.getPauseInbound();
-        this.pauseOutbound = entity.getPauseOutbound();
-        this.e2eSigning = entity.getE2eSigning();
-        this.service = entity.getService();
-        this.mailboxPathOut = entity.getMailboxPathOut();
-        this.mqQueueOut = entity.getMqQueueOut();
-        this.routeInbound = entity.getRouteInbound();
-        this.routeOutbound = entity.getRouteOutbound();
-        this.inboundDir = entity.getInboundDir();
-        this.inboundRoutingRule = entity.getInboundRoutingRule();
-        this.deleted = entity.getDeleted();
-        this.inboundRequestType = entity.getInboundRequestType();
-        this.irishStep2 = entity.getIrishStep2();
-        this.schedules = entity.getSchedules();
-        this.schedules.forEach(
-                schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTime(schedule.getTimeStart())));
-    }
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "entity",
+            cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Valid
+    private List<Schedule> schedules = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
@@ -282,12 +311,12 @@ public class EntityLog {
         if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
-    public String getEntityLogId() {
-        return entityLogId;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public void setEntityLogId(String entityLogId) {
-        this.entityLogId = entityLogId;
+    public static Logger getLog() {
+        return LOG;
     }
 
     public Integer getEntityId() {
@@ -312,86 +341,6 @@ public class EntityLog {
 
     public void setService(String service) {
         this.service = service;
-    }
-
-    public List<Schedule> getSchedules() {
-        return schedules;
-    }
-
-    public void setSchedules(List<Schedule> schedules) {
-        this.schedules = schedules;
-    }
-
-    public String getMailboxPathOut() {
-        return mailboxPathOut;
-    }
-
-    public void setMailboxPathOut(String mailboxPathOut) {
-        this.mailboxPathOut = mailboxPathOut;
-    }
-
-    public String getMqQueueOut() {
-        return mqQueueOut;
-    }
-
-    public void setMqQueueOut(String mqQueueOut) {
-        this.mqQueueOut = mqQueueOut;
-    }
-
-    public Boolean getRouteInbound() {
-        return routeInbound;
-    }
-
-    public void setRouteInbound(Boolean routeInbound) {
-        this.routeInbound = routeInbound;
-    }
-
-    public Boolean getRouteOutbound() {
-        return routeOutbound;
-    }
-
-    public void setRouteOutbound(Boolean routeOutbound) {
-        this.routeOutbound = routeOutbound;
-    }
-
-    public Boolean getInboundDir() {
-        return inboundDir;
-    }
-
-    public void setInboundDir(Boolean inboundDir) {
-        this.inboundDir = inboundDir;
-    }
-
-    public Boolean getInboundRoutingRule() {
-        return inboundRoutingRule;
-    }
-
-    public void setInboundRoutingRule(Boolean inboundRoutingRule) {
-        this.inboundRoutingRule = inboundRoutingRule;
-    }
-
-    public List<String> getInboundRequestType() {
-        return inboundRequestType;
-    }
-
-    public void setInboundRequestType(List<String> inboundRequestType) {
-        this.inboundRequestType = inboundRequestType;
-    }
-
-    public Boolean getIrishStep2() {
-        return irishStep2;
-    }
-
-    public void setIrishStep2(Boolean irishStep2) {
-        this.irishStep2 = irishStep2;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getRequestorDN() {
@@ -427,11 +376,11 @@ public class EntityLog {
     }
 
     public Boolean getSnF() {
-        return snF;
+        return SnF;
     }
 
     public void setSnF(Boolean snF) {
-        this.snF = snF;
+        SnF = snF;
     }
 
     public Boolean getTrace() {
@@ -522,12 +471,28 @@ public class EntityLog {
         this.mailboxPathIn = mailboxPathIn;
     }
 
+    public String getMailboxPathOut() {
+        return mailboxPathOut;
+    }
+
+    public void setMailboxPathOut(String mailboxPathOut) {
+        this.mailboxPathOut = mailboxPathOut;
+    }
+
     public String getMqQueueIn() {
         return mqQueueIn;
     }
 
     public void setMqQueueIn(String mqQueueIn) {
         this.mqQueueIn = mqQueueIn;
+    }
+
+    public String getMqQueueOut() {
+        return mqQueueOut;
+    }
+
+    public void setMqQueueOut(String mqQueueOut) {
+        this.mqQueueOut = mqQueueOut;
     }
 
     public String getEntityParticipantType() {
@@ -576,6 +541,14 @@ public class EntityLog {
 
     public void setEndOfDay(String endOfDay) {
         this.endOfDay = endOfDay;
+    }
+
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
     }
 
     public String getCdNode() {
@@ -786,6 +759,38 @@ public class EntityLog {
         this.mqSessionTimeout = mqSessionTimeout;
     }
 
+    public Boolean getRouteInbound() {
+        return routeInbound;
+    }
+
+    public void setRouteInbound(Boolean routeInbound) {
+        this.routeInbound = routeInbound;
+    }
+
+    public Boolean getRouteOutbound() {
+        return routeOutbound;
+    }
+
+    public void setRouteOutbound(Boolean routeOutbound) {
+        this.routeOutbound = routeOutbound;
+    }
+
+    public Boolean getInboundDir() {
+        return inboundDir;
+    }
+
+    public void setInboundDir(Boolean inboundDir) {
+        this.inboundDir = inboundDir;
+    }
+
+    public Boolean getInboundRoutingRule() {
+        return inboundRoutingRule;
+    }
+
+    public void setInboundRoutingRule(Boolean inboundRoutingRule) {
+        this.inboundRoutingRule = inboundRoutingRule;
+    }
+
     public String getInboundRequestorDN() {
         return inboundRequestorDN;
     }
@@ -808,6 +813,14 @@ public class EntityLog {
 
     public void setInboundService(String inboundService) {
         this.inboundService = inboundService;
+    }
+
+    public List<String> getInboundRequestType() {
+        return inboundRequestType;
+    }
+
+    public void setInboundRequestType(List<String> inboundRequestType) {
+        this.inboundRequestType = inboundRequestType;
     }
 
     public Boolean getNonRepudiation() {
@@ -834,6 +847,38 @@ public class EntityLog {
         this.pauseOutbound = pauseOutbound;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getChangeID() {
+        return changeID;
+    }
+
+    public void setChangeID(String changeID) {
+        this.changeID = changeID;
+    }
+
+    public String getChangerComments() {
+        return changerComments;
+    }
+
+    public void setChangerComments(String changerComments) {
+        this.changerComments = changerComments;
+    }
+
+    public Boolean getIrishStep2() {
+        return irishStep2;
+    }
+
+    public void setIrishStep2(Boolean irishStep2) {
+        this.irishStep2 = irishStep2;
+    }
+
     public String getE2eSigning() {
         return e2eSigning;
     }
@@ -843,12 +888,16 @@ public class EntityLog {
     }
 
     @Override
-    public String toString() {
-        return "EntityLog{" +
-                "entityLogId='" + entityLogId + '\'' +
-                ", entityId=" + entityId +
-                ", entity='" + entity + '\'' +
-                ", service='" + service + '\'' +
-                '}';
+    public String nameForSorting() {
+        return entity;
     }
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "entityId=" + entityId +
+                ", entity='" + entity + '\'' +
+                ", service='" + service + '\'' + '}';
+    }
+
 }

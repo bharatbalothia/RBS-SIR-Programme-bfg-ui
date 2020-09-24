@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.model.Entity;
-import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.entity.EntityLog;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;

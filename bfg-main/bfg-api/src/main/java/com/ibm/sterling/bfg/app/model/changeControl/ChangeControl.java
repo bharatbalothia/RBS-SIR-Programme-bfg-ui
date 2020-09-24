@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.changeControl;
 
-import com.ibm.sterling.bfg.app.model.EntityLog;
+import com.ibm.sterling.bfg.app.model.entity.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Entity
 public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable, EntityType {
     private static final long SERIAL_VERSION_UID = 1L;
-    private static final Logger LOGGER = LogManager.getLogger(com.ibm.sterling.bfg.app.model.Entity.class);
+    private static final Logger LOGGER = LogManager.getLogger(ChangeControl.class);
 
     @Id
     @Column(name = "CHANGE_ID")
@@ -204,8 +204,8 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         this.entityLog = entityLog;
     }
 
-    public com.ibm.sterling.bfg.app.model.Entity convertEntityLogToEntity() {
-        com.ibm.sterling.bfg.app.model.Entity entityFromLog = new com.ibm.sterling.bfg.app.model.Entity();
+    public com.ibm.sterling.bfg.app.model.entity.Entity convertEntityLogToEntity() {
+        com.ibm.sterling.bfg.app.model.entity.Entity entityFromLog = new com.ibm.sterling.bfg.app.model.entity.Entity();
         entityFromLog.setEntityId(entityLog.getEntityId());
         entityFromLog.setEntity(entityLog.getEntity());
         entityFromLog.setService(entityLog.getService());

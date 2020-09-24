@@ -7,7 +7,7 @@ export interface DetailsDialogData {
     actionData?: any;
     isDragable?: boolean;
     parentError?: EventEmitter<ErrorMessage>;
-    displayName: (fieldName: string) => string;
+    displayName?: (fieldName: string) => string;
 }
 
 export interface Tab {

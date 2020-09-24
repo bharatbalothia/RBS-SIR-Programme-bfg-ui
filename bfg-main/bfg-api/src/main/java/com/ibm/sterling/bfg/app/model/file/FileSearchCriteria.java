@@ -13,7 +13,7 @@ public class FileSearchCriteria extends SearchCriteria {
     private Integer entityid;
     private Boolean override;
     @JsonProperty("bp-state")
-    @JsonAlias("bpState")
+    @JsonAlias("bpstate")
     private String bpState;
     @JsonAlias("fileName")
     private String filename;

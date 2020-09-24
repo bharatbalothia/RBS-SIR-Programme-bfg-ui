@@ -40,6 +40,9 @@
                         <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">
                             <mat-icon>clear</mat-icon>
                         </button>
+                        <button mat-icon-button *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT" (click)="transmitEntity(element)">
+                            <mat-icon>explicit</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
 

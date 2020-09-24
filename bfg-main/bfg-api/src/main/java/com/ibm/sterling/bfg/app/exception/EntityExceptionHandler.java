@@ -41,6 +41,13 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return restTemplateExceptionHandler.handleRestTemplateException(ex);
     }
 
+    @ExceptionHandler(TransmittalException.class)
+    public ResponseEntity handleTransmittalException(TransmittalException ex) {
+        ErrorMessage errorMessage = errorConfig.getErrorMessage(
+                EntityErrorCode.TransmittalException, Collections.singletonList(ex.getInnerExceptions()));
+        return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

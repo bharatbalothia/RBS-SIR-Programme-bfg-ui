@@ -43,6 +43,7 @@ import { DragableDialogWrapperComponent } from './components/dragable-dialog-wra
 import { XmlPipe } from './pipes/xml/xml.pipe';
 import { DisableControlDirective } from './directives/disable-control.directive';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 
 
@@ -59,12 +60,13 @@ import { BusinessProcessDialogComponent } from './components/business-process-di
     DeleteDialogComponent,
     TooltipComponent,
     DragableDialogWrapperComponent,
+    TransmitDialogComponent,
+    BusinessProcessDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
-    DisableControlDirective,
-    BusinessProcessDialogComponent,
+    DisableControlDirective
   ],
   imports: [
     CommonModule,
@@ -143,6 +145,7 @@ import { BusinessProcessDialogComponent } from './components/business-process-di
     DeleteDialogComponent,
     TooltipComponent,
     DragableDialogWrapperComponent,
+    TransmitDialogComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

@@ -19,6 +19,8 @@ import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/d
 import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dialog/transmit-dialog.component';
 
 @Component({
   selector: 'app-entity-search',
@@ -29,6 +31,7 @@ export class EntitySearchComponent implements OnInit {
 
   getEntityDisplayName = getEntityDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
+  SERVICE_TYPE = ENTITY_SERVICE_TYPE;
 
   entityNameSearchingValue = '';
   serviceSearchingValue = '';
@@ -165,6 +168,16 @@ export class EntitySearchComponent implements OnInit {
         });
       }
     });
+  }
+
+  transmitEntity(entity: Entity) {
+    this.dialog.open(TransmitDialogComponent, new DetailsDialogConfig({
+      title: `Transmit File for the Entity ID ${entity.entity}`,
+      actionData: {
+        entity,
+        transmitAction: (id: string, fileType: string) => this.entityService.transmitEntity(id, fileType)
+      }
+    }));
   }
 
 }

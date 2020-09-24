@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<app-error-template [errorMessage]="errorMessage"></app-error-template>
+<mat-dialog-content>
+    <section class='radio-group-section'>
+        <label class='radio-group-label'>Select File Type:</label>
+        <mat-radio-group [(ngModel)]="fileType">
+            <mat-radio-button [value]="FILE_TYPE.ICF">ICF</mat-radio-button>
+            <mat-radio-button [value]="FILE_TYPE.IQF">IQF</mat-radio-button>
+        </mat-radio-group>
+    </section>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="transmit-actions">
+        <button mat-raised-button color='primary' (click)="transmit()">Transmit</button>
+        <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+    </div>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+</mat-dialog-actions>

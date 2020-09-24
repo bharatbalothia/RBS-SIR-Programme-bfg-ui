@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model;
+package com.ibm.sterling.bfg.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;

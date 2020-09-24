@@ -4,15 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
-import com.ibm.sterling.bfg.app.model.Entity;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.entity.Transmittal;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.EntityService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
+import com.ibm.sterling.bfg.app.service.TransmittalService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,9 @@ public class EntityController {
 
     @Autowired
     private ChangeControlService changeControlService;
+
+    @Autowired
+    private TransmittalService transmittalService;
 
     @GetMapping
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
@@ -145,6 +150,12 @@ public class EntityController {
     @GetMapping("mq-details")
     public ResponseEntity<Map<String, List<String>>> getMqDetails() throws JsonProcessingException {
         return ok(propertyService.getMQDetails());
+    }
+
+    @PostMapping("transmit")
+    @PreAuthorize("hasAuthority('SFG_SCT_ICFOutbound')")
+    public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
+        return ok(transmittalService.transmit(transmittal));
     }
 
 }

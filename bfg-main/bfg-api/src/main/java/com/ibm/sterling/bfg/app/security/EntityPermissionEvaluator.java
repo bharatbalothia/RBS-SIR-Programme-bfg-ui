@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.security;
 
 import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.model.Entity;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.service.ChangeControlService;

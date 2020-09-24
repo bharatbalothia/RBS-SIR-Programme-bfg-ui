@@ -3,7 +3,7 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { isEmpty, merge, isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-service-type';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';

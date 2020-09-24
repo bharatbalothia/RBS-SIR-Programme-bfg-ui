@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.service;
 
-import com.ibm.sterling.bfg.app.model.Entity;
-import com.ibm.sterling.bfg.app.model.Schedule;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import com.ibm.sterling.bfg.app.repository.ScheduleRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

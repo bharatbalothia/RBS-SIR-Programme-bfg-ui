@@ -36,8 +36,6 @@ public interface EntityService extends FieldValueExists {
 
     boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException;
 
-    List<Entity> findEntitiesByService(String service);
-
     boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException;
 
     List<Entity> findEntitiesByService(String service);

@@ -135,6 +135,7 @@ public class EntityController {
     }
 
     @PostMapping("transmit")
+    @PreAuthorize("hasAuthority('SFG_SCT_ICFOutbound')")
     public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
         return ok(transmittalService.transmit(transmittal));
     }

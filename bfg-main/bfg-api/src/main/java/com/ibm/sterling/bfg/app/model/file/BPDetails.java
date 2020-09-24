@@ -28,6 +28,8 @@ public class BPDetails {
     private String secondNotificationMinutes;
     private BPDetailFormat commitStepsUponError;
     private String description;
+    private String node;
+    private BPDetailFormat nodePreference;
     private String businessProcess;
 
     public String getName() {
@@ -238,4 +240,19 @@ public class BPDetails {
         this.businessProcess = businessProcess;
     }
 
+    public String getNode() {
+        return node;
+    }
+
+    public void setNode(String node) {
+        this.node = node;
+    }
+
+    public void setNodePreference(BPDetailFormat nodePreference) {
+        this.nodePreference = nodePreference;
+    }
+
+    public String getNodePreference() {
+        return Optional.ofNullable(nodePreference).map(BPDetailFormat::getDisplay).orElse("");
+    }
 }

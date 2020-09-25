@@ -32,10 +32,9 @@ public class CertificateValidationService {
                     String.class
             );
         } catch (HttpStatusCodeException e) {
-            String message = e.getMessage();
-            return Optional.ofNullable(message)
-                    .map(errMessage -> {
-                        String errorMap = errMessage.substring(message.indexOf("[") + 1, message.indexOf("]"));
+            return Optional.ofNullable(e.getMessage())
+                    .map(errorMessage -> {
+                        String errorMap = errorMessage.substring(errorMessage.indexOf("[") + 1, errorMessage.indexOf("]"));
                         try {
                             return new ObjectMapper().readValue(errorMap, new TypeReference<Map<String, Object>>() {
                             });

@@ -27,14 +27,14 @@ public class TransmittalService {
     @Value("${transmittal.url}")
     private String transmittalUrl;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Value("${file.userName}")
     private String userName;
 
     @Value("${file.password}")
     private String password;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Map<String, Object> transmit(Transmittal transmittal) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();

@@ -26,7 +26,6 @@ public class BPDetails {
     private String firstNotificationMinutes;
     private String secondNotificationHours;
     private String secondNotificationMinutes;
-    private BPDetailFormat commitStepsUponError;
     private String description;
     private String node;
     private BPDetailFormat nodePreference;
@@ -214,14 +213,6 @@ public class BPDetails {
 
     public void setSecondNotificationMinutes(String secondNotificationMinutes) {
         this.secondNotificationMinutes = secondNotificationMinutes;
-    }
-
-    public String getCommitStepsUponError() {
-        return Optional.ofNullable(commitStepsUponError).map(BPDetailFormat::getCode).orElse("");
-    }
-
-    public void setCommitStepsUponError(BPDetailFormat commitStepsUponError) {
-        this.commitStepsUponError = commitStepsUponError;
     }
 
     public String getDescription() {

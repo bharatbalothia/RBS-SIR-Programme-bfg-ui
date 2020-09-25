@@ -188,4 +188,6 @@ export class BusinessProcessDialogComponent implements OnInit {
     }
   }
 
+  shouldShowBPContent = () => get(this.workflowSteps, 'content.length');
+
 }

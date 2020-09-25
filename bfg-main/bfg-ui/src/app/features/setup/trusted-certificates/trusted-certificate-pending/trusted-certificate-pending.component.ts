@@ -141,8 +141,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
       .then((changeCtrl: ChangeControl) =>
         this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
           title: 'Approve Change',
+          tabs: getTrustedCertificatePendingChangesTabs(changeCtrl, true),
           yesCaption: 'Cancel',
-          tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
           displayName: getTrustedCertificateDisplayName,
           actionData: {
             changeID: changeCtrl.changeID,

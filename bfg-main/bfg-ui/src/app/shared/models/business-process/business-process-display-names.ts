@@ -82,7 +82,6 @@ const getBusinessProcessDetailsSectionItems = (businessProcess: BusinessProcess)
             fieldValue: `${businessProcess.secondNotificationHours ? `${businessProcess.secondNotificationHours} Hours ` : ''}` +
                 `${businessProcess.secondNotificationMinutes ? ` ${businessProcess.secondNotificationMinutes} Minutes` : ''}`
         },
-        { fieldName: 'commitStepsUponError', fieldValue: capitalizeFirstLetter(businessProcess.commitStepsUponError) },
         { fieldName: 'description', fieldValue: businessProcess.description },
         { fieldName: 'businessProcess', fieldValue: businessProcess.businessProcess, isXML: true },
     ].map(el => removeEmpties(el))

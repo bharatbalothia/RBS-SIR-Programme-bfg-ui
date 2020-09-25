@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,22 +19,36 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
+
 @Service
 public class TransmittalService {
 
     @Value("${transmittal.url}")
     private String transmittalUrl;
 
+    @Value("${file.userName}")
+    private String userName;
+
+    @Value("${file.password}")
+    private String password;
+
     @Autowired
     private ObjectMapper objectMapper;
 
     public Map<String, Object> transmit(Transmittal transmittal) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        String userCredentials = userName + ":" + password;
+        headers.set(HttpHeaders.AUTHORIZATION,
+                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         transmittal.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         String transmittalResponse = null;
         try {
             transmittalResponse = new RestTemplate().postForObject(
                     transmittalUrl,
-                    new HttpEntity<>(transmittal, new HttpHeaders()),
+                    new HttpEntity<>(transmittal, headers),
                     String.class
             );
         } catch (HttpStatusCodeException e) {
@@ -47,10 +62,11 @@ public class TransmittalService {
                     ex.printStackTrace();
                 }
                 if (CollectionUtils.isEmpty(errors)) {
-                    errors = Collections.singletonList(new HashMap<String, Object>() {{
-                        put("attribute", "error");
-                        put("message", errorMessage);
-                    }});
+                    throw new TransmittalException(
+                            new HashMap<String, List<Object>>() {{
+                                put("error", Collections.singletonList(errorMessage));
+                            }},
+                            e.getStatusCode());
                 }
                 Map<String, List<Object>> transmittalErrors = new HashMap<>();
                 errors.forEach(error -> {

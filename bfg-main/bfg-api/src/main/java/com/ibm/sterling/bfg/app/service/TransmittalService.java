@@ -36,6 +36,12 @@ public class TransmittalService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Value("${file.userName}")
+    private String userName;
+
+    @Value("${file.password}")
+    private String password;
+
     public Map<String, Object> transmit(Transmittal transmittal) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         String userCredentials = userName + ":" + password;

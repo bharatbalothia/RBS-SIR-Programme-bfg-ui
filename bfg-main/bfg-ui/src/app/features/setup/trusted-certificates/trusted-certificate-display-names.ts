@@ -66,7 +66,7 @@ export const getTrustedCertificateDetailsTabs = (trustedCertificate: TrustedCert
     }
 ].filter(el => el);
 
-export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeControl): Tab[] => [
+export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeControl, isApprovingAction?: boolean): Tab[] => [
     {
         tabTitle: DIALOG_TABS.CHANGE_DETAILS,
         tabSections: [{
@@ -79,7 +79,7 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
                 { fieldName: 'dateChanged', fieldValue: changeControl.dateChanged },
                 { fieldName: 'changerComments', fieldValue: changeControl.changerComments },
                 { fieldName: 'approver', fieldValue: changeControl.approver },
-                { fieldName: 'approverComments', fieldValue: changeControl.approverComments },
+                !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
             ],
         }]
     },

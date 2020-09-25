@@ -5,7 +5,7 @@
     <mat-dialog-content *ngIf="workflowSteps && !isBPHeaderLoading">
         <div class="bp-details">
             <div class="pb-details-section">
-                <div class="dp-details-item">
+                <div *ngIf="bpHeader" class="dp-details-item">
                     <label class="item-label">Name: </label>
                     <a class="header-link" (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</a>
                 </div>

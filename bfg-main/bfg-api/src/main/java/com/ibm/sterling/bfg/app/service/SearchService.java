@@ -190,7 +190,7 @@ public class SearchService {
             }
             if (isStatusSuccessful) {
                 wfPage.setState("");
-                wfPage.setState("Success");
+                wfPage.setStatus("Success");
             } else {
                 wfPage.setState("Halted");
                 wfPage.setStatus("Error");

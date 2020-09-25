@@ -9,7 +9,7 @@
                     <label class="item-label">Name: </label>
                     <a class="header-link" (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</a>
                 </div>
-                <div class="dp-details-item">
+                <div *ngIf="shouldShowBPContent()" class="dp-details-item">
                     <label class="item-label">Deadline: </label>
                     None
                 </div>
@@ -19,12 +19,12 @@
                     <label class="item-label">Instance ID: </label>
                     {{id}}
                 </div>
-                <div class="dp-details-item">
+                <div *ngIf="shouldShowBPContent()" class="dp-details-item">
                     <label class="item-label">Contract ID: </label>
                     None
                 </div>
             </div>
-            <div class="pb-details-section">
+            <div *ngIf="shouldShowBPContent()" class="pb-details-section">
                 <div class="dp-details-item">
                     <label class="item-label">Status: </label>
                     {{workflowSteps.status}}
@@ -34,7 +34,7 @@
                     {{workflowSteps.state}}
                 </div>
             </div>
-            <div class="pb-details-section">
+            <div *ngIf="shouldShowBPContent()" class="pb-details-section">
                 <div class="dp-details-item">
                     <label class="item-label">User: </label>
                     admin
@@ -138,7 +138,7 @@
             [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
         </app-table-paginator>
 
-        <div class='bp-description'>
+        <div *ngIf="shouldShowBPContent()" class='bp-description'>
             *Inline Invocation
             <br>
             [-]=Load Balanced, [p]=Preferred Node, [m]=Mandatory Node, [r]=Execution Role

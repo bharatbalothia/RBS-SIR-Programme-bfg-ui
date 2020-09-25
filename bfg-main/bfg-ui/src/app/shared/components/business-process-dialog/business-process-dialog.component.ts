@@ -30,6 +30,8 @@ export class BusinessProcessDialogComponent implements OnInit {
   isLoading = true;
   isBPHeaderLoading = false;
 
+  currentDate = Date.now();
+
   errorMessage: ErrorMessage;
 
   stepsWarnings: ErrorMessage;

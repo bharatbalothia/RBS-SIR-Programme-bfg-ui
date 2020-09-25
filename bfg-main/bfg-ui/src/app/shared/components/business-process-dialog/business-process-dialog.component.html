@@ -2,10 +2,10 @@
 <app-dragable-dialog-wrapper *ngIf="data.isDragable">
     <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <app-error-template [errorMessage]="stepsWarnings"></app-error-template>
-    <mat-dialog-content>
-        <div *ngIf="bpHeader && workflowSteps" class="bp-details">
+    <mat-dialog-content *ngIf="workflowSteps && !isBPHeaderLoading">
+        <div class="bp-details">
             <div class="pb-details-section">
-                <div class="dp-details-item">
+                <div *ngIf="bpHeader" class="dp-details-item">
                     <label class="item-label">Name: </label>
                     <a class="header-link" (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</a>
                 </div>
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        <mat-table [dataSource]="dataSource" *ngIf="workflowSteps && !isBPHeaderLoading">
+        <mat-table [dataSource]="dataSource">
 
             <ng-container matColumnDef="stepId">
                 <mat-header-cell *matHeaderCellDef> {{displayName('stepId')}} </mat-header-cell>
@@ -132,11 +132,19 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
 
-        <app-table-paginator *ngIf="workflowSteps && !isBPHeaderLoading" [value]="pageIndex + 1"
-            [getRows]="getWorkflowSteps.bind(this)" [min]="1" [max]="workflowSteps.totalPages"
-            [length]="workflowSteps.totalElements" [pageIndex]="workflowSteps.pageable.pageNumber"
-            [pageSize]="workflowSteps.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        <app-table-paginator [value]="pageIndex + 1" [getRows]="getWorkflowSteps.bind(this)" [min]="1"
+            [max]="workflowSteps.totalPages" [length]="workflowSteps.totalElements"
+            [pageIndex]="workflowSteps.pageable.pageNumber" [pageSize]="workflowSteps.pageable.pageSize"
+            [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
         </app-table-paginator>
+
+        <div class='bp-description'>
+            *Inline Invocation
+            <br>
+            [-]=Load Balanced, [p]=Preferred Node, [m]=Mandatory Node, [r]=Execution Role
+            <br>
+            Last update on {{currentDate | date:'dd/MM/yyyy, HH:mm:ss'}}
+        </div>
     </mat-dialog-content>
     <mat-dialog-actions>
         <mat-progress-bar mode="buffer" *ngIf="isLoading || isBPHeaderLoading"></mat-progress-bar>

@@ -18,14 +18,6 @@
                 font-weight: bold;
             }
 
-            .header-link {
-                background: none !important;
-                border: none;
-                padding: 0 !important;
-                text-decoration: underline;
-                cursor: pointer;
-            }
-
         }
 
         .dp-details-item>.mat-button {
@@ -38,31 +30,31 @@
 .mat-table {
     border-collapse: collapse;
 
-    .mat-header-cell,
-    .mat-cell,
-    .mat-cell>.mat-button {
-        word-wrap: initial;
-        display: table-cell;
-        padding-right: 10px;
-        line-break: unset;
-        white-space: nowrap;
-        overflow: hidden;
-        vertical-align: middle;
+.mat-header-cell,
+.mat-cell,
+.mat-cell>.mat-button {
+    word-wrap: initial;
+    display: table-cell;
+    padding-right: 10px;
+    line-break: unset;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
 
-    }
+}
 
-    .mat-cell>.mat-button {
-        padding: 0;
-    }
+.mat-cell>.mat-button {
+    padding: 0;
+}
 
-    .mat-cell>.mat-icon {
-        vertical-align: inherit;
-    }
+.mat-cell>.mat-icon {
+    vertical-align: inherit;
+}
 
-    .mat-header-row,
-    .mat-row {
-        display: table-row;
-    }
+.mat-header-row,
+.mat-row {
+    display: table-row;
+}
 
     .mat-column-stepId {
         flex: 0 0 7% !important;

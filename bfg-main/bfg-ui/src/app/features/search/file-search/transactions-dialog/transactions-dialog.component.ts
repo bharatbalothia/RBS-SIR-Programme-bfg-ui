@@ -15,7 +15,6 @@ import { Transaction } from 'src/app/shared/models/transaction/transaction.model
 import { getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
-import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -129,7 +128,7 @@ export class TransactionsDialogComponent implements OnInit {
       })
 
   openBusinessProcessDialog = (transaction: Transaction) =>
-    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
+    this.dialog.open(BusinessProcessDialogComponent, new DetailsDialogConfig({
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,

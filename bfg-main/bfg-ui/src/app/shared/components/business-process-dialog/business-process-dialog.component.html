@@ -7,7 +7,7 @@
             <div class="pb-details-section">
                 <div class="dp-details-item">
                     <label class="item-label">Name: </label>
-                    <a class="header-link" (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</a>
+                    <button mat-button (click)="openBPDetails(bpHeader.bpRef)">{{bpHeader.bpName}}</button>
                 </div>
                 <div class="dp-details-item">
                     <label class="item-label">Deadline: </label>
@@ -52,7 +52,7 @@
             </ng-container>
 
             <ng-container matColumnDef="serviceName">
-                <mat-header-cell *matHeaderCellDef> {{displayName('service')}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{displayName('serviceName')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.serviceName}}
                 </mat-cell>

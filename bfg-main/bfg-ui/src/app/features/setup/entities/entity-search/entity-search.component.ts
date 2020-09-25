@@ -121,6 +121,7 @@ export class EntitySearchComponent implements OnInit {
     this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
         title: 'Approve Change',
+        yesCaption: 'Cancel',
         tabs: getPendingChangesTabs(changeCtrl, true),
         displayName: getEntityDisplayName,
         actionData: {

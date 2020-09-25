@@ -13,11 +13,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
@@ -53,30 +54,29 @@ public class TransmittalService {
             );
         } catch (HttpStatusCodeException e) {
             Optional.ofNullable(e.getMessage()).ifPresent(errorMessage -> {
-                String parsedErrorMessageList = "[" + errorMessage.replaceAll("(^[\\w:\\[\\s]+)|([]\\s]+$)", "") + "]";
-                List<Map<String, Object>> errors = null;
-                try {
-                    errors = new ObjectMapper().readValue(parsedErrorMessageList, new TypeReference<List<Map<String, Object>>>() {
+                List<Map<String, Object>> errorList = null;
+                Matcher matcher = Pattern.compile("\\{.*}").matcher(errorMessage);
+                if (matcher.find()) {
+                    String errorMessageList = "[" + matcher.group(0) + "]";
+                    try {
+                        errorList = new ObjectMapper().readValue(errorMessageList, new TypeReference<List<Map<String, Object>>>() {
+                        });
+                    } catch (JsonProcessingException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                Map<String, List<Object>> errorMap = Optional.ofNullable(errorList).map(errors -> {
+                    Map<String, List<Object>> transmittalErrors = new HashMap<>();
+                    errors.forEach(error -> {
+                        String key = String.valueOf(error.get("attribute"));
+                        if (transmittalErrors.containsKey(key))
+                            transmittalErrors.get(key).add(error.get("message"));
+                        else
+                            transmittalErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
                     });
-                } catch (JsonProcessingException ex) {
-                    ex.printStackTrace();
-                }
-                if (CollectionUtils.isEmpty(errors)) {
-                    throw new TransmittalException(
-                            new HashMap<String, List<Object>>() {{
-                                put("error", Collections.singletonList(errorMessage));
-                            }},
-                            e.getStatusCode());
-                }
-                Map<String, List<Object>> transmittalErrors = new HashMap<>();
-                errors.forEach(error -> {
-                    String key = String.valueOf(error.get("attribute"));
-                    if (transmittalErrors.containsKey(key))
-                        transmittalErrors.get(key).add(error.get("message"));
-                    else
-                        transmittalErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
-                });
-                throw new TransmittalException(transmittalErrors, e.getStatusCode());
+                    return transmittalErrors;
+                }).orElseGet(() -> Collections.singletonMap("error", Collections.singletonList(errorMessage)));
+                throw new TransmittalException(errorMap, e.getStatusCode());
             });
         }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(transmittalResponse));

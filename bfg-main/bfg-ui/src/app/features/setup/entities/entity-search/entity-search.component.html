@@ -35,13 +35,14 @@
                                 pageSize: pageSize,
                                 serviceSearchingValue: serviceSearchingValue,
                                 entityNameSearchingValue: entityNameSearchingValue }">
-                            <mat-icon inline>edit</mat-icon>
+                            <mat-icon alt="Edit" title="Edit" inline>edit</mat-icon>
                         </a>
                         <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">
-                            <mat-icon>clear</mat-icon>
+                            <mat-icon alt="Delete" title="Delete">clear</mat-icon>
                         </button>
-                        <button mat-icon-button *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT" (click)="transmitEntity(element)">
-                            <mat-icon>explicit</mat-icon>
+                        <button mat-icon-button *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT"
+                            (click)="transmitEntity(element)">
+                            <mat-icon alt="Transmit" title="Transmit">explicit</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

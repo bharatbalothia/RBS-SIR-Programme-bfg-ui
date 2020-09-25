@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,15 +46,20 @@ public class TransmittalService {
                 } catch (JsonProcessingException ex) {
                     ex.printStackTrace();
                 }
+                if (CollectionUtils.isEmpty(errors)) {
+                    errors = Collections.singletonList(new HashMap<String, Object>() {{
+                        put("attribute", "error");
+                        put("message", errorMessage);
+                    }});
+                }
                 Map<String, List<Object>> transmittalErrors = new HashMap<>();
-                Optional.ofNullable(errors).orElse(new ArrayList<>())
-                        .forEach(error -> {
-                            String key = String.valueOf(error.get("attribute"));
-                            if (transmittalErrors.containsKey(key))
-                                transmittalErrors.get(key).add(error.get("message"));
-                            else
-                                transmittalErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
-                        });
+                errors.forEach(error -> {
+                    String key = String.valueOf(error.get("attribute"));
+                    if (transmittalErrors.containsKey(key))
+                        transmittalErrors.get(key).add(error.get("message"));
+                    else
+                        transmittalErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
+                });
                 throw new TransmittalException(transmittalErrors, e.getStatusCode());
             });
         }

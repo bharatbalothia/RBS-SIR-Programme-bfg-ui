@@ -78,7 +78,6 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
                 { fieldName: 'changer', fieldValue: changeControl.changer },
                 { fieldName: 'dateChanged', fieldValue: changeControl.dateChanged },
                 { fieldName: 'changerComments', fieldValue: changeControl.changerComments },
-                { fieldName: 'approver', fieldValue: changeControl.approver },
                 !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
             ],
         }]

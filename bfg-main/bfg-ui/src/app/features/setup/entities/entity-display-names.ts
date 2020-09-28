@@ -178,7 +178,6 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
         { fieldName: 'Changer', fieldValue: changeControl.changer },
         { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
         { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
-        { fieldName: 'Approver', fieldValue: changeControl.approver },
         !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
       ],
     }]

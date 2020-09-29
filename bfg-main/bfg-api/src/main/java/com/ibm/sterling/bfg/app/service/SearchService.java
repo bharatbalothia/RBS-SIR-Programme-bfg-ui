@@ -51,6 +51,15 @@ public class SearchService {
     @Value("${file.password}")
     private String password;
 
+    @Value("${property.fileStatusPrefixKey}")
+    private String fileStatusPrefixKey;
+
+    @Value("${property.transactionStatusPrefixKey}")
+    private String transactionStatusPrefixKey;
+
+    @Autowired
+    private PropertyService propertyService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -75,7 +84,15 @@ public class SearchService {
         List<File> files = Optional.ofNullable(fileList).orElseGet(ArrayList::new);
         if (files.size() == 1) {
             setEntityOfFile(files);
-            return Optional.ofNullable(files.get(0));
+            Optional<File> file = Optional.ofNullable(files.get(0));
+            file.ifPresent(noStatusLabelFile -> noStatusLabelFile.setStatusLabel(
+                    propertyService.getStatusLabel(
+                            fileStatusPrefixKey,
+                            noStatusLabelFile.getService(),
+                            noStatusLabelFile.getOutbound(),
+                            noStatusLabelFile.getStatus())
+            ));
+            return file;
         } else {
             return Optional.empty();
         }
@@ -90,7 +107,7 @@ public class SearchService {
         return convertListToPage(transactionSearchCriteria, getListFromSBI(transactionSearchCriteria, transactionSearchUrl));
     }
 
-    public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
+    public Optional<TransactionDetails> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
         JsonNode root;
         try {
             root = getJsonNodeFromSBI(new FileSearchCriteria(),
@@ -98,7 +115,15 @@ public class SearchService {
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
         }
-        return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
+        Optional<TransactionDetails> transactionDetails = Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
+        transactionDetails.ifPresent(noStatusLabelTransaction -> noStatusLabelTransaction.setStatusLabel(
+                propertyService.getStatusLabel(
+                        transactionStatusPrefixKey,
+                        "sct",
+                        noStatusLabelTransaction.getIsoutbound(),
+                        noStatusLabelTransaction.getStatus())
+        ));
+        return transactionDetails;
     }
 
     public Map<String, String> getDocumentPayload(String documentId) throws JsonProcessingException {

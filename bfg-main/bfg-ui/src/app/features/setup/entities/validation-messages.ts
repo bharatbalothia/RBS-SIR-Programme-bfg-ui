@@ -26,7 +26,10 @@ export const ENTITY_VALIDATION_MESSAGES = {
         { type: 'pattern', message: `${getEntityDisplayName('requestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
     serviceName: [
-        { type: 'required', message: `${getEntityDisplayName('serviceName')} is required` }
+        { type: 'required', message: `${getEntityDisplayName('service')} is required` }
+    ],
+    requestType: [
+        { type: 'required', message: `${getEntityDisplayName('requestType')} is required` }
     ],
     responderDN: [
         { type: 'required', message: `${getEntityDisplayName('responderDN')} is required` },

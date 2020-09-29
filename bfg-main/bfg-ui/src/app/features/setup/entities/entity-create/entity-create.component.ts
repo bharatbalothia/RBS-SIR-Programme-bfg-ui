@@ -31,6 +31,8 @@ import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.servic
 })
 export class EntityCreateComponent implements OnInit {
 
+  get = get;
+
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
   scheduleType = SCHEDULE_TYPE;
 
@@ -71,6 +73,8 @@ export class EntityCreateComponent implements OnInit {
 
   editableEntity: Entity;
   selectedService = '';
+
+  requiredFields: { [filedName: string]: boolean } = {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -170,7 +174,7 @@ export class EntityCreateComponent implements OnInit {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{value : entity.entity, disabled: this.isEditing()}, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -244,16 +248,16 @@ export class EntityCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
-        this.resetMqWalidators(this.entityPageFormGroup.controls.entityParticipantType.value);
         this.resetSwiftValidators(value);
+        this.resetMqValidators(this.entityPageFormGroup.controls.entityParticipantType.value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
-          this.resetMqWalidators(value);
+          this.resetMqValidators(value);
         });
 
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{value : entity.entity, disabled: this.isEditing()}, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -291,23 +295,39 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  resetMqWalidators(value) {
+  resetMqValidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
     const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    const requestType = this.SWIFTDetailsFormGroup.controls.requestType;
+    const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
     if (value === 'DIRECT') {
       for (const control in this.mqDetailsFormGroup.controls) {
         if (this.mqDetailsFormGroup.contains(control)) {
-          this.mqDetailsFormGroup.get(control).setValidators(Validators.required);
-          this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+          this.mqDetailsFormGroup.get(control).setValidators([Validators.required]);
+          this.requiredFields[control] = true;
         }
       }
+      requestType.setValidators(Validators.required);
+      serviceName.setValidators(Validators.required);
+      this.requiredFields = {
+        ...this.requiredFields,
+        serviceName: true,
+        requestType: true
+      };
     } else {
       for (const control in this.mqDetailsFormGroup.controls) {
         if (this.mqDetailsFormGroup.contains(control)) {
           this.mqDetailsFormGroup.get(control).clearValidators();
-          this.mqDetailsFormGroup.get(control).updateValueAndValidity();
+          this.requiredFields[control] = false;
         }
       }
+      requestType.clearValidators();
+      serviceName.clearValidators();
+      this.requiredFields = {
+        ...this.requiredFields,
+        serviceName: false,
+        requestType: false
+      };
     }
     port.setValidators(
       port.validator == null ?
@@ -329,10 +349,23 @@ export class EntityCreateComponent implements OnInit {
       reqDn.setValidators(Validators.required);
       resDn.setValidators(Validators.required);
       serviceName.setValidators(Validators.required);
-    } else {
+      this.requiredFields = {
+        ...this.requiredFields,
+        requestorDN: true,
+        responderDN: true,
+        serviceName: true,
+      };
+    }
+    else {
       reqDn.clearValidators();
       resDn.clearValidators();
       serviceName.clearValidators();
+      this.requiredFields = {
+        ...this.requiredFields,
+        requestorDN: false,
+        responderDN: false,
+        serviceName: false,
+      };
     }
 
     reqDn.setValidators(

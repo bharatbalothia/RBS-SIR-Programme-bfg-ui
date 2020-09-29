@@ -144,7 +144,7 @@ public class PropertyService {
     public String getStatusLabel(String statusPrefixKey, String service, Boolean outbound, Integer status) {
         try {
             return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
-                    service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + status
+                    service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + Math.abs(status)
             ).stream()
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]"
                     ).collect(Collectors.joining(", "));

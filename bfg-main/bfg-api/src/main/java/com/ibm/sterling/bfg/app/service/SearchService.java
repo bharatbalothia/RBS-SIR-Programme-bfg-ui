@@ -133,10 +133,16 @@ public class SearchService {
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
         return Optional.ofNullable(objectMapper.convertValue(jsonNode, TransactionDetails.class))
-                .map(transaction -> {
-                    transaction.setStatusLabel(propertyService.getStatusLabel(
-                            transactionStatusPrefixKey, transaction.getService(), transaction.getIsoutbound(), transaction.getStatus()));
-                    return transaction;
+                .map(transactionDetails -> {
+                    transactionDetails.setStatusLabel(
+                            propertyService.getStatusLabel(
+                                    transactionStatusPrefixKey,
+                                    transactionDetails.getService(),
+                                    transactionDetails.getDirection().equals("outbound"),
+                                    transactionDetails.getStatus()
+                            )
+                    );
+                    return transactionDetails;
                 });
     }
 

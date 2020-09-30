@@ -20,7 +20,15 @@ export const routes: Routes = [
             ]
         }
     },
-    { path: ROUTING_PATHS.EDIT + '/:entityId', component: EntityCreateComponent },
+    { path: ROUTING_PATHS.EDIT + '/:entityId', component: EntityCreateComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: [
+                'SFG_UI_SCT_EDIT_ENTITY_SCT',
+                'SFG_UI_SCT_EDIT_ENTITY_GPL'
+            ]
+        }
+    },
     { path: ROUTING_PATHS.SEARCH, component: EntitySearchComponent },
     { path: ROUTING_PATHS.PENDING, component: EntityPendingComponent }
 ];

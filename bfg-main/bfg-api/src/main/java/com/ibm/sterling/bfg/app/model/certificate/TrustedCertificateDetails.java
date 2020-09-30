@@ -83,12 +83,14 @@ public class TrustedCertificateDetails {
     private void validateCertificateUsingAugmentedService(CertificateValidationService certificateValidationService, X509Certificate x509Certificate,
                                                           List<Map<String, List<String>>> errors, Map<String, Object> warnings) throws JsonProcessingException, CertificateEncodingException {
         Map<String, Object> certificateChain = certificateValidationService.getCertificateChain(DatatypeConverter.printBase64Binary(x509Certificate.getEncoded()));
-        String errorMessage = Optional.ofNullable(certificateChain.get("attribute"))
-                .map(attribute -> (String) Optional.ofNullable(certificateChain.get("error"))
+        Object attribute = certificateChain.get("attribute");
+        String errorMessage = Optional.ofNullable(attribute)
+                .map(attributeValue -> (String) Optional.ofNullable(certificateChain.get("error"))
                         .orElseGet(() -> Optional.ofNullable(certificateChain.get("message")).orElse(null))).orElse(null);
         if (errorMessage != null)
-            errors.add(Collections.singletonMap(certificateChain.get("attribute").toString(),
-                    Collections.singletonList(errorMessage)));
+            if ("certificate.expired".equals(attribute))
+                warnings.put("certificate.expired", "Certificate has expired");
+            else errors.add(Collections.singletonMap(attribute.toString(), Collections.singletonList(errorMessage)));
         else if (Boolean.valueOf(Optional.ofNullable(certificateChain.get("selfSigned")).orElse("").toString()))
             warnings.put("authChainReport", "Certificate is valid but is self-signed and therefore cannot be trusted via a certificate chain");
         else this.authChainReport = new ObjectMapper().convertValue(certificateChain.get("chain"), List.class);

@@ -138,7 +138,7 @@ public class SearchService {
                             propertyService.getStatusLabel(
                                     transactionStatusPrefixKey,
                                     transactionDetails.getService(),
-                                    transactionDetails.getDirection().equals("outbound"),
+                                    "outbound".equals(transactionDetails.getDirection()),
                                     transactionDetails.getStatus()
                             )
                     );

@@ -146,8 +146,8 @@ public class PropertyService {
             return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
                     service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + Math.abs(status)
             ).stream()
-                    .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]"
-                    ).collect(Collectors.joining(", "));
+                    .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
+                    .collect(Collectors.joining(", "));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

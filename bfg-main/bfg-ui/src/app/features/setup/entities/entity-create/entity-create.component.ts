@@ -90,6 +90,9 @@ export class EntityCreateComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.entityTypeFormGroup = this.formBuilder.group({
+      service: ['', Validators.required]
+    });
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
       if (params.entityId) {
@@ -108,9 +111,6 @@ export class EntityCreateComponent implements OnInit {
   }
 
   initializeFormGroups(entity: Entity) {
-    this.entityTypeFormGroup = this.formBuilder.group({
-      service: [entity.service, Validators.required]
-    });
     this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
@@ -172,6 +172,7 @@ export class EntityCreateComponent implements OnInit {
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     this.selectedService = value;
+    this.tryToProceed();
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -256,7 +257,6 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqValidators(value);
         });
-
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -570,31 +570,33 @@ export class EntityCreateComponent implements OnInit {
     return toolTip.length > 0 ? toolTip : (this.entityDisplayNames[field] || '');
   }
 
-  isAuthorizedToProceed(){
+  isAuthorizedToProceed() {
     const requiredPermissions = [];
-    if (this.isEditing()){
-      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT){
+    if (this.isEditing()) {
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
         requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_SCT);
       }
-      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL){
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
         requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_GPL);
       }
     } else {
-      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT){
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
         requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_SCT);
       }
-      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL){
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
         requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_GPL);
       }
     }
     return this.auth.isEnoughPermissions(requiredPermissions);
   }
 
-  tryToProceed(){
-    if (this.isAuthorizedToProceed()){
-      this.stepper.next();
+  tryToProceed(shouldGoNext?: boolean) {
+    if (this.isAuthorizedToProceed()) {
+      if (shouldGoNext) {
+        this.stepper.next();
+      }
     } else {
-      this.entityTypeFormGroup.get('service').setErrors({forbidden: true});
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
       this.auth.showForbidden();
     }
   }

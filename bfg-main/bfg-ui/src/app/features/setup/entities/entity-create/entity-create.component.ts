@@ -175,7 +175,17 @@ export class EntityCreateComponent implements OnInit {
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     this.selectedService = value;
-    this.tryToProceed();
+    if (this.isAuthorizedToProceed()) {
+      this.prepareFieldsForEntityOfType(value, entity);
+    } else {
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
+      if (this.isEditing()){
+        this.prepareFieldsForEntityOfType(value, entity);
+      }
+    }
+  }
+
+  prepareFieldsForEntityOfType(value, entity){
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -593,11 +603,9 @@ export class EntityCreateComponent implements OnInit {
     return this.auth.isEnoughPermissions(requiredPermissions);
   }
 
-  tryToProceed(shouldGoNext?: boolean) {
+  tryToProceed() {
     if (this.isAuthorizedToProceed()) {
-      if (shouldGoNext) {
-        this.stepper.next();
-      }
+      this.stepper.next();
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
       this.auth.showForbidden();

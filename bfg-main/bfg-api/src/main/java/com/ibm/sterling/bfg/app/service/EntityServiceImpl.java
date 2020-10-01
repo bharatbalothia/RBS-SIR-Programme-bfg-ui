@@ -1,14 +1,13 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.entity.Entity;
-import com.ibm.sterling.bfg.app.model.entity.EntityLog;
+import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.EntityType;
-import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
@@ -52,6 +51,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ScheduleService scheduleService;
+
+    @Autowired
+    private SWIFTNetRoutingRuleService swiftNetRoutingRuleService;
 
     @Autowired
     private Validator validator;
@@ -153,7 +155,8 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) {
+    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status)
+            throws JsonProcessingException {
         if (!PENDING.equals(changeControl.getStatus())) {
             throw new StatusNotPendingException();
         }
@@ -162,7 +165,16 @@ public class EntityServiceImpl implements EntityService {
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControl.getChanger()))
                 throw new InvalidUserForApprovalException();
+            SWIFTNetRoutingRuleServiceResponse routingRules = null;
+            if (changeControl.getEntityLog().getInboundRoutingRule()) {
+                routingRules = swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(changeControl));
+                if (routingRules.getSwiftNetRoutingRuleErrors() != null) {
+                    entity.setRoutingRules(routingRules);
+                    return entity;
+                }
+            }
             entity = saveEntityAfterApprove(changeControl);
+            entity.setRoutingRules(routingRules);
         }
         changeControlService.setApproveInfo(
                 changeControl,

@@ -247,6 +247,8 @@ public class Entity implements EntityType {
     private Boolean inboundDir = Boolean.FALSE;
     @Transient
     private Boolean inboundRoutingRule = Boolean.FALSE;
+    @Transient
+    private SWIFTNetRoutingRuleServiceResponse routingRules;
 
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
@@ -789,6 +791,14 @@ public class Entity implements EntityType {
 
     public void setInboundRoutingRule(Boolean inboundRoutingRule) {
         this.inboundRoutingRule = inboundRoutingRule;
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse getRoutingRules() {
+        return routingRules;
+    }
+
+    public void setRoutingRules(SWIFTNetRoutingRuleServiceResponse routingRules) {
+        this.routingRules = routingRules;
     }
 
     public String getInboundRequestorDN() {

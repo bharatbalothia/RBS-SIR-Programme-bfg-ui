@@ -48,6 +48,13 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
     }
 
+    @ExceptionHandler(SWIFTNetRoutingRuleException.class)
+    public ResponseEntity handleSWIFTNetRoutingRuleException(SWIFTNetRoutingRuleException ex) {
+        ErrorMessage errorMessage = errorConfig.getErrorMessage(
+                EntityErrorCode.SWIFTNetRoutingRuleException, ex.getErrorMessage(), Collections.singletonList(ex.getInnerExceptions()));
+        return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

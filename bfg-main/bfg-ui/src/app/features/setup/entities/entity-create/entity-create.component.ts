@@ -99,6 +99,9 @@ export class EntityCreateComponent implements OnInit {
         this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
           this.isLoading = false;
           this.editableEntity = data;
+          this.entityTypeFormGroup = this.formBuilder.group({
+            service: [this.editableEntity.service, Validators.required]
+          });
           this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         },

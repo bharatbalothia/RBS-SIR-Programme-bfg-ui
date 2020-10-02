@@ -3,7 +3,8 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
-            <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
+            <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [beforeTab]="getBeforeTab(tab)">
+            </app-tab-content>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>

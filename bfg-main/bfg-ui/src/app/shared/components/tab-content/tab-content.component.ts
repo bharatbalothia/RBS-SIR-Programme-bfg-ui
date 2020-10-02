@@ -16,7 +16,9 @@ export class TabContentComponent implements OnInit {
 
   @Input() actions;
 
-  displayedColumns: string[] = ['fieldName', 'fieldValue'];
+  @Input() beforeTab;
+
+  displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
 
   constructor() { }
 
@@ -25,17 +27,22 @@ export class TabContentComponent implements OnInit {
       this.tab.tabSections.filter(el => el).forEach(section => section.sectionItems = section.sectionItems
         .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue)));
     }
+    console.log(this.tab);
+
   }
 
   isDifferencesTab = (tabTitle: string) => tabTitle === DIALOG_TABS.DIFFERENCES;
 
   getBeforeValue = (tabSectionTitle: string, fieldName: string) => {
-    const tableObject = get(this.tab, 'tableObject', null);
-    const tabSections = get(this.tab, 'tabSections', []);
-    const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
-    return tableObject && tableObject.tableTitle === tabSectionTitle
-      ? this.tab.tableObject.tableDataSource.map(el => this.tab.tableObject.formatRow ? this.tab.tableObject.formatRow(el) : el)
-      : get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
+    if (this.beforeTab) {
+      const tableObject = get(this.beforeTab, 'tableObject', null);
+      const tabSections = get(this.beforeTab, 'tabSections', []);
+      const sectionItems = get(tabSections.find(el => el.sectionTitle === tabSectionTitle), 'sectionItems', []);
+      return tableObject && tableObject.tableTitle === tabSectionTitle
+        ? this.beforeTab.tableObject.tableDataSource
+          .map(el => this.beforeTab.tableObject.formatRow ? this.beforeTab.tableObject.formatRow(el) : el)
+        : get(sectionItems.find(el => el.fieldName === fieldName), 'fieldValue', null);
+    }
   }
 
   getClickAction = (fieldName) => get(this.actions, fieldName, (e) => e)();

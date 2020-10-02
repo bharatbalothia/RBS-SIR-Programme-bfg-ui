@@ -291,6 +291,10 @@ export class EntityCreateComponent implements OnInit {
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
+
+        this.onRouteInboundChanging(this.entityPageFormGroup.controls.routeInbound.value);
+        this.entityPageFormGroup.controls.routeInbound.valueChanges
+          .subscribe((value: boolean) => this.onRouteInboundChanging(value));
         break;
     }
   }
@@ -391,6 +395,40 @@ export class EntityCreateComponent implements OnInit {
     const index = array.indexOf(toRemove);
     if (index !== -1) {
       array.splice(index, 1);
+    }
+  }
+
+  onRouteInboundChanging = (value: boolean) => {
+    if (!value) {
+      this.entityPageFormGroup.controls.inboundRequestorDN.disable();
+      this.entityPageFormGroup.controls.inboundRequestorDN.reset();
+      this.entityPageFormGroup.controls.inboundResponderDN.disable();
+      this.entityPageFormGroup.controls.inboundResponderDN.reset();
+      this.entityPageFormGroup.controls.inboundService.disable();
+      this.entityPageFormGroup.controls.inboundRequestType.clearValidators();
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: false,
+      };
+      this.entityPageFormGroup.controls.inboundDir.disable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(false);
+      this.entityPageFormGroup.controls.inboundRoutingRule.disable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(false);
+    }
+    else {
+      this.entityPageFormGroup.controls.inboundRequestorDN.enable();
+      this.entityPageFormGroup.controls.inboundResponderDN.enable();
+      this.entityPageFormGroup.controls.inboundService.enable();
+      this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: true,
+      };
+      this.entityPageFormGroup.controls.inboundDir.enable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(true);
+
+      this.entityPageFormGroup.controls.inboundRoutingRule.enable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(true);
     }
   }
 

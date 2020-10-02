@@ -32,7 +32,7 @@
                         <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>

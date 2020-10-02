@@ -3,6 +3,7 @@ import { getEntityDisplayName } from './entity-display-names';
 export const ENTITY_VALIDATION_MESSAGES = {
     service: [
         { type: 'required', message: `${getEntityDisplayName('service')} is required` },
+        { type: 'forbidden', message: `You don't have enough permissions to proceed with this ${getEntityDisplayName('service')}`}
     ],
     entity: [
         { type: 'required', message: `${getEntityDisplayName('entity')} is required` },

@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { ENTITY_SERVICE_TYPE, ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
@@ -23,6 +23,8 @@ import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-sch
 import { MatTableDataSource } from '@angular/material/table';
 import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-entity-create',
@@ -38,7 +40,7 @@ export class EntityCreateComponent implements OnInit {
 
   isLinear = true;
 
-  @ViewChild('stepper') stepper;
+  @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   inboundRequestTypeList: string[] = [];
@@ -83,16 +85,23 @@ export class EntityCreateComponent implements OnInit {
     private entityValidators: EntityValidators,
     private activatedRouter: ActivatedRoute,
     private router: Router,
-    private toolTip: TooltipService
+    private toolTip: TooltipService,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
+    this.entityTypeFormGroup = this.formBuilder.group({
+      service: ['', Validators.required]
+    });
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
       if (params.entityId) {
         this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
           this.isLoading = false;
           this.editableEntity = data;
+          this.entityTypeFormGroup = this.formBuilder.group({
+            service: [this.editableEntity.service, Validators.required]
+          });
           this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         },
@@ -105,9 +114,6 @@ export class EntityCreateComponent implements OnInit {
   }
 
   initializeFormGroups(entity: Entity) {
-    this.entityTypeFormGroup = this.formBuilder.group({
-      service: [entity.service, Validators.required]
-    });
     this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
@@ -169,6 +175,17 @@ export class EntityCreateComponent implements OnInit {
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     this.selectedService = value;
+    if (this.isAuthorizedToProceed()) {
+      this.prepareFieldsForEntityOfType(value, entity);
+    } else {
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
+      if (this.isEditing()){
+        this.prepareFieldsForEntityOfType(value, entity);
+      }
+    }
+  }
+
+  prepareFieldsForEntityOfType(value, entity){
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -253,7 +270,6 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqValidators(value);
         });
-
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -615,6 +631,35 @@ export class EntityCreateComponent implements OnInit {
       fieldName: field
     });
     return toolTip.length > 0 ? toolTip : (this.entityDisplayNames[field] || '');
+  }
+
+  isAuthorizedToProceed() {
+    const requiredPermissions = [];
+    if (this.isEditing()) {
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_SCT);
+      }
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_GPL);
+      }
+    } else {
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_SCT);
+      }
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_GPL);
+      }
+    }
+    return this.auth.isEnoughPermissions(requiredPermissions);
+  }
+
+  tryToProceed() {
+    if (this.isAuthorizedToProceed()) {
+      this.stepper.next();
+    } else {
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
+      this.auth.showForbidden();
+    }
   }
 
 }

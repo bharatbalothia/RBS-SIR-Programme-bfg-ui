@@ -10,10 +10,7 @@ import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfguiRestRespons
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleServiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -88,11 +85,20 @@ public class SWIFTNetRoutingRuleService {
         Map<String, String> errorMap = swiftNetRoutingRuleBfguiRestResponse.stream()
                 .filter(ruleResponse -> !HttpStatus.valueOf(ruleResponse.getCode()).is2xxSuccessful())
                 .collect(Collectors.toMap(SWIFTNetRoutingRuleBfguiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfguiRestResponse::getFailCause));
-        if (errorMap.size() == swiftNetRoutingRuleBfguiRestResponse.size())
-            return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, Collections.singletonList(errorMap), null);
-        else if (errorMap.size() > 0)
-            return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null, Collections.singletonList(errorMap));
-        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null, null);
+        if (errorMap.size() > 0)
+            return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, Collections.singletonList(errorMap));
+        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null);
+    }
+
+    public List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                routingRuleViewUrl + "?entity-name=" + entityName,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        return objectMapper.convertValue(root, new TypeReference<List<String>>() {
+        });
     }
 
     private HttpHeaders getHttpHeaders() {

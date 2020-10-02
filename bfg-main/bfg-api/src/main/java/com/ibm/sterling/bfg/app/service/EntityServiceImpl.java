@@ -165,16 +165,9 @@ public class EntityServiceImpl implements EntityService {
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControl.getChanger()))
                 throw new InvalidUserForApprovalException();
-            SWIFTNetRoutingRuleServiceResponse routingRules = null;
-            if (changeControl.getEntityLog().getInboundRoutingRule()) {
-                routingRules = swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(changeControl));
-                if (routingRules.getSwiftNetRoutingRuleErrors() != null) {
-                    entity.setRoutingRules(routingRules);
-                    return entity;
-                }
-            }
-            entity = saveEntityAfterApprove(changeControl);
-            entity.setRoutingRules(routingRules);
+            entity = approveEntity(changeControl);
+            if (entity.getRoutingRules().getSwiftNetRoutingRuleErrors() != null)
+                return entity;
         }
         changeControlService.setApproveInfo(
                 changeControl,
@@ -185,7 +178,16 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    private Entity saveEntityAfterApprove(ChangeControl changeControl) {
+    private SWIFTNetRoutingRuleServiceResponse getSwiftNetRoutingRuleServiceResponse(Entity entity, String changer) throws JsonProcessingException {
+        List<String> routingRulesByEntityName = swiftNetRoutingRuleService.getRoutingRulesByEntityName(entity.getEntity());
+        if (routingRulesByEntityName.isEmpty())
+            return swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+        return new SWIFTNetRoutingRuleServiceResponse(routingRulesByEntityName.stream()
+                .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
+                .collect(Collectors.toList()));
+    }
+
+    private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
         LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
         Optional.ofNullable(entity.getEntityId()).ifPresent(entityId -> {
@@ -211,12 +213,24 @@ public class EntityServiceImpl implements EntityService {
             entity.setMailboxPathOut("DEL_" + entity.getEntityId() + "_" + entity.getMailboxPathOut());
             entity.setMqQueueOut("DEL_" + entity.getEntityId() + "_" + entity.getMqQueueOut());
         }
+
+        SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
+        if (entity.getInboundRoutingRule()) {
+            routingRules = getSwiftNetRoutingRuleServiceResponse(entity, changeControl.getChanger());
+            if (routingRules.getSwiftNetRoutingRuleErrors() != null) {
+                Entity emptyEntity = new Entity();
+                emptyEntity.setRoutingRules(routingRules);
+                return emptyEntity;
+            }
+        }
+
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);
         changeControlService.save(changeControl);
+        savedEntity.setRoutingRules(routingRules);
         return savedEntity;
     }
 

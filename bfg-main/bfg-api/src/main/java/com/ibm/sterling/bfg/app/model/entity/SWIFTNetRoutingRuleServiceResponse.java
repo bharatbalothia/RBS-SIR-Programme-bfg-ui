@@ -6,18 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 public class SWIFTNetRoutingRuleServiceResponse {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String, String>> swiftNetRoutingRuleErrors;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Map<String, String>> swiftNetRoutingRuleWarnings;
 
     public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse,
-                                              List<Map<String, String>> swiftNetRoutingRuleErrors,
-                                              List<Map<String, String>> swiftNetRoutingRuleWarnings) {
+                                              List<Map<String, String>> swiftNetRoutingRuleErrors) {
         this.swiftNetRoutingRuleBfguiRestResponse = swiftNetRoutingRuleBfguiRestResponse;
         this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
-        this.swiftNetRoutingRuleWarnings = swiftNetRoutingRuleWarnings;
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse(List<Map<String, String>> swiftNetRoutingRuleErrors) {
+        this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse() {
     }
 
     public List<SWIFTNetRoutingRuleBfguiRestResponse> getSwiftNetRoutingRuleBfguiRestResponse() {
@@ -34,14 +38,6 @@ public class SWIFTNetRoutingRuleServiceResponse {
 
     public void setSwiftNetRoutingRuleErrors(List<Map<String, String>> swiftNetRoutingRuleErrors) {
         this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
-    }
-
-    public List<Map<String, String>> getSwiftNetRoutingRuleWarnings() {
-        return swiftNetRoutingRuleWarnings;
-    }
-
-    public void setSwiftNetRoutingRuleWarnings(List<Map<String, String>> swiftNetRoutingRuleWarnings) {
-        this.swiftNetRoutingRuleWarnings = swiftNetRoutingRuleWarnings;
     }
 
 }

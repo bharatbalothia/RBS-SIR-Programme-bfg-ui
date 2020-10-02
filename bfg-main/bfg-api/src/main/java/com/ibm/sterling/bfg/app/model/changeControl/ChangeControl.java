@@ -270,6 +270,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setRouteInbound(entityLog.getRouteInbound());
         entityFromLog.setRouteOutbound(entityLog.getRouteOutbound());
         entityFromLog.setInboundDir(entityLog.getInboundDir());
+        entityFromLog.setInboundRoutingRule(entityLog.getInboundRoutingRule());
         entityFromLog.setInboundRequestType(entityLog.getInboundRequestType());
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);

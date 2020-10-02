@@ -33,6 +33,22 @@ public class SWIFTNetRoutingRuleRequest {
         username = changeControl.getChanger();
     }
 
+    public SWIFTNetRoutingRuleRequest(Entity entity, String changer) {
+        entityName = entity.getEntity();
+        entityType = entity.getService();
+        requestorDN = entity.getRequestorDN();
+        responderDN = entity.getResponderDN();
+        requestType = entity.getInboundRequestType().stream()
+                .map(inboundRequestType -> {
+                    Matcher matcher = Pattern.compile("\\((.*?)\\)").matcher(inboundRequestType);
+                    if (matcher.find())
+                        return matcher.group(1);
+                    return "";
+                }).collect(Collectors.toList());
+        service = entity.getInboundService();
+        username = changer;
+    }
+
     public SWIFTNetRoutingRuleRequest() {
     }
 

@@ -23,9 +23,9 @@ public class ScheduleValidator implements ConstraintValidator<ScheduleValid, Sch
                            ConstraintValidatorContext constraintValidatorContext) {
         LOG.info("Schedule validation");
         BiFunction<String, String, String> emptyFieldMessage =
-                (fieldName, directParticipant) ->
+                (fieldName, type) ->
                         new Formatter().format("%s cannot be empty because the Type has the value %s",
-                                fieldName, directParticipant).toString();
+                                fieldName, type).toString();
 
         Boolean isWindow = schedule.getIsWindow();
         boolean isWindowNotNull = isValidSchedule(ScheduleFieldName.ISWINDOW.fieldName(), isWindow,

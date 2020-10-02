@@ -2,7 +2,8 @@ package com.ibm.sterling.bfg.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ibm.sterling.bfg.app.model.EntityType;
-import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
@@ -30,6 +31,7 @@ import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNu
 @EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
 @EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
 @MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+@RouteValid(groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType {
@@ -240,33 +242,32 @@ public class Entity implements EntityType {
     private Integer mqSessionTimeout;
 
     @Transient
-    private Boolean routeInbound = Boolean.TRUE;
-    @Transient
     private Boolean routeOutbound = Boolean.TRUE;
-    @Transient
-    private Boolean inboundDir = Boolean.FALSE;
-    @Transient
-    private Boolean inboundRoutingRule = Boolean.FALSE;
 
+    @Transient
+    private Boolean routeInbound = Boolean.TRUE;
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound RequestorDN",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_REQUESTORDN")
     private String inboundRequestorDN = "";
-
     @Pattern(
             regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
             message = "Please match the requested format for Inbound ResponderDN",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_RESPONDERDN")
     private String inboundResponderDN = "";
-
     @Column(name = "ROUTE_SERVICE")
     private String inboundService = "";
     @Convert(converter = StringToListConverter.class)
     @Column(name = "ROUTE_REQUESTTYPE")
     private List<String> inboundRequestType = new ArrayList<>();
+    @Transient
+    private Boolean inboundDir = Boolean.FALSE;
+    @Transient
+    private Boolean inboundRoutingRule = Boolean.FALSE;
+
     @NotNull(message = "NONREPUDIATION has to be present",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
@@ -282,6 +283,7 @@ public class Entity implements EntityType {
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "PAUSE_OUTBOUND")
     private Boolean pauseOutbound = Boolean.FALSE;
+
     @Column(name = "ISDELETED")
     private Boolean deleted = Boolean.FALSE;
     @Transient

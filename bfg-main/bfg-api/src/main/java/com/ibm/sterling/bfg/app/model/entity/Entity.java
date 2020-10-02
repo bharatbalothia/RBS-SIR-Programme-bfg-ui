@@ -246,16 +246,8 @@ public class Entity implements EntityType {
 
     @Transient
     private Boolean routeInbound = Boolean.TRUE;
-    @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for Inbound RequestorDN",
-            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_REQUESTORDN")
     private String inboundRequestorDN = "";
-    @Pattern(
-            regexp = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$",
-            message = "Please match the requested format for Inbound ResponderDN",
-            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
     @Column(name = "ROUTE_RESPONDERDN")
     private String inboundResponderDN = "";
     @Column(name = "ROUTE_SERVICE")

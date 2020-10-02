@@ -119,7 +119,8 @@
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('inboundRequestType')">
                             <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
-                            <mat-select formControlName="inboundRequestType" multiple>
+                            <mat-select formControlName="inboundRequestType" multiple
+                                [required]="get(requiredFields,'inboundRequestType')">
                                 <mat-select-trigger>
                                     <mat-chip-list>
                                         <mat-chip
@@ -135,6 +136,11 @@
                                     [value]="inboundRequestType">{{inboundRequestType}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestType">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundRequestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>

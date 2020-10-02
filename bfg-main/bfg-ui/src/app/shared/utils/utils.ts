@@ -9,6 +9,15 @@ export const removeEmpties = (obj) => {
     return obj;
 };
 
+export const removeNullOrUndefined = (obj) => {
+    for (const propName in obj) {
+        if (obj[propName] === null || obj[propName] === undefined) {
+            delete obj[propName];
+        }
+    }
+    return obj;
+};
+
 export const difference = (object, base) => {
     const changes = (object, base): any => {
         return transform(object, (result, value, key) => {

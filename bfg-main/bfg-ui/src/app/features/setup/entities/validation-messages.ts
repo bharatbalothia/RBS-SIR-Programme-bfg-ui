@@ -22,6 +22,9 @@ export const ENTITY_VALIDATION_MESSAGES = {
     inboundService: [
         { type: 'required', message: `${getEntityDisplayName('inboundService')} is required` },
     ],
+    inboundRequestType: [
+        { type: 'required', message: `${getEntityDisplayName('inboundRequestType')} is required` },
+    ],
     requestorDN: [
         { type: 'required', message: `${getEntityDisplayName('requestorDN')} is required` },
         { type: 'pattern', message: `${getEntityDisplayName('requestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }

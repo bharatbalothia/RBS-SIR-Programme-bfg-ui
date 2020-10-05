@@ -5,7 +5,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { removeEmpties } from 'src/app/shared/utils/utils';
+import { removeNullOrUndefined } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
@@ -307,6 +307,10 @@ export class EntityCreateComponent implements OnInit {
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
+
+        this.onRouteInboundChanging(this.entityPageFormGroup.controls.routeInbound.value);
+        this.entityPageFormGroup.controls.routeInbound.valueChanges
+          .subscribe((value: boolean) => this.onRouteInboundChanging(value));
         break;
     }
   }
@@ -410,6 +414,40 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
+  onRouteInboundChanging = (value: boolean) => {
+    if (!value) {
+      this.entityPageFormGroup.controls.inboundRequestorDN.disable();
+      this.entityPageFormGroup.controls.inboundRequestorDN.setValue('');
+      this.entityPageFormGroup.controls.inboundResponderDN.disable();
+      this.entityPageFormGroup.controls.inboundResponderDN.setValue('');
+      this.entityPageFormGroup.controls.inboundService.disable();
+      this.entityPageFormGroup.controls.inboundRequestType.clearValidators();
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: false,
+      };
+      this.entityPageFormGroup.controls.inboundDir.disable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(false);
+      this.entityPageFormGroup.controls.inboundRoutingRule.disable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(false);
+    }
+    else {
+      this.entityPageFormGroup.controls.inboundRequestorDN.enable();
+      this.entityPageFormGroup.controls.inboundResponderDN.enable();
+      this.entityPageFormGroup.controls.inboundService.enable();
+      this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: true,
+      };
+      this.entityPageFormGroup.controls.inboundDir.enable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(true);
+
+      this.entityPageFormGroup.controls.inboundRoutingRule.enable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(true);
+    }
+  }
+
   sendEntity(isEditing: boolean) {
     const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
@@ -427,15 +465,20 @@ export class EntityCreateComponent implements OnInit {
           ...this.summaryPageFormGroup.value,
           ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
+          inboundRequestorDN: this.entityPageFormGroup.controls.inboundRequestorDN.value,
+          inboundResponderDN: this.entityPageFormGroup.controls.inboundResponderDN.value,
+          inboundService: this.entityPageFormGroup.controls.inboundService.value,
+          inboundDir: this.entityPageFormGroup.controls.inboundDir.value,
+          inboundRoutingRule: this.entityPageFormGroup.controls.inboundRoutingRule.value,
         };
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
-          entityAction = this.entityService.editEntity(removeEmpties({ ...editableEntity, ...entity }));
+          entityAction = this.entityService.editEntity(removeNullOrUndefined({ ...editableEntity, ...entity }));
         }
         else {
-          entityAction = this.entityService.createEntity(removeEmpties(entity));
+          entityAction = this.entityService.createEntity(removeNullOrUndefined(entity));
         }
         entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {
@@ -503,8 +546,15 @@ export class EntityCreateComponent implements OnInit {
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
-      ...this.summaryPageFormGroup.value
+      ...this.summaryPageFormGroup.value,
+      inboundRequestorDN: this.entityPageFormGroup.controls.inboundRequestorDN.value,
+      inboundResponderDN: this.entityPageFormGroup.controls.inboundResponderDN.value,
+      inboundService: this.entityPageFormGroup.controls.inboundService.value,
+      inboundDir: this.entityPageFormGroup.controls.inboundDir.value,
+      inboundRoutingRule: this.entityPageFormGroup.controls.inboundRoutingRule.value,
     };
+    console.log(entity);
+
     this.summaryPageDataSource = Object.keys(entity)
       .map((key) => ({
         field: key,

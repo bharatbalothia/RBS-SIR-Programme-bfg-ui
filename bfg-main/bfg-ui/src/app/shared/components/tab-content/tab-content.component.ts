@@ -27,8 +27,6 @@ export class TabContentComponent implements OnInit {
       this.tab.tabSections.filter(el => el).forEach(section => section.sectionItems = section.sectionItems
         .filter(item => this.isDifferencesTab && !isUndefined(item.fieldValue)));
     }
-    console.log(this.tab);
-
   }
 
   isDifferencesTab = (tabTitle: string) => tabTitle === DIALOG_TABS.DIFFERENCES;

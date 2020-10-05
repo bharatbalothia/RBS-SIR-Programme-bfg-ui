@@ -83,7 +83,7 @@ export class AuthService {
   isEnoughPermissions(requiredPermissions: string[]): boolean{
     let enoughPermissions = false;
     const userPermissions = this.getUserPermissions();
-    if (!requiredPermissions){
+    if (!requiredPermissions || requiredPermissions.length === 0){
       return true;
     }
     requiredPermissions.forEach( element => enoughPermissions = enoughPermissions || userPermissions.includes(element));
@@ -97,6 +97,12 @@ export class AuthService {
       shouldHideYesCaption: true,
       noCaption: 'Back'
     }));
+  }
+
+  checkPermissions(requiredPermissions: string[]) {
+    if (!this.isEnoughPermissions(requiredPermissions)){
+      this.showForbidden();
+    }
   }
 
 }

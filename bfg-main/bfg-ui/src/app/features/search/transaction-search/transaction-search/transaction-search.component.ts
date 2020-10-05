@@ -5,7 +5,7 @@ import { take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
 import * as moment from 'moment';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { TransactionCriteriaData } from 'src/app/shared/models/transaction/transaction-criteria.model';
 import { getTransactionSearchDisplayName, getTransactionDetailsTabs } from '../transaction-search-display-names';
 import { MatTableDataSource } from '@angular/material/table';
@@ -44,12 +44,13 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
 
-  defaultSelectedData: string[] = [
-    moment().hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
-    ''
-  ];
-
-  selectedData: string[];
+  defaultSelectedData: { from: { startDate, endDate }, to: { startDate, endDate } } = {
+    from: {
+      startDate: moment().hours(0).minutes(0).seconds(0),
+      endDate: moment().hours(0).minutes(0).seconds(0),
+    },
+    to: null
+  };
 
   criteriaFilterObject = { direction: '', trxStatus: '' };
 
@@ -76,9 +77,7 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     private transactionService: TransactionService,
     private fileService: FileService,
     private dialog: MatDialog
-  ) {
-    this.selectedData = this.defaultSelectedData;
-  }
+  ) { }
 
   ngOnInit(): void {
     this.initializeSearchingParametersFormGroup();
@@ -95,8 +94,8 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
       transactionID: [''],
       paymentBIC: [''],
       type: [''],
-      from: [this.defaultSelectedData],
-      to: [this.defaultSelectedData]
+      from: [this.defaultSelectedData.from],
+      to: [this.defaultSelectedData.to]
     });
     this.criteriaFilterObject = { direction: '', trxStatus: '' };
   }
@@ -137,8 +136,8 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
 
     const formData = {
       ...this.searchingParametersFormGroup.value,
-      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value[0]')),
-      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
@@ -286,6 +285,22 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.autoRefreshChange(false);
+  }
+
+  isInvalidFromDate = (date) => {
+    const endDate = get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null);
+    return endDate && moment(endDate).isBefore(date);
+  }
+
+  isInvalidToDate = (date) => {
+    const startDate = get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null);
+    return startDate && moment(date).isBefore(startDate);
+  }
+
+  onDateChange = (event, control: AbstractControl) => {
+    if (get(event, 'target.value', null) === '') {
+      control.setValue(null);
+    }
   }
 
 }

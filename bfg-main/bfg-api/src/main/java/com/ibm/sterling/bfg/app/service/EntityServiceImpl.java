@@ -12,7 +12,7 @@ import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
-import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;

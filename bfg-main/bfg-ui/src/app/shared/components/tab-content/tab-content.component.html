@@ -32,7 +32,7 @@
         </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"
-        [hidden]="(dataSource.sectionItems && dataSource.sectionItems.length === 0) || tabSectionIndex > 0">
+        [hidden]="this.isAllTabEmpty() || tabSectionIndex > 0">
     </mat-header-row>
     <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
         [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">

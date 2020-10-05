@@ -62,15 +62,17 @@
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>{{getTransactionSearchDisplayName('from')}}</mat-label>
-                    <input [owlDateTime]="from" matInput [owlDateTimeTrigger]="from" [selectMode]="'rangeFrom'"
-                        [(ngModel)]="selectedData" formControlName="from">
-                    <owl-date-time #from></owl-date-time>
+                    <input matInput type="text" [formControl]="searchingParametersFormGroup.controls['from']"
+                        (change)="onDateChange($event, searchingParametersFormGroup.controls['from'])"
+                        ngxDaterangepickerMd [timePicker]="true" drops="down" opens="right" [singleDatePicker]="true"
+                        [isInvalidDate]="isInvalidFromDate" [timePicker24Hour]="true" />
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>{{getTransactionSearchDisplayName('to')}}</mat-label>
-                    <input [owlDateTime]="to" matInput [owlDateTimeTrigger]="to" [selectMode]="'rangeTo'"
-                        [(ngModel)]="selectedData" formControlName="to">
-                    <owl-date-time #to></owl-date-time>
+                    <input matInput type="text" [formControl]="searchingParametersFormGroup.controls['to']"
+                        (change)="onDateChange($event, searchingParametersFormGroup.controls['to'])"
+                        ngxDaterangepickerMd [timePicker]="true" drops="down" opens="right" [singleDatePicker]="true"
+                        [isInvalidDate]="isInvalidToDate" [timePicker24Hour]="true" />
                 </mat-form-field>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperNext class="action-button">Next</button>

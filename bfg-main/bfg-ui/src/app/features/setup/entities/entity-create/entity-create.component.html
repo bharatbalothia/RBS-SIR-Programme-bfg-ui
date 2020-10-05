@@ -16,7 +16,8 @@
                             <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
                             <mat-select formControlName="service" (selectionChange)="onServiceSelect($event.value)"
                                 required [appDisableControl]="isEditing()">
-                                <mat-option *ngFor="let service of getEntityServicesArray()" [value]="service">{{service}}
+                                <mat-option *ngFor="let service of getEntityServicesArray()" [value]="service">
+                                    {{service}}
                                 </mat-option>
                             </mat-select>
                             <mat-error *ngFor="let validation of entityValidationMessages.service">
@@ -31,7 +32,7 @@
                         <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
@@ -53,7 +54,8 @@
                                 {{getErrorByField('entity')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
+                        </app-tooltip>
                     </section>
                     <section *ngIf="entityPageFormGroup.get('routeInbound')" class='radio-group-section'>
                         <label
@@ -67,7 +69,7 @@
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('routeInbound', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section"  *ngIf="entityPageFormGroup.get('inboundRequestorDN')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundRequestorDN')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestorDN'] || 'inboundRequestorDN'}}</mat-label>
                             <input matInput formControlName="inboundRequestorDN" appInputLowercase required>
@@ -80,10 +82,10 @@
                                 {{getErrorByField('inboundRequestorDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
-                    <mat-form-field *ngIf="entityPageFormGroup.get('inboundResponderDN')">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('inboundResponderDN')">
                             <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
                             <input matInput formControlName="inboundResponderDN" appInputLowercase required>
                             <mat-error *ngFor="let validation of entityValidationMessages.inboundResponderDN">
@@ -95,7 +97,8 @@
                                 {{getErrorByField('inboundResponderDN')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')" [tip]="getTooltip('inboundResponderDN', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
+                            [tip]="getTooltip('inboundResponderDN', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('inboundService')">
@@ -110,17 +113,20 @@
                                 {{getErrorByField('inboundService')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')" [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
+                            [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('inboundRequestType')">
                             <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
-                            <mat-select formControlName="inboundRequestType" multiple>
+                            <mat-select formControlName="inboundRequestType" multiple
+                                [required]="get(requiredFields,'inboundRequestType')">
                                 <mat-select-trigger>
                                     <mat-chip-list>
                                         <mat-chip
                                             *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
-                                            [removable]="true" (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
+                                            [removable]="true"
+                                            (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
                                             {{ inboundRequestType }}
                                             <mat-icon matChipRemove>cancel</mat-icon>
                                         </mat-chip>
@@ -130,11 +136,17 @@
                                     [value]="inboundRequestType">{{inboundRequestType}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestType">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundRequestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')" [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
+                            [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundDir')">
                         <label class='radio-group-label'>{{entityDisplayNames['inboundDir'] || 'inboundDir'}}:*</label>
@@ -145,7 +157,8 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundDir')">
                             {{getErrorByField('inboundDir')}}
                         </mat-error>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundDir')" [tip]="getTooltip('inboundDir', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundDir')"
+                            [tip]="getTooltip('inboundDir', 'entity')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundRoutingRule')">
                         <label
@@ -157,7 +170,8 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('inboundRoutingRule')">
                             {{getErrorByField('inboundRoutingRule')}}
                         </mat-error>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRoutingRule')" [tip]="getTooltip('inboundRoutingRule', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRoutingRule')"
+                            [tip]="getTooltip('inboundRoutingRule', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
@@ -172,11 +186,13 @@
                                 {{getErrorByField('maxBulksPerFile')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('maxBulksPerFile')" [tip]="getTooltip('maxBulksPerFile', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('maxBulksPerFile')"
+                            [tip]="getTooltip('maxBulksPerFile', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')">
-                            <mat-label>{{entityDisplayNames['maxTransfersPerBulk'] || 'maxTransfersPerBulk'}}</mat-label>
+                            <mat-label>{{entityDisplayNames['maxTransfersPerBulk'] || 'maxTransfersPerBulk'}}
+                            </mat-label>
                             <input matInput type="number" min="0" formControlName="maxTransfersPerBulk" required>
                             <mat-error *ngFor="let validation of entityValidationMessages.maxTransfersPerBulk">
                                 <mat-error class="error-message"
@@ -187,7 +203,8 @@
                                 {{getErrorByField('maxTransfersPerBulk')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')" [tip]="getTooltip('maxTransfersPerBulk', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')"
+                            [tip]="getTooltip('maxTransfersPerBulk', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('startOfDay')">
@@ -202,7 +219,8 @@
                                 {{getErrorByField('startOfDay')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('startOfDay')" [tip]="getTooltip('startOfDay', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('startOfDay')"
+                            [tip]="getTooltip('startOfDay', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('endOfDay')">
@@ -217,7 +235,8 @@
                                 {{getErrorByField('endOfDay')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('endOfDay')" [tip]="getTooltip('endOfDay', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('endOfDay')"
+                            [tip]="getTooltip('endOfDay', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathIn')">
@@ -232,7 +251,8 @@
                                 {{getErrorByField('mailboxPathIn')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')" [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')"
+                            [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathOut')">
@@ -247,7 +267,8 @@
                                 {{getErrorByField('mailboxPathOut')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')" [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
+                            [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueIn')">
@@ -257,7 +278,8 @@
                                 {{getErrorByField('mqQueueIn')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueIn')" [tip]="getTooltip('mqQueueIn', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueIn')"
+                            [tip]="getTooltip('mqQueueIn', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueOut')">
@@ -267,7 +289,8 @@
                                 {{getErrorByField('mqQueueOut')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')" [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
+                            [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="entityPageFormGroup.get('compression')">
                         <label class='radio-group-label'>{{entityDisplayNames['compression'] || 'compression'}}:</label>
@@ -278,7 +301,8 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('compression')">
                             {{getErrorByField('compression')}}
                         </mat-error>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('compression')" [tip]="getTooltip('compression', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('compression')"
+                            [tip]="getTooltip('compression', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
@@ -292,12 +316,14 @@
                                 {{getErrorByField('entityParticipantType')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('entityParticipantType')" [tip]="getTooltip('entityParticipantType', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('entityParticipantType')"
+                            [tip]="getTooltip('entityParticipantType', 'entity')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('directParticipant')">
                             <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
-                            <input matInput formControlName="directParticipant">
+                            <input matInput formControlName="directParticipant"
+                                [required]="entityPageFormGroup.get('entityParticipantType').value === 'INDIRECT'">
                             <mat-error *ngFor="let validation of entityValidationMessages.directParticipant">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('directParticipant').hasError(validation.type)">
@@ -307,7 +333,8 @@
                                 {{getErrorByField('directParticipant')}}
                             </mat-error>
                         </mat-form-field>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('directParticipant')" [tip]="getTooltip('directParticipant', 'entity')"></app-tooltip>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('directParticipant')"
+                            [tip]="getTooltip('directParticipant', 'entity')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
@@ -370,7 +397,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqHost'] || 'mqHost'}}</mat-label>
-                            <input matInput formControlName="mqHost">
+                            <input matInput formControlName="mqHost" [required]="get(requiredFields,'mqHost')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqHost">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqHost').hasError(validation.type)">
@@ -385,7 +412,8 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqPort'] || 'mqPort'}}</mat-label>
-                            <input matInput type="number" min="0" formControlName="mqPort">
+                            <input matInput type="number" min="0" formControlName="mqPort"
+                                [required]="get(requiredFields,'mqPort')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqPort">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqPort').hasError(validation.type)">
@@ -400,7 +428,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQManager'] || 'mqQManager'}}</mat-label>
-                            <input matInput formControlName="mqQManager">
+                            <input matInput formControlName="mqQManager" [required]="get(requiredFields,'mqQManager')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqQManager">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqQManager').hasError(validation.type)">
@@ -415,7 +443,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqChannel'] || 'mqChannel'}}</mat-label>
-                            <input matInput formControlName="mqChannel">
+                            <input matInput formControlName="mqChannel" [required]="get(requiredFields,'mqChannel')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqChannel">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqChannel').hasError(validation.type)">
@@ -430,7 +458,8 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQueueName'] || 'mqQueueName'}}</mat-label>
-                            <input matInput formControlName="mqQueueName">
+                            <input matInput formControlName="mqQueueName"
+                                [required]="get(requiredFields,'mqQueueName')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqQueueName">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqQueueName').hasError(validation.type)">
@@ -446,8 +475,10 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQueueBinding'] || 'mqQueueBinding'}}
                             </mat-label>
-                            <mat-select formControlName="mqQueueBinding">
-                                <mat-option *ngFor="let mqQueueBinding of mqDetails.QueueBinding" [value]="mqQueueBinding">
+                            <mat-select formControlName="mqQueueBinding"
+                                [required]="get(requiredFields,'mqQueueBinding')">
+                                <mat-option *ngFor="let mqQueueBinding of mqDetails.QueueBinding"
+                                    [value]="mqQueueBinding">
                                     {{mqQueueBinding}}</mat-option>
                             </mat-select>
                             <mat-error *ngFor="let validation of entityValidationMessages.mqQueueBinding">
@@ -460,13 +491,15 @@
                             </mat-error>
                         </mat-form-field>
                         <app-tooltip [tip]="getTooltip('mqQueueBinding', 'mqdetails')"></app-tooltip>
-                    </section>    
+                    </section>
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQueueContext'] || 'mqQueueContext'}}
                             </mat-label>
-                            <mat-select formControlName="mqQueueContext">
-                                <mat-option *ngFor="let mqQueueContext of mqDetails.QueueContext" [value]="mqQueueContext">
+                            <mat-select formControlName="mqQueueContext"
+                                [required]="get(requiredFields,'mqQueueContext')">
+                                <mat-option *ngFor="let mqQueueContext of mqDetails.QueueContext"
+                                    [value]="mqQueueContext">
                                     {{mqQueueContext}}</mat-option>
                             </mat-select>
                             <mat-error *ngFor="let validation of entityValidationMessages.mqQueueContext">
@@ -484,7 +517,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqDebug'] || 'mqDebug'}}
                             </mat-label>
-                            <mat-select formControlName="mqDebug">
+                            <mat-select formControlName="mqDebug" [required]="get(requiredFields,'mqDebug')">
                                 <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug.toUpperCase()">
                                     {{mqDebug}}</mat-option>
                             </mat-select>
@@ -498,12 +531,12 @@
                             </mat-error>
                         </mat-form-field>
                         <app-tooltip [tip]="getTooltip('mqDebug', 'mqdetails')"></app-tooltip>
-                    </section>    
+                    </section>
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqSSLOptions'] || 'mqSSLOptions'}}
                             </mat-label>
-                            <mat-select formControlName="mqSSLOptions">
+                            <mat-select formControlName="mqSSLOptions" [required]="get(requiredFields,'mqSSLOptions')">
                                 <mat-option *ngFor="let mqSSLOptions of mqDetails.SSLOptions" [value]="mqSSLOptions">
                                     {{mqSSLOptions}}</mat-option>
                             </mat-select>
@@ -522,7 +555,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqSSLCiphers'] || 'mqSSLCiphers'}}
                             </mat-label>
-                            <mat-select formControlName="mqSSLCiphers">
+                            <mat-select formControlName="mqSSLCiphers" [required]="get(requiredFields,'mqSSLCiphers')">
                                 <mat-option *ngFor="let mqSSLCiphers of mqDetails.SSLCiphers" [value]="mqSSLCiphers">
                                     {{mqSSLCiphers}}</mat-option>
                             </mat-select>
@@ -536,12 +569,12 @@
                             </mat-error>
                         </mat-form-field>
                         <app-tooltip [tip]="getTooltip('mqSSLCiphers', 'mqdetails')"></app-tooltip>
-                    </section>    
+                    </section>
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
                             </mat-label>
-                            <mat-select formControlName="mqSSLKeyCert">
+                            <mat-select formControlName="mqSSLKeyCert" [required]="get(requiredFields,'mqSSLKeyCert')">
                                 <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates"
                                     [value]="mqSSLKeyCert">
                                     {{mqSSLKeyCert}}</mat-option>
@@ -561,7 +594,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqSSLCaCert'] || 'mqSSLCaCert'}}
                             </mat-label>
-                            <mat-select formControlName="mqSSLCaCert">
+                            <mat-select formControlName="mqSSLCaCert" [required]="get(requiredFields,'mqSSLCaCert')">
                                 <mat-option *ngFor="let mqSSLCaCert of mqDetails.CaDigitalCertificates"
                                     [value]="mqSSLCaCert">
                                     {{mqSSLCaCert}}</mat-option>
@@ -580,7 +613,7 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqHeader'] || 'mqHeader'}}</mat-label>
-                            <input matInput formControlName="mqHeader">
+                            <input matInput formControlName="mqHeader" [required]="get(requiredFields,'mqHeader')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqHeader">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqHeader').hasError(validation.type)">
@@ -595,7 +628,8 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqSessionTimeout'] || 'mqSessionTimeout'}}</mat-label>
-                            <input matInput formControlName="mqSessionTimeout" type="number" min="0">
+                            <input matInput formControlName="mqSessionTimeout" type="number" min="0"
+                                [required]="get(requiredFields,'mqSessionTimeout')">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqSessionTimeout">
                                 <mat-error class="error-message"
                                     *ngIf="mqDetailsFormGroup.get('mqSessionTimeout').hasError(validation.type)">
@@ -621,7 +655,8 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestorDN'] || 'requestorDN'}}</mat-label>
-                            <input matInput formControlName="requestorDN" appInputLowercase>
+                            <input matInput formControlName="requestorDN" appInputLowercase
+                                [required]="get(requiredFields,'requestorDN')">
                             <mat-error *ngFor="let validation of entityValidationMessages.requestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
@@ -631,12 +666,13 @@
                                 {{getErrorByField('requestorDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestorDN', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('requestorDN', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['responderDN'] || 'responderDN'}}</mat-label>
-                            <input matInput formControlName="responderDN" appInputLowercase>
+                            <input matInput formControlName="responderDN" appInputLowercase
+                                [required]="get(requiredFields,'responderDN')">
                             <mat-error *ngFor="let validation of entityValidationMessages.responderDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
@@ -650,8 +686,9 @@
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
-                            <mat-label>{{entityDisplayNames['serviceName'] || 'serviceName'}}</mat-label>
-                            <input matInput formControlName="serviceName">
+                            <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
+                            <input matInput formControlName="serviceName"
+                                [required]="get(requiredFields,'serviceName')">
                             <mat-error *ngFor="let validation of entityValidationMessages.serviceName">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('serviceName').hasError(validation.type)">
@@ -666,12 +703,18 @@
                     <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestType'] || 'requestType'}}</mat-label>
-                            <input matInput formControlName="requestType">
+                            <input matInput formControlName="requestType"
+                                [required]="get(requiredFields,'requestType')">
+                            <mat-error *ngFor="let validation of entityValidationMessages.requestType">
+                                <mat-error class="error-message"
+                                    *ngIf="SWIFTDetailsFormGroup.get('requestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('requestType')">
                                 {{getErrorByField('requestType')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestType', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('requestType', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['trace'] || 'trace'}}:</label>
@@ -738,7 +781,7 @@
                                 {{getErrorByField('deliveryNotifDN')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('deliveryNotifDN', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('deliveryNotifDN', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -748,7 +791,7 @@
                                 {{getErrorByField('deliveryNotifRT')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('deliveryNotifRT', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('deliveryNotifRT', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -758,7 +801,7 @@
                                 {{getErrorByField('requestRef')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('requestRef', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('requestRef', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -768,7 +811,7 @@
                                 {{getErrorByField('fileInfo')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('fileInfo', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('fileInfo', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -778,7 +821,7 @@
                                 {{getErrorByField('fileDesc')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('fileDesc', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('fileDesc', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -788,7 +831,7 @@
                                 {{getErrorByField('transferInfo')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('transferInfo', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('transferInfo', 'swift')"></app-tooltip>
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
@@ -798,7 +841,7 @@
                                 {{getErrorByField('transferDesc')}}
                             </mat-error>
                         </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('transferDesc', 'swift')"></app-tooltip>
+                        <app-tooltip [tip]="getTooltip('transferDesc', 'swift')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>

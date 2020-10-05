@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model.validation;
+package com.ibm.sterling.bfg.app.model.validation.gplvalidation;
 
 public class GplValidation {
 

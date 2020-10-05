@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
 import { getFileSearchDisplayName, getFileDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
@@ -48,12 +48,17 @@ export class FileSearchComponent implements OnInit {
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
 
-  defaultSelectedData: string[] = [
-    moment().subtract(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DDTHH:mm:ss'),
-    moment().add(1, 'days').hours(23).minutes(59).seconds(0).format('YYYY-MM-DDTHH:mm:ss')
-  ];
+  defaultSelectedData: { from: { startDate, endDate }, to: { startDate, endDate } } = {
+    from: {
+      startDate: moment().subtract(1, 'days').hours(0).minutes(0).seconds(0),
+      endDate: moment().subtract(1, 'days').hours(0).minutes(0).seconds(0)
+    },
+    to: {
+      startDate: moment().add(1, 'days').hours(23).minutes(59).seconds(0),
+      endDate: moment().add(1, 'days').hours(23).minutes(59).seconds(0)
+    }
 
-  selectedData: string[];
+  };
 
   criteriaFilterObject = { direction: '', service: '' };
 
@@ -81,9 +86,7 @@ export class FileSearchComponent implements OnInit {
     private fileService: FileService,
     private dialog: MatDialog,
     private entityService: EntityService
-  ) {
-    this.selectedData = this.defaultSelectedData;
-  }
+  ) { }
 
   ngOnInit(): void {
     this.initializeSearchingParametersFormGroup();
@@ -100,8 +103,8 @@ export class FileSearchComponent implements OnInit {
       filename: [''],
       reference: [''],
       type: [''],
-      from: [this.defaultSelectedData],
-      to: [this.defaultSelectedData]
+      from: [this.defaultSelectedData.from],
+      to: [this.defaultSelectedData.to]
     });
     this.criteriaFilterObject = { direction: '', service: '' };
   }
@@ -148,8 +151,8 @@ export class FileSearchComponent implements OnInit {
 
     const formData = {
       ...this.searchingParametersFormGroup.value,
-      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value[0]')),
-      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value[1]')),
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
       outbound: getDirectionBooleanValue(get(this.searchingParametersFormGroup.get('direction'), 'value')),
       page: pageIndex.toString(),
       size: pageSize.toString()
@@ -359,4 +362,19 @@ export class FileSearchComponent implements OnInit {
     }
   }
 
+  isInvalidFromDate = (date) => {
+    const endDate = get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null);
+    return endDate && moment(endDate).isBefore(date);
+  }
+
+  isInvalidToDate = (date) => {
+    const startDate = get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null);
+    return startDate && moment(date).isBefore(startDate);
+  }
+
+  onDateChange = (event, control: AbstractControl) => {
+    if (get(event, 'target.value', null) === '') {
+      control.setValue(null);
+    }
+  }
 }

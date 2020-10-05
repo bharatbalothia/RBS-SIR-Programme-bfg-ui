@@ -35,10 +35,10 @@ public class MQDetailsValidator implements ConstraintValidator<MQValid, Entity> 
         );
 
         BiFunction<String, String, String> emptyFieldMessage =
-                (fieldName, directParticipant) ->
+                (fieldName, participantType) ->
                         new Formatter().format("%s cannot be empty because the Entity Participant " +
                                         "Type has the value %s",
-                                fieldName, directParticipant).toString();
+                                fieldName, participantType).toString();
 
         String entityParticipantType = entity.getEntityParticipantType();
         boolean isEntityParticipantTypeNotNull = isValidMQDetails(MQDetailsFieldName.ENTITY_PARTICIPANT_TYPE.fieldName(),

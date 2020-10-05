@@ -3,6 +3,7 @@ import { getEntityDisplayName } from './entity-display-names';
 export const ENTITY_VALIDATION_MESSAGES = {
     service: [
         { type: 'required', message: `${getEntityDisplayName('service')} is required` },
+        { type: 'forbidden', message: `You don't have enough permissions to proceed with this ${getEntityDisplayName('service')}`}
     ],
     entity: [
         { type: 'required', message: `${getEntityDisplayName('entity')} is required` },
@@ -21,12 +22,18 @@ export const ENTITY_VALIDATION_MESSAGES = {
     inboundService: [
         { type: 'required', message: `${getEntityDisplayName('inboundService')} is required` },
     ],
+    inboundRequestType: [
+        { type: 'required', message: `${getEntityDisplayName('inboundRequestType')} is required` },
+    ],
     requestorDN: [
         { type: 'required', message: `${getEntityDisplayName('requestorDN')} is required` },
         { type: 'pattern', message: `${getEntityDisplayName('requestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
     serviceName: [
-        { type: 'required', message: `${getEntityDisplayName('serviceName')} is required` }
+        { type: 'required', message: `${getEntityDisplayName('service')} is required` }
+    ],
+    requestType: [
+        { type: 'required', message: `${getEntityDisplayName('requestType')} is required` }
     ],
     responderDN: [
         { type: 'required', message: `${getEntityDisplayName('responderDN')} is required` },

@@ -1,6 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~ng-pick-datetime/assets/style/picker.min.css";
-
 html,
 body {
     height: 100%;
@@ -92,4 +90,23 @@ mat-form-field {
 
 .mat-slide-toggle-thumb-container {
     z-index: 0 !important;
+}
+
+.mat-horizontal-content-container {
+    overflow: initial !important;
+}
+
+.mat-form-field {
+
+    .md-drppicker {
+
+        &.shown {
+            height: 374px;
+            left: 0px;
+            right: auto;
+            position: absolute;
+            top: -390px !important;
+        }
+    }
+
 }

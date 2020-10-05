@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +15,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_PERMISSIONS;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
@@ -36,6 +38,9 @@ public class PermissionsService {
 
     @Autowired
     private PropertyService propertyService;
+
+    @Autowired
+    private PermissionsService permissionsService;
 
     public List<String> getPermissionList(LoginRequest loginRequest) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
@@ -60,7 +65,7 @@ public class PermissionsService {
 
         List<String> userAccountPermissions = propertyService.getUserAccountPermissions();
         List<String> userAccountGroups = propertyService.getUserAccountGroups();
-        Map<String, Set<String>> permissions = getPermissionsOfBFGUIGroups();
+        Map<String, Set<String>> permissions = permissionsService.getPermissionsOfBFGUIGroups();
 
         return authorityList.stream()
                 .flatMap(authorities -> {
@@ -72,12 +77,12 @@ public class PermissionsService {
                                     .map(permission -> permission.get("name"))
                                     .collect(Collectors.toSet());
                             Set<String> groupSet = new HashSet<>();
-                            Optional.ofNullable(groupMap).ifPresent(map -> {
+                            Optional.ofNullable(groupMap).ifPresent(map ->
                                 groupSet.addAll(
                                         map.stream()
                                                 .map(group -> group.get("name"))
-                                                .collect(Collectors.toSet()));
-                            });
+                                                .collect(Collectors.toSet()))
+                            );
 
                             groupSet.removeIf(isContainsNeededPermsPredicate(userAccountGroups));
 
@@ -89,6 +94,7 @@ public class PermissionsService {
                 ).collect(Collectors.toList());
     }
 
+    @Cacheable(cacheNames = CACHE_PERMISSIONS)
     public Map<String, Set<String>> getPermissionsOfBFGUIGroups() throws JsonProcessingException {
         Map<String, Set<String>> permissions = new HashMap<>();
         propertyService.getUserAccountGroups().forEach(group -> {

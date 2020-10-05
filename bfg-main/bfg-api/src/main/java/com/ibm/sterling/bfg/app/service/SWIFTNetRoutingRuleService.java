@@ -43,7 +43,8 @@ public class SWIFTNetRoutingRuleService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public SWIFTNetRoutingRuleServiceResponse createRoutingRules(SWIFTNetRoutingRuleRequest swiftNetRoutingRuleRequest) throws JsonProcessingException {
+    public SWIFTNetRoutingRuleServiceResponse createRoutingRules(SWIFTNetRoutingRuleRequest swiftNetRoutingRuleRequest)
+            throws JsonProcessingException {
         String routingRuleResponse = null;
         try {
             routingRuleResponse = new RestTemplate().postForObject(
@@ -52,31 +53,7 @@ public class SWIFTNetRoutingRuleService {
                     String.class
             );
         } catch (HttpStatusCodeException e) {
-            Optional.ofNullable(e.getMessage()).ifPresent(errorMessage -> {
-                List<Map<String, Object>> errorList = null;
-                Matcher matcher = Pattern.compile("\\{.*}").matcher(errorMessage);
-                if (matcher.find()) {
-                    String errorMessageList = "[" + matcher.group(0) + "]";
-                    try {
-                        errorList = new ObjectMapper().readValue(errorMessageList, new TypeReference<List<Map<String, Object>>>() {
-                        });
-                    } catch (JsonProcessingException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                Map<String, List<Object>> errorMap = Optional.ofNullable(errorList).map(errors -> {
-                    Map<String, List<Object>> routingRuleErrors = new HashMap<>();
-                    errors.forEach(error -> {
-                        String key = String.valueOf(error.get("attribute"));
-                        if (routingRuleErrors.containsKey(key))
-                            routingRuleErrors.get(key).add(error.get("message"));
-                        else
-                            routingRuleErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
-                    });
-                    return routingRuleErrors;
-                }).orElseGet(() -> Collections.singletonMap("error", Collections.singletonList(errorMessage)));
-                throw new SWIFTNetRoutingRuleException(errorMap, e.getStatusCode(), "Error creating routing rules in an Entity");
-            });
+            processErrorMessage(e, "Error creating routing rules in Entity");
         }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(routingRuleResponse));
         List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse =
@@ -84,7 +61,9 @@ public class SWIFTNetRoutingRuleService {
                 });
         Map<String, String> errorMap = swiftNetRoutingRuleBfguiRestResponse.stream()
                 .filter(ruleResponse -> !HttpStatus.valueOf(ruleResponse.getCode()).is2xxSuccessful())
-                .collect(Collectors.toMap(SWIFTNetRoutingRuleBfguiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfguiRestResponse::getFailCause));
+                .collect(Collectors.toMap(
+                        SWIFTNetRoutingRuleBfguiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfguiRestResponse::getFailCause
+                ));
         if (errorMap.size() > 0)
             return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, Collections.singletonList(errorMap));
         return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null);
@@ -98,6 +77,44 @@ public class SWIFTNetRoutingRuleService {
                 String.class);
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
         return objectMapper.convertValue(root, new TypeReference<List<String>>() {
+        });
+    }
+
+    public void deleteRoutingRules(List<String> routingRulesByEntityName) {
+        routingRulesByEntityName.forEach(routingRule -> {
+            try {
+                new RestTemplate().delete(routingRuleDeleteUrl + routingRule);
+            } catch (HttpStatusCodeException e) {
+                processErrorMessage(e, "Error deleting routing rules in Entity");
+            }
+        });
+    }
+
+    private void processErrorMessage(HttpStatusCodeException e, String codeMessage) {
+        Optional.ofNullable(e.getMessage()).ifPresent(errorMessage -> {
+            List<Map<String, Object>> errorList = null;
+            Matcher matcher = Pattern.compile("\\{.*}").matcher(errorMessage);
+            if (matcher.find()) {
+                String errorMessageList = "[" + matcher.group(0) + "]";
+                try {
+                    errorList = new ObjectMapper().readValue(errorMessageList, new TypeReference<List<Map<String, Object>>>() {
+                    });
+                } catch (JsonProcessingException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            Map<String, List<Object>> errorMap = Optional.ofNullable(errorList).map(errors -> {
+                Map<String, List<Object>> routingRuleErrors = new HashMap<>();
+                errors.forEach(error -> {
+                    String key = String.valueOf(error.get("attribute"));
+                    if (routingRuleErrors.containsKey(key))
+                        routingRuleErrors.get(key).add(error.get("message"));
+                    else
+                        routingRuleErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
+                });
+                return routingRuleErrors;
+            }).orElseGet(() -> Collections.singletonMap("error", Collections.singletonList(errorMessage)));
+            throw new SWIFTNetRoutingRuleException(errorMap, e.getStatusCode(), codeMessage);
         });
     }
 

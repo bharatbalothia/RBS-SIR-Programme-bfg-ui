@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.validation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
@@ -34,8 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
 
 @Service
 @Transactional
@@ -166,7 +165,7 @@ public class EntityServiceImpl implements EntityService {
             if (userName.equals(changeControl.getChanger()))
                 throw new InvalidUserForApprovalException();
             entity = approveEntity(changeControl);
-            if (entity.getRoutingRules().getSwiftNetRoutingRuleErrors() != null)
+            if (entity.getRoutingRules().getErrors() != null)
                 return entity;
         }
         changeControlService.setApproveInfo(
@@ -178,13 +177,19 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    private SWIFTNetRoutingRuleServiceResponse getSwiftNetRoutingRuleServiceResponse(Entity entity, String changer) throws JsonProcessingException {
+    private SWIFTNetRoutingRuleServiceResponse getSwiftNetRoutingRuleServiceResponse(Operation operation, Entity entity, String changer) throws JsonProcessingException {
         List<String> routingRulesByEntityName = swiftNetRoutingRuleService.getRoutingRulesByEntityName(entity.getEntity());
-        if (routingRulesByEntityName.isEmpty())
-            return swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
-        return new SWIFTNetRoutingRuleServiceResponse(routingRulesByEntityName.stream()
-                .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
-                .collect(Collectors.toList()));
+        if (operation.equals(CREATE)) {
+            if (routingRulesByEntityName.isEmpty())
+                return swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+            return new SWIFTNetRoutingRuleServiceResponse(routingRulesByEntityName.stream()
+                    .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
+                    .collect(Collectors.toList()));
+        } else if (operation.equals(DELETE)) {
+            if (!routingRulesByEntityName.isEmpty())
+                swiftNetRoutingRuleService.deleteRoutingRules(routingRulesByEntityName);
+        }
+        return new SWIFTNetRoutingRuleServiceResponse();
     }
 
     private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
@@ -212,12 +217,13 @@ public class EntityServiceImpl implements EntityService {
             entity.setService("DEL_" + entity.getEntityId() + "_" + entity.getService());
             entity.setMailboxPathOut("DEL_" + entity.getEntityId() + "_" + entity.getMailboxPathOut());
             entity.setMqQueueOut("DEL_" + entity.getEntityId() + "_" + entity.getMqQueueOut());
+            entity.setInboundRoutingRule(true);
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if (entity.getInboundRoutingRule()) {
-            routingRules = getSwiftNetRoutingRuleServiceResponse(entity, changeControl.getChanger());
-            if (routingRules.getSwiftNetRoutingRuleErrors() != null) {
+        if (entity.getInboundRoutingRule() && changeControl.getEntityLog().getService().equals("GPL")) {
+            routingRules = getSwiftNetRoutingRuleServiceResponse(operation, entity, changeControl.getChanger());
+            if (routingRules.getErrors() != null) {
                 Entity emptyEntity = new Entity();
                 emptyEntity.setRoutingRules(routingRules);
                 return emptyEntity;

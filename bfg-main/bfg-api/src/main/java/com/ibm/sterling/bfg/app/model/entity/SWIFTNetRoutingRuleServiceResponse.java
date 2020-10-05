@@ -7,37 +7,37 @@ import java.util.Map;
 
 public class SWIFTNetRoutingRuleServiceResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse;
+    private List<SWIFTNetRoutingRuleBfguiRestResponse> response;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Map<String, String>> swiftNetRoutingRuleErrors;
+    private List<Map<String, String>> errors;
 
-    public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse,
-                                              List<Map<String, String>> swiftNetRoutingRuleErrors) {
-        this.swiftNetRoutingRuleBfguiRestResponse = swiftNetRoutingRuleBfguiRestResponse;
-        this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
+    public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> response,
+                                              List<Map<String, String>> errors) {
+        this.response = response;
+        this.errors = errors;
     }
 
-    public SWIFTNetRoutingRuleServiceResponse(List<Map<String, String>> swiftNetRoutingRuleErrors) {
-        this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
+    public SWIFTNetRoutingRuleServiceResponse(List<Map<String, String>> errors) {
+        this.errors = errors;
     }
 
     public SWIFTNetRoutingRuleServiceResponse() {
     }
 
-    public List<SWIFTNetRoutingRuleBfguiRestResponse> getSwiftNetRoutingRuleBfguiRestResponse() {
-        return swiftNetRoutingRuleBfguiRestResponse;
+    public List<SWIFTNetRoutingRuleBfguiRestResponse> getResponse() {
+        return response;
     }
 
-    public void setSwiftNetRoutingRuleBfguiRestResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse) {
-        this.swiftNetRoutingRuleBfguiRestResponse = swiftNetRoutingRuleBfguiRestResponse;
+    public void setResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> response) {
+        this.response = response;
     }
 
-    public List<Map<String, String>> getSwiftNetRoutingRuleErrors() {
-        return swiftNetRoutingRuleErrors;
+    public List<Map<String, String>> getErrors() {
+        return errors;
     }
 
-    public void setSwiftNetRoutingRuleErrors(List<Map<String, String>> swiftNetRoutingRuleErrors) {
-        this.swiftNetRoutingRuleErrors = swiftNetRoutingRuleErrors;
+    public void setErrors(List<Map<String, String>> errors) {
+        this.errors = errors;
     }
 
 }

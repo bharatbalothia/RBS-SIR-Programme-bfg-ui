@@ -16,8 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,5 +62,4 @@ public class CredentialsService {
                                 .collect(Collectors.toList())
                 )).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
     }
-
 }

@@ -24,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
+import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 import static org.springframework.data.domain.PageRequest.of;
 
@@ -225,7 +226,7 @@ public class SearchService {
         return header;
     }
 
-    @Cacheable("bpNames")
+    @Cacheable(cacheNames = CACHE_BP_HEADERS)
     public List<BPName> getBPNames() throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",

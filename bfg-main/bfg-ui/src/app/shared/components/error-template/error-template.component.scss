@@ -1,7 +1,9 @@
 .error-message {
     margin-bottom: 15px;
+    display: block;
 
     .warnings-message {
+        display: block;
         color: #856404;
         background-color: #fff3cd;
         border-color: #ffeeba;
@@ -11,6 +13,7 @@
     }
 
     .errors-message {
+        display: block;
         color: #721c24;
         background-color: #f8d7da;
         border-color: #f5c6cb;

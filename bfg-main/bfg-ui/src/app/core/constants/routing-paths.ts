@@ -19,6 +19,7 @@ export const ROUTING_PATHS = {
 
   // search routes
   FILE_SEARCH: 'file-search',
+  FILE_DETAILS: 'file-details',
   SCT_TRANSACTION_SEARCH: 'sct-transaction-search',
 
   // setup routes

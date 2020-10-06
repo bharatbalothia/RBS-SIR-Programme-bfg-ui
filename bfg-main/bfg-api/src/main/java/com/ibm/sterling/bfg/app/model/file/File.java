@@ -24,6 +24,7 @@ public class File {
     private Integer transactionTotal;
     private Boolean outbound;
     private Boolean override;
+    private String statusLabel;
 
     public Integer getId() {
         return id;
@@ -151,6 +152,14 @@ public class File {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public String getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(String statusLabel) {
+        this.statusLabel = statusLabel;
     }
 
 }

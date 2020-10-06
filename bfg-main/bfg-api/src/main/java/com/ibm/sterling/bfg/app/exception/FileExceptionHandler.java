@@ -59,6 +59,14 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity handleFileNotFoundException(FileNotFoundException ex) {
+        ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.FileNotFoundException);
+        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "message"))
+                .ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
     private String extractErrorMessage(String message, String messageKey) {
         return Optional.ofNullable(message)
                 .map(errMessage -> {

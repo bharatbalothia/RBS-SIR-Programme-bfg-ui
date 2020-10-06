@@ -179,13 +179,13 @@ export class EntityCreateComponent implements OnInit {
       this.prepareFieldsForEntityOfType(value, entity);
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
-      if (this.isEditing()){
+      if (this.isEditing()) {
         this.prepareFieldsForEntityOfType(value, entity);
       }
     }
   }
 
-  prepareFieldsForEntityOfType(value, entity){
+  prepareFieldsForEntityOfType(value, entity) {
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -465,11 +465,11 @@ export class EntityCreateComponent implements OnInit {
           ...this.summaryPageFormGroup.value,
           ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
-          inboundRequestorDN: this.entityPageFormGroup.controls.inboundRequestorDN.value,
-          inboundResponderDN: this.entityPageFormGroup.controls.inboundResponderDN.value,
-          inboundService: this.entityPageFormGroup.controls.inboundService.value,
-          inboundDir: this.entityPageFormGroup.controls.inboundDir.value,
-          inboundRoutingRule: this.entityPageFormGroup.controls.inboundRoutingRule.value,
+          inboundRequestorDN: get(this.entityPageFormGroup.controls.inboundRequestorDN, 'value'),
+          inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
+          inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
+          inboundDir: get(this.entityPageFormGroup.controls.inboundDir, 'value'),
+          inboundRoutingRule: get(this.entityPageFormGroup.controls.inboundRoutingRule, 'value'),
         };
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
@@ -543,17 +543,18 @@ export class EntityCreateComponent implements OnInit {
     const entity = {
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
+      ...get(this.entityTypeFormGroup.controls, 'service.value', '') === ENTITY_SERVICE_TYPE.GPL && {
+        inboundRequestorDN: get(this.entityPageFormGroup.controls, 'inboundRequestorDN.value'),
+        inboundResponderDN: get(this.entityPageFormGroup.controls, 'inboundResponderDN.value'),
+        inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
+        inboundDir: get(this.entityPageFormGroup.controls, 'inboundDir.value'),
+        inboundRoutingRule: get(this.entityPageFormGroup.controls, 'inboundRoutingRule.value'),
+      },
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
       ...this.summaryPageFormGroup.value,
-      inboundRequestorDN: this.entityPageFormGroup.controls.inboundRequestorDN.value,
-      inboundResponderDN: this.entityPageFormGroup.controls.inboundResponderDN.value,
-      inboundService: this.entityPageFormGroup.controls.inboundService.value,
-      inboundDir: this.entityPageFormGroup.controls.inboundDir.value,
-      inboundRoutingRule: this.entityPageFormGroup.controls.inboundRoutingRule.value,
     };
-    console.log(entity);
 
     this.summaryPageDataSource = Object.keys(entity)
       .map((key) => ({

@@ -26,6 +26,8 @@ public class PropertySettings {
     private String[] fileErrorPostfixKey;
     private String transactionSearchPrefixKey;
     private String[] transactionSearchPostfixKey;
+    private String useraccountGroupsKey;
+    private String useraccountPermissionsKey;
 
     public String getUserName() {
         return userName;
@@ -179,4 +181,19 @@ public class PropertySettings {
         this.transactionStatusPrefixKey = transactionStatusPrefixKey;
     }
 
+    public String getUseraccountGroupsKey() {
+        return useraccountGroupsKey;
+    }
+
+    public void setUseraccountGroupsKey(String useraccountGroupsKey) {
+        this.useraccountGroupsKey = useraccountGroupsKey;
+    }
+
+    public String getUseraccountPermissionsKey() {
+        return useraccountPermissionsKey;
+    }
+
+    public void setUseraccountPermissionsKey(String useraccountPermissionsKey) {
+        this.useraccountPermissionsKey = useraccountPermissionsKey;
+    }
 }

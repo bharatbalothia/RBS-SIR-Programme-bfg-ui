@@ -9,3 +9,4 @@ Fix SIRP-2050 The Mail box fields are added to Pending Changes view.
 Fix SIRP-2053 Conditional validation added to Inbound Request Type field according to .Route Inbound value.
 Fix SIRP-2129 Permission check added to Entity Creation component for SCT and GPL.
 Fix SIRP-2136 Certificate Is expired set as warning. Added Validity field.
+Fix SIRP-1955 User permissions composed from Permissions, Groups and Subgroups

@@ -10,3 +10,4 @@ Fix SIRP-2053 Conditional validation added to Inbound Request Type field accordi
 Fix SIRP-2129 Permission check added to Entity Creation component for SCT and GPL.
 Fix SIRP-2136 Certificate Is expired set as warning. Added Validity field.
 Fix SIRP-1955 User permissions composed from Permissions, Groups and Subgroups
+Fix SIRP-2225 Handle efield values while editing Entity

@@ -70,18 +70,17 @@ public class PermissionsService {
         List<String> userAccountPermissions = userAuthorities.get(userAccountPermissionsKey);
         Map<String, Set<String>> permissions = permissionsService.getPermissionsOfBFGUIGroups(userAccountGroups, userAccountPermissions);
 
-        return authorityList.stream()
-                .flatMap(authorities -> {
-                            Set<String> permissionSet = getAuthoritySet.apply(authorities, "permissions");
-                            Set<String> groupSet = getAuthoritySet.apply(authorities, "groups");
-                            if (!groupSet.isEmpty()) {
-                                groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
-                                groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
-                            }
-                            permissionSet.removeIf(isNotNeededAuthorityPredicate(userAccountPermissions));
-                            return permissionSet.stream();
-                        }
-                ).collect(Collectors.toList());
+        return authorityList.stream().flatMap(auth -> {
+                    Set<String> permissionSet = getAuthoritySet.apply(auth, "permissions");
+                    Set<String> groupSet = getAuthoritySet.apply(auth, "groups");
+                    if (!groupSet.isEmpty()) {
+                        groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
+                        groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
+                    }
+                    permissionSet.removeIf(isNotNeededAuthorityPredicate(userAccountPermissions));
+                    return permissionSet.stream();
+                }
+        ).collect(Collectors.toList());
     }
 
     @Cacheable(cacheNames = CACHE_PERMISSIONS)

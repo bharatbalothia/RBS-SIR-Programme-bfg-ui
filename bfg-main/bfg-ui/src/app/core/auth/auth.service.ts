@@ -7,11 +7,12 @@ import { User } from './user.model';
 import { tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { get } from 'lodash';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 import { ROUTING_PATHS } from '../constants/routing-paths';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { SSOCredentials } from './sso-credentials.model';
 
 
 @Injectable({
@@ -43,6 +44,18 @@ export class AuthService {
 
   logIn(credentials: Credentials): Observable<User> {
     return this.http.post<User>(this.apiUrl + 'signin', credentials)
+      .pipe(
+        tap(user => {
+          this.user.next(user);
+          localStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
+        })
+      );
+  }
+
+  ssologIn(credentials: SSOCredentials): Observable<User>{
+    console.log('============================================================');
+    console.log('Logged In With SSO');
+    return this.http.post<User>(this.apiUrl + 'signin', {login: 'TESTUSER', password: 'password'})
       .pipe(
         tap(user => {
           this.user.next(user);
@@ -105,4 +118,17 @@ export class AuthService {
     }
   }
 
+  isValidSSOLink(queryParams): boolean{
+    return queryParams && queryParams.userName && queryParams.nodeName && queryParams.dlssoToken;
+  }
+
+  extractSSOCredentials(queryParams: Params): SSOCredentials{
+    const credentials: SSOCredentials = {userName : '', dlssoToken: '', nodeName: ''};
+    if (this.isValidSSOLink(queryParams)){
+      credentials.userName = queryParams.userName;
+      credentials.dlssoToken = queryParams.dlssoToken;
+      credentials.nodeName = queryParams.nodeName;
+    }
+    return credentials;
+  }
 }

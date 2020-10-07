@@ -1,0 +1,25 @@
+.file-details-card {
+    margin: 15px 15px 15px 15px;
+
+    .top-error-message {
+        margin-left: 24px;
+    }
+
+    .card-content {
+        min-height: 150px;
+
+        ::ng-deep .mat-tab-body-wrapper {
+            max-height: none;
+            z-index: 0;
+        }
+
+    }
+
+    .mat-spinner {
+        height: 100px;
+        width: 100px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+    }
+}

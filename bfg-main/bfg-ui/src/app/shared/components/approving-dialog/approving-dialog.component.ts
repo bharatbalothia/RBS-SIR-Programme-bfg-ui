@@ -4,9 +4,8 @@ import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { CHANGE_STATUS } from '../../models/changeControl/change-status';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { removeEmpties } from '../../utils/utils';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -68,5 +67,8 @@ export class ApprovingDialogComponent implements OnInit {
           this.errorMessage = getApiErrorMessage(error);
         });
   }
+
+  getBeforeTab = (tab: Tab) => get(tab, 'tabTitle') === DIALOG_TABS.DIFFERENCES
+    && this.tabs.find(el => el.tabTitle === DIALOG_TABS.BEFORE_CHANGES)
 
 }

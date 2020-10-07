@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -70,24 +71,30 @@ public class EntityController {
                 changeControl,
                 String.valueOf(approve.get("approverComments")),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
-        ).map(record -> ok()
-                .body(record))
+        ).map(record -> ok().body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
         return entityService.findById(id)
-                .map(record -> ok()
-                        .body(record))
+                .map(record -> {
+                    if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
+                            StringUtils.isEmpty(record.getInboundResponderDN()))
+                        record.setRouteInbound(Boolean.FALSE);
+                    else {
+                        record.setInboundDir(Boolean.TRUE);
+                        record.setInboundRoutingRule(Boolean.TRUE);
+                    }
+                    return ok().body(record);
+                })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("pending/{id}")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable(name = "id") String id) {
         return changeControlService.findById(id)
-                .map(record -> ok()
-                        .body(record.convertEntityLogToEntity()))
+                .map(record -> ok().body(record.convertEntityLogToEntity()))
                 .orElseThrow(ChangeControlNotFoundException::new);
     }
 

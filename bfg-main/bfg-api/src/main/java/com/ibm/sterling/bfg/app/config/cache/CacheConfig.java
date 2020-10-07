@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.config;
+package com.ibm.sterling.bfg.app.config.cache;
 
 import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,26 +11,39 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
+import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
+import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_PERMISSIONS;
+
 @Configuration
 @EnableCaching
 public class CacheConfig {
 
-    @Value("${cache.timeToLive}")
-    private Long timeToLive;
+    @Value("${cache.bpheaders.timeout}")
+    private Long bpheadersTimeout;
+
+    @Value("${cache.permissions.timeout}")
+    private Long permissionsTimeout;
 
     @Bean("bpNames")
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager() {
             @Override
             protected Cache createConcurrentMapCache(String name) {
+                long timeOut = 10;
+                switch (name) {
+                    case CACHE_PERMISSIONS :
+                        timeOut = bpheadersTimeout;
+                        break;
+                    case CACHE_BP_HEADERS :
+                        timeOut = permissionsTimeout;
+                }
                 return new ConcurrentMapCache(
                         name,
                         CacheBuilder.newBuilder()
-                                .expireAfterWrite(timeToLive, TimeUnit.SECONDS)
+                                .expireAfterWrite(timeOut, TimeUnit.SECONDS)
                                 .build().asMap(),
                         false);
             }
         };
     }
-
 }

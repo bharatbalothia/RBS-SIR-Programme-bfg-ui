@@ -36,8 +36,7 @@ public class FileSearchController {
 
     @GetMapping("{id}")
     public ResponseEntity<File> getFileById(@PathVariable Integer id) throws JsonProcessingException {
-        return ok(fileSearchService.getFileById(id)
-                .orElseThrow(FileNotFoundException::new));
+        return ok(fileSearchService.getFileById(id).orElseThrow(FileNotFoundException::new));
     }
 
     @GetMapping("{fileId}/transactions")

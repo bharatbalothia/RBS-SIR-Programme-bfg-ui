@@ -3,7 +3,6 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.model.security.Login;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +50,7 @@ public class PermissionsService {
     @Autowired
     private PermissionsService permissionsService;
 
-    public List<String> getPermissionList(Login loginRequest) throws JsonProcessingException {
+    public List<String> getPermissionList(LoginRequest loginRequest) throws JsonProcessingException {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(permissionsUrl)
                 .queryParam("_exclude", "preferredLanguage")
                 .queryParam("_range", "0-999")

@@ -3,7 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.model.security.Login;
+import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import com.ibm.sterling.bfg.app.model.security.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,13 +33,18 @@ public class CredentialsService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public UserCredentials getSBIAuthResponse(Login loginRequest) throws JsonProcessingException {
+    public UserCredentials getSBIAuthResponse(LoginRequest loginRequest) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> loginMap = loginRequest.getLoginMap();
+        MultiValueMap<String, String> loginMap = new LinkedMultiValueMap<String, String>() {
+            {
+                add("userName", loginRequest.getLogin());
+                add("password", loginRequest.getPassword());
+            }
+        };
         String userCredentials = restTemplate.postForObject(
-                authenticationUrl + loginRequest.getUrlPostfix(),
+                authenticationUrl,
                 new HttpEntity<>(loginMap, headers),
                 String.class
         );

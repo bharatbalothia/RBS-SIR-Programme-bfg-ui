@@ -1,7 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.model.security.LoginSsoRequest;
 import com.ibm.sterling.bfg.app.security.JwtTokenGenerator;
 import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import com.ibm.sterling.bfg.app.service.CredentialsService;
@@ -27,12 +26,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity signIn(@RequestBody LoginRequest credentials) throws JsonProcessingException {
-        return ok(Collections.singletonMap("accessToken",
-                jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
-    }
-
-    @PostMapping("/sso")
-    public ResponseEntity signInSso(@RequestBody LoginSsoRequest credentials) throws JsonProcessingException {
         return ok(Collections.singletonMap("accessToken",
                 jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
     }

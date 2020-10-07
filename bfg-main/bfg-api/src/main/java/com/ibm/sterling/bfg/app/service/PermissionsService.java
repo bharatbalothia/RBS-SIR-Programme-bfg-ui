@@ -67,11 +67,10 @@ public class PermissionsService {
                 .flatMap(authorities -> {
                             Set<String> permissionSet = getAuthoritySet.apply(authorities, "permissions");
                             Set<String> groupSet = getAuthoritySet.apply(authorities, "groups");
-
-                            groupSet.removeIf(isNotNeededPermsPredicate(userAccountGroups));
-
-                            groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
-
+                            if (!groupSet.isEmpty()) {
+                                groupSet.removeIf(isNotNeededPermsPredicate(userAccountGroups));
+                                groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
+                            }
                             permissionSet.removeIf(isNotNeededPermsPredicate(userAccountPermissions));
                             return permissionSet.stream();
                         }

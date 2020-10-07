@@ -63,10 +63,9 @@ public class PermissionsService {
         List<String> userAccountGroups = propertyService.getUserAccountGroups();
         Map<String, Set<String>> permissions = permissionsService.getPermissionsOfBFGUIGroups(userAccountGroups, userAccountPermissions);
 
-        return authorityList.stream()
-                .flatMap(authorities -> {
-                            Set<String> permissionSet = getAuthoritySet.apply(authorities, "permissions");
-                            Set<String> groupSet = getAuthoritySet.apply(authorities, "groups");
+        return Optional.ofNullable(authorityList).map(authList -> authList.stream().flatMap(auth -> {
+                            Set<String> permissionSet = getAuthoritySet.apply(auth, "permissions");
+                            Set<String> groupSet = getAuthoritySet.apply(auth, "groups");
                             if (!groupSet.isEmpty()) {
                                 groupSet.removeIf(isNotNeededPermsPredicate(userAccountGroups));
                                 groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
@@ -74,7 +73,7 @@ public class PermissionsService {
                             permissionSet.removeIf(isNotNeededPermsPredicate(userAccountPermissions));
                             return permissionSet.stream();
                         }
-                ).collect(Collectors.toList());
+                ).collect(Collectors.toList())).orElse(new ArrayList<>());
     }
 
     @Cacheable(cacheNames = CACHE_PERMISSIONS)
@@ -111,28 +110,24 @@ public class PermissionsService {
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
 
         List<Map<String, String>> authorityList = objectMapper.convertValue(root, List.class);
+        return Optional.ofNullable(authorityList).map(authList -> authList.stream().flatMap(auth -> {
+                    Set<String> permissionSet = getAuthoritySet.apply(auth, "permissions");
 
-        return authorityList.stream()
-                .flatMap(authorities -> {
-                            Set<String> permissionSet = getAuthoritySet.apply(authorities, "permissions");
-
-                            if (!isChild) {
-
-                                Set<String> subgroups = getAuthoritySet.apply(authorities, "subgroups");
-                                subgroups.forEach(subgroup -> {
-                                    try {
-                                        permissionSet.addAll(
-                                                getPermissionsOfGroup(subgroup, true, listBFGUIPermissions));
-                                    } catch (JsonProcessingException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                });
+                    if (!isChild) {
+                        Set<String> subgroups = getAuthoritySet.apply(auth, "subgroups");
+                        subgroups.forEach(subgroup -> {
+                            try {
+                                permissionSet.addAll(
+                                        getPermissionsOfGroup(subgroup, true, listBFGUIPermissions));
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
                             }
-                            permissionSet.removeIf(isNotNeededPermsPredicate(listBFGUIPermissions));
-                            return permissionSet.stream();
-                        }
-                ).collect(Collectors.toSet());
+                        });
+                    }
+                    permissionSet.removeIf(isNotNeededPermsPredicate(listBFGUIPermissions));
+                    return permissionSet.stream();
+                }
+        ).collect(Collectors.toSet())).orElse(new HashSet<>());
     }
 
     private Predicate<String> isNotNeededPermsPredicate(List<String> userAccountPermissions) {
@@ -144,6 +139,6 @@ public class PermissionsService {
                 objectMapper.convertValue(authorityMap.get(name), List.class);
         return Optional.ofNullable(authorityList)
                 .map(authList -> authorityList.stream().map(authority -> authority.get("name")).collect(Collectors.toSet()))
-                .orElse(new HashSet<String>());
+                .orElse(new HashSet<>());
     };
 }

@@ -82,18 +82,17 @@ public class SWIFTNetRoutingRuleService {
         List<SWIFTNetRoutingRuleBfgUiRestResponse> swiftNetRoutingRuleBfgUiRestResponse =
                 objectMapper.convertValue(root, new TypeReference<List<SWIFTNetRoutingRuleBfgUiRestResponse>>() {
                 });
-        Map<String, String> errorMap = swiftNetRoutingRuleBfgUiRestResponse.stream()
+        List<Object> errorList = swiftNetRoutingRuleBfgUiRestResponse.stream()
                 .filter(ruleResponse -> !HttpStatus.valueOf(ruleResponse.getCode()).is2xxSuccessful())
-                .collect(Collectors.toMap(
-                        SWIFTNetRoutingRuleBfgUiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfgUiRestResponse::getFailCause
-                ));
-        if (errorMap.size() > 0) {
-            if (errorMap.size() < swiftNetRoutingRuleBfgUiRestResponse.size()) {
+                .map(ruleResponse -> (Object) Collections.singletonMap(ruleResponse.getRoutingRuleName(), ruleResponse.getFailCause()))
+                .collect(Collectors.toList());
+        if (errorList.size() > 0) {
+            if (errorList.size() < swiftNetRoutingRuleBfgUiRestResponse.size()) {
                 Entity entity = new Entity();
                 entity.setEntity(swiftNetRoutingRuleRequest.getEntityName());
                 executeRoutingRuleOperation(DELETE, entity, null);
             }
-            throw new EntityApprovalException(Collections.singletonList(errorMap), CREATION_APPROVAL_ERROR);
+            throw new EntityApprovalException(errorList, CREATION_APPROVAL_ERROR);
         }
         return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfgUiRestResponse, null);
     }

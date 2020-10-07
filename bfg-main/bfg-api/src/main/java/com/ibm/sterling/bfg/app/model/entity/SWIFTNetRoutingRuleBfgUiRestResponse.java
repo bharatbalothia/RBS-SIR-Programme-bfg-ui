@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
-public class SWIFTNetRoutingRuleBfguiRestResponse {
+public class SWIFTNetRoutingRuleBfgUiRestResponse {
     private String routingRuleName;
     private String updateAction;
     private String failCause;

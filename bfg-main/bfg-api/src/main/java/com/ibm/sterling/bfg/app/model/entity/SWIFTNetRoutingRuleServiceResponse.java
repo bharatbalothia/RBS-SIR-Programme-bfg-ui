@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class SWIFTNetRoutingRuleServiceResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<SWIFTNetRoutingRuleBfguiRestResponse> response;
+    private List<SWIFTNetRoutingRuleBfgUiRestResponse> response;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String, String>> errors;
 
-    public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> response,
+    public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfgUiRestResponse> response,
                                               List<Map<String, String>> errors) {
         this.response = response;
         this.errors = errors;
@@ -20,11 +20,11 @@ public class SWIFTNetRoutingRuleServiceResponse {
     public SWIFTNetRoutingRuleServiceResponse() {
     }
 
-    public List<SWIFTNetRoutingRuleBfguiRestResponse> getResponse() {
+    public List<SWIFTNetRoutingRuleBfgUiRestResponse> getResponse() {
         return response;
     }
 
-    public void setResponse(List<SWIFTNetRoutingRuleBfguiRestResponse> response) {
+    public void setResponse(List<SWIFTNetRoutingRuleBfgUiRestResponse> response) {
         this.response = response;
     }
 

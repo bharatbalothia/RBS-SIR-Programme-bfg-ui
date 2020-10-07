@@ -9,7 +9,7 @@ import com.ibm.sterling.bfg.app.exception.SWIFTNetRoutingRuleException;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
-import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfguiRestResponse;
+import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfgUiRestResponse;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleServiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +48,9 @@ public class SWIFTNetRoutingRuleService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String CREATION_APPROVAL_ERROR = "The Entity is not approved. Error creating routing rules";
+    private static final String DELETING_APPROVAL_ERROR = "The Entity is not approved. Error deleting routing rules";
+
     public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer) throws JsonProcessingException {
         List<String> routingRulesByEntityName = getRoutingRulesByEntityName(entity.getEntity());
         if (operation.equals(CREATE)) {
@@ -55,7 +58,7 @@ public class SWIFTNetRoutingRuleService {
                 return createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
             throw new EntityApprovalException(routingRulesByEntityName.stream()
                     .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
-                    .collect(Collectors.toList()), "Error creating routing rules in Entity");
+                    .collect(Collectors.toList()), CREATION_APPROVAL_ERROR);
         } else if (operation.equals(DELETE)) {
             if (!routingRulesByEntityName.isEmpty())
                 deleteRoutingRules(routingRulesByEntityName);
@@ -73,26 +76,26 @@ public class SWIFTNetRoutingRuleService {
                     String.class
             );
         } catch (HttpStatusCodeException e) {
-            processErrorMessage(e, "Error creating routing rules in Entity");
+            processErrorMessage(e, CREATION_APPROVAL_ERROR);
         }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(routingRuleResponse));
-        List<SWIFTNetRoutingRuleBfguiRestResponse> swiftNetRoutingRuleBfguiRestResponse =
-                objectMapper.convertValue(root, new TypeReference<List<SWIFTNetRoutingRuleBfguiRestResponse>>() {
+        List<SWIFTNetRoutingRuleBfgUiRestResponse> swiftNetRoutingRuleBfgUiRestResponse =
+                objectMapper.convertValue(root, new TypeReference<List<SWIFTNetRoutingRuleBfgUiRestResponse>>() {
                 });
-        Map<String, String> errorMap = swiftNetRoutingRuleBfguiRestResponse.stream()
+        Map<String, String> errorMap = swiftNetRoutingRuleBfgUiRestResponse.stream()
                 .filter(ruleResponse -> !HttpStatus.valueOf(ruleResponse.getCode()).is2xxSuccessful())
                 .collect(Collectors.toMap(
-                        SWIFTNetRoutingRuleBfguiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfguiRestResponse::getFailCause
+                        SWIFTNetRoutingRuleBfgUiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfgUiRestResponse::getFailCause
                 ));
         if (errorMap.size() > 0) {
-            if (errorMap.size() < swiftNetRoutingRuleBfguiRestResponse.size()) {
+            if (errorMap.size() < swiftNetRoutingRuleBfgUiRestResponse.size()) {
                 Entity entity = new Entity();
                 entity.setEntity(swiftNetRoutingRuleRequest.getEntityName());
                 executeRoutingRuleOperation(DELETE, entity, null);
             }
-            throw new EntityApprovalException(Collections.singletonList(errorMap), "Error creating routing rules in Entity");
+            throw new EntityApprovalException(Collections.singletonList(errorMap), CREATION_APPROVAL_ERROR);
         }
-        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null);
+        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfgUiRestResponse, null);
     }
 
     private List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {
@@ -111,7 +114,7 @@ public class SWIFTNetRoutingRuleService {
             try {
                 new RestTemplate().delete(routingRuleDeleteUrl + routingRule);
             } catch (HttpStatusCodeException e) {
-                processErrorMessage(e, "Error deleting routing rules in Entity");
+                processErrorMessage(e, DELETING_APPROVAL_ERROR);
             }
         });
     }

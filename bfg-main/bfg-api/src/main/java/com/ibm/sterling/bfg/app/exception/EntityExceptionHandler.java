@@ -51,14 +51,14 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SWIFTNetRoutingRuleException.class)
     public ResponseEntity handleSWIFTNetRoutingRuleException(SWIFTNetRoutingRuleException ex) {
         ErrorMessage errorMessage = errorConfig.getErrorMessage(
-                EntityErrorCode.SWIFTNetRoutingRuleException, ex.getErrorMessage(), Collections.singletonList(ex.getInnerExceptions()));
+                EntityErrorCode.EntityApprovalException, ex.getErrorMessage(), Collections.singletonList(ex.getInnerExceptions()));
         return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
     }
 
     @ExceptionHandler(EntityApprovalException.class)
     public ResponseEntity handleEntityApprovalException(EntityApprovalException ex) {
         ErrorMessage errorMessage = errorConfig.getErrorMessage(
-                EntityErrorCode.EntityApprovalException, ex.getErrorMessage(), Collections.singletonList(ex.getErrors()));
+                EntityErrorCode.EntityApprovalException, ex.getErrorMessage(), ex.getErrors());
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

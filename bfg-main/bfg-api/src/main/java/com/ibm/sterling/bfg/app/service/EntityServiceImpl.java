@@ -3,9 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.*;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
@@ -165,8 +163,6 @@ public class EntityServiceImpl implements EntityService {
             if (userName.equals(changeControl.getChanger()))
                 throw new InvalidUserForApprovalException();
             entity = approveEntity(changeControl);
-            if (entity.getRoutingRules().getErrors() != null)
-                return entity;
         }
         changeControlService.setApproveInfo(
                 changeControl,
@@ -175,21 +171,6 @@ public class EntityServiceImpl implements EntityService {
                 status
         );
         return entity;
-    }
-
-    private SWIFTNetRoutingRuleServiceResponse getSwiftNetRoutingRuleServiceResponse(Operation operation, Entity entity, String changer) throws JsonProcessingException {
-        List<String> routingRulesByEntityName = swiftNetRoutingRuleService.getRoutingRulesByEntityName(entity.getEntity());
-        if (operation.equals(CREATE)) {
-            if (routingRulesByEntityName.isEmpty())
-                return swiftNetRoutingRuleService.createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
-            return new SWIFTNetRoutingRuleServiceResponse(routingRulesByEntityName.stream()
-                    .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
-                    .collect(Collectors.toList()));
-        } else if (operation.equals(DELETE)) {
-            if (!routingRulesByEntityName.isEmpty())
-                swiftNetRoutingRuleService.deleteRoutingRules(routingRulesByEntityName);
-        }
-        return new SWIFTNetRoutingRuleServiceResponse();
     }
 
     private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
@@ -222,12 +203,7 @@ public class EntityServiceImpl implements EntityService {
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
         if (entity.getInboundRoutingRule() && changeControl.getEntityLog().getService().equals("GPL")) {
-            routingRules = getSwiftNetRoutingRuleServiceResponse(operation, entity, changeControl.getChanger());
-            if (routingRules.getErrors() != null) {
-                Entity emptyEntity = new Entity();
-                emptyEntity.setRoutingRules(routingRules);
-                return emptyEntity;
-            }
+            routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 
         Entity savedEntity = entityRepository.save(entity);

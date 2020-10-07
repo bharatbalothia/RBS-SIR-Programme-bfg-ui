@@ -31,8 +31,8 @@ public class ErrorConfig {
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public ErrorMessage getErrorMessage(ErrorCode errorCode, List<Object> data) {
-        return new ErrorMessage(environment, errorCode, data);
+    public ErrorMessage getErrorMessage(ErrorCode code, List<Object> data) {
+        return new ErrorMessage(environment, code, data);
     }
 
 }

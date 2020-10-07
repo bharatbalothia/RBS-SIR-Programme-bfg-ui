@@ -17,10 +17,6 @@ public class SWIFTNetRoutingRuleServiceResponse {
         this.errors = errors;
     }
 
-    public SWIFTNetRoutingRuleServiceResponse(List<Map<String, String>> errors) {
-        this.errors = errors;
-    }
-
     public SWIFTNetRoutingRuleServiceResponse() {
     }
 

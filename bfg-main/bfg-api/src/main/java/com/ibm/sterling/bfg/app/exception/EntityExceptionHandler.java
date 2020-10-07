@@ -55,6 +55,13 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
     }
 
+    @ExceptionHandler(EntityApprovalException.class)
+    public ResponseEntity handleEntityApprovalException(EntityApprovalException ex) {
+        ErrorMessage errorMessage = errorConfig.getErrorMessage(
+                EntityErrorCode.EntityApprovalException, ex.getErrorMessage(), Collections.singletonList(ex.getErrors()));
+        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

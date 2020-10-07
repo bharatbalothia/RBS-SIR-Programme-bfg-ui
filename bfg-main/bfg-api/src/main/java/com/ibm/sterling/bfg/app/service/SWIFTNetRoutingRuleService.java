@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.EntityApprovalException;
 import com.ibm.sterling.bfg.app.exception.SWIFTNetRoutingRuleException;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfguiRestResponse;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleServiceResponse;
@@ -20,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
@@ -43,7 +48,22 @@ public class SWIFTNetRoutingRuleService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public SWIFTNetRoutingRuleServiceResponse createRoutingRules(SWIFTNetRoutingRuleRequest swiftNetRoutingRuleRequest)
+    public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer) throws JsonProcessingException {
+        List<String> routingRulesByEntityName = getRoutingRulesByEntityName(entity.getEntity());
+        if (operation.equals(CREATE)) {
+            if (routingRulesByEntityName.isEmpty())
+                return createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+            throw new EntityApprovalException(routingRulesByEntityName.stream()
+                    .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
+                    .collect(Collectors.toList()), "Error creating routing rules in Entity");
+        } else if (operation.equals(DELETE)) {
+            if (!routingRulesByEntityName.isEmpty())
+                deleteRoutingRules(routingRulesByEntityName);
+        }
+        return new SWIFTNetRoutingRuleServiceResponse();
+    }
+
+    private SWIFTNetRoutingRuleServiceResponse createRoutingRules(SWIFTNetRoutingRuleRequest swiftNetRoutingRuleRequest)
             throws JsonProcessingException {
         String routingRuleResponse = null;
         try {
@@ -64,12 +84,18 @@ public class SWIFTNetRoutingRuleService {
                 .collect(Collectors.toMap(
                         SWIFTNetRoutingRuleBfguiRestResponse::getRoutingRuleName, SWIFTNetRoutingRuleBfguiRestResponse::getFailCause
                 ));
-        if (errorMap.size() > 0)
-            return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, Collections.singletonList(errorMap));
+        if (errorMap.size() > 0) {
+            if (errorMap.size() < swiftNetRoutingRuleBfguiRestResponse.size()) {
+                Entity entity = new Entity();
+                entity.setEntity(swiftNetRoutingRuleRequest.getEntityName());
+                executeRoutingRuleOperation(DELETE, entity, null);
+            }
+            throw new EntityApprovalException(Collections.singletonList(errorMap), "Error creating routing rules in Entity");
+        }
         return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfguiRestResponse, null);
     }
 
-    public List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {
+    private List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 routingRuleViewUrl + "?entity-name=" + entityName,
                 HttpMethod.GET,
@@ -80,7 +106,7 @@ public class SWIFTNetRoutingRuleService {
         });
     }
 
-    public void deleteRoutingRules(List<String> routingRulesByEntityName) {
+    private void deleteRoutingRules(List<String> routingRulesByEntityName) {
         routingRulesByEntityName.forEach(routingRule -> {
             try {
                 new RestTemplate().delete(routingRuleDeleteUrl + routingRule);

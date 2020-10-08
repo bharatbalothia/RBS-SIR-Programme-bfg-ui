@@ -45,7 +45,7 @@ public class CredentialsService {
         );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
-
+        JsonNode error = root.get("error");
         List<String> permissionList = permissionsService.getPermissionList(loginRequest);
 
         return Optional.ofNullable(user.get("authenticated"))

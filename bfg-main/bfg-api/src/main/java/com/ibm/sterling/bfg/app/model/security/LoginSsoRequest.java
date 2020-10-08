@@ -1,20 +1,27 @@
 package com.ibm.sterling.bfg.app.model.security;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ibm.sterling.bfg.app.utils.Decoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-public class LoginRequest implements Login {
-
+public class LoginSsoRequest implements Login {
+    @JsonAlias("userName")
     private String login;
-    private String password;
+    private String nodeName;
+    private String dlssoToken;
 
     public String getLogin() {
         return login;
     }
 
-    public String getPassword() {
-        return password;
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public String getDlssoToken() {
+        return dlssoToken;
     }
 
     @Override
@@ -23,7 +30,8 @@ public class LoginRequest implements Login {
         return new LinkedMultiValueMap<String, String>() {
             {
                 add("userName", login);
-                add("password", password);
+                add("nodeName", nodeName);
+                add("dlssoToken", Decoder.decodeValue(dlssoToken) );
             }
         };
     }
@@ -31,6 +39,6 @@ public class LoginRequest implements Login {
     @Override
     @JsonIgnore
     public String urlPostfix() {
-        return "";
+        return "/sso";
     }
 }

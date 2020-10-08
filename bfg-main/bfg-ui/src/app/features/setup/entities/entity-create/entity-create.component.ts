@@ -265,6 +265,8 @@ export class EntityCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
+        this.SWIFTDetailsFormGroup.removeControl('nonRepudiation');
+        this.SWIFTDetailsFormGroup.removeControl('e2eSigning');
         this.resetSwiftValidators(value);
         this.resetMqValidators(this.entityPageFormGroup.controls.entityParticipantType.value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {

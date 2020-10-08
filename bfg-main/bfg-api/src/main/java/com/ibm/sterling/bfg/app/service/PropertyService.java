@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -63,6 +64,26 @@ public class PropertyService {
     private BiFunction<String, String, String> getUrl = (url, attributeValue) ->
             new Formatter().format("%s?_where=con(%s,%s)",
                     url, PROPERTY_KEY, attributeValue).toString();
+
+    public Map<String, List<String>> getUserAuthorities() throws JsonProcessingException {
+        String userAccountGroupsKey = settings.getUseraccountGroupsKey();
+        String userAccountPermissionsKey = settings.getUseraccountPermissionsKey();
+        List<String> propertyKeys = new ArrayList<>(Arrays.asList(userAccountGroupsKey, userAccountPermissionsKey));
+        List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getBfgUiUrl());
+        return new HashMap<String, List<String>>() {
+            {
+                put(userAccountGroupsKey, getAuthoritiesByKey(userAccountGroupsKey, propertyList));
+                put(userAccountPermissionsKey, getAuthoritiesByKey(userAccountPermissionsKey, propertyList));
+            }
+        };
+    }
+
+    private List<String> getAuthoritiesByKey(String userAccountGroupsKey, List<Map<String, String>> propertyList) {
+        return propertyList.stream()
+                .filter(property -> property.get(PROPERTY_KEY).equals(userAccountGroupsKey))
+                .flatMap(property -> Arrays.stream(property.get(PROPERTY_VALUE).split(",")))
+                .collect(Collectors.toList());
+    }
 
     public Map<String, List<Object>> getFileCriteriaData(String service, Boolean outbound) throws JsonProcessingException {
         Map<String, List<Object>> fileCriteriaData = new HashMap<>();

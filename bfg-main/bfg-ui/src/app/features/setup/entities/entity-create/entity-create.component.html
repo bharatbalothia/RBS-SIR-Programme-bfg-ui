@@ -686,7 +686,7 @@
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
-                            <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
+                            <mat-label>{{entityDisplayNames['serviceName'] || 'service'}}</mat-label>
                             <input matInput formControlName="serviceName"
                                 [required]="get(requiredFields,'serviceName')">
                             <mat-error *ngFor="let validation of entityValidationMessages.serviceName">

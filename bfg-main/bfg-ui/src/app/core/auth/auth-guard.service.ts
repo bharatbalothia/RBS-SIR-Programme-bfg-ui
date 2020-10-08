@@ -16,17 +16,22 @@ export class AuthGuardService implements CanActivate {
         if (this.auth.isAuthenticated()) {
             return true;
         } else {
+            console.log('Not Authenticated');
             return new Promise((resolve) => {
                 if (this.auth.isValidSSOLink(route.queryParams)){
+                    console.log('Valid SSO Query');
                     this.auth.ssoLogIn(this.auth.extractSSOCredentials(route.queryParams)).pipe(take(1)).subscribe(
                         () => {
+                            console.log('Authenticated With SSO');
                             resolve(true);
                         },
                         () => {
+                            console.log('Not Authenticated With SSO');
                             resolve(this.router.parseUrl('/' + ROUTING_PATHS.LOGIN));
                         }
                     );
                 } else {
+                    console.log('Invalid Query');
                     resolve(this.router.parseUrl('/' + ROUTING_PATHS.LOGIN));
                 }
             });

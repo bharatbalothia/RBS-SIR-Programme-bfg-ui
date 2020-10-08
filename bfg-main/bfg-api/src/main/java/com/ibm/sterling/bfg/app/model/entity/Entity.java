@@ -245,6 +245,13 @@ public class Entity implements EntityType {
     private Boolean routeOutbound = Boolean.TRUE;
 
     @Transient
+    private Boolean inboundDir = Boolean.FALSE;
+    @Transient
+    private Boolean inboundRoutingRule = Boolean.FALSE;
+    @Transient
+    private SWIFTNetRoutingRuleServiceResponse routingRules;
+
+    @Transient
     private Boolean routeInbound = Boolean.TRUE;
     @Column(name = "ROUTE_REQUESTORDN")
     private String inboundRequestorDN = "";
@@ -255,10 +262,6 @@ public class Entity implements EntityType {
     @Convert(converter = StringToListConverter.class)
     @Column(name = "ROUTE_REQUESTTYPE")
     private List<String> inboundRequestType = new ArrayList<>();
-    @Transient
-    private Boolean inboundDir = Boolean.FALSE;
-    @Transient
-    private Boolean inboundRoutingRule = Boolean.FALSE;
 
     @NotNull(message = "NONREPUDIATION has to be present",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
@@ -783,6 +786,14 @@ public class Entity implements EntityType {
 
     public void setInboundRoutingRule(Boolean inboundRoutingRule) {
         this.inboundRoutingRule = inboundRoutingRule;
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse getRoutingRules() {
+        return routingRules;
+    }
+
+    public void setRoutingRules(SWIFTNetRoutingRuleServiceResponse routingRules) {
+        this.routingRules = routingRules;
     }
 
     public String getInboundRequestorDN() {

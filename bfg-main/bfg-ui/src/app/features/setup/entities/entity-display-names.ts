@@ -37,7 +37,7 @@ export const ENTITY_DISPLAY_NAMES = {
   transferDesc: 'Transfer Description',
   changerComments: 'Changer comments',
   changeID: 'Changer ID',
-  serviceName: 'Service Name',
+  serviceName: 'Service',
   isWindow: 'Type',
   timeStart: 'Time Start',
   windowEnd: 'Time End',

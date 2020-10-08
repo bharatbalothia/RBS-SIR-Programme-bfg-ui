@@ -1,11 +1,17 @@
 package com.ibm.sterling.bfg.app.model.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-public class LoginSsoRequest extends Login {
+public class LoginSsoRequest implements Login {
+    private String login;
     private String nodeName;
     private String dlssoToken;
+
+    public String getLogin() {
+        return login;
+    }
 
     public String getNodeName() {
         return nodeName;
@@ -18,10 +24,13 @@ public class LoginSsoRequest extends Login {
     @Override
     @JsonIgnore
     public MultiValueMap<String, String> retrieveFields() {
-        MultiValueMap<String, String> loginMap = super.retrieveFields();
-        loginMap.add("nodeName", nodeName);
-        loginMap.add("dlssoToken", dlssoToken);
-        return loginMap;
+        return new LinkedMultiValueMap<String, String>() {
+            {
+                add("userName", login);
+                add("nodeName", nodeName);
+                add("dlssoToken", dlssoToken);
+            }
+        };
     }
 
     @Override

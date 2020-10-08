@@ -750,7 +750,7 @@
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('deliveryNotification', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('nonRepudiation')">
                         <label
                             class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] || 'nonRepudiation'}}:</label>
                         <mat-radio-group formControlName='nonRepudiation'>
@@ -762,7 +762,7 @@
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('nonRepudiation', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('e2eSigning')">
                         <label class='radio-group-label'>{{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
                         <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>

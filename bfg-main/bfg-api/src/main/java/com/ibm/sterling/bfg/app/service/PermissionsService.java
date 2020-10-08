@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.Login;
-import com.ibm.sterling.bfg.app.model.security.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,7 +11,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -74,10 +72,8 @@ public class PermissionsService {
         return authorityList.stream().flatMap(auth -> {
                     Set<String> permissionSet = getAuthoritySet.apply(auth, "permissions");
                     Set<String> groupSet = getAuthoritySet.apply(auth, "groups");
-                    if (!groupSet.isEmpty()) {
-                        groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
-                        groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
-                    }
+                    groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
+                    groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
                     permissionSet.removeIf(isNotNeededAuthorityPredicate(userAccountPermissions));
                     return permissionSet.stream();
                 }
@@ -147,5 +143,4 @@ public class PermissionsService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
     }
-
 }

@@ -52,10 +52,8 @@ export class AuthService {
       );
   }
 
-  ssologIn(credentials: SSOCredentials): Observable<User>{
-    console.log('============================================================');
-    console.log('Logged In With SSO');
-    return this.http.post<User>(this.apiUrl + 'signin', {login: 'TESTUSER', password: 'password'})
+  ssoLogIn(credentials: SSOCredentials): Observable<User>{
+    return this.http.post<User>(this.apiUrl + 'sso', credentials)
       .pipe(
         tap(user => {
           this.user.next(user);

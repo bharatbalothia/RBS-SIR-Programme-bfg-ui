@@ -18,7 +18,7 @@ export class AuthGuardService implements CanActivate {
         } else {
             return new Promise((resolve) => {
                 if (this.auth.isValidSSOLink(route.queryParams)){
-                    this.auth.ssologIn(this.auth.extractSSOCredentials(route.queryParams)).pipe(take(1)).subscribe(
+                    this.auth.ssoLogIn(this.auth.extractSSOCredentials(route.queryParams)).pipe(take(1)).subscribe(
                         () => {
                             resolve(true);
                         },

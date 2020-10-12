@@ -417,7 +417,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   onRouteInboundChanging = (value: boolean) => {
-    if (!value) {
+    if (value === false) {
       this.entityPageFormGroup.controls.inboundRequestorDN.disable();
       this.entityPageFormGroup.controls.inboundRequestorDN.setValue('');
       this.entityPageFormGroup.controls.inboundResponderDN.disable();

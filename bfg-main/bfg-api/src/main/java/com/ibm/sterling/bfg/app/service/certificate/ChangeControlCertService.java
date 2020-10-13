@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,16 +51,6 @@ public class ChangeControlCertService {
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
         changeControlCertRepository.save(changeControl);
-    }
-
-    public boolean isNameUnique(String entityName) {
-        return changeControlCertRepository
-                .findAll()
-                .stream()
-                .noneMatch(changeControl ->
-                        changeControl.getResultMeta1().equalsIgnoreCase(entityName) &&
-                                changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                );
     }
 
     public List<ChangeControlCert> findAllPending() {

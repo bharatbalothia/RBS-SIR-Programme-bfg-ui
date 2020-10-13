@@ -1,13 +1,14 @@
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { isEmpty, merge, isEqual, get } from 'lodash';
+import { isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
+import { formatDate } from '@angular/common';
 
 export const ENTITY_DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -182,7 +183,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
         { fieldName: 'Operation', fieldValue: changeControl.operation },
         { fieldName: 'Status', fieldValue: changeControl.status },
         { fieldName: 'Changer', fieldValue: changeControl.changer },
-        { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
+        { fieldName: 'Date Changed', fieldValue: formatDate(changeControl.dateChanged, 'yyyy-MM-dd HH:mm:ss', 'en-GB') },
         { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
         !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
       ],

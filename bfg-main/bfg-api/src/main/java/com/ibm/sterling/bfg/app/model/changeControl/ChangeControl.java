@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.changeControl;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +49,7 @@ public class ChangeControl implements ObjectTypeConstants, Comparable<ChangeCont
 
     @Column(name = "CHANGE_DATE")
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp dateChanged; //date change was requested
 
     @Column(name = "APPROVE_USER")

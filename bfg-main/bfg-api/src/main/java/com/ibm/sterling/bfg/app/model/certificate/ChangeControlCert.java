@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
@@ -51,6 +52,7 @@ public class ChangeControlCert implements ObjectTypeConstants, Comparable<Change
 
     @Column(name = "CHANGE_DATE")
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp dateChanged; //date change was requested
 
     @Column(name = "APPROVE_USER")

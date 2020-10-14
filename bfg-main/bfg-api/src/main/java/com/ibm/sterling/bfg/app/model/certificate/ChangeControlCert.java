@@ -1,14 +1,16 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.ibm.sterling.bfg.app.model.CertType;
-import com.ibm.sterling.bfg.app.model.changeControl.*;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.ObjectTypeConstants;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,7 +18,7 @@ import java.sql.Timestamp;
 
 @Table(name = "FB_CHANGE_CONTROL")
 @Entity
-public class ChangeControlCert implements ChangeControlConstants, Comparable<ChangeControlCert>, Serializable, CertType {
+public class ChangeControlCert implements ObjectTypeConstants, Comparable<ChangeControlCert>, Serializable, CertType {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlCert.class);
 
@@ -103,6 +105,10 @@ public class ChangeControlCert implements ChangeControlConstants, Comparable<Cha
 
     public void setStatus(ChangeControlStatus status) {
         this.status = status;
+    }
+
+    public String getObjectType() {
+        return OBJECT_TYPE_CERT;
     }
 
     public String getChanger() {

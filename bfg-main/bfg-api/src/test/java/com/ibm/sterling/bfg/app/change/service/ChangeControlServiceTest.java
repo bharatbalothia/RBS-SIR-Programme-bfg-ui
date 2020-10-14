@@ -3,7 +3,7 @@ package com.ibm.sterling.bfg.app.change.service;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
+import com.ibm.sterling.bfg.app.model.changeControl.ObjectTypeConstants;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
@@ -45,16 +45,10 @@ class ChangeControlServiceTest {
             cc.setChanger("testChanger");
             cc.setStatus(ChangeControlStatus.PENDING);
             cc.setResultMeta1("FOMGC2LXXX");
-            cc.setObjectType(ChangeControlConstants.OBJECT_TYPE);
             repository.save(cc);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Test
-    void isNameUnique() {
-        System.out.println(service.isNameUnique("FOMGB2BXXX"));
     }
 
     @Test

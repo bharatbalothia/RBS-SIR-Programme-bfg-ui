@@ -13,14 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class MasterErrorController implements ErrorController {
     private static final Logger LOG = LogManager.getLogger(AuthExceptionHandler.class);
+
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request) {
+        LOG.info("Request to /error handled in MasterErrorController");
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        LOG.info("Request to /error handled in MasterErrorController.");
-        if (status != null) {
-            Integer statusCode = Integer.valueOf(status.toString());
-            LOG.info("Error status code is %s", statusCode);
-        }
+        LOG.info("Error status code is {}", status);
         return "index.html";
     }
 
@@ -28,4 +26,5 @@ public class MasterErrorController implements ErrorController {
     public String getErrorPath() {
         return null;
     }
+
 }

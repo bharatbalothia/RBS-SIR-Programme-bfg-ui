@@ -3,6 +3,7 @@ import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-dat
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { get } from 'lodash';
 import { formatDate } from '@angular/common';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
@@ -35,11 +36,14 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     changer: 'Changer',
     operation: 'Operation',
     dateChanged: 'Date Changed',
+    valid: 'Validity'
 };
 
 export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFICATE_DISPLAY_NAMES[key] || key;
 
 export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`).sort();
+
+export const getValidityLabel = (value) => value ? 'Certificate is valid' : 'Certificate is not valid';
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
@@ -56,6 +60,11 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
         {
             fieldName: 'subject',
             fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.subject)
+        },
+        { fieldName: 'valid', fieldValue: getValidityLabel(trustedCertificate.valid) },
+        (get(trustedCertificate, 'authChainReport') || []).length !== 0 && {
+            fieldName: 'authChainReport',
+            fieldValue: trustedCertificate.authChainReport.map(el => getTrustedCertificateItemInfoValues(el).join(',\n'))
         },
     ],
 });

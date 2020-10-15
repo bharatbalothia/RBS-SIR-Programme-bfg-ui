@@ -180,8 +180,9 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getConfirmationFieldsSource() {
     const entity = removeEmpties({
       ...this.detailsTrustedCertificateFormGroup.value,
-      authChainReport: (get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || [])
-        .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')),
+      authChainReport: (get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || []).length !== 0 ?
+        this.detailsTrustedCertificateFormGroup.get('authChainReport').value
+          .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')) : '',
       issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
     });

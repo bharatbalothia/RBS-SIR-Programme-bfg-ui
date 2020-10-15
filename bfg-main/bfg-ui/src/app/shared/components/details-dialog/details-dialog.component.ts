@@ -29,7 +29,10 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
     this.displayName = this.data.displayName;
 
     this.actions = get(this.data, 'actionData.actions');
-    if (this.data.parentError){
+
+    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+
+    if (this.data.parentError) {
       this.errorSubscription = this.data.parentError.subscribe((evt: ErrorMessage) => this.errorMessage = evt);
     }
   }
@@ -38,8 +41,8 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
     this.updateSections();
   }
 
-  ngOnDestroy(){
-    if (this.errorSubscription){
+  ngOnDestroy() {
+    if (this.errorSubscription) {
       this.errorSubscription.unsubscribe();
     }
   }

@@ -129,7 +129,7 @@ public class CertificateController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
     public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
-            throws JsonProcessingException, CertificateException {
+            throws CertificateException {
         TrustedCertificate cert = Optional
                 .ofNullable(certificateService.findById(id))
                 .orElseThrow(CertificateNotFoundException::new);

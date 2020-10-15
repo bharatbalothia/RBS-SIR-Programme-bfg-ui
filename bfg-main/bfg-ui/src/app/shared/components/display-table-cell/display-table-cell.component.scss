@@ -1,5 +1,9 @@
 .list-group {
     padding-left: 15px;
+
+    .list-group-item {
+        white-space: pre-line;
+    }
 }
 
 .ng-star-inserted[xml] {

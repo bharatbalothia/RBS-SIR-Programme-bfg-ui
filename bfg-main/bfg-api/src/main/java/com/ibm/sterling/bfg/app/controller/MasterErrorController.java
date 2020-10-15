@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class MasterErrorController implements ErrorController {
-    private static final Logger LOG = LogManager.getLogger(MasterErrorController .class);
+    private static final Logger LOG = LogManager.getLogger(MasterErrorController.class);
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request) {

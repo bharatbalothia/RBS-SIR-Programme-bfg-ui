@@ -30,6 +30,9 @@ import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFI
 @Service
 public class SWIFTNetRoutingRuleService {
 
+    private static final String CREATION_APPROVAL_ERROR = "The Entity is not approved. Error creating routing rules";
+    private static final String DELETING_APPROVAL_ERROR = "The Entity is not approved. Error deleting routing rules";
+
     @Value("${routingRule.url}")
     private String routingRuleViewUrl;
 
@@ -47,9 +50,6 @@ public class SWIFTNetRoutingRuleService {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private static final String CREATION_APPROVAL_ERROR = "The Entity is not approved. Error creating routing rules";
-    private static final String DELETING_APPROVAL_ERROR = "The Entity is not approved. Error deleting routing rules";
 
     public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer) throws JsonProcessingException {
         List<String> routingRulesByEntityName = getRoutingRulesByEntityName(entity.getEntity());

@@ -42,7 +42,10 @@ import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
 
 @Service
 public class TrustedCertificateImplService implements TrustedCertificateService {
+
     private static final Logger LOG = LogManager.getLogger(TrustedCertificateImplService.class);
+    private static final String CERTIFICATE_FILE_MISSING = "The certificate file is missing";
+    private static final String NO_CERTIFICATE_DATA = "There is no certificate data";
 
     @Autowired
     private TrustedCertificateRepository trustedCertificateRepository;
@@ -71,22 +74,25 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     public TrustedCertificate findById(String id) {
         LOG.info("Trusted certificate by id {}", id);
         return trustedCertificateRepository.findById(id)
-                .orElseThrow(CertificateNotFoundException::new);
+                .orElseThrow(() -> new CertificateNotFoundException("There is no such certificate in SCT_TRUSTED_CERTIFICATE"));
     }
 
     @Override
-    public TrustedCertificateDetails findCertificateDataById(String id) throws JsonProcessingException, InvalidNameException,
-            NoSuchAlgorithmException, CertificateEncodingException {
-        Optional<TrustedCertificate> trustedCertificate = trustedCertificateRepository.findById(id);
+    public TrustedCertificateDetails findCertificateDataById(String id)
+            throws JsonProcessingException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
+        X509Certificate x509Certificate;
         Optional<TrustedCertificateLog> trustedCertificateLog = trustedCertificateLogRepository.findById(id);
-        X509Certificate certificate;
-        if (trustedCertificate.isPresent()) {
-            certificate = trustedCertificate.get().getCertificate();
+        if (trustedCertificateLog.isPresent()) {
+            x509Certificate = Optional.ofNullable(trustedCertificateLog.get().getCertificate())
+                    .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING));
         } else {
-            certificate = trustedCertificateLog.map(TrustedCertificateLog::getCertificate).orElseThrow(CertificateNotFoundException::new);
+            x509Certificate = trustedCertificateRepository.findById(id)
+                    .map(trustedCertificate -> Optional.ofNullable(trustedCertificate.getCertificate())
+                            .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING)))
+                    .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA));
         }
-        return new TrustedCertificateDetails(certificate,
-                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, true);
+        return new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository,
+                changeControlCertRepository, true);
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,

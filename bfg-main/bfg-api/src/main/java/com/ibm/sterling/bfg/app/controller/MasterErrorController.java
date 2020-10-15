@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.controller;
 
-import com.ibm.sterling.bfg.app.exception.AuthExceptionHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class MasterErrorController implements ErrorController {
-    private static final Logger LOG = LogManager.getLogger(AuthExceptionHandler.class);
+    private static final Logger LOG = LogManager.getLogger(MasterErrorController .class);
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request) {

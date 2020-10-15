@@ -151,6 +151,7 @@ export class EntitySearchComponent implements OnInit {
   deleteEntity(entity: Entity) {
     this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${entity.entity}`,
+      yesCaption: 'Cancel',
       tabs: getEntityDetailsTabs(entity),
       displayName: getEntityDisplayName,
       actionData: {
@@ -161,7 +162,7 @@ export class EntitySearchComponent implements OnInit {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
           title: `Entity deleted`,
-          text: `Entity ${entity.entity} has been deleted`,
+          text: `The update to the Entity will be committed after the change has been approved.`,
           shouldHideYesCaption: true,
           noCaption: 'Back'
         })).afterClosed().subscribe(() => {

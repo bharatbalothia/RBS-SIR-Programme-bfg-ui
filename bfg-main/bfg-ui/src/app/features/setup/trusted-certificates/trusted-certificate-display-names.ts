@@ -4,6 +4,7 @@ import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { get } from 'lodash';
+import { formatDate } from '@angular/common';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     name: 'Name',
@@ -23,6 +24,7 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
     ST: 'State or Province',
     EMAILADDRESS: 'Email Address',
     changerComments: 'Changer Comments',
+    changerNotes: 'Changer Notes',
     authChainReport: 'Auth Chain Report',
     subjectDN: 'Subject DN',
     certificateName: 'Certificate Name',
@@ -84,8 +86,8 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
                 { fieldName: 'operation', fieldValue: changeControl.operation },
                 { fieldName: 'status', fieldValue: changeControl.status },
                 { fieldName: 'changer', fieldValue: changeControl.changer },
-                { fieldName: 'dateChanged', fieldValue: changeControl.dateChanged },
-                { fieldName: 'changerComments', fieldValue: changeControl.changerComments },
+                { fieldName: 'dateChanged', fieldValue: formatDate(changeControl.dateChanged, 'yyyy-MM-dd HH:mm:ss', 'en-GB') },
+                { fieldName: 'changerNotes', fieldValue: changeControl.changerComments },
                 !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
             ],
         }]

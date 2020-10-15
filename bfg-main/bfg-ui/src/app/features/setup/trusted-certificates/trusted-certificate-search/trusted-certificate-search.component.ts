@@ -246,6 +246,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
   deleteTrustedCertificate(trustedCertificate: TrustedCertificate) {
     this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${trustedCertificate.certificateName}`,
+      yesCaption: 'Cancel',
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
       displayName: getTrustedCertificateDisplayName,
       actionData: {
@@ -256,7 +257,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
           title: `Trusted Certificate deleted`,
-          text: `Trusted Certificate ${trustedCertificate.certificateName} has been deleted`,
+          text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
           shouldHideYesCaption: true,
           noCaption: 'Back'
         })).afterClosed().subscribe(() => {

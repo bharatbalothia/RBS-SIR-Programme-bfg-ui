@@ -25,19 +25,14 @@
     }
 }
 
-.mat-dialog-actions {
+.delete-actions {
 
-    display: block;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
 
-    .delete-actions {
-
-        .mat-button-base {
-            margin-left: 0px !important;
-            margin-right: 8px;
-        }
-    }
-
-    .close-button {
-        float: right;
-    }
+.close-button {
+    float: right;
+    margin-left: auto;
 }

@@ -39,6 +39,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/certificates")
+@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class CertificateController {
 
     @Autowired
@@ -130,9 +131,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
     public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
             throws CertificateException {
-        TrustedCertificate cert = Optional
-                .ofNullable(certificateService.findById(id))
-                .orElseThrow(CertificateNotFoundException::new);
+        TrustedCertificate cert = certificateService.findById(id);
         Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
         return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }

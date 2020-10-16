@@ -41,6 +41,13 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
         return restTemplateExceptionHandler.handleRestTemplateException(ex);
     }
 
+    @ExceptionHandler(CertificateNotFoundException.class)
+    public ResponseEntity handleEntityApprovalException(CertificateNotFoundException ex) {
+        ErrorMessage error = errorConfig.getErrorMessage(CertificateErrorCode.CertificateNotFoundException);
+        Optional.ofNullable(ex.getMessage()).ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

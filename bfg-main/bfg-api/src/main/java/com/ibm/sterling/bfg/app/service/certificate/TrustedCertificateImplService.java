@@ -89,7 +89,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
             x509Certificate = trustedCertificateRepository.findById(id)
                     .map(trustedCertificate -> Optional.ofNullable(trustedCertificate.getCertificate())
                             .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE")))
-                    .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE_LOG and SCT_TRUSTED_CERTIFICATE"));
+                    .orElseThrow(() -> new CertificateNotFoundException(
+                            NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE_LOG and SCT_TRUSTED_CERTIFICATE by " + id)
+                    );
         }
         return new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository,
                 changeControlCertRepository, true);

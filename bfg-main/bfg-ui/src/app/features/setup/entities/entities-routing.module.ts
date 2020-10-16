@@ -6,6 +6,7 @@ import { EntityCreateComponent } from './entity-create/entity-create.component';
 import { EntityPendingComponent } from './entity-pending/entity-pending.component';
 import { EntitySearchComponent } from './entity-search/entity-search.component';
 import { PermissionsGuardService } from 'src/app/core/guards/permissions-guard.service';
+import { ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 
 
 export const routes: Routes = [
@@ -15,8 +16,8 @@ export const routes: Routes = [
         canActivate: [PermissionsGuardService],
         data: {
             permissions: [
-                'SFG_UI_SCT_CREATE_ENTITY_SCT',
-                'SFG_UI_SCT_CREATE_ENTITY_GPL'
+                ENTITY_PERMISSIONS.CREATE_SCT,
+                ENTITY_PERMISSIONS.CREATE_GPL
             ]
         }
     },
@@ -24,13 +25,26 @@ export const routes: Routes = [
         canActivate: [PermissionsGuardService],
         data: {
             permissions: [
-                'SFG_UI_SCT_EDIT_ENTITY_SCT',
-                'SFG_UI_SCT_EDIT_ENTITY_GPL'
+                ENTITY_PERMISSIONS.EDIT_SCT,
+                ENTITY_PERMISSIONS.EDIT_GPL
             ]
         }
     },
-    { path: ROUTING_PATHS.SEARCH, component: EntitySearchComponent },
-    { path: ROUTING_PATHS.PENDING, component: EntityPendingComponent }
+    { path: ROUTING_PATHS.SEARCH, component: EntitySearchComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: [
+                ENTITY_PERMISSIONS.VIEW
+            ]
+        }
+    },
+    { path: ROUTING_PATHS.PENDING, component: EntityPendingComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: [
+                ENTITY_PERMISSIONS.VIEW
+            ]
+        } }
 ];
 
 @NgModule({

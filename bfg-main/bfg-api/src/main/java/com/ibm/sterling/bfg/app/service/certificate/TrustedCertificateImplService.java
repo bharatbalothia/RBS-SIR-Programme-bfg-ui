@@ -74,7 +74,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     public TrustedCertificate findById(String id) {
         LOG.info("Trusted certificate by id {}", id);
         return trustedCertificateRepository.findById(id)
-                .orElseThrow(() -> new CertificateNotFoundException("There is no such certificate in SCT_TRUSTED_CERTIFICATE"));
+                .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE"));
     }
 
     @Override
@@ -84,12 +84,12 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         Optional<TrustedCertificateLog> trustedCertificateLog = trustedCertificateLogRepository.findById(id);
         if (trustedCertificateLog.isPresent()) {
             x509Certificate = Optional.ofNullable(trustedCertificateLog.get().getCertificate())
-                    .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING));
+                    .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE_LOG"));
         } else {
             x509Certificate = trustedCertificateRepository.findById(id)
                     .map(trustedCertificate -> Optional.ofNullable(trustedCertificate.getCertificate())
-                            .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING)))
-                    .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA));
+                            .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE")))
+                    .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE_LOG and SCT_TRUSTED_CERTIFICATE"));
         }
         return new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository,
                 changeControlCertRepository, true);

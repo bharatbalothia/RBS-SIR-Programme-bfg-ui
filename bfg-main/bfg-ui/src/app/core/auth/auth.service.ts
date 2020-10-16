@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { SSOCredentials } from './sso-credentials.model';
+import { GENERAL_PERMISSIONS } from '../constants/general-permissions';
 
 
 @Injectable({
@@ -94,6 +95,9 @@ export class AuthService {
   isEnoughPermissions(requiredPermissions: string[]): boolean{
     let enoughPermissions = false;
     const userPermissions = this.getUserPermissions();
+    if (!userPermissions.includes(GENERAL_PERMISSIONS.HOME)){
+      return false;
+    }
     if (!requiredPermissions || requiredPermissions.length === 0){
       return true;
     }

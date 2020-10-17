@@ -56,22 +56,6 @@ public class EntityServiceImpl implements EntityService {
     private Validator validator;
 
     @Override
-    public boolean existsByMqQueueOut(String mqQueueOut) {
-        LOG.info("exists by mqQueueOut {}", mqQueueOut);
-        return entityRepository.existsByMqQueueOut(mqQueueOut);
-    }
-
-    @Override
-    public boolean existsByServiceAndEntityPut(Entity entity) {
-        LOG.info("Checking uniqueness entity and service for {}", entity);
-        boolean isUnique = getEntitiesExceptCurrent(entity).stream()
-                .anyMatch(ent -> ent.getService().equals(entity.getService()) &
-                        ent.getEntity().equals(entity.getEntity()));
-        LOG.info("Uniqueness entity and service is {}", isUnique);
-        return isUnique;
-    }
-
-    @Override
     public boolean existsByServiceAndEntity(String service, String entity) {
         LOG.info("exists by {} and {}", service, entity);
         return entityRepository.existsByServiceAndEntityAllIgnoreCase(service, entity);
@@ -281,30 +265,27 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public List<Entity> findEntitiesByService(String service) {
-        List<Entity> entities = new ArrayList<>();
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse(""), "service"))
                 .and(
                         GenericSpecification.filter("false", "deleted"));
-        entities.addAll(entityRepository.findAll(specification));
+        List<Entity> entities = new ArrayList<>(entityRepository.findAll(specification));
         entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
         return entities;
     }
 
     @Override
-    public boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException {
-        return getEntitiesExceptCurrent(entity).stream()
-                .anyMatch(ent -> Optional.ofNullable(ent.getMqQueueOut())
-                        .map(mqOut -> mqOut.equals(entity.getMqQueueOut()))
-                        .orElse(false));
-    }
-
-    private List<Entity> getEntitiesExceptCurrent(Entity entity) {
-        List<Entity> entities = entityRepository.findByDeleted(false);
-        Entity editedEntity = entityRepository.findById(entity.getEntityId()).orElse(entity);
-        entities.remove(editedEntity);
-        return entities;
+    public Entity getEntityWithAttributesOfRoutingRules(String inboundRequestorDN, String inboundResponderDN,
+                                                        String inboundService, List<String> inboundRequestType) {
+        LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",
+                inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundService(inboundRequestorDN,
+                inboundResponderDN, inboundService);
+        return entities.stream()
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .findFirst()
+                .orElse(null);
     }
 
 }

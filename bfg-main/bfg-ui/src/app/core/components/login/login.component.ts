@@ -54,4 +54,16 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  logout() {
+    this.authService.logOut();
+  }
+
+  getUserName(){
+    return this.authService.getUserName() || '';
+  }
+
+  isAuthenticated(){
+    return this.authService.isAuthenticated();
+  }
+
 }

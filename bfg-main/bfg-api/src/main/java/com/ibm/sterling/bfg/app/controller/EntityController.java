@@ -30,6 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/entities")
+@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
 
     @Autowired
@@ -48,6 +49,7 @@ public class EntityController {
     private TransmittalService transmittalService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
                                         @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
                                         @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
@@ -56,6 +58,7 @@ public class EntityController {
     }
 
     @GetMapping("pending")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
@@ -76,6 +79,7 @@ public class EntityController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
         return entityService.findById(id)
                 .map(record -> {
@@ -92,6 +96,7 @@ public class EntityController {
     }
 
     @GetMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable(name = "id") String id) {
         return changeControlService.findById(id)
                 .map(record -> ok().body(record.convertEntityLogToEntity()))

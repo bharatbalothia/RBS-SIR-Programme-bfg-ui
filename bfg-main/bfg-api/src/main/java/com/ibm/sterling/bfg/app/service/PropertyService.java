@@ -30,17 +30,38 @@ public class PropertyService {
     @Autowired
     private EntityService entityService;
 
-    public List<String> getInboundRequestType() throws JsonProcessingException {
+    public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
         return getPropertyList(settings.getGplUrl()).stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(reqTypePrefixKey))
-                .map(property -> {
+                .flatMap(property -> {
                             String propertyKey = property.get(PROPERTY_KEY);
-                            return property.get(PROPERTY_VALUE) +
-                                    " (" + propertyKey.substring(propertyKey.indexOf(reqTypePrefixKey) +
-                                    reqTypePrefixKey.length()) + ")";
+                            String typeKey = propertyKey.substring(propertyKey.indexOf(reqTypePrefixKey) +
+                                    reqTypePrefixKey.length());
+                            return Collections.singletonMap(typeKey,
+                                    property.get(PROPERTY_VALUE) + " (" + typeKey + ")").entrySet().stream();
                         }
-                ).collect(Collectors.toList());
+                ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public List<String> getRestoredInboundRequestType(List<String> inboundRequestTypes) {
+        String reqTypePrefixKey = settings.getReqTypePrefixKey();
+        List<String> typeKeys = inboundRequestTypes.stream()
+                .map(type -> reqTypePrefixKey + type)
+                .collect(Collectors.toList());
+        try {
+            return getPropertiesByPartialKey(typeKeys, settings.getGplUrl()).stream()
+                    .map(property -> {
+                                String propertyKey = property.get(PROPERTY_KEY);
+                                return property.get(PROPERTY_VALUE) +
+                                        " (" + propertyKey.substring(propertyKey.indexOf(reqTypePrefixKey) +
+                                        reqTypePrefixKey.length()) + ")";
+                            }
+                    ).collect(Collectors.toList());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<String> getFileType() throws JsonProcessingException {

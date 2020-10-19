@@ -3,9 +3,6 @@ package com.ibm.sterling.bfg.app.model.entity;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SWIFTNetRoutingRuleRequest {
     private String entityName;
@@ -22,13 +19,7 @@ public class SWIFTNetRoutingRuleRequest {
         entityType = entityLog.getService();
         requestorDN = entityLog.getRequestorDN();
         responderDN = entityLog.getResponderDN();
-        requestType = entityLog.getInboundRequestType().stream()
-                .map(inboundRequestType -> {
-                    Matcher matcher = Pattern.compile("\\((.*?)\\)").matcher(inboundRequestType);
-                    if (matcher.find())
-                        return matcher.group(1);
-                    return "";
-                }).collect(Collectors.toList());
+        requestType = entityLog.getInboundRequestType();
         service = entityLog.getInboundService();
         username = changeControl.getChanger();
     }
@@ -38,13 +29,7 @@ public class SWIFTNetRoutingRuleRequest {
         entityType = entity.getService();
         requestorDN = entity.getRequestorDN();
         responderDN = entity.getResponderDN();
-        requestType = entity.getInboundRequestType().stream()
-                .map(inboundRequestType -> {
-                    Matcher matcher = Pattern.compile("\\((.*?)\\)").matcher(inboundRequestType);
-                    if (matcher.find())
-                        return matcher.group(1);
-                    return "";
-                }).collect(Collectors.toList());
+        requestType = entity.getInboundRequestType();
         service = entity.getInboundService();
         username = changer;
     }

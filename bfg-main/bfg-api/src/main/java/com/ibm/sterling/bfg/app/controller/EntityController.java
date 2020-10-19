@@ -80,24 +80,27 @@ public class EntityController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
+    public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> {
-                    if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
-                            StringUtils.isEmpty(record.getInboundResponderDN()))
-                        record.setRouteInbound(Boolean.FALSE);
-                    else {
-                        record.setInboundDir(Boolean.TRUE);
-                        record.setInboundRoutingRule(Boolean.TRUE);
-                    }
-                    return ok().body(record);
-                })
-                .orElseThrow(EntityNotFoundException::new);
+                            record.setInboundRequestType(
+                                    propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
+                            );
+                            if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
+                                    StringUtils.isEmpty(record.getInboundResponderDN()))
+                                record.setRouteInbound(Boolean.FALSE);
+                            else {
+                                record.setInboundDir(Boolean.TRUE);
+                                record.setInboundRoutingRule(Boolean.TRUE);
+                            }
+                            return ok().body(record);
+                        }
+                ).orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<Entity> getPendingEntityById(@PathVariable(name = "id") String id) {
+    public ResponseEntity<Entity> getPendingEntityById(@PathVariable String id) {
         return changeControlService.findById(id)
                 .map(record -> ok().body(record.convertEntityLogToEntity()))
                 .orElseThrow(ChangeControlNotFoundException::new);
@@ -146,7 +149,7 @@ public class EntityController {
     }
 
     @GetMapping("inbound-request-type")
-    public ResponseEntity<List<String>> getInboundRequestType() throws JsonProcessingException {
+    public ResponseEntity<Map<String, String>> getInboundRequestType() throws JsonProcessingException {
         return ok(propertyService.getInboundRequestType());
     }
 

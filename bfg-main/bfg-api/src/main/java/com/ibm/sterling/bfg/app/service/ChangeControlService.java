@@ -1,10 +1,10 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlConstants;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -54,17 +53,6 @@ public class ChangeControlService {
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
         changeControlRepository.save(changeControl);
-    }
-
-    public boolean isNameUnique(String entityName) {
-        return changeControlRepository
-                .findAll()
-                .stream()
-                .noneMatch(changeControl ->
-                        changeControl.getResultMeta1().equalsIgnoreCase(entityName) &&
-                                changeControl.getObjectType().equals(ChangeControlConstants.OBJECT_TYPE) &&
-                                changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                );
     }
 
     public List<ChangeControl> findAllPending() {

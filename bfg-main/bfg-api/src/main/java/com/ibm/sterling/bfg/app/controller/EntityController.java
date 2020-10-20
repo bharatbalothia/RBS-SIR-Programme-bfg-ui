@@ -4,17 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
-import com.ibm.sterling.bfg.app.model.entity.Transmittal;
-import com.ibm.sterling.bfg.app.service.ChangeControlService;
-import com.ibm.sterling.bfg.app.service.EntityService;
-import com.ibm.sterling.bfg.app.service.PropertyService;
-import com.ibm.sterling.bfg.app.service.TransmittalService;
+import com.ibm.sterling.bfg.app.service.*;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -33,6 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/entities")
+@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
 
     @Autowired
@@ -51,6 +49,7 @@ public class EntityController {
     private TransmittalService transmittalService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
                                         @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
                                         @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
@@ -59,6 +58,7 @@ public class EntityController {
     }
 
     @GetMapping("pending")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
@@ -74,24 +74,32 @@ public class EntityController {
                 changeControl,
                 String.valueOf(approve.get("approverComments")),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
-        ).map(record -> ok()
-                .body(record))
+        ).map(record -> ok().body(record))
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
         return entityService.findById(id)
-                .map(record -> ok()
-                        .body(record))
+                .map(record -> {
+                    if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
+                            StringUtils.isEmpty(record.getInboundResponderDN()))
+                        record.setRouteInbound(Boolean.FALSE);
+                    else {
+                        record.setInboundDir(Boolean.TRUE);
+                        record.setInboundRoutingRule(Boolean.TRUE);
+                    }
+                    return ok().body(record);
+                })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable(name = "id") String id) {
         return changeControlService.findById(id)
-                .map(record -> ok()
-                        .body(record.convertEntityLogToEntity()))
+                .map(record -> ok().body(record.convertEntityLogToEntity()))
                 .orElseThrow(ChangeControlNotFoundException::new);
     }
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.DocumentContentNotFoundException;
+import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
@@ -24,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
+import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 import static org.springframework.data.domain.PageRequest.of;
 
@@ -51,6 +53,15 @@ public class SearchService {
     @Value("${file.password}")
     private String password;
 
+    @Value("${property.fileStatusPrefixKey}")
+    private String fileStatusPrefixKey;
+
+    @Value("${property.transactionStatusPrefixKey}")
+    private String transactionStatusPrefixKey;
+
+    @Autowired
+    private PropertyService propertyService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -63,22 +74,42 @@ public class SearchService {
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
         });
-        Optional.ofNullable(fileList).ifPresent(this::setEntityOfFile);
+        Optional.ofNullable(fileList).ifPresent(files -> files.forEach(this::setEntityOfFile));
         return convertListToPage(fileSearchCriteria, fileList);
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
-        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
-        fileSearchCriteria.setId(id);
-        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
-        });
-        List<File> files = Optional.ofNullable(fileList).orElseGet(ArrayList::new);
-        if (files.size() == 1) {
-            setEntityOfFile(files);
-            return Optional.ofNullable(files.get(0));
-        } else {
-            return Optional.empty();
+        ResponseEntity<String> response;
+        try {
+            response = new RestTemplate().exchange(
+                    fileSearchUrl + "/" + id,
+                    HttpMethod.GET,
+                    new HttpEntity<>(getHttpHeaders()),
+                    String.class);
+        } catch (HttpStatusCodeException e) {
+            throw new FileNotFoundException(e.getMessage());
         }
+        JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        return Optional.ofNullable(objectMapper.convertValue(jsonNode, File.class)).map(file -> {
+            setEntityOfFile(file);
+            file.setStatusLabel(propertyService.getStatusLabel(
+                    fileStatusPrefixKey, file.getService(), file.getOutbound(), file.getStatus()));
+            return file;
+        });
+    }
+
+    private void setEntityOfFile(File file) {
+        Integer entityId = file.getEntityID();
+        Entity entity = new Entity();
+        entity.setEntityId(entityId);
+        entity.setEntity(entityService.findById(entityId)
+                .map(com.ibm.sterling.bfg.app.model.entity.Entity::getEntity)
+                .orElseGet(() -> {
+                    entity.setError("no such entity");
+                    return null;
+                })
+        );
+        file.setEntity(entity);
     }
 
     public Page<Transaction> getTransactionsList(Integer fileId, Integer page, Integer size) throws JsonProcessingException {
@@ -90,21 +121,36 @@ public class SearchService {
         return convertListToPage(transactionSearchCriteria, getListFromSBI(transactionSearchCriteria, transactionSearchUrl));
     }
 
-    public Optional<Transaction> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
-        JsonNode root;
+    public Optional<TransactionDetails> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
+        ResponseEntity<String> response;
         try {
-            root = getJsonNodeFromSBI(new FileSearchCriteria(),
-                    fileSearchUrl + "/" + fileId + "/transactions/" + id);
+            response = new RestTemplate().exchange(
+                    fileSearchUrl + "/" + fileId + "/transactions/" + id,
+                    HttpMethod.GET,
+                    new HttpEntity<>(getHttpHeaders()),
+                    String.class);
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
         }
-        return Optional.ofNullable(objectMapper.convertValue(root, TransactionDetails.class));
+        JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        return Optional.ofNullable(objectMapper.convertValue(jsonNode, TransactionDetails.class))
+                .map(transactionDetails -> {
+                    transactionDetails.setStatusLabel(
+                            propertyService.getStatusLabel(
+                                    transactionStatusPrefixKey,
+                                    transactionDetails.getService(),
+                                    "outbound".equals(transactionDetails.getDirection()),
+                                    transactionDetails.getStatus()
+                            )
+                    );
+                    return transactionDetails;
+                });
     }
 
     public Map<String, String> getDocumentPayload(String documentId) throws JsonProcessingException {
-        ResponseEntity<String> responseEntity;
+        ResponseEntity<String> response;
         try {
-            responseEntity = new RestTemplate().exchange(
+            response = new RestTemplate().exchange(
                     documentUrl + documentId + "/actions/getpayload?isPlainText=true",
                     HttpMethod.POST,
                     new HttpEntity<>(getHttpHeaders()),
@@ -112,7 +158,7 @@ public class SearchService {
         } catch (HttpStatusCodeException e) {
             throw new DocumentContentNotFoundException(e.getMessage());
         }
-        JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody())).get("response");
+        JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody())).get("response");
         return Collections.singletonMap("document", jsonNode.asText());
     }
 
@@ -137,25 +183,21 @@ public class SearchService {
 
     private <T> List<T> getListFromSBI(SearchCriteria searchCriteria, String searchingUrl) throws JsonProcessingException {
         searchCriteria.setStart(searchCriteria.getPage() * searchCriteria.getSize());
-        JsonNode root = getJsonNodeFromSBI(searchCriteria, searchingUrl);
+        MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
+        objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
+        }).forEach(fileSearchCriteriaMultiValueMap::add);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(searchingUrl)
+                .queryParams(fileSearchCriteriaMultiValueMap);
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                uriBuilder.build().toString(),
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders()),
+                String.class);
+
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
         searchCriteria.setTotalRows(objectMapper.convertValue(root.get("totalRows"), Integer.class));
         return objectMapper.convertValue(root.get("results"), List.class);
-    }
-
-    private void setEntityOfFile(List<File> fileList) {
-        fileList.forEach(file -> {
-            Integer entityId = file.getEntityID();
-            Entity entity = new Entity();
-            entity.setEntityId(entityId);
-            entity.setEntity(entityService.findById(entityId)
-                    .map(com.ibm.sterling.bfg.app.model.entity.Entity::getEntity)
-                    .orElseGet(() -> {
-                        entity.setError("no such entity");
-                        return null;
-                    })
-            );
-            file.setEntity(entity);
-        });
     }
 
     private <T> PageImpl<T> convertListToPage(SearchCriteria searchCriteria, List<T> results) {
@@ -225,7 +267,7 @@ public class SearchService {
         return header;
     }
 
-    @Cacheable("bpNames")
+    @Cacheable(cacheNames = CACHE_BP_HEADERS)
     public List<BPName> getBPNames() throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",
@@ -235,22 +277,6 @@ public class SearchService {
         return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
                 new TypeReference<List<BPName>>() {
                 });
-    }
-
-    private JsonNode getJsonNodeFromSBI(SearchCriteria searchCriteria, String fileSearchUrl) throws JsonProcessingException {
-        MultiValueMap<String, String> fileSearchCriteriaMultiValueMap = new LinkedMultiValueMap<>();
-        objectMapper.convertValue(searchCriteria, new TypeReference<Map<String, String>>() {
-        }).forEach(fileSearchCriteriaMultiValueMap::add);
-
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(fileSearchUrl)
-                .queryParams(fileSearchCriteriaMultiValueMap);
-        ResponseEntity<String> response = new RestTemplate().exchange(
-                uriBuilder.build().toString(),
-                HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
-                String.class);
-
-        return objectMapper.readTree(Objects.requireNonNull(response.getBody()));
     }
 
     private HttpHeaders getHttpHeaders() {

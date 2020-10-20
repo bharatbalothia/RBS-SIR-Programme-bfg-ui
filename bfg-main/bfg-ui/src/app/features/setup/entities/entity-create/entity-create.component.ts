@@ -5,7 +5,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { removeEmpties } from 'src/app/shared/utils/utils';
+import { removeNullOrUndefined } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { ENTITY_SERVICE_TYPE, ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
@@ -23,6 +23,8 @@ import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-sch
 import { MatTableDataSource } from '@angular/material/table';
 import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-entity-create',
@@ -38,7 +40,7 @@ export class EntityCreateComponent implements OnInit {
 
   isLinear = true;
 
-  @ViewChild('stepper') stepper;
+  @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
   inboundRequestTypeList: string[] = [];
@@ -83,16 +85,23 @@ export class EntityCreateComponent implements OnInit {
     private entityValidators: EntityValidators,
     private activatedRouter: ActivatedRoute,
     private router: Router,
-    private toolTip: TooltipService
+    private toolTip: TooltipService,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
+    this.entityTypeFormGroup = this.formBuilder.group({
+      service: ['', Validators.required]
+    });
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
       if (params.entityId) {
         this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
           this.isLoading = false;
           this.editableEntity = data;
+          this.entityTypeFormGroup = this.formBuilder.group({
+            service: [this.editableEntity.service, Validators.required]
+          });
           this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
           this.markAllFieldsTouched();
         },
@@ -105,9 +114,6 @@ export class EntityCreateComponent implements OnInit {
   }
 
   initializeFormGroups(entity: Entity) {
-    this.entityTypeFormGroup = this.formBuilder.group({
-      service: [entity.service, Validators.required]
-    });
     this.entityPageFormGroup = this.formBuilder.group({});
     this.SWIFTDetailsFormGroup = this.formBuilder.group({
       requestorDN: [entity.requestorDN, {
@@ -169,6 +175,17 @@ export class EntityCreateComponent implements OnInit {
 
   onServiceSelect(value, entity: Entity = this.getEntityDefaultValue()) {
     this.selectedService = value;
+    if (this.isAuthorizedToProceed()) {
+      this.prepareFieldsForEntityOfType(value, entity);
+    } else {
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
+      if (this.isEditing()) {
+        this.prepareFieldsForEntityOfType(value, entity);
+      }
+    }
+  }
+
+  prepareFieldsForEntityOfType(value, entity) {
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
@@ -248,12 +265,13 @@ export class EntityCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
         });
+        this.SWIFTDetailsFormGroup.removeControl('nonRepudiation');
+        this.SWIFTDetailsFormGroup.removeControl('e2eSigning');
         this.resetSwiftValidators(value);
         this.resetMqValidators(this.entityPageFormGroup.controls.entityParticipantType.value);
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqValidators(value);
         });
-
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -291,6 +309,10 @@ export class EntityCreateComponent implements OnInit {
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
+
+        this.onRouteInboundChanging(this.entityPageFormGroup.controls.routeInbound.value);
+        this.entityPageFormGroup.controls.routeInbound.valueChanges
+          .subscribe((value: boolean) => this.onRouteInboundChanging(value));
         break;
     }
   }
@@ -394,6 +416,40 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
+  onRouteInboundChanging = (value: boolean) => {
+    if (value === false) {
+      this.entityPageFormGroup.controls.inboundRequestorDN.disable();
+      this.entityPageFormGroup.controls.inboundRequestorDN.setValue('');
+      this.entityPageFormGroup.controls.inboundResponderDN.disable();
+      this.entityPageFormGroup.controls.inboundResponderDN.setValue('');
+      this.entityPageFormGroup.controls.inboundService.disable();
+      this.entityPageFormGroup.controls.inboundRequestType.clearValidators();
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: false,
+      };
+      this.entityPageFormGroup.controls.inboundDir.disable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(false);
+      this.entityPageFormGroup.controls.inboundRoutingRule.disable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(false);
+    }
+    else {
+      this.entityPageFormGroup.controls.inboundRequestorDN.enable();
+      this.entityPageFormGroup.controls.inboundResponderDN.enable();
+      this.entityPageFormGroup.controls.inboundService.enable();
+      this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
+      this.requiredFields = {
+        ...this.requiredFields,
+        inboundRequestType: true,
+      };
+      this.entityPageFormGroup.controls.inboundDir.enable();
+      this.entityPageFormGroup.controls.inboundDir.setValue(true);
+
+      this.entityPageFormGroup.controls.inboundRoutingRule.enable();
+      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(true);
+    }
+  }
+
   sendEntity(isEditing: boolean) {
     const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
@@ -411,15 +467,20 @@ export class EntityCreateComponent implements OnInit {
           ...this.summaryPageFormGroup.value,
           ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
+          inboundRequestorDN: get(this.entityPageFormGroup.controls.inboundRequestorDN, 'value'),
+          inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
+          inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
+          inboundDir: get(this.entityPageFormGroup.controls.inboundDir, 'value'),
+          inboundRoutingRule: get(this.entityPageFormGroup.controls.inboundRoutingRule, 'value'),
         };
         let entityAction: Observable<Entity>;
         const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
-          entityAction = this.entityService.editEntity(removeEmpties({ ...editableEntity, ...entity }));
+          entityAction = this.entityService.editEntity(removeNullOrUndefined({ ...editableEntity, ...entity }));
         }
         else {
-          entityAction = this.entityService.createEntity(removeEmpties(entity));
+          entityAction = this.entityService.createEntity(removeNullOrUndefined(entity));
         }
         entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {
@@ -484,11 +545,19 @@ export class EntityCreateComponent implements OnInit {
     const entity = {
       ...this.entityTypeFormGroup.value,
       ...this.entityPageFormGroup.value,
+      ...get(this.entityTypeFormGroup.controls, 'service.value', '') === ENTITY_SERVICE_TYPE.GPL && {
+        inboundRequestorDN: get(this.entityPageFormGroup.controls, 'inboundRequestorDN.value'),
+        inboundResponderDN: get(this.entityPageFormGroup.controls, 'inboundResponderDN.value'),
+        inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
+        inboundDir: get(this.entityPageFormGroup.controls, 'inboundDir.value'),
+        inboundRoutingRule: get(this.entityPageFormGroup.controls, 'inboundRoutingRule.value'),
+      },
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
       ...this.SWIFTDetailsFormGroup.value,
-      ...this.summaryPageFormGroup.value
+      ...this.summaryPageFormGroup.value,
     };
+
     this.summaryPageDataSource = Object.keys(entity)
       .map((key) => ({
         field: key,
@@ -565,6 +634,35 @@ export class EntityCreateComponent implements OnInit {
       fieldName: field
     });
     return toolTip.length > 0 ? toolTip : (this.entityDisplayNames[field] || '');
+  }
+
+  isAuthorizedToProceed() {
+    const requiredPermissions = [];
+    if (this.isEditing()) {
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_SCT);
+      }
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.EDIT_GPL);
+      }
+    } else {
+      if (this.selectedService === ENTITY_SERVICE_TYPE.SCT) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_SCT);
+      }
+      if (this.selectedService === ENTITY_SERVICE_TYPE.GPL) {
+        requiredPermissions.push(ENTITY_PERMISSIONS.CREATE_GPL);
+      }
+    }
+    return this.auth.isEnoughPermissions(requiredPermissions);
+  }
+
+  tryToProceed() {
+    if (this.isAuthorizedToProceed()) {
+      this.stepper.next();
+    } else {
+      this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
+      this.auth.showForbidden();
+    }
   }
 
 }

@@ -12,6 +12,7 @@ export interface File {
     reference: string;
     service: string;
     status: number;
+    statusLabel: string;
     timestamp: string;
     transactionTotal: number;
     type: string;

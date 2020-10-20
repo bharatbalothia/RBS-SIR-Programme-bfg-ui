@@ -86,6 +86,35 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.trustedCertificates.content);
   }
 
+  addValidationToCertificate(trustedCertificate: TrustedCertificate): Promise<any> {
+    const promise = new Promise((resolve) => {
+      const certificateId = get(trustedCertificate, 'certificateId');
+      const certificateLogId = get(trustedCertificate, 'certificateLogId');
+      if (certificateId || certificateLogId) {
+        this.isLoadingDetails = true;
+        this.trustedCertificateService.validateCertificateById(certificateId || certificateLogId).toPromise()
+          .then(data => {
+            this.isLoadingDetails = false;
+            resolve({
+              ...trustedCertificate,
+              authChainReport: data.authChainReport,
+              valid: data.valid,
+              warnings: data.certificateWarnings,
+              errors: data.certificateErrors,
+            });
+          },
+            error => {
+              this.isLoadingDetails = false;
+              this.errorMessage = getApiErrorMessage(error);
+            });
+      }
+      else {
+        resolve(trustedCertificate);
+      }
+    });
+    return promise;
+  }
+
   addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
     const promise = new Promise((resolve) => {
       const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
@@ -94,7 +123,21 @@ export class TrustedCertificateSearchComponent implements OnInit {
         this.trustedCertificateService.validateCertificateById(certificateLogId.toString()).toPromise()
           .then(data => {
             this.isLoadingDetails = false;
-            resolve({ ...changeControl, warnings: data.certificateWarnings, errors: data.certificateErrors });
+            resolve({
+              ...changeControl,
+              trustedCertificateLog: {
+                ...changeControl.trustedCertificateLog,
+                authChainReport: data.authChainReport,
+                valid: data.valid
+              },
+              certificateBefore: changeControl.certificateBefore && {
+                ...changeControl.certificateBefore,
+                authChainReport: data.authChainReport,
+                valid: data.valid
+              },
+              warnings: data.certificateWarnings,
+              errors: data.certificateErrors,
+            });
           },
             error => {
               this.isLoadingDetails = false;
@@ -131,62 +174,79 @@ export class TrustedCertificateSearchComponent implements OnInit {
   }
 
   openInfoDialog(changeControl: ChangeControl) {
-    this.addCertificateBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: `Change Record: Pending`,
-        tabs: getTrustedCertificatePendingChangesTabs(changeCtrl),
-        displayName: getTrustedCertificateDisplayName
-      })));
+    this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
+        .then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+          title: `Change Record: Pending`,
+          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
+          displayName: getTrustedCertificateDisplayName,
+          actionData: {
+            errorMessage: {
+              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+              warnings: get(validatedChangeControl, 'warnings'),
+              errors: get(validatedChangeControl, 'errors')
+            },
+          }
+        }))));
   }
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `Trusted Certificate: ${trustedCertificate.certificateName}`,
-      tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
-      displayName: getTrustedCertificateDisplayName
-    }));
+    this.addValidationToCertificate(trustedCertificate)
+      .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
+        tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
+        displayName: getTrustedCertificateDisplayName,
+        actionData: {
+          errorMessage: {
+            message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+            warnings: get(validatedCertificate, 'warnings'),
+            errors: get(validatedCertificate, 'errors')
+          },
+        }
+      })));
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.addValidationToChangeControl(changeControl)
-      .then(validatedChangeControl => this.addCertificateBeforeToChangeControl(validatedChangeControl))
-      .then((changeCtrl: ChangeControl) =>
-        this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-          title: 'Approve Change',
-          tabs: getTrustedCertificatePendingChangesTabs(changeCtrl, true),
-          yesCaption: 'Cancel',
-          displayName: getTrustedCertificateDisplayName,
-          actionData: {
-            changeID: changeCtrl.changeID,
-            changer: changeCtrl.changer,
-            errorMessage: {
-              message: (get(changeCtrl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'])
-                || (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
-              warnings: get(changeCtrl, 'warnings'),
-              errors: get(changeCtrl, 'errors')
-            },
-            approveAction:
-              (params: { changeID: string, status: string, approverComments: string }) =>
-                this.trustedCertificateService.resolveChange(params)
-          }
-        })).afterClosed().subscribe(data => {
-          if (get(data, 'refreshList')) {
-            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
-              text:
-                `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
-              shouldHideYesCaption: true,
-              noCaption: 'Back'
-            })).afterClosed().subscribe(() => {
-              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
-            });
-          }
-        }));
+    this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
+        .then(validatedChangeControl =>
+          this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+            title: 'Approve Change',
+            tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl, true),
+            yesCaption: 'Cancel',
+            displayName: getTrustedCertificateDisplayName,
+            actionData: {
+              changeID: validatedChangeControl.changeID,
+              changer: validatedChangeControl.changer,
+              errorMessage: {
+                message: (get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'])
+                  || (this.authService.isTheSameUser(validatedChangeControl.changer) ? ERROR_MESSAGES['approvingChanges'] : undefined),
+                warnings: get(validatedChangeControl, 'warnings'),
+                errors: get(validatedChangeControl, 'errors')
+              },
+              approveAction:
+                (params: { changeID: string, status: string, approverComments: string }) =>
+                  this.trustedCertificateService.resolveChange(params)
+            }
+          })).afterClosed().subscribe(data => {
+            if (get(data, 'refreshList')) {
+              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+                title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
+                text:
+                  `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
+                shouldHideYesCaption: true,
+                noCaption: 'Back'
+              })).afterClosed().subscribe(() => {
+                this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+              });
+            }
+          })));
   }
 
   deleteTrustedCertificate(trustedCertificate: TrustedCertificate) {
     this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${trustedCertificate.certificateName}`,
+      yesCaption: 'Cancel',
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
       displayName: getTrustedCertificateDisplayName,
       actionData: {
@@ -197,7 +257,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
           title: `Trusted Certificate deleted`,
-          text: `Trusted Certificate ${trustedCertificate.certificateName} has been deleted`,
+          text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
           shouldHideYesCaption: true,
           noCaption: 'Back'
         })).afterClosed().subscribe(() => {

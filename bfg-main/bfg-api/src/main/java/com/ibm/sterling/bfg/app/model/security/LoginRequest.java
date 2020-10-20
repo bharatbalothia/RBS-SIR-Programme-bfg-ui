@@ -1,6 +1,10 @@
 package com.ibm.sterling.bfg.app.model.security;
 
-public class LoginRequest {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+public class LoginRequest implements Login {
 
     private String login;
     private String password;
@@ -11,5 +15,22 @@ public class LoginRequest {
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    @JsonIgnore
+    public MultiValueMap<String, String> retrieveFields() {
+        return new LinkedMultiValueMap<String, String>() {
+            {
+                add("userName", login);
+                add("password", password);
+            }
+        };
+    }
+
+    @Override
+    @JsonIgnore
+    public String urlPostfix() {
+        return "";
     }
 }

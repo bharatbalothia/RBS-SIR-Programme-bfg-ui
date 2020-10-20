@@ -1,18 +1,15 @@
 package com.ibm.sterling.bfg.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.entity.Entity;
-import com.ibm.sterling.bfg.app.model.entity.EntityLog;
+import com.ibm.sterling.bfg.app.exception.*;
 import com.ibm.sterling.bfg.app.model.EntityType;
-import com.ibm.sterling.bfg.app.model.entity.Schedule;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
-import com.ibm.sterling.bfg.app.model.validation.GplValidation;
+import com.ibm.sterling.bfg.app.model.entity.*;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.EntityRepository;
@@ -35,8 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
 
 @Service
 @Transactional
@@ -52,6 +48,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private ScheduleService scheduleService;
+
+    @Autowired
+    private SWIFTNetRoutingRuleService swiftNetRoutingRuleService;
 
     @Autowired
     private Validator validator;
@@ -153,7 +152,8 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) {
+    public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status)
+            throws JsonProcessingException {
         if (!PENDING.equals(changeControl.getStatus())) {
             throw new StatusNotPendingException();
         }
@@ -162,7 +162,7 @@ public class EntityServiceImpl implements EntityService {
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControl.getChanger()))
                 throw new InvalidUserForApprovalException();
-            entity = saveEntityAfterApprove(changeControl);
+            entity = approveEntity(changeControl);
         }
         changeControlService.setApproveInfo(
                 changeControl,
@@ -173,7 +173,7 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    private Entity saveEntityAfterApprove(ChangeControl changeControl) {
+    private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
         LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
         Optional.ofNullable(entity.getEntityId()).ifPresent(entityId -> {
@@ -198,13 +198,21 @@ public class EntityServiceImpl implements EntityService {
             entity.setService("DEL_" + entity.getEntityId() + "_" + entity.getService());
             entity.setMailboxPathOut("DEL_" + entity.getEntityId() + "_" + entity.getMailboxPathOut());
             entity.setMqQueueOut("DEL_" + entity.getEntityId() + "_" + entity.getMqQueueOut());
+            entity.setInboundRoutingRule(true);
         }
+
+        SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
+        if (entity.getInboundRoutingRule() && changeControl.getEntityLog().getService().equals("GPL")) {
+            routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
+        }
+
         Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
         changeControl.setEntityLog(entityLog);
         changeControlService.save(changeControl);
+        savedEntity.setRoutingRules(routingRules);
         return savedEntity;
     }
 

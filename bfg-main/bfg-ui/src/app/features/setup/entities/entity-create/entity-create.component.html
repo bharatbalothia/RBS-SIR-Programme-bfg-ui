@@ -32,7 +32,7 @@
                         <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
@@ -119,7 +119,8 @@
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('inboundRequestType')">
                             <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
-                            <mat-select formControlName="inboundRequestType" multiple>
+                            <mat-select formControlName="inboundRequestType" multiple
+                                [required]="get(requiredFields,'inboundRequestType')">
                                 <mat-select-trigger>
                                     <mat-chip-list>
                                         <mat-chip
@@ -135,6 +136,11 @@
                                     [value]="inboundRequestType">{{inboundRequestType}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestType">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundRequestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>
@@ -680,7 +686,7 @@
                     </section>
                     <section class="form-field-section">
                         <mat-form-field>
-                            <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
+                            <mat-label>{{entityDisplayNames['serviceName'] || 'service'}}</mat-label>
                             <input matInput formControlName="serviceName"
                                 [required]="get(requiredFields,'serviceName')">
                             <mat-error *ngFor="let validation of entityValidationMessages.serviceName">
@@ -744,7 +750,7 @@
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('deliveryNotification', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('nonRepudiation')">
                         <label
                             class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] || 'nonRepudiation'}}:</label>
                         <mat-radio-group formControlName='nonRepudiation'>
@@ -756,7 +762,7 @@
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('nonRepudiation', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('e2eSigning')">
                         <label class='radio-group-label'>{{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
                         <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>

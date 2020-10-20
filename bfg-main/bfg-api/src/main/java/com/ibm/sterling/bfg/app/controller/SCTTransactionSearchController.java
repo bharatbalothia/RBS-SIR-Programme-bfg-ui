@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/transactions")
+@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class SCTTransactionSearchController {
 
     @Autowired

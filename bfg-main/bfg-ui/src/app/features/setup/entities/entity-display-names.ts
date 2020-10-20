@@ -1,13 +1,14 @@
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { isEmpty, merge, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
+import { formatDate } from '@angular/common';
 
 export const ENTITY_DISPLAY_NAMES = {
   entityId: 'Entity ID',
@@ -37,7 +38,7 @@ export const ENTITY_DISPLAY_NAMES = {
   transferDesc: 'Transfer Description',
   changerComments: 'Changer comments',
   changeID: 'Changer ID',
-  serviceName: 'Service Name',
+  serviceName: 'Service',
   isWindow: 'Type',
   timeStart: 'Time Start',
   windowEnd: 'Time End',
@@ -81,7 +82,8 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
     { fieldName: 'entityId', fieldValue: entity.entityId },
     { fieldName: 'entity', fieldValue: entity.entity },
     { fieldName: 'service', fieldValue: entity.service, shouldDisplayValueUpperCase: true },
-    ...(entity.service === ENTITY_SERVICE_TYPE.SCT || targetService === ENTITY_SERVICE_TYPE.SCT) && [{ fieldName: 'maxBulksPerFile', fieldValue: entity.maxBulksPerFile },
+    ...(entity.service === ENTITY_SERVICE_TYPE.SCT || targetService === ENTITY_SERVICE_TYPE.SCT)
+    && [{ fieldName: 'maxBulksPerFile', fieldValue: entity.maxBulksPerFile },
     { fieldName: 'maxTransfersPerBulk', fieldValue: entity.maxTransfersPerBulk },
     { fieldName: 'compression', fieldValue: entity.compression },
     { fieldName: 'startOfDay', fieldValue: entity.startOfDay },
@@ -125,6 +127,11 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
     { fieldName: 'fileInfo', fieldValue: entity.fileInfo },
     { fieldName: 'transferInfo', fieldValue: entity.transferInfo },
     { fieldName: 'transferDesc', fieldValue: entity.transferDesc },
+    ...(entity.service === ENTITY_SERVICE_TYPE.SCT || targetService === ENTITY_SERVICE_TYPE.SCT)
+    && [{ fieldName: 'mailboxPathIn', fieldValue: entity.mailboxPathIn },
+    { fieldName: 'mailboxPathOut', fieldValue: entity.mailboxPathOut },
+    { fieldName: 'mqQueueIn', fieldValue: entity.mqQueueIn },
+    { fieldName: 'mqQueueOut', fieldValue: entity.mqQueueOut }]
   ],
   'Routing Details': [
     { fieldName: 'inboundRequestorDN', fieldValue: entity.inboundRequestorDN },
@@ -176,7 +183,7 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
         { fieldName: 'Operation', fieldValue: changeControl.operation },
         { fieldName: 'Status', fieldValue: changeControl.status },
         { fieldName: 'Changer', fieldValue: changeControl.changer },
-        { fieldName: 'Date Changed', fieldValue: changeControl.dateChanged },
+        { fieldName: 'Date Changed', fieldValue: formatDate(changeControl.dateChanged, 'yyyy-MM-dd HH:mm:ss', 'en-GB') },
         { fieldName: 'Changer Notes', fieldValue: changeControl.changerComments },
         !isApprovingAction && { fieldName: 'Approver Notes', fieldValue: changeControl.approverComments },
       ],
@@ -251,7 +258,8 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
       },
       {
         sectionTitle: 'SWIFT Details',
-        sectionItems: getEntityDetailsSectionItems(difference(changeControl.entityLog, changeControl.entityBefore))['SWIFT Details']
+        sectionItems: getEntityDetailsSectionItems(
+          difference(changeControl.entityLog, changeControl.entityBefore), changeControl.entityLog.service)['SWIFT Details']
       },
       changeControl.entityLog.service === ENTITY_SERVICE_TYPE.GPL &&
       {

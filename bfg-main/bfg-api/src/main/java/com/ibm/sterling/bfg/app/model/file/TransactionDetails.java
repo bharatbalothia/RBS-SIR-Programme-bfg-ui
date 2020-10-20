@@ -7,6 +7,7 @@ public class TransactionDetails extends Transaction {
     private String reference;
     private String fileID;
     private String service;
+    private String statusLabel;
 
     public String getEntity() {
         return entity;
@@ -54,6 +55,14 @@ public class TransactionDetails extends Transaction {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public String getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(String statusLabel) {
+        this.statusLabel = statusLabel;
     }
 
 }

@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,7 +15,7 @@ import java.sql.Timestamp;
 
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
-public class ChangeControl implements ChangeControlConstants, Comparable<ChangeControl>, Serializable, EntityType {
+public class ChangeControl implements ObjectTypeConstants, Comparable<ChangeControl>, Serializable, EntityType {
     private static final long SERIAL_VERSION_UID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ChangeControl.class);
 
@@ -42,12 +41,6 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private ChangeControlStatus status; //status of change - PENDING(0), REJECTED(1), ACCEPTED(2), FAILED(-1)
-
-    @Column(name = "OBJECT_TYPE")
-    private String objectType; //original SI object type being changed
-
-    @Column(name = "OBJECT_KEY")
-    private String objectKey; //Key for original SI Object being changed
 
     @Column(name = "CHANGE_USER")
     @NotNull
@@ -85,7 +78,6 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
 
     public ChangeControl() {
         this.setStatus(ChangeControlStatus.PENDING);
-        this.setObjectType(OBJECT_TYPE);
     }
 
     public String getChangeID() {
@@ -113,19 +105,7 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
     }
 
     public String getObjectType() {
-        return objectType;
-    }
-
-    public void setObjectType(String objectType) {
-        this.objectType = OBJECT_TYPE;
-    }
-
-    public String getObjectKey() {
-        return objectKey;
-    }
-
-    public void setObjectKey(String objectKey) {
-        this.objectKey = objectKey;
+        return OBJECT_TYPE_ENTITY;
     }
 
     public String getChanger() {
@@ -270,22 +250,13 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
         entityFromLog.setRouteInbound(entityLog.getRouteInbound());
         entityFromLog.setRouteOutbound(entityLog.getRouteOutbound());
         entityFromLog.setInboundDir(entityLog.getInboundDir());
+        entityFromLog.setInboundRoutingRule(entityLog.getInboundRoutingRule());
         entityFromLog.setInboundRequestType(entityLog.getInboundRequestType());
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);
         entityFromLog.setIrishStep2(entityLog.getIrishStep2());
         entityFromLog.setSchedules(entityLog.getSchedules());
         return entityFromLog;
-    }
-
-    public String getShortType() {
-        String shortType = "Unknown";
-        try {
-            ChangeViewer changeViewer = (ChangeViewer) Class.forName(objectType).newInstance();
-            shortType = changeViewer.getObjectType();
-        } catch (Exception e) {
-        }
-        return shortType;
     }
 
     public boolean isPending() {
@@ -298,8 +269,6 @@ public class ChangeControl implements ChangeControlConstants, Comparable<ChangeC
                 "changeID='" + changeID + '\'' +
                 ", operation='" + operation + '\'' +
                 ", status=" + status +
-                ", objectType='" + objectType + '\'' +
-                ", objectKey='" + objectKey + '\'' +
                 ", changer='" + changer + '\'' +
                 ", dateChanged='" + dateChanged + '\'' +
                 ", approver='" + approver + '\'' +

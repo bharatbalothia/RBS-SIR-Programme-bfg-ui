@@ -154,7 +154,8 @@ public class PropertyService {
                 .map(queryStringToGetDataByPartialKey)
                 .reduce((firstQuery, secondQuery) -> "or(" + firstQuery + "," + secondQuery + ")")
                 .orElse(null);
-        return getPropertyList(url + Optional.ofNullable(multipleQuery).map(query -> "?_where=" + query).orElse(null));
+        return getPropertyList(url + "?_where=" +
+                Optional.ofNullable(multipleQuery).orElseGet(() -> queryStringToGetDataByPartialKey.apply(null)));
     }
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {

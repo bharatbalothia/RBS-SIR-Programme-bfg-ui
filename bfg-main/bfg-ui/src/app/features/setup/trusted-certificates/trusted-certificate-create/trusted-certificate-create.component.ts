@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/
 import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
-import { getTrustedCertificateDisplayName, getTrustedCertificateItemInfoValues } from '../trusted-certificate-display-names';
+import { getTrustedCertificateDisplayName, getTrustedCertificateItemInfoValues, getTrustedCertificateItemInfoValuesOrdered } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
 import { get } from 'lodash';
@@ -24,6 +24,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getErrorsMessage = getErrorsMessage;
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   getTrustedCertificateItemInfoValues = getTrustedCertificateItemInfoValues;
+  getTrustedCertificateItemInfoValuesOrdered = getTrustedCertificateItemInfoValuesOrdered;
 
   trustedCertificateValidationMessages = TRUSTED_CERTIFICATE_VALIDATION_MESSAGES;
 

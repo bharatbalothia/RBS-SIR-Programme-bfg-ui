@@ -67,7 +67,7 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('issuer')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('issuer').value)">
+                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('issuer').value)">
                                 </app-display-table-cell>
                             </div>
 
@@ -76,7 +76,7 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('subject').value)">
+                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('subject').value)">
                                 </app-display-table-cell>
                             </div>
                         </section>

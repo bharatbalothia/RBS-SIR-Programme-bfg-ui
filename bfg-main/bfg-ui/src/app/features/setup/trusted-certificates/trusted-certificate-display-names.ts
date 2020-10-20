@@ -40,6 +40,18 @@ export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFI
 
 export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`).sort();
 
+export const getTrustedCertificateItemInfoValuesOrdered = (item) => item && [
+    ...new Set([
+        `${getTrustedCertificateDisplayName('CN')}: ${item.CN || ''}`,
+        `${getTrustedCertificateDisplayName('OU')}: ${item.OU || ''}`,
+        `${getTrustedCertificateDisplayName('O')}: ${item.O || ''}`,
+        `${getTrustedCertificateDisplayName('L')}: ${item.L || ''}`,
+        `${getTrustedCertificateDisplayName('ST')}: ${item.ST || ''}`,
+        `${getTrustedCertificateDisplayName('C')}: ${item.C || ''}`,
+        ...getTrustedCertificateItemInfoValues(item)
+    ])];
+
+
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
         { fieldName: 'certificateName', fieldValue: trustedCertificate.certificateName },
@@ -50,11 +62,11 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
         { fieldName: 'endDate', fieldValue: trustedCertificate.endDate },
         {
             fieldName: 'issuer',
-            fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.issuer)
+            fieldValue: getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.issuer)
         },
         {
             fieldName: 'subject',
-            fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.subject)
+            fieldValue: getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.subject)
         },
     ],
 });

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,13 @@ public class ChangeControlService {
     }
 
     public Optional<ChangeControl> findById(String id) {
-        LOGGER.info("change control by id {}", id);
+        LOGGER.info("change by id {}", id);
         return changeControlRepository.findById(id);
+    }
+
+    public Optional<ChangeControl> findPendingChangeById(String id) {
+        LOGGER.info("pending change control by id {}", id);
+        return changeControlRepository.findByChangeIDAndStatus(id, ChangeControlStatus.PENDING);
     }
 
     public ChangeControl save(ChangeControl changeControl) {

@@ -101,8 +101,14 @@ public class EntityController {
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable String id) {
-        return changeControlService.findById(id)
-                .map(record -> ok().body(record.convertEntityLogToEntity()))
+        return changeControlService.findPendingChangeById(id)
+                .map(record -> {
+                    Entity entity = record.convertEntityLogToEntity();
+                    entity.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
+                    );
+                    return ok().body(entity);
+                })
                 .orElseThrow(ChangeControlNotFoundException::new);
     }
 

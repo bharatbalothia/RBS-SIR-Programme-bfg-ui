@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ibm.sterling.bfg.app.model.EntityType;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.ConvertedStringSize;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
@@ -261,6 +262,10 @@ public class Entity implements EntityType {
     private String inboundService = "";
     @Convert(converter = StringToListConverter.class)
     @Column(name = "ROUTE_REQUESTTYPE")
+    @ConvertedStringSize(
+            message = "value too large for column ROUTE_REQUESTTYPE (maximum: 255)",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private List<String> inboundRequestType = new ArrayList<>();
 
     @NotNull(message = "NONREPUDIATION has to be present",

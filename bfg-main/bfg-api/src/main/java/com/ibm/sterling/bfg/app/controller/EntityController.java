@@ -83,19 +83,18 @@ public class EntityController {
     public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> {
-                            record.setInboundRequestType(
-                                    propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
-                            );
-                            if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
-                                    StringUtils.isEmpty(record.getInboundResponderDN()))
-                                record.setRouteInbound(Boolean.FALSE);
-                            else {
-                                record.setInboundDir(Boolean.TRUE);
-                                record.setInboundRoutingRule(Boolean.TRUE);
-                            }
-                            return ok().body(record);
-                        }
-                ).orElseThrow(EntityNotFoundException::new);
+                    record.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
+                    );
+                    if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
+                            StringUtils.isEmpty(record.getInboundResponderDN()))
+                        record.setRouteInbound(Boolean.FALSE);
+                    else {
+                        record.setInboundDir(Boolean.TRUE);
+                        record.setInboundRoutingRule(Boolean.TRUE);
+                    }
+                    return ok().body(record);
+                }).orElseThrow(EntityNotFoundException::new);
     }
 
     @GetMapping("pending/{id}")
@@ -108,8 +107,7 @@ public class EntityController {
                             propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
                     );
                     return ok().body(entity);
-                })
-                .orElseThrow(ChangeControlNotFoundException::new);
+                }).orElseThrow(ChangeControlNotFoundException::new);
     }
 
     @PostMapping
@@ -137,8 +135,7 @@ public class EntityController {
                     entity.setEntity(record.getEntity());
                     entity.setService(record.getService());
                     return ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE));
-                })
-                .orElseThrow(EntityNotFoundException::new);
+                }).orElseThrow(EntityNotFoundException::new);
     }
 
     @DeleteMapping("/{id}")

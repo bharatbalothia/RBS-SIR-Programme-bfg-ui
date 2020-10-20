@@ -30,7 +30,7 @@ public class ChangeControlService {
     }
 
     public Optional<ChangeControl> findById(String id) {
-        LOGGER.info("change by id {}", id);
+        LOGGER.info("change control by id {}", id);
         return changeControlRepository.findById(id);
     }
 

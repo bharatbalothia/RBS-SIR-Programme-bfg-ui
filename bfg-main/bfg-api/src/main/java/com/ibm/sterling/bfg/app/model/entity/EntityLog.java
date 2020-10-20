@@ -185,7 +185,7 @@ public class EntityLog {
     private String e2eSigning;
 
     @Convert(converter = StringToListConverter.class)
-    @Column(name = "INBOUND_REQUEST_TYPE", columnDefinition = "varchar2(2255)", nullable = false)
+    @Column(name = "ROUTE_REQUESTTYPE")
     private List<String> inboundRequestType = new ArrayList<>();
 
     @Column(name = "IRISH_STEP2")

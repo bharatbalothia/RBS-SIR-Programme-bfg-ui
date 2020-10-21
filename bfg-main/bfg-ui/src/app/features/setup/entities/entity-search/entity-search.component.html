@@ -21,7 +21,7 @@
             <button color="primary" mat-raised-button (click)="getEntityList(pageIndex, pageSize)">Search</button>
         </div>
         <div class="mat-elevation-z8">
-            <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+            <mat-table [dataSource]="dataSource" *ngIf="entities">
 
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
@@ -59,7 +59,7 @@
                 <ng-container matColumnDef="entity">openEntityDetailsDialog
                     <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button (click)="openEntityDetailsDialog(element.entityLog || element)">
+                        <button mat-button (click)="openDetailsDialog(element)">
                             {{element.entity || element.resultMeta1}}
                         </button>
                     </mat-cell>

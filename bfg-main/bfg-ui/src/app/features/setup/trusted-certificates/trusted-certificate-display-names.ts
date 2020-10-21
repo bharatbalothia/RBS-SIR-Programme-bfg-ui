@@ -43,7 +43,7 @@ export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFI
 
 export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`).sort();
 
-export const getValidityLabel = (value) => value ? 'Certificate is valid' : 'Certificate is not valid';
+export const getValidityLabel = (value) => value === true ? 'Certificate is valid' : 'Certificate is not valid';
 
 const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCertificate) => ({
     'Trusted Certificate Details': [
@@ -61,7 +61,7 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
             fieldName: 'subject',
             fieldValue: getTrustedCertificateItemInfoValues(trustedCertificate.subject)
         },
-        { fieldName: 'valid', fieldValue: getValidityLabel(trustedCertificate.valid) },
+        (get(trustedCertificate, 'valid', null)) !== null && { fieldName: 'valid', fieldValue: getValidityLabel(trustedCertificate.valid) },
         (get(trustedCertificate, 'authChainReport') || []).length !== 0 && {
             fieldName: 'authChainReport',
             fieldValue: trustedCertificate.authChainReport.map(el => getTrustedCertificateItemInfoValues(el).join(',\n'))

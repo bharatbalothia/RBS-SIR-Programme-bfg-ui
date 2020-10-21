@@ -54,6 +54,13 @@
                     justify-content: center;
                     -ms-flex-direction: column;
                     flex-direction: column;
+
+                    .validity-flag{
+                        display: flex;
+                        align-items: center;
+                        -ms-flex-direction: row;
+                        flex-direction: row;
+                    }
                 }
             }
         }

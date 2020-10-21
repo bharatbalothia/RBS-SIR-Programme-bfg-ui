@@ -67,7 +67,7 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('issuer')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('issuer').value)">
+                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('issuer').value)">
                                 </app-display-table-cell>
                             </div>
 
@@ -76,8 +76,22 @@
                             <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
                             <div class="section-value">
                                 <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValues(detailsTrustedCertificateFormGroup.get('subject').value)">
+                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('subject').value)">
                                 </app-display-table-cell>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="ts-item-section">
+                    <h3 class="ts-item-section-title">Validity:</h3>
+                    <div class="ts-item-section-value">
+                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('serialNumber')">
+                            <h4 class="section-label"></h4>
+                            <div class="section-value">
+                                <div class="validity-flag">
+                                    <mat-icon >{{detailsTrustedCertificateFormGroup.get('valid').value === true ? 'check_circle_outline' : 'warning'}}</mat-icon>
+                                    <span>{{getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
+                                </div>
                             </div>
                         </section>
                     </div>

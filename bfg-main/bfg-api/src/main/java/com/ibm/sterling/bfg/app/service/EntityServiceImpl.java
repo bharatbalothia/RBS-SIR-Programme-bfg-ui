@@ -280,7 +280,7 @@ public class EntityServiceImpl implements EntityService {
                                                         String inboundService, List<String> inboundRequestType) {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundService(inboundRequestorDN,
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(inboundRequestorDN,
                 inboundResponderDN, inboundService);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))

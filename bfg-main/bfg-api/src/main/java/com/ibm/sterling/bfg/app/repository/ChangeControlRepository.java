@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChangeControlRepository extends JpaRepository<ChangeControl, String>, JpaSpecificationExecutor<ChangeControl> {
@@ -15,5 +16,7 @@ public interface ChangeControlRepository extends JpaRepository<ChangeControl, St
     List<ChangeControl> findByStatus(ChangeControlStatus status);
 
     List<ChangeControl> findAll(Specification<ChangeControl> specification);
+
+    Optional<ChangeControl> findByChangeIDAndStatus(String changeID, ChangeControlStatus status);
 
 }

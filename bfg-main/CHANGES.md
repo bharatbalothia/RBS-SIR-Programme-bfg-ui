@@ -5,6 +5,7 @@ Fix SIRP-2148 Text changed in Delete Entity dialog
 Fix SIRP-2169 Object Type added, Date format changed, Changer Comments field renamed in Trusted Certificate details view
 Fix SIRP-2078 Changed Object Type value.
 Fix SIRP-2143 Trusted Certificate Auth Chain Report added to details view
+Fix SIRP-2008 Added global Home and Entity View permission check
 
 ## SIR Sprint 15
 Fix SIRP-1952 Removed repeating Approver Comments field.

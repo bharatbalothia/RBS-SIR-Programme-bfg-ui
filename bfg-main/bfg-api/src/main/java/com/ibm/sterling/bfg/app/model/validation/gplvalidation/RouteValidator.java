@@ -81,8 +81,9 @@ public class RouteValidator implements ConstraintValidator<RouteValid, Entity> {
                         constraintValidatorContext, (Boolean inboundRoutingRule) -> !Optional.ofNullable(inboundRoutingRule).isPresent())
 
                         & isValidInboundRoute("routingRules", entity,
-                        "The attributes of the routing rules match the attributes of the existing entity " +
-                                entityWithAttributesOfRoutingRules.map(Entity::getEntity).orElse(""),
+                        "Entity properties should be unique for requester DN, responder DN, service, and request types.  These match the entity " +
+                                entityWithAttributesOfRoutingRules.map(Entity::getEntity).orElse("") +
+                                ". Please correct the properties and try again, or cancel",
                         constraintValidatorContext, (Entity validatedEntity) -> entityWithAttributesOfRoutingRules.isPresent());
             }
             return true;

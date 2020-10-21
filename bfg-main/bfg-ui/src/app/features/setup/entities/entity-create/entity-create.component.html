@@ -127,13 +127,13 @@
                                             *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
                                             [removable]="true"
                                             (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
-                                            {{ inboundRequestType }}
+                                            {{ inboundRequestType.value }}
                                             <mat-icon matChipRemove>cancel</mat-icon>
                                         </mat-chip>
                                     </mat-chip-list>
                                 </mat-select-trigger>
                                 <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
-                                    [value]="inboundRequestType">{{inboundRequestType}}
+                                    [value]="inboundRequestType">{{inboundRequestType.value}}
                                 </mat-option>
                             </mat-select>
                             <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestType">

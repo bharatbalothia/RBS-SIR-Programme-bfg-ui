@@ -43,7 +43,7 @@ export class EntityCreateComponent implements OnInit {
   @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
 
-  inboundRequestTypeList: string[] = [];
+  inboundRequestTypeList: any[] = [];
   entityValidationMessages = ENTITY_VALIDATION_MESSAGES;
   errorMessage: ErrorMessage;
 
@@ -299,9 +299,13 @@ export class EntityCreateComponent implements OnInit {
           inboundDir: [entity.inboundDir, Validators.required],
           inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
         });
-        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe((data: string[]) => {
+        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
           this.isLoading = false;
-          this.inboundRequestTypeList = data;
+          this.inboundRequestTypeList = this.getInboundRequestTypes(data);
+          if (this.isEditing()) {
+            this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
+              .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[]).includes(el.value)));
+          }
         }, error => {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
@@ -470,6 +474,8 @@ export class EntityCreateComponent implements OnInit {
           inboundRequestorDN: get(this.entityPageFormGroup.controls.inboundRequestorDN, 'value'),
           inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
           inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
+          inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
+            .map(el => el.key),
           inboundDir: get(this.entityPageFormGroup.controls.inboundDir, 'value'),
           inboundRoutingRule: get(this.entityPageFormGroup.controls.inboundRoutingRule, 'value'),
         };
@@ -549,6 +555,8 @@ export class EntityCreateComponent implements OnInit {
         inboundRequestorDN: get(this.entityPageFormGroup.controls, 'inboundRequestorDN.value'),
         inboundResponderDN: get(this.entityPageFormGroup.controls, 'inboundResponderDN.value'),
         inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
+        inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
+          .map(el => el.value).join(',\n'),
         inboundDir: get(this.entityPageFormGroup.controls, 'inboundDir.value'),
         inboundRoutingRule: get(this.entityPageFormGroup.controls, 'inboundRoutingRule.value'),
       },
@@ -664,5 +672,7 @@ export class EntityCreateComponent implements OnInit {
       this.auth.showForbidden();
     }
   }
+
+  getInboundRequestTypes = (value) => value && Object.keys(value).map(el => ({ key: el, value: value[el] }));
 
 }

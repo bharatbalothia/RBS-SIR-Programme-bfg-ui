@@ -65,14 +65,19 @@ export class EntitySearchComponent implements OnInit {
     this.getEntityList(this.pageIndex, this.pageSize);
   }
 
-  getEntityList(pageIndex: number, pageSize: number) {
+  setLoading(data) {
+    this.errorMessage = null;
     this.isLoading = true;
+    return data;
+  }
+
+  getEntityList(pageIndex: number, pageSize: number) {
     this.entityService.getEntityList(removeEmpties({
       entity: this.entityNameSearchingValue || null,
       service: this.serviceSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
-    })).pipe(take(1)).subscribe((data: EntitiesWithPagination) => {
+    })).pipe(take(1)).pipe(data => this.setLoading(data)).subscribe((data: EntitiesWithPagination) => {
       this.isLoading = false;
       this.pageIndex = pageIndex;
       this.pageSize = pageSize;
@@ -89,73 +94,114 @@ export class EntitySearchComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.entities.content);
   }
 
-  addEntityBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+  addEntityBeforeToChangeControl(changeControl: ChangeControl) {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
-      return this.entityService.getEntityById(entityId.toString()).toPromise()
-        .then(data => ({ ...changeControl, entityBefore: data }));
+      return this.entityService.getEntityById(entityId.toString()).pipe(data => this.setLoading(data)).toPromise()
+        .then(data => {
+          this.isLoading = false;
+          return ({ ...changeControl, entityBefore: data });
+        }).catch(error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
     }
     else {
       return new Promise((res) => res(changeControl));
     }
   }
 
+  getEntityDetails = (entity: Entity) =>
+    this.entityService.getEntityById(entity.entityId).pipe(data => this.setLoading(data)).toPromise()
+      .then((data: Entity) => {
+        this.isLoading = false;
+        return data;
+      }).catch(error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+        return null;
+      })
+
+  getPendingEntityDetails = (changeControl: ChangeControl) =>
+    this.entityService.getPendingEntityById(changeControl.changeID).pipe(data => this.setLoading(data)).toPromise()
+      .then((data: Entity) => {
+        this.isLoading = false;
+        return ({ ...changeControl, entityLog: data });
+      }).catch(error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+        return null;
+      })
+
   openInfoDialog(changeControl: ChangeControl) {
-    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: `Change Record: Pending`,
-        tabs: getPendingChangesTabs(changeCtrl),
+    this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
+        .then((changeCtrl: ChangeControl) =>
+          changeCtrl && this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+            title: `Change Record: Pending`,
+            tabs: getPendingChangesTabs(changeCtrl),
+            displayName: getEntityDisplayName
+          }))));
+  }
+
+  openDetailsDialog(value: Entity | ChangeControl) {
+    let detailsData = null;
+    if (value.changeID) {
+      detailsData = this.getPendingEntityDetails(value as ChangeControl)
+        .then((changeControl: ChangeControl) => changeControl && changeControl.entityLog);
+    }
+    else {
+      detailsData = this.getEntityDetails(value as Entity);
+    }
+    detailsData.then((data: Entity) =>
+      data && this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${data.service}: ${data.entity}`,
+        tabs: getEntityDetailsTabs(data),
         displayName: getEntityDisplayName
       })));
   }
 
-  openEntityDetailsDialog(entity: Entity) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `${entity.service}: ${entity.entity}`,
-      tabs: getEntityDetailsTabs(entity),
-      displayName: getEntityDisplayName
-    }));
-  }
-
   openApprovingDialog(changeControl: ChangeControl) {
-    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: 'Approve Change',
-        yesCaption: 'Cancel',
-        tabs: getPendingChangesTabs(changeCtrl, true),
-        displayName: getEntityDisplayName,
-        actionData: {
-          changeID: changeControl.changeID,
-          changer: changeControl.changer,
-          errorMessage: {
-            message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
-            errors: get(changeCtrl, 'errors')
-          },
-          approveAction:
-            (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
-        }
-      })).afterClosed().subscribe(data => {
-        if (get(data, 'refreshList')) {
-          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-            title: `Entity ${get(data, 'status').toLowerCase()}`,
-            text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-            shouldHideYesCaption: true,
-            noCaption: 'Back'
-          })).afterClosed().subscribe(() => {
-            this.getEntityList(this.pageIndex, this.pageSize);
-          });
-        }
-      }));
+    this.getPendingEntityDetails(changeControl)
+      .then((detailedChangeCtrl: ChangeControl) =>
+        detailedChangeCtrl && this.addEntityBeforeToChangeControl(detailedChangeCtrl).then((changeCtrl: ChangeControl) =>
+          changeCtrl && this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+            title: 'Approve Change',
+            yesCaption: 'Cancel',
+            tabs: getPendingChangesTabs(changeCtrl, true),
+            displayName: getEntityDisplayName,
+            actionData: {
+              changeID: changeControl.changeID,
+              changer: changeControl.changer,
+              errorMessage: {
+                message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
+                errors: get(changeCtrl, 'errors')
+              },
+              approveAction:
+                (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
+            }
+          })).afterClosed().subscribe(data => {
+            if (get(data, 'refreshList')) {
+              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+                title: `Entity ${get(data, 'status').toLowerCase()}`,
+                text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+                shouldHideYesCaption: true,
+                noCaption: 'Back'
+              })).afterClosed().subscribe(() => {
+                this.getEntityList(this.pageIndex, this.pageSize);
+              });
+            }
+          })));
   }
 
   deleteEntity(entity: Entity) {
-    this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
-      title: `Delete ${entity.entity}`,
+    this.getEntityDetails(entity).then((detailedEntity: Entity) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+      title: `Delete ${detailedEntity.entity}`,
       yesCaption: 'Cancel',
-      tabs: getEntityDetailsTabs(entity),
+      tabs: getEntityDetailsTabs(detailedEntity),
       displayName: getEntityDisplayName,
       actionData: {
-        id: entity.entityId,
+        id: detailedEntity.entityId,
         deleteAction: (id: string, changerComments: string) => this.entityService.deleteEntity(id, changerComments)
       }
     })).afterClosed().subscribe(data => {
@@ -169,7 +215,7 @@ export class EntitySearchComponent implements OnInit {
           this.getEntityList(this.pageIndex, this.pageSize);
         });
       }
-    });
+    }));
   }
 
   transmitEntity(entity: Entity) {

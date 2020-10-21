@@ -10,7 +10,14 @@ import { ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constant
 
 
 export const routes: Routes = [
-    { path: ROUTING_PATHS.EMPTY, component: EntityHomeComponent },
+    { path: ROUTING_PATHS.EMPTY, component: EntityHomeComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: [
+                ...Object.keys(ENTITY_PERMISSIONS).map(key => ENTITY_PERMISSIONS[key])
+            ]
+        }
+    },
     {
         path: ROUTING_PATHS.CREATE, component: EntityCreateComponent,
         canActivate: [PermissionsGuardService],

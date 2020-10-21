@@ -47,10 +47,15 @@ export class EntityPendingComponent implements OnInit {
     this.getPendingChanges(this.pageIndex, this.pageSize);
   }
 
-  getPendingChanges(pageIndex: number, pageSize: number) {
+  setLoading(data) {
+    this.errorMessage = null;
     this.isLoading = true;
+    return data;
+  }
+
+  getPendingChanges(pageIndex: number, pageSize: number) {
     this.entityService.getPendingChanges({ page: pageIndex.toString(), size: pageSize.toString() })
-      .pipe(take(1)).subscribe((data: ChangeControlsWithPagination) => {
+      .pipe(take(1)).pipe(data => this.setLoading(data)).subscribe((data: ChangeControlsWithPagination) => {
         this.isLoading = false;
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
@@ -67,63 +72,90 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
-  addEntityBeforeToChangeControl(changeControl: ChangeControl): Promise<ChangeControl> {
+  addEntityBeforeToChangeControl(changeControl: ChangeControl) {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
-      return this.entityService.getEntityById(entityId.toString()).toPromise()
-        .then(data => ({ ...changeControl, entityBefore: data }));
+      return this.entityService.getEntityById(entityId.toString()).pipe(data => this.setLoading(data)).toPromise()
+        .then(data => {
+          this.isLoading = false;
+          return ({ ...changeControl, entityBefore: data });
+        }).catch(error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
     }
     else {
       return new Promise((res) => res(changeControl));
     }
   }
 
+  getPendingEntityDetails = (changeControl: ChangeControl) =>
+    this.entityService.getPendingEntityById(changeControl.changeID).pipe(data => this.setLoading(data)).toPromise()
+      .then((data: Entity) => {
+        this.isLoading = false;
+        return ({ ...changeControl, entityLog: data });
+      }).catch(error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+        return null;
+      })
+
   openInfoDialog(changeControl: ChangeControl) {
-    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: `Change Record: Pending`,
-        tabs: getPendingChangesTabs(changeCtrl),
-        displayName: getEntityDisplayName
-      })));
+    this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
+        .then((changeCtrl: ChangeControl) =>
+          changeCtrl && this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+            title: `Change Record: Pending`,
+            tabs: getPendingChangesTabs(changeCtrl),
+            displayName: getEntityDisplayName
+          }))));
   }
 
-  openEntityDetailsDialog(entity: Entity) {
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `${entity.service}: ${entity.entity}`,
-      tabs: getEntityDetailsTabs(entity),
-      displayName: getEntityDisplayName
-    }));
+  openDetailsDialog(value: Entity | ChangeControl) {
+    if (value.changeID) {
+      return this.getPendingEntityDetails(value as ChangeControl)
+        .then((changeControl: ChangeControl) => changeControl && changeControl.entityLog)
+        .then((data: Entity) =>
+          data && this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+            title: `${data.service}: ${data.entity}`,
+            tabs: getEntityDetailsTabs(data),
+            displayName: getEntityDisplayName
+          })));
+    }
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.addEntityBeforeToChangeControl(changeControl).then(changeCtrl =>
-      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: 'Approve Change',
-        yesCaption: 'Cancel',
-        tabs: getPendingChangesTabs(changeCtrl, true),
-        displayName: getEntityDisplayName,
-        actionData: {
-          changeID: changeControl.changeID,
-          changer: changeControl.changer,
-          errorMessage: {
-            message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
-            errors: get(changeCtrl, 'errors')
-          },
-          approveAction:
-            (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
-        }
-      })).afterClosed().subscribe(data => {
-        if (get(data, 'refreshList')) {
-          this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-            title: `Entity ${get(data, 'status').toLowerCase()}`,
-            text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-            shouldHideYesCaption: true,
-            noCaption: 'Back'
-          })).afterClosed().subscribe(() => {
-            this.getPendingChanges(this.pageIndex, this.pageSize);
-          });
-        }
-      }));
+    this.getPendingEntityDetails(changeControl)
+      .then((detailedChangeCtrl: ChangeControl) =>
+        detailedChangeCtrl && this.addEntityBeforeToChangeControl(detailedChangeCtrl).then((changeCtrl: ChangeControl) =>
+          changeCtrl &&
+          this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+            title: 'Approve Change',
+            yesCaption: 'Cancel',
+            tabs: getPendingChangesTabs(changeCtrl, true),
+            displayName: getEntityDisplayName,
+            actionData: {
+              changeID: changeControl.changeID,
+              changer: changeControl.changer,
+              errorMessage: {
+                message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
+                errors: get(changeCtrl, 'errors')
+              },
+              approveAction:
+                (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
+            }
+          })).afterClosed().subscribe(data => {
+            if (get(data, 'refreshList')) {
+              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+                title: `Entity ${get(data, 'status').toLowerCase()}`,
+                text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+                shouldHideYesCaption: true,
+                noCaption: 'Back'
+              })).afterClosed().subscribe(() => {
+                this.getPendingChanges(this.pageIndex, this.pageSize);
+              });
+            }
+          })));
   }
 
 }

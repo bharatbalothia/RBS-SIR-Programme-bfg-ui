@@ -5,7 +5,7 @@
   <mat-card-content class="card-content">
     <app-error-template [errorMessage]="errorMessage"></app-error-template>
     <div class="mat-elevation-z8">
-      <mat-table [dataSource]="dataSource" *ngIf="!isLoading">
+      <mat-table [dataSource]="dataSource" *ngIf="changeControls">
 
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
@@ -28,7 +28,7 @@
         <ng-container matColumnDef="entity">openEntityDetailsDialog
           <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button (click)="openEntityDetailsDialog(element.entityLog)">
+            <button mat-button (click)="openDetailsDialog(element)">
               {{element.resultMeta1}}
             </button>
           </mat-cell>

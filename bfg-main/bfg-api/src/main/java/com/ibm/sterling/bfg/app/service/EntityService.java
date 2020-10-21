@@ -14,10 +14,6 @@ import java.util.Optional;
 
 public interface EntityService extends FieldValueExists {
 
-    boolean existsByMqQueueOut(String mqQueueOut);
-
-    boolean existsByServiceAndEntityPut(Entity entity);
-
     boolean existsByServiceAndEntity(String service, String entity);
 
     List<Entity> listAll();
@@ -34,9 +30,11 @@ public interface EntityService extends FieldValueExists {
 
     Page<EntityType> findEntities(Pageable pageable, String entity, String service);
 
-    boolean fieldValueExistsPut(Entity entity) throws UnsupportedOperationException;
-
     boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException;
 
     List<Entity> findEntitiesByService(String service);
+
+    Entity getEntityWithAttributesOfRoutingRules(String inboundRequestorDN, String inboundResponderDN,
+                                                 String inboundService, List<String> inboundRequestType);
+
 }

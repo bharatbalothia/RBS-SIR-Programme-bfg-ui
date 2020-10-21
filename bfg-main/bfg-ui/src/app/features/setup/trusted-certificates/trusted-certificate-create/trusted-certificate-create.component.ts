@@ -2,7 +2,12 @@ import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/
 import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
-import { getTrustedCertificateDisplayName, getTrustedCertificateItemInfoValues } from '../trusted-certificate-display-names';
+import {
+  getTrustedCertificateDisplayName,
+  getTrustedCertificateItemInfoValues,
+  getTrustedCertificateItemInfoValuesOrdered,
+  getValidityLabel
+} from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
 import { get } from 'lodash';
@@ -23,7 +28,9 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   getErrorsMessage = getErrorsMessage;
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
+  getValidityLabel = getValidityLabel;
   getTrustedCertificateItemInfoValues = getTrustedCertificateItemInfoValues;
+  getTrustedCertificateItemInfoValuesOrdered = getTrustedCertificateItemInfoValuesOrdered;
 
   trustedCertificateValidationMessages = TRUSTED_CERTIFICATE_VALIDATION_MESSAGES;
 
@@ -74,7 +81,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
       issuer: [trustedCertificate.issuer],
       subject: [trustedCertificate.subject],
       authChainReport: [trustedCertificate.authChainReport],
-      changerComments: ['']
+      changerComments: [''],
+      valid: [trustedCertificate.valid],
     }, { validators: this.trustedCertificateValidators.isTrustedCertificateHasErrors(trustedCertificate) });
   }
 
@@ -107,7 +115,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       EMAILADDRESS: []
     },
     authChainReport: [],
-    valid: null,
+    valid: false,
     changerComments: ''
   })
 

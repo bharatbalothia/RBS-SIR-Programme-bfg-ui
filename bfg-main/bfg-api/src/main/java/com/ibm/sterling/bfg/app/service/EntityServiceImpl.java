@@ -288,4 +288,18 @@ public class EntityServiceImpl implements EntityService {
                 .orElse(null);
     }
 
+    @Override
+    public Entity getEntityWithAttributesOfRoutingRulesBesidesItself(String inboundRequestorDN, String inboundResponderDN,
+                                                                     String inboundService, List<String> inboundRequestType, Integer entityId) {
+        LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, " +
+                        "inboundRequestType - {}, entityId - {}",
+                inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType, entityId);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCaseAndEntityIdNot(
+                inboundRequestorDN, inboundResponderDN, inboundService, entityId);
+        return entities.stream()
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .findFirst()
+                .orElse(null);
+    }
+
 }

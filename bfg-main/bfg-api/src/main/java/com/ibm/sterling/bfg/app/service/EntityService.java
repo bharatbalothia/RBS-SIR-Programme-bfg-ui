@@ -37,4 +37,8 @@ public interface EntityService extends FieldValueExists {
     Entity getEntityWithAttributesOfRoutingRules(String inboundRequestorDN, String inboundResponderDN,
                                                  String inboundService, List<String> inboundRequestType);
 
+    Entity getEntityWithAttributesOfRoutingRulesBesidesItself(String inboundRequestorDN, String inboundResponderDN,
+                                                              String inboundService, List<String> inboundRequestType,
+                                                              Integer entityId);
+
 }

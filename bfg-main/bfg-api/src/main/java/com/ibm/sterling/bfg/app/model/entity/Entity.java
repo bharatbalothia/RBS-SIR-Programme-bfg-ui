@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.ConvertedStringSize;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
-import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteValid;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteCreationValid;
+import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteUpdateValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
@@ -32,7 +33,8 @@ import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNu
 @EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
 @EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
 @MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
-@RouteValid(groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class})
+@RouteCreationValid(groups = GplValidation.PostValidation.class)
+@RouteUpdateValid(groups = GplValidation.PutValidation.class)
 @javax.persistence.Entity
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType {

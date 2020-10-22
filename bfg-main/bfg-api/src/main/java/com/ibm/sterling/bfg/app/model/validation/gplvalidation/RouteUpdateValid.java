@@ -11,9 +11,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = RouteValidator.class)
+@Constraint(validatedBy = RouteUpdateValidator.class)
 @Documented
-public @interface RouteValid {
+public @interface RouteUpdateValid {
 
     String message() default "Route fields are not valid";
 

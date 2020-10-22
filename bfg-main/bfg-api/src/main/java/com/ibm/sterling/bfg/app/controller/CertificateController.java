@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.naming.InvalidNameException;
 import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -69,27 +70,31 @@ public class CertificateController {
 
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
-    public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile certificate)
+    public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile file)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
-        if (!"application/x-x509-ca-cert".equals(certificate.getContentType()))
-            throw new FileNotValidException();
-        return ok(new TrustedCertificateDetails(getX509Certificate(certificate), certificateValidationService,
+        return ok(new TrustedCertificateDetails(getX509Certificate(file), certificateValidationService,
                 trustedCertificateRepository, changeControlCertRepository, false));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
-    public ResponseEntity<TrustedCertificate> createTrustedCertificate(@RequestParam("file") MultipartFile certificate,
+    public ResponseEntity<TrustedCertificate> createTrustedCertificate(@RequestParam("file") MultipartFile file,
                                                                        @RequestParam String name,
                                                                        @RequestParam String comments)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
         return ok(certificateService.saveCertificateToChangeControl(
-                certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(certificate), name, comments), CREATE));
+                certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(file), name, comments), CREATE));
     }
 
-    private X509Certificate getX509Certificate(MultipartFile certificate) throws CertificateException, IOException {
+    private X509Certificate getX509Certificate(MultipartFile file) throws CertificateException, IOException {
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) factory.generateCertificate(certificate.getInputStream());
+        X509Certificate x509Certificate;
+        try (InputStream inputStream = file.getInputStream()) {
+            x509Certificate = (X509Certificate) factory.generateCertificate(inputStream);
+        } catch (CertificateException e) {
+            throw new FileNotValidException();
+        }
+        return x509Certificate;
     }
 
     @PostMapping("pending")

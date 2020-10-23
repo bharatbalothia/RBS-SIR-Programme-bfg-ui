@@ -23,8 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
+import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
@@ -51,17 +50,20 @@ public class SWIFTNetRoutingRuleService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer) throws JsonProcessingException {
-        List<String> routingRulesByEntityName = getRoutingRulesByEntityName(entity.getEntity());
-        if (operation.equals(CREATE)) {
+    public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer)
+            throws JsonProcessingException {
+        List<String> routingRulesByEntityName = Optional.ofNullable(getRoutingRulesByEntityName(entity.getEntity())).orElseGet(ArrayList::new);
+        if (CREATE.equals(operation)) {
             if (routingRulesByEntityName.isEmpty())
                 return createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
             throw new EntityApprovalException(routingRulesByEntityName.stream()
                     .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
                     .collect(Collectors.toList()), CREATION_APPROVAL_ERROR);
-        } else if (operation.equals(DELETE)) {
-            if (!routingRulesByEntityName.isEmpty())
-                deleteRoutingRules(routingRulesByEntityName);
+        } else if (DELETE.equals(operation)) {
+            deleteRoutingRules(routingRulesByEntityName);
+        } else if (UPDATE.equals(operation)) {
+            deleteRoutingRules(routingRulesByEntityName);
+            createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
         }
         return new SWIFTNetRoutingRuleServiceResponse();
     }

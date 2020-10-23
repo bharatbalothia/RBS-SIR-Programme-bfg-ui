@@ -1,33 +1,30 @@
 package com.ibm.sterling.bfg.app.model.validation.gplvalidation;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
-import com.ibm.sterling.bfg.app.service.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Formatter;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class RouteValidator implements ConstraintValidator<RouteValid, Entity> {
-    private static final Logger LOG = LogManager.getLogger(RouteValidator.class);
+public class RouteValidator {
+
+    private static final Logger LOG = LogManager.getLogger(RouteCreationValidator.class);
     private static final String ROUTE_INBOUND = "routeInbound";
     private static final String INBOUND_DIR = "inboundDir";
     private static final String INBOUND_ROUTING_RULE = "inboundRoutingRule";
     private static final String DN_REGEXP = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$";
 
-    @Autowired
-    private EntityService entityService;
 
-    @Override
-    public boolean isValid(Entity entity, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean validateRouteFields(Entity entity, ConstraintValidatorContext constraintValidatorContext,
+                                       Function<Entity, Optional<Entity>> getEntityWithAttributesOfRoutingRules) {
         LOG.info("Route validation");
         BiFunction<String, Boolean, String> emptyFieldMessage = (fieldName, inboundRoute) ->
                 new Formatter().format("%s cannot be empty because the " + ROUTE_INBOUND + " has the value %s",
@@ -40,14 +37,7 @@ public class RouteValidator implements ConstraintValidator<RouteValid, Entity> {
 
         if (isRouteInboundNotNull) {
             if (isRouteInbound) {
-                Optional<Entity> entityWithAttributesOfRoutingRules = Optional.ofNullable(
-                        entityService.getEntityWithAttributesOfRoutingRules(
-                                entity.getInboundRequestorDN(),
-                                entity.getInboundResponderDN(),
-                                entity.getInboundService(),
-                                entity.getInboundRequestType()
-                        )
-                );
+                Optional<Entity> entityWithAttributesOfRoutingRules = getEntityWithAttributesOfRoutingRules.apply(entity);
                 return isValidInboundRoute(RouteFieldName.ROUTE_REQUESTORDN.fieldName(), entity.getInboundRequestorDN(),
                         emptyFieldMessage.apply(RouteFieldName.ROUTE_REQUESTORDN.name(), entity.getRouteInbound()),
                         constraintValidatorContext, StringUtils::isEmpty)

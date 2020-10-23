@@ -6,6 +6,10 @@ Fix SIRP-2169 Object Type added, Date format changed, Changer Comments field ren
 Fix SIRP-2078 Changed Object Type value.
 Fix SIRP-2143 Trusted Certificate Auth Chain Report added to details view
 Fix SIRP-2008 Added global Home and Entity View permission check
+Fix SIRP-2042 Use correct(short) format to store Inbound Request Type in DB.
+Fix SIRP-2136 Added Validity field to Trusted Certificate creation form
+Fix SIRP-2242 Added uniqueness chect to Entity's route fields
+Fix SIRP-2137 Added general file validation for eny uploaded file before extracting certificate content
 
 ## SIR Sprint 15
 Fix SIRP-1952 Removed repeating Approver Comments field.

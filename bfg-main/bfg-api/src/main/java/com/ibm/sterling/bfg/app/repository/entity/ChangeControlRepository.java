@@ -1,6 +1,6 @@
-package com.ibm.sterling.bfg.app.repository;
+package com.ibm.sterling.bfg.app.repository.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;

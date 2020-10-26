@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.file;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,6 +9,8 @@ import com.ibm.sterling.bfg.app.exception.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
+import com.ibm.sterling.bfg.app.service.PropertyService;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

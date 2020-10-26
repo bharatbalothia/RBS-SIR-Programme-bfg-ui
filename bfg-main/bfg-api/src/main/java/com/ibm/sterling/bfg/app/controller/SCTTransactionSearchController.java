@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
 import com.ibm.sterling.bfg.app.model.file.TransactionSearchCriteria;
 import com.ibm.sterling.bfg.app.service.PropertyService;
-import com.ibm.sterling.bfg.app.service.SearchService;
+import com.ibm.sterling.bfg.app.service.file.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

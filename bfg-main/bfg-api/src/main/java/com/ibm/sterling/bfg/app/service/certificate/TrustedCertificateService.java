@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.model.CertType;
+import com.ibm.sterling.bfg.app.model.certificate.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;

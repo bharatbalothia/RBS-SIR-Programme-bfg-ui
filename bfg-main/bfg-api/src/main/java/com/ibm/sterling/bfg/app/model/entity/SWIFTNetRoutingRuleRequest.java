@@ -1,7 +1,5 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
-
 import java.util.List;
 
 public class SWIFTNetRoutingRuleRequest {

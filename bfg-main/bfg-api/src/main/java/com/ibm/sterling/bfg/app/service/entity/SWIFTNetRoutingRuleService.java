@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

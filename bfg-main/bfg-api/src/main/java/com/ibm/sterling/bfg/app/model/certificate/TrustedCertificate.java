@@ -1,7 +1,6 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ibm.sterling.bfg.app.model.CertType;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;

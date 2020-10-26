@@ -5,7 +5,7 @@ import com.ibm.sterling.bfg.app.exception.ErrorDetailsNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
-import com.ibm.sterling.bfg.app.service.SearchService;
+import com.ibm.sterling.bfg.app.service.file.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

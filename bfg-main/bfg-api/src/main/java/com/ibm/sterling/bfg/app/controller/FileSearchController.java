@@ -74,4 +74,8 @@ public class FileSearchController {
         return ok(fileSearchService.getDocumentPayload(documentId.isEmpty() ? null : documentId));
     }
 
+    @GetMapping("file-monitor")
+    public ResponseEntity<List<File>> getFileMonitor() throws JsonProcessingException {
+        return ok(fileSearchService.getFileMonitor().orElseThrow(FileNotFoundException::new));
+    }
 }

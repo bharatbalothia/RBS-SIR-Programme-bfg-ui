@@ -110,6 +110,15 @@
                 <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>
+        <profile>
+            <id>dev-fyre</id>
+            <properties>
+                <active.profile>dev-fyre</active.profile>
+                <server.host>*</server.host>
+                <server.port>12000</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
     </profiles>
     <build>
         <plugins>

@@ -48,6 +48,13 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
+    @ExceptionHandler(TrustedDigitalCertificateException.class)
+    public ResponseEntity handleTrustedCertBIException(TrustedDigitalCertificateException ex) {
+        ErrorMessage error = errorConfig.getErrorMessage(CertificateErrorCode.CertificateApprovalException);
+        Optional.ofNullable(ex.getErrorMessage()).ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

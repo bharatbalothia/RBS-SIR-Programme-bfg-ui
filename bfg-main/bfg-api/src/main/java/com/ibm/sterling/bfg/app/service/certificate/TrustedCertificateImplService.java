@@ -5,11 +5,7 @@ import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.certificate.CertType;
-import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
+import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -61,6 +57,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
+
+    @Autowired
+    private TrustedDigitalCertificateService digitalCertificateService;
 
     @Autowired
     private Validator validator;
@@ -165,6 +164,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         TrustedCertificate cert = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
         Operation operation = changeControlCert.getOperation();
         if (operation.equals(DELETE)) {
+            digitalCertificateService.deleteTrustedCertificate(cert.getCertificateName());
             trustedCertificateRepository.delete(cert);
         } else {
             validateCertificate(cert);

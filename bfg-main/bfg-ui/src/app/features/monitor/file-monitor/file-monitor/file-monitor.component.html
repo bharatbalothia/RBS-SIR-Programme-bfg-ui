@@ -1,0 +1,18 @@
+<mat-card class="file-monitor-create-card">
+    <mat-card-header>
+        <mat-card-title>File monitor
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        </div>
+        <app-file-table [(errorMessage)]="errorMessage" [(isLoading)]="isLoading" [shouldHidePaginator]="true"
+            [shouldHideTableHeader]="true" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource"
+            [files]="files">
+        </app-file-table>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>

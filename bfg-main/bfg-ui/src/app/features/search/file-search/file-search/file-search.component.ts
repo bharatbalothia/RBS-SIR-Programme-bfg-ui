@@ -1,31 +1,19 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
-import { getFileSearchDisplayName, getFileDetailsTabs, getErrorDetailsTabs } from '../file-search-display-names';
+import { getFileSearchDisplayName } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { getStatusIcon, STATUS_ICON } from 'src/app/core/constants/status-icon';
+import { STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
-import { MatDialog } from '@angular/material/dialog';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { FileError } from 'src/app/shared/models/file/file-error.model';
-import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
-import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
-import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
-import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { Entity } from 'src/app/shared/models/entity/entity.model';
-import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
-import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
-import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
-import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
+import { FileTableComponent } from 'src/app/shared/components/file-table/file-table.component';
 
 @Component({
   selector: 'app-file-search',
@@ -35,15 +23,15 @@ import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-
 export class FileSearchComponent implements OnInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
-  getFileStatusIcon = getStatusIcon;
   FILE_STATUS_ICON = STATUS_ICON;
-
-  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLinear = true;
 
   errorMessage: ErrorMessage;
   isLoading = false;
+
+  @ViewChild(FileTableComponent)
+  fileTableComponent: FileTableComponent;
 
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
@@ -63,29 +51,13 @@ export class FileSearchComponent implements OnInit {
   criteriaFilterObject = { direction: '', service: '' };
 
   files: FilesWithPagination;
-  displayedColumns: string[] = [
-    'status',
-    'id',
-    'filename',
-    'reference',
-    'type',
-    'service',
-    'timestamp',
-    'WFID',
-    'error',
-    'transactions'
-  ];
   dataSource: MatTableDataSource<File>;
-
   pageIndex = 0;
   pageSize = 100;
-  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private formBuilder: FormBuilder,
-    private fileService: FileService,
-    private dialog: MatDialog,
-    private entityService: EntityService
+    private fileService: FileService
   ) { }
 
   ngOnInit(): void {
@@ -184,7 +156,12 @@ export class FileSearchComponent implements OnInit {
   onStepChange(event) {
     if (event.selectedIndex === 1) {
       this.getFileList(this.pageIndex, this.pageSize);
+      this.fileTableComponent.autoRefreshChange(true);
     }
+    else {
+      this.fileTableComponent.autoRefreshChange(false);
+    }
+
   }
 
   resetSearchParameters = () => {
@@ -207,128 +184,6 @@ export class FileSearchComponent implements OnInit {
   }
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
-
-  getSearchingTableHeader(totalElements: number, pageSize: number, page: number) {
-    const start = (page * pageSize) - (pageSize - 1);
-    const end = Math.min(start + pageSize - 1, totalElements);
-    return `Items ${start}-${end} of ${totalElements}`;
-  }
-
-  openFileDetailsDialog = (file: File) => {
-    this.createErrorMesageEmitter(file.id);
-    this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-      title: `File - ${file.id}`,
-      tabs: getFileDetailsTabs(file),
-      displayName: getFileSearchDisplayName,
-      isDragable: true,
-      actionData: {
-        actions: {
-          entity: () => this.openEntityDetailsDialog(file),
-          errorCode: () => this.openErrorDetailsDialog(file),
-          transactionTotal: () => this.openTransactionsDialog(file),
-          filename: () => this.openFileDocumentInfo(file),
-          workflowID: () => this.openBusinessProcessDialog(file)
-        }
-      },
-      parentError: this.errorMesageEmitters[file.id]
-    })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
-  }
-
-  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: DocumentContent) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `File Document Information`,
-        tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
-        displayName: getFileSearchDisplayName,
-        isDragable: true
-      }));
-    },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMesageEvent(file.id);
-      })
-
-  openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
-    .pipe(data => this.setLoading(data))
-    .subscribe((entity: Entity) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `${entity.service}: ${entity.entity}`,
-        tabs: getEntityDetailsTabs(entity),
-        displayName: getEntityDisplayName,
-        isDragable: true,
-
-      }));
-    },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMesageEvent(file.id);
-      })
-
-  openBusinessProcessDialog = (file: File) =>
-    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
-      title: `Business Process Detail`,
-      tabs: [],
-      displayName: getBusinessProcessDisplayName,
-      isDragable: true,
-      actionData: {
-        id: file.workflowID,
-        actions: {
-        }
-      },
-    }))
-
-  openTransactionsDialog = (file: File) =>
-    this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
-      title: `Transactions for ${file.filename} [${file.id}]`,
-      tabs: [],
-      displayName: getFileSearchDisplayName,
-      isDragable: true,
-      actionData: {
-        fileId: file.id,
-        actions: {
-          file: () => this.openFileDetailsDialog(file),
-          workflowID: () => this.openBusinessProcessDialog(file)
-        }
-      },
-    }))
-
-  openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
-    .pipe(data => this.setLoading(data))
-    .subscribe((data: FileError) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `${data.code}`,
-        tabs: getErrorDetailsTabs(data),
-        displayName: getFileSearchDisplayName,
-        isDragable: true
-      }));
-    },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
-
-
-  createErrorMesageEmitter(id: number) {
-    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
-  }
-
-  deleteErrorMesageEmitter(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id] = null;
-    }
-  }
-
-  emitErrorMesageEvent(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id].emit(this.errorMessage);
-    }
-  }
 
   setServiceAndDirectionFromStatus(fromStatus) {
     if (fromStatus !== '') {

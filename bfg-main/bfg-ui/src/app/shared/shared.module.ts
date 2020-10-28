@@ -45,6 +45,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { FileTableComponent } from './components/file-table/file-table.component';
 
 
 @NgModule({
@@ -62,11 +63,12 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
     DragableDialogWrapperComponent,
     TransmitDialogComponent,
     BusinessProcessDialogComponent,
+    FileTableComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
-    DisableControlDirective
+    DisableControlDirective,
   ],
   imports: [
     CommonModule,
@@ -147,6 +149,7 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
     TooltipComponent,
     DragableDialogWrapperComponent,
     TransmitDialogComponent,
+    FileTableComponent,
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

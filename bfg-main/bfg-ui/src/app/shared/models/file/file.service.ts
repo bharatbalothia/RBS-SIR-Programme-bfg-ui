@@ -45,4 +45,8 @@ export class FileService {
     getDocumentContent(docId: string) {
         return this.http.get<FileError>(this.apiUrl + 'document-content/', { params: { id: docId } });
     }
+
+    getFileMonitorList() {
+        return this.http.get<File[]>(this.apiUrl + 'file-monitor');
+    }
 }

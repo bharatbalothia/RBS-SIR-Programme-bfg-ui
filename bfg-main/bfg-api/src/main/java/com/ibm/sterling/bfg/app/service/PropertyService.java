@@ -131,7 +131,7 @@ public class PropertyService {
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
-                .map(this::getStatusLabelData)
+                .map(map -> getStatusLabelData(map, true))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("entity",
                 entityService.findEntitiesByService(service)
@@ -174,16 +174,36 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).equals(transactionSearchPrefixKey + value))
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList())));
-        transactionCriteriaData.put("trxStatus", propertyList.stream()
+
+        List<Object> statusMap = propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
-                .map(this::getStatusLabelData)
-                .collect(Collectors.toList()));
+                .map(map -> getStatusLabelData(map, false))
+                .sorted(Comparator
+                        .comparing(getStatusLabelForComparing("title"),
+                                Comparator.nullsLast(Comparator.naturalOrder()))
+                        .thenComparing(getOutboundForComparing("outbound"),
+                                Comparator.nullsLast(Comparator.naturalOrder()))
+                        .thenComparing(getStatusLabelForComparing("status"),
+                                Comparator.nullsLast(Comparator.comparingInt(Integer::parseInt))))
+                .collect(Collectors.toList());
+
+        transactionCriteriaData.put("trxStatus", statusMap);
         transactionCriteriaData.put("entity", entityService.findEntitiesByService("SCT")
                 .stream().map(Entity::getEntity).collect(Collectors.toList()));
         return transactionCriteriaData;
     }
 
-    private Map<String, Object> getStatusLabelData(Map<String, String> property) {
+    private Function<Map<String, Object>, String> getOutboundForComparing(String status) {
+        return map -> {
+            boolean bound = (boolean) map.get(status);
+            return bound ? "Outbound" : "Inbound";};
+    }
+
+    private Function<Map<String, Object>, String> getStatusLabelForComparing(String status) {
+        return map -> (String) map.get(status);
+    }
+
+    private Map<String, Object> getStatusLabelData(Map<String, String> property, boolean isFile) {
         Map<String, Object> statusMap = new HashMap<>();
         String propertyKey = property.get(PROPERTY_KEY);
         statusMap.put("service", propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
@@ -195,7 +215,11 @@ public class PropertyService {
         statusMap.put("title", noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
         String status = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
         statusMap.put("status", status);
-        statusMap.put("label", "[" + status + "] " + noStatusLabel);
+        if (isFile) {
+            statusMap.put("label", "[" + status + "] " + noStatusLabel);
+        } else {
+            statusMap.put("label", noStatusLabel + "[" + status + "] ");
+        }
         return statusMap;
     }
 
@@ -227,7 +251,7 @@ public class PropertyService {
                                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE)))
                                 .collect(Collectors.toList())
                                 .stream()
-                                .map(val -> String.valueOf(val))
+                                .map(String::valueOf)
                                 .collect(Collectors.joining("")));
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();

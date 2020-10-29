@@ -25,11 +25,13 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                   String certName,
-                                                                  String comment) throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
+                                                                  String comment)
+            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
 
     TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) throws CertificateException;
 
-    TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControl, String approverComments, ChangeControlStatus status) throws Exception;
+    TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControl, String approverComments, ChangeControlStatus status)
+            throws JsonProcessingException, java.security.cert.CertificateEncodingException;
 
     Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256);
 

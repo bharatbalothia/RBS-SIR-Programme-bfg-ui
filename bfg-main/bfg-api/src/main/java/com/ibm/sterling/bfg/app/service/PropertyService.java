@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
@@ -30,6 +31,9 @@ public class PropertyService {
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
 
     public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
@@ -276,23 +280,14 @@ public class PropertyService {
     }
 
     private List<Map<String, String>> getPropertyList(String propertyUrl) throws JsonProcessingException {
-        HttpHeaders headers = new HttpHeaders();
-        String userCredentials = settings.getUserName() + ":" + settings.getPassword();
-        headers.set(HttpHeaders.AUTHORIZATION,
-                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity request = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity =
-                new RestTemplate().exchange(
-                        propertyUrl,
-                        HttpMethod.GET,
-                        request,
-                        String.class
-                );
+        ResponseEntity<String> responseEntity = new RestTemplate().exchange(
+                propertyUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(settings.getUserName(), settings.getPassword())),
+                String.class
+        );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
         return objectMapper.convertValue(root, List.class);
     }
 
 }
-

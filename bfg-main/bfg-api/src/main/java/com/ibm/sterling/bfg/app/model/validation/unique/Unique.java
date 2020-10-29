@@ -9,9 +9,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
 @Target(FIELD)
-@Constraint(validatedBy = EntityUniqueValidator.class)
+@Constraint(validatedBy = UniqueValidator.class)
 @Retention(RUNTIME)
-public @interface EntityUnique {
+public @interface Unique {
 
     String message();
 

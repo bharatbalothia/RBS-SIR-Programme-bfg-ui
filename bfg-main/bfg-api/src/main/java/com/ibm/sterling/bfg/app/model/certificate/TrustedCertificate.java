@@ -2,7 +2,8 @@ package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
-import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.unique.UniqueBICertificate;
+import com.ibm.sterling.bfg.app.model.validation.unique.Unique;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
@@ -35,10 +36,11 @@ public class TrustedCertificate implements CertType {
                     @Parameter(name = ChangeControlIdSequenceGenerator.NUMBER_FORMAT_PARAMETER, value = "%d")})
     private String certificateId;
 
-    @EntityUnique(
+    @Unique(
             service = TrustedCertificateService.class,
             fieldName = "CERTIFICATE_NAME",
             message = "CERTIFICATE_NAME has to be unique")
+    @UniqueBICertificate
     @NotBlank(message = "CERTIFICATE_NAME has to be present")
     @Pattern(regexp = "^[0-9a-zA-Z _\\-:.]+$",
             message = "Please match the requested format for certificateName")

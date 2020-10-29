@@ -114,8 +114,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private void validateEntity(Entity entity, Operation operation) {
-        Set<ConstraintViolation<Entity>> violations;
-        violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
+        Set<ConstraintViolation<Entity>> violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
@@ -149,12 +148,7 @@ public class EntityServiceImpl implements EntityService {
                 throw new InvalidUserForApprovalException();
             entity = approveEntity(changeControl);
         }
-        changeControlService.setApproveInfo(
-                changeControl,
-                userName,
-                approverComments,
-                status
-        );
+        changeControlService.setApproveInfo(changeControl, userName, approverComments, status);
         return entity;
     }
 
@@ -281,8 +275,8 @@ public class EntityServiceImpl implements EntityService {
                                                         String inboundService, List<String> inboundRequestType) {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(inboundRequestorDN,
-                inboundResponderDN, inboundService);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
+                inboundRequestorDN, inboundResponderDN, inboundService);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
                 .findFirst()

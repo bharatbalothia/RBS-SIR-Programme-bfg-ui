@@ -10,8 +10,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class EntityUniqueValidator implements ConstraintValidator<EntityUnique, Object> {
-    private static final Logger LOG = LogManager.getLogger(EntityUniqueValidator.class);
+public class UniqueValidator implements ConstraintValidator<Unique, Object> {
+    private static final Logger LOG = LogManager.getLogger(UniqueValidator.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -19,7 +19,7 @@ public class EntityUniqueValidator implements ConstraintValidator<EntityUnique, 
     private String fieldName;
 
     @Override
-    public void initialize(EntityUnique unique) {
+    public void initialize(Unique unique) {
         fieldName = unique.fieldName();
         Class<? extends FieldValueExists> serviceClass = unique.service();
         service = applicationContext.getBean(serviceClass);

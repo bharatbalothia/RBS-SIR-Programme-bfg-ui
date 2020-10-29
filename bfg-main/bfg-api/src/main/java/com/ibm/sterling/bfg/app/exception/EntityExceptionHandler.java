@@ -34,11 +34,11 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
     private ErrorConfig errorConfig;
 
     @Autowired
-    private RestTemplateExceptionHandler restTemplateExceptionHandler;
+    private ExceptionHandlerConfiguration exceptionHandlerConfiguration;
 
     @ExceptionHandler(HttpStatusCodeException.class)
     public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
-        return restTemplateExceptionHandler.handleRestTemplateException(ex);
+        return exceptionHandlerConfiguration.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(TransmittalException.class)

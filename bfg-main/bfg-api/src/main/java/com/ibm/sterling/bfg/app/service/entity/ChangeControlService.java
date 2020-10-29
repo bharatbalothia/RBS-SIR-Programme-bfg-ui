@@ -52,10 +52,8 @@ public class ChangeControlService {
         return controlFromBD;
     }
 
-    public void setApproveInfo(ChangeControl changeControl,
-                               String user,
-                               String comments,
-                               ChangeControlStatus status) {
+    public void setApproveInfo(ChangeControl changeControl, String user,
+                               String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
@@ -100,4 +98,5 @@ public class ChangeControlService {
             save(changeControl);
         }
     }
+
 }

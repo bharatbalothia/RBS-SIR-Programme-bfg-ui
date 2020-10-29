@@ -7,7 +7,7 @@ import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteCreationVali
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteUpdateValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
-import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.unique.Unique;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUpdateUniqueness;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityServiceUniquenessConstraint;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
@@ -131,7 +131,7 @@ public class Entity implements EntityType {
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
-    @EntityUnique(
+    @Unique(
             service = EntityService.class,
             fieldName = "MAILBOXPATHOUT",
             message = "MAILBOXPATHOUT has to be unique",
@@ -140,7 +140,7 @@ public class Entity implements EntityType {
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
-    @EntityUnique(
+    @Unique(
             service = EntityService.class,
             fieldName = "MQQUEUEOUT",
             message = "MQQUEUEOUT has to be unique",

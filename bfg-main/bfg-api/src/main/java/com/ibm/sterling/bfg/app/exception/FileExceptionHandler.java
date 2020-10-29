@@ -1,8 +1,6 @@
 package com.ibm.sterling.bfg.app.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.controller.FileSearchController;
 import com.ibm.sterling.bfg.app.controller.SCTTransactionSearchController;
@@ -36,17 +34,20 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     private ErrorConfig errorConfig;
 
     @Autowired
-    private RestTemplateExceptionHandler restTemplateExceptionHandler;
+    private APIDetailsHandler apiDetailsHandler;
+
+    @Autowired
+    private ExceptionHandlerConfiguration exceptionHandlerConfiguration;
 
     @ExceptionHandler(HttpStatusCodeException.class)
     public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
-        return restTemplateExceptionHandler.handleRestTemplateException(ex);
+        return exceptionHandlerConfiguration.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(DocumentContentNotFoundException.class)
     public ResponseEntity handleDocumentContentNotFoundException(DocumentContentNotFoundException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.DocumentContentNotFoundException);
-        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "errorDescription"))
+        Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "errorDescription"))
                 .ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
@@ -54,7 +55,7 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FileTransactionNotFoundException.class)
     public ResponseEntity handleFileTransactionNotFoundException(FileTransactionNotFoundException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.FileTransactionNotFoundException);
-        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "message"))
+        Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "message"))
                 .ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
@@ -62,25 +63,9 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FileNotFoundException.class)
     public ResponseEntity handleFileNotFoundException(FileNotFoundException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(FileErrorCode.FileNotFoundException);
-        Optional.ofNullable(extractErrorMessage(ex.getMessage(), "message"))
+        Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "message"))
                 .ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
-    }
-
-    private String extractErrorMessage(String message, String messageKey) {
-        return Optional.ofNullable(message)
-                .map(errMessage -> {
-                            String errorMapString = errMessage.substring(errMessage.indexOf("[") + 1, errMessage.indexOf("]"));
-                            Map<String, Object> errorMap = new HashMap<>();
-                            try {
-                                errorMap = new ObjectMapper().readValue(errorMapString, new TypeReference<Map<String, Object>>() {
-                                });
-                            } catch (JsonProcessingException e) {
-                                e.printStackTrace();
-                            }
-                            return (String) errorMap.get(messageKey);
-                        }
-                ).orElse(null);
     }
 
     @Override

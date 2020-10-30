@@ -134,13 +134,13 @@ public class PropertyService {
                 .map(map -> getStatusLabelData(map, true))
                 .sorted(Comparator
                         .comparing(getStatusLabelForComparing("title"),
-                                Comparator.nullsLast(Comparator.naturalOrder()))
+                                Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("service"),
-                                Comparator.nullsLast(Comparator.naturalOrder()))
+                                Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing("outbound"),
-                                Comparator.nullsLast(Comparator.naturalOrder()))
+                                Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("status"),
-                                Comparator.nullsLast(Comparator.comparingInt(Integer::parseInt))))
+                                Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("entity",
                 entityService.findEntitiesByService(service)
@@ -189,11 +189,11 @@ public class PropertyService {
                 .map(map -> getStatusLabelData(map, false))
                 .sorted(Comparator
                         .comparing(getStatusLabelForComparing("title"),
-                                Comparator.nullsLast(Comparator.naturalOrder()))
+                                Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing("outbound"),
-                                Comparator.nullsLast(Comparator.naturalOrder()))
+                                Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("status"),
-                                Comparator.nullsLast(Comparator.comparingInt(Integer::parseInt))))
+                                Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         transactionCriteriaData.put("entity", entityService.findEntitiesByService("SCT")
                 .stream().map(Entity::getEntity).collect(Collectors.toList()));
@@ -201,8 +201,7 @@ public class PropertyService {
     }
 
     private Function<Map<String, Object>, String> getOutboundForComparing(String status) {
-        return map ->
-            Optional.ofNullable(map.get(status)).map(bound -> (boolean) bound ? "Outbound" : "Inbound").orElse("");
+        return map -> (boolean) map.get(status) ? "Outbound" : "Inbound";
     }
 
     private Function<Map<String, Object>, String> getStatusLabelForComparing(String status) {

@@ -110,3 +110,10 @@ mat-form-field {
     }
 
 }
+
+.mat-select-panel {
+    max-height: 400px !important;
+    .mat-option {
+        height: 2em !important;
+    }
+}

@@ -31,6 +31,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/monitor/file-monitor/file-monitor.module').then(m => m.FileMonitorModule)
       },
       {
+        path: ROUTING_PATHS.ERROR_MONITOR,
+        canActivate: [PermissionsGuardService],
+        loadChildren: () => import('./features/monitor/error-monitor/error-monitor.module').then(m => m.ErrorMonitorModule)
+      },
+      {
         path: ROUTING_PATHS.FILE_SEARCH,
         canActivate: [PermissionsGuardService],
         loadChildren: () => import('./features/search/file-search/file-search.module').then(m => m.FileSearchModule)

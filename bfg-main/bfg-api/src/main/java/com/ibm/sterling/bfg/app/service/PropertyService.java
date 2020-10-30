@@ -137,7 +137,7 @@ public class PropertyService {
                                 Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("service"),
                                 Comparator.naturalOrder())
-                        .thenComparing(getOutboundForComparing("outbound"),
+                        .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("status"),
                                 Comparator.comparingInt(Integer::parseInt)))
@@ -190,7 +190,7 @@ public class PropertyService {
                 .sorted(Comparator
                         .comparing(getStatusLabelForComparing("title"),
                                 Comparator.naturalOrder())
-                        .thenComparing(getOutboundForComparing("outbound"),
+                        .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
                         .thenComparing(getStatusLabelForComparing("status"),
                                 Comparator.comparingInt(Integer::parseInt)))
@@ -200,8 +200,11 @@ public class PropertyService {
         return transactionCriteriaData;
     }
 
-    private Function<Map<String, Object>, String> getOutboundForComparing(String status) {
-        return map -> (boolean) map.get(status) ? "Outbound" : "Inbound";
+    private Function<Map<String, Object>, String> getOutboundForComparing() {
+        return map ->
+                Optional.ofNullable(map.get("outbound"))
+                        .map(bound -> (boolean) bound ? "Outbound" : "Inbound")
+                        .orElse("");
     }
 
     private Function<Map<String, Object>, String> getStatusLabelForComparing(String status) {

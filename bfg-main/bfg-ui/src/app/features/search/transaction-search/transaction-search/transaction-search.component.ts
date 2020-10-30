@@ -21,6 +21,8 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
+import { File } from 'src/app/shared/models/file/file.model';
+import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 
 @Component({
   selector: 'app-transaction-search',
@@ -76,7 +78,8 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private transactionService: TransactionService,
     private fileService: FileService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private fileDialogService: FileDialogService
   ) { }
 
   ngOnInit(): void {
@@ -194,17 +197,17 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  createErrorMesageEmitter(id: number) {
+  createErrorMessageEmitter(id: number) {
     this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
   }
 
-  deleteErrorMesageEmitter(id: number) {
+  deleteErrorMessageEmitter(id: number) {
     if (this.errorMessageEmitters[id]) {
       this.errorMessageEmitters[id] = null;
     }
   }
 
-  emitErrorMesageEvent(id: number) {
+  emitErrorMessageEvent(id: number) {
     if (this.errorMessageEmitters[id]) {
       this.errorMessageEmitters[id].emit(this.errorMessage);
     }
@@ -233,23 +236,39 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createErrorMesageEmitter(id);
+    this.createErrorMessageEmitter(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
+        const actions = {
+          workflowID: () => this.openBusinessProcessDialog(data),
+          file: () => this.openFileDetailsDialog(fileId)
+        };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-          title: `Transaction Details of ${data.id}`,
-          tabs: getTransactionDetailsTabs(data, { workflowID: () => this.openBusinessProcessDialog(data) }),
+          title: `SCT Transaction - ${data.id}`,
+          tabs: getTransactionDetailsTabs(data, actions),
           displayName: getTransactionSearchDisplayName,
           isDragable: true,
           actionData: {
-            actions: {
-              workflowID: () => this.openBusinessProcessDialog(data)
-            }
+            actions
           },
           parentError: this.errorMessageEmitters[id]
-        })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
+        })).afterClosed().subscribe(() => this.deleteErrorMessageEmitter(fileId));
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+  }
+
+
+  openFileDetailsDialog = (fileId: number) => {
+    this.fileService.getFileById(fileId)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: File) => {
+        this.isLoading = false;
+        this.fileDialogService.openFileDetailsDialog(data);
       },
         error => {
           this.isLoading = false;

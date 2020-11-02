@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { File } from 'src/app/shared/models/file/file.model';
 import { FileService } from './file.service';
 import { EntityService } from '../entity/entity.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +26,9 @@ export class FileDialogService {
     errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
     errorMessage: ErrorMessage;
     isLoading = false;
+
+    errorMessageChange: Subject<ErrorMessage> = new Subject<ErrorMessage>();
+    isLoadingChange: Subject<boolean> = new Subject<boolean>();
 
     constructor(private fileService: FileService, private dialog: MatDialog, private entityService: EntityService) {
     }
@@ -53,6 +57,7 @@ export class FileDialogService {
         .pipe(data => this.setLoading(data))
         .subscribe((entity: Entity) => {
             this.isLoading = false;
+            this.isLoadingChange.next(false);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `${entity.service}: ${entity.entity}`,
                 tabs: getEntityDetailsTabs(entity),
@@ -62,7 +67,9 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.isLoadingChange.next(false);
                 this.errorMessage = getApiErrorMessage(error);
+                this.errorMessageChange.next(this.errorMessage);
                 this.emitErrorMessageEvent(file.id);
             })
 
@@ -71,6 +78,7 @@ export class FileDialogService {
         .pipe(data => this.setLoading(data))
         .subscribe((data: FileError) => {
             this.isLoading = false;
+            this.isLoadingChange.next(false);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `${data.code}`,
                 tabs: getErrorDetailsTabs(data),
@@ -80,7 +88,9 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.isLoadingChange.next(false);
                 this.errorMessage = getApiErrorMessage(error);
+                this.errorMessageChange.next(this.errorMessage);
                 this.emitErrorMessageEvent(file.id);
             })
 
@@ -103,6 +113,7 @@ export class FileDialogService {
         .pipe(data => this.setLoading(data))
         .subscribe((data: DocumentContent) => {
             this.isLoading = false;
+            this.isLoadingChange.next(false);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `File Document Information`,
                 tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
@@ -112,7 +123,9 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.isLoadingChange.next(false);
                 this.errorMessage = getApiErrorMessage(error);
+                this.errorMessageChange.next(this.errorMessage);
                 this.emitErrorMessageEvent(file.id);
             })
 
@@ -132,7 +145,9 @@ export class FileDialogService {
 
     setLoading(data) {
         this.errorMessage = null;
+        this.errorMessageChange.next(null);
         this.isLoading = true;
+        this.isLoadingChange.next(true);
         return data;
     }
 

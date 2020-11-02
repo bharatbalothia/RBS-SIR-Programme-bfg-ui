@@ -30,6 +30,7 @@ import java.util.*;
 @RestControllerAdvice(assignableTypes = CertificateController.class)
 public class CertificateExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LogManager.getLogger(CertificateExceptionHandler.class);
+    private static final String CONTACT_MESSAGE = "Please contact application support.";
 
     @Autowired
     private ErrorConfig errorConfig;
@@ -55,9 +56,10 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
     @ExceptionHandler(CertificateApprovalException.class)
     public ResponseEntity handleCertificateApprovalException(CertificateApprovalException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(CertificateErrorCode.CertificateApprovalException);
-        error.setMessage(ex.getApprovalErrorMessage() +
+        error.setMessage(ex.getApprovalErrorMessage() + " - " +
                 Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "errorDescription"))
-                        .orElseGet(ex::getMessage)
+                        .orElseGet(ex::getMessage) + ". " +
+                CONTACT_MESSAGE
         );
         return new ResponseEntity<>(error, error.getHttpStatus());
     }

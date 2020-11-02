@@ -20,8 +20,8 @@ import java.util.*;
 @Service
 public class CertificateIntegrationService {
 
-    private static final String CREATION_APPROVAL_ERROR = "The Certificate is not approved. Error creating the certificate in BI - ";
-    private static final String DELETING_APPROVAL_ERROR = "The Certificate is not approved. Error deleting the certificate in BI - ";
+    private static final String CREATION_APPROVAL_ERROR = "The Certificate is not approved. Error creating the certificate in BI";
+    private static final String DELETING_APPROVAL_ERROR = "The Certificate is not approved. Error deleting the certificate in BI";
 
     @Value("${trustedDigitalCertificates.url}")
     private String trustedDigitalCertificatesUrl;

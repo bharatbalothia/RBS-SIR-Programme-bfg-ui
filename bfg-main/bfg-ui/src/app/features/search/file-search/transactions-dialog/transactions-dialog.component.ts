@@ -28,7 +28,7 @@ export class TransactionsDialogComponent implements OnInit {
 
   displayName: (fieldName: string) => string;
 
-  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
+  errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
 
   isLoading = true;
   errorMessage: ErrorMessage;
@@ -87,13 +87,13 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createErrorMesageEmitter(id);
+    this.createErrorMessageEmitter(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-          title: `Transaction Details of ${data.id}`,
+          title: `SCT Transaction -  ${data.id}`,
           tabs: getTransactionDetailsTabs(data, ...this.actions),
           displayName: getFileSearchDisplayName,
           isDragable: true,
@@ -102,8 +102,8 @@ export class TransactionsDialogComponent implements OnInit {
               ...this.actions
             }
           },
-          parentError: this.errorMesageEmitters[id]
-        })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(fileId));
+          parentError: this.errorMessageEmitters[id]
+        })).afterClosed().subscribe(() => this.deleteErrorMessageEmitter(fileId));
       },
         error => {
           this.isLoading = false;
@@ -125,7 +125,7 @@ export class TransactionsDialogComponent implements OnInit {
       error => {
         this.isLoading = false;
         this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMesageEvent(transaction.id);
+        this.emitErrorMessageEvent(transaction.id);
       })
 
   openBusinessProcessDialog = (transaction: Transaction) =>
@@ -141,19 +141,19 @@ export class TransactionsDialogComponent implements OnInit {
       },
     }))
 
-  createErrorMesageEmitter(id: number) {
-    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
+  createErrorMessageEmitter(id: number) {
+    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
   }
 
-  deleteErrorMesageEmitter(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id] = null;
+  deleteErrorMessageEmitter(id: number) {
+    if (this.errorMessageEmitters[id]) {
+      this.errorMessageEmitters[id] = null;
     }
   }
 
-  emitErrorMesageEvent(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id].emit(this.errorMessage);
+  emitErrorMessageEvent(id: number) {
+    if (this.errorMessageEmitters[id]) {
+      this.errorMessageEmitters[id].emit(this.errorMessage);
     }
   }
 }

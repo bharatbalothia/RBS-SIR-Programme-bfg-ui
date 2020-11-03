@@ -28,6 +28,12 @@
 				<build.settings>-poc</build.settings>
 			</properties>
 		</profile>
+		<profile>
+			<id>dev-fyre</id>
+			<properties>
+				<build.settings>-dev-fyre</build.settings>
+			</properties>
+		</profile>
 	</profiles>
 	<build>
 		<plugins>

@@ -7,6 +7,7 @@
     "build": "ng build",
     "build-testing": "ng build --configuration=testing",
     "build-poc": "ng build --configuration=poc",
+    "build-dev-fyre": "ng build --configuration=dev-fyre",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

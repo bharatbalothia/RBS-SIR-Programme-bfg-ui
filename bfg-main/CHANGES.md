@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## SIR Sprint 17
+Fix SIRP-2271 SCT Transactions. Changed dialog caption, added link to File details
+Fix SIRP-2240 SCT Transactions and File Search. Items of Status dropdown rearranged in alphabetic order
+
 ## SIR Sprint 16
 Fix SIRP-2148 Text changed in Delete Entity dialog
 Fix SIRP-2169 Object Type added, Date format changed, Changer Comments field renamed in Trusted Certificate details view

@@ -1,10 +1,11 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityApprovalException;
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.exception.SWIFTNetRoutingRuleException;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
@@ -19,12 +20,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
-import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 
 @Service
 public class SWIFTNetRoutingRuleService {
@@ -46,6 +44,9 @@ public class SWIFTNetRoutingRuleService {
 
     @Value("${file.password}")
     private String password;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -70,15 +71,15 @@ public class SWIFTNetRoutingRuleService {
 
     private SWIFTNetRoutingRuleServiceResponse createRoutingRules(SWIFTNetRoutingRuleRequest swiftNetRoutingRuleRequest)
             throws JsonProcessingException {
-        String routingRuleResponse = null;
+        String routingRuleResponse;
         try {
             routingRuleResponse = new RestTemplate().postForObject(
                     routingRuleCreationUrl,
-                    new HttpEntity<>(swiftNetRoutingRuleRequest, getHttpHeaders()),
+                    new HttpEntity<>(swiftNetRoutingRuleRequest, apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class
             );
         } catch (HttpStatusCodeException e) {
-            processErrorMessage(e, CREATION_APPROVAL_ERROR);
+            throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(), CREATION_APPROVAL_ERROR);
         }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(routingRuleResponse));
         List<SWIFTNetRoutingRuleBfgUiRestResponse> swiftNetRoutingRuleBfgUiRestResponse =
@@ -103,7 +104,7 @@ public class SWIFTNetRoutingRuleService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 routingRuleViewUrl + "?entity-name=" + entityName,
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
         return objectMapper.convertValue(root, new TypeReference<List<String>>() {
@@ -111,51 +112,19 @@ public class SWIFTNetRoutingRuleService {
     }
 
     private void deleteRoutingRules(List<String> routingRulesByEntityName) {
+        HttpEntity httpEntity = new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password));
         routingRulesByEntityName.forEach(routingRule -> {
             try {
-                new RestTemplate().delete(routingRuleDeleteUrl + routingRule);
+                new RestTemplate().exchange(
+                        routingRuleDeleteUrl + routingRule,
+                        HttpMethod.DELETE,
+                        httpEntity,
+                        String.class
+                );
             } catch (HttpStatusCodeException e) {
-                processErrorMessage(e, DELETING_APPROVAL_ERROR);
+                throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(), DELETING_APPROVAL_ERROR);
             }
         });
-    }
-
-    private void processErrorMessage(HttpStatusCodeException e, String codeMessage) {
-        Optional.ofNullable(e.getMessage()).ifPresent(errorMessage -> {
-            List<Map<String, Object>> errorList = null;
-            Matcher matcher = Pattern.compile("\\{.*}").matcher(errorMessage);
-            if (matcher.find()) {
-                String errorMessageList = "[" + matcher.group(0) + "]";
-                try {
-                    errorList = new ObjectMapper().readValue(errorMessageList, new TypeReference<List<Map<String, Object>>>() {
-                    });
-                } catch (JsonProcessingException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            Map<String, List<Object>> errorMap = Optional.ofNullable(errorList).map(errors -> {
-                Map<String, List<Object>> routingRuleErrors = new HashMap<>();
-                errors.forEach(error -> {
-                    String key = String.valueOf(error.get("attribute"));
-                    if (routingRuleErrors.containsKey(key))
-                        routingRuleErrors.get(key).add(error.get("message"));
-                    else
-                        routingRuleErrors.put(key, new ArrayList<>(Collections.singletonList(error.get("message"))));
-                });
-                return routingRuleErrors;
-            }).orElseGet(() -> Collections.singletonMap("error", Collections.singletonList(errorMessage)));
-            throw new SWIFTNetRoutingRuleException(errorMap, e.getStatusCode(), codeMessage);
-        });
-    }
-
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        String userCredentials = userName + ":" + password;
-        headers.set(HttpHeaders.AUTHORIZATION,
-                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return headers;
     }
 
 }

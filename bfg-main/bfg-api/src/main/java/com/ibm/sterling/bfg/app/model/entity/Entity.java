@@ -1,17 +1,16 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ibm.sterling.bfg.app.model.EntityType;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.ConvertedStringSize;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteCreationValid;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteUpdateValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
-import com.ibm.sterling.bfg.app.model.validation.unique.EntityUnique;
+import com.ibm.sterling.bfg.app.model.validation.unique.Unique;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUpdateUniqueness;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityServiceUniquenessConstraint;
-import com.ibm.sterling.bfg.app.service.EntityService;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
@@ -132,7 +131,7 @@ public class Entity implements EntityType {
     private Boolean compression = Boolean.FALSE;
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
-    @EntityUnique(
+    @Unique(
             service = EntityService.class,
             fieldName = "MAILBOXPATHOUT",
             message = "MAILBOXPATHOUT has to be unique",
@@ -141,7 +140,7 @@ public class Entity implements EntityType {
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
     private String mqQueueIn;
-    @EntityUnique(
+    @Unique(
             service = EntityService.class,
             fieldName = "MQQUEUEOUT",
             message = "MQQUEUEOUT has to be unique",

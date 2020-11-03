@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,10 +44,8 @@ public class ChangeControlCertService {
         return controlFromBD;
     }
 
-    public void setApproveInfo(ChangeControlCert changeControl,
-                               String user,
-                               String comments,
-                               ChangeControlStatus status) {
+    public void setApproveInfo(ChangeControlCert changeControl, String user,
+                               String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);

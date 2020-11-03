@@ -1,18 +1,19 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.*;
-import com.ibm.sterling.bfg.app.model.EntityType;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.entity.EntityType;
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
-import com.ibm.sterling.bfg.app.repository.EntityRepository;
+import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
+import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,8 +114,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private void validateEntity(Entity entity, Operation operation) {
-        Set<ConstraintViolation<Entity>> violations;
-        violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
+        Set<ConstraintViolation<Entity>> violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
@@ -148,12 +148,7 @@ public class EntityServiceImpl implements EntityService {
                 throw new InvalidUserForApprovalException();
             entity = approveEntity(changeControl);
         }
-        changeControlService.setApproveInfo(
-                changeControl,
-                userName,
-                approverComments,
-                status
-        );
+        changeControlService.setApproveInfo(changeControl, userName, approverComments, status);
         return entity;
     }
 
@@ -280,8 +275,8 @@ public class EntityServiceImpl implements EntityService {
                                                         String inboundService, List<String> inboundRequestType) {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(inboundRequestorDN,
-                inboundResponderDN, inboundService);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
+                inboundRequestorDN, inboundResponderDN, inboundService);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
                 .findFirst()

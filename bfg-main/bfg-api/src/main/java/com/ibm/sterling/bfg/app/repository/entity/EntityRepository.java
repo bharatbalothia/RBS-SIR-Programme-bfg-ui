@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.repository;
+package com.ibm.sterling.bfg.app.repository.entity;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import org.springframework.data.jpa.domain.Specification;

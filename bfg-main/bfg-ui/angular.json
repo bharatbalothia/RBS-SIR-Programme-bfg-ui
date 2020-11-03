@@ -77,6 +77,14 @@
                   "with": "src/environments/environment.poc.ts"
                 }
               ]
+            },
+            "dev-fyre": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev-fyre.ts"
+                }
+              ]
             }
           }
         },
@@ -94,6 +102,9 @@
             },
             "poc": {
               "browserTarget": "bfg-ui:build:poc"
+            },
+            "dev-fyre": {
+              "browserTarget": "bfg-ui:build:dev-fyre"
             }
           }
         },

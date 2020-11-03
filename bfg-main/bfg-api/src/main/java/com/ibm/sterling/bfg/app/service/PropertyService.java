@@ -3,8 +3,10 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class PropertyService {
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
 
     public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
@@ -131,7 +136,16 @@ public class PropertyService {
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
-                .map(this::getStatusLabelData)
+                .map(map -> getStatusLabelData(map, true))
+                .sorted(Comparator
+                        .comparing(getStatusLabelForComparing("title"),
+                                Comparator.naturalOrder())
+                        .thenComparing(getStatusLabelForComparing("service"),
+                                Comparator.naturalOrder())
+                        .thenComparing(getOutboundForComparing(),
+                                Comparator.naturalOrder())
+                        .thenComparing(getStatusLabelForComparing("status"),
+                                Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("entity",
                 entityService.findEntitiesByService(service)
@@ -174,16 +188,35 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).equals(transactionSearchPrefixKey + value))
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList())));
+
         transactionCriteriaData.put("trxStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
-                .map(this::getStatusLabelData)
+                .map(map -> getStatusLabelData(map, false))
+                .sorted(Comparator
+                        .comparing(getStatusLabelForComparing("title"),
+                                Comparator.naturalOrder())
+                        .thenComparing(getOutboundForComparing(),
+                                Comparator.naturalOrder())
+                        .thenComparing(getStatusLabelForComparing("status"),
+                                Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         transactionCriteriaData.put("entity", entityService.findEntitiesByService("SCT")
                 .stream().map(Entity::getEntity).collect(Collectors.toList()));
         return transactionCriteriaData;
     }
 
-    private Map<String, Object> getStatusLabelData(Map<String, String> property) {
+    private Function<Map<String, Object>, String> getOutboundForComparing() {
+        return map ->
+                Optional.ofNullable(map.get("outbound"))
+                        .map(bound -> (boolean) bound ? "Outbound" : "Inbound")
+                        .orElse("");
+    }
+
+    private Function<Map<String, Object>, String> getStatusLabelForComparing(String status) {
+        return map -> String.valueOf(map.get(status));
+    }
+
+    private Map<String, Object> getStatusLabelData(Map<String, String> property, boolean isFile) {
         Map<String, Object> statusMap = new HashMap<>();
         String propertyKey = property.get(PROPERTY_KEY);
         statusMap.put("service", propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
@@ -195,7 +228,11 @@ public class PropertyService {
         statusMap.put("title", noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
         String status = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
         statusMap.put("status", status);
-        statusMap.put("label", "[" + status + "] " + noStatusLabel);
+        if (isFile) {
+            statusMap.put("label", "[" + status + "] " + noStatusLabel);
+        } else {
+            statusMap.put("label", noStatusLabel + "[" + status + "] ");
+        }
         return statusMap;
     }
 
@@ -227,7 +264,7 @@ public class PropertyService {
                                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE)))
                                 .collect(Collectors.toList())
                                 .stream()
-                                .map(val -> String.valueOf(val))
+                                .map(String::valueOf)
                                 .collect(Collectors.joining("")));
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
@@ -275,23 +312,14 @@ public class PropertyService {
     }
 
     private List<Map<String, String>> getPropertyList(String propertyUrl) throws JsonProcessingException {
-        HttpHeaders headers = new HttpHeaders();
-        String userCredentials = settings.getUserName() + ":" + settings.getPassword();
-        headers.set(HttpHeaders.AUTHORIZATION,
-                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity request = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity =
-                new RestTemplate().exchange(
-                        propertyUrl,
-                        HttpMethod.GET,
-                        request,
-                        String.class
-                );
+        ResponseEntity<String> responseEntity = new RestTemplate().exchange(
+                propertyUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(settings.getUserName(), settings.getPassword())),
+                String.class
+        );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));
         return objectMapper.convertValue(root, List.class);
     }
 
 }
-

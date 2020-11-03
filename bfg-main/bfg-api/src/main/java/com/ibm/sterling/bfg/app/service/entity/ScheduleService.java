@@ -1,8 +1,8 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.entity;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.Schedule;
-import com.ibm.sterling.bfg.app.repository.ScheduleRepository;
+import com.ibm.sterling.bfg.app.repository.entity.ScheduleRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

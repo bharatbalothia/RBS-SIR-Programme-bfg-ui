@@ -1,6 +1,8 @@
 package com.ibm.sterling.bfg.app.service;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

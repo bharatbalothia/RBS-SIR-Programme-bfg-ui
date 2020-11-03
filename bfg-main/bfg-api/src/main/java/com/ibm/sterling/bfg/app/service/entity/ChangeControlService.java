@@ -1,11 +1,12 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControl;
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
-import com.ibm.sterling.bfg.app.repository.ChangeControlRepository;
+import com.ibm.sterling.bfg.app.repository.entity.ChangeControlRepository;
+import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,8 @@ public class ChangeControlService {
         return controlFromBD;
     }
 
-    public void setApproveInfo(ChangeControl changeControl,
-                               String user,
-                               String comments,
-                               ChangeControlStatus status) {
+    public void setApproveInfo(ChangeControl changeControl, String user,
+                               String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
@@ -99,4 +98,5 @@ public class ChangeControlService {
             save(changeControl);
         }
     }
+
 }

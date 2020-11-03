@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.exception;
 
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.controller.CertificateController;
 import com.ibm.sterling.bfg.app.model.exception.CertificateErrorCode;
@@ -29,22 +30,37 @@ import java.util.*;
 @RestControllerAdvice(assignableTypes = CertificateController.class)
 public class CertificateExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LogManager.getLogger(CertificateExceptionHandler.class);
+    private static final String CONTACT_MESSAGE = "Please contact application support.";
 
     @Autowired
     private ErrorConfig errorConfig;
 
     @Autowired
-    private RestTemplateExceptionHandler restTemplateExceptionHandler;
+    private APIDetailsHandler apiDetailsHandler;
+
+    @Autowired
+    private ExceptionHandlerConfiguration exceptionHandlerConfiguration;
 
     @ExceptionHandler(HttpStatusCodeException.class)
     public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
-        return restTemplateExceptionHandler.handleRestTemplateException(ex);
+        return exceptionHandlerConfiguration.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(CertificateNotFoundException.class)
     public ResponseEntity handleEntityApprovalException(CertificateNotFoundException ex) {
         ErrorMessage error = errorConfig.getErrorMessage(CertificateErrorCode.CertificateNotFoundException);
         Optional.ofNullable(ex.getMessage()).ifPresent(error::setMessage);
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
+    @ExceptionHandler(CertificateApprovalException.class)
+    public ResponseEntity handleCertificateApprovalException(CertificateApprovalException ex) {
+        ErrorMessage error = errorConfig.getErrorMessage(CertificateErrorCode.CertificateApprovalException);
+        error.setMessage(ex.getApprovalErrorMessage() + " - " +
+                Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "errorDescription"))
+                        .orElseGet(ex::getMessage) + ". " +
+                CONTACT_MESSAGE
+        );
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 

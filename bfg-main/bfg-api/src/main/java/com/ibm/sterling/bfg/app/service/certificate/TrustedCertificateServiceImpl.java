@@ -5,11 +5,7 @@ import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.CertType;
-import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
+import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -30,6 +26,7 @@ import javax.naming.InvalidNameException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -41,9 +38,9 @@ import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.P
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
 
 @Service
-public class TrustedCertificateImplService implements TrustedCertificateService {
+public class TrustedCertificateServiceImpl implements TrustedCertificateService {
 
-    private static final Logger LOG = LogManager.getLogger(TrustedCertificateImplService.class);
+    private static final Logger LOG = LogManager.getLogger(TrustedCertificateServiceImpl.class);
     private static final String CERTIFICATE_FILE_MISSING = "The certificate file is missing";
     private static final String NO_CERTIFICATE_DATA = "There is no certificate data";
 
@@ -61,6 +58,9 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
+
+    @Autowired
+    private CertificateIntegrationService certificateIntegrationService;
 
     @Autowired
     private Validator validator;
@@ -98,7 +98,7 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
-                                                                         String certName,
+                                                                         String certificateName,
                                                                          String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails = new TrustedCertificateDetails(x509Certificate,
@@ -106,15 +106,14 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
-        trustedCertificate.setCertificateName(certName);
+        trustedCertificate.setCertificateName(certificateName);
         trustedCertificate.setChangerComments(comment);
         trustedCertificate.setCertificate(x509Certificate);
         return trustedCertificate;
     }
 
     private void validateCertificate(TrustedCertificate trustedCertificate) {
-        Set<ConstraintViolation<TrustedCertificate>> violations;
-        violations = validator.validate(trustedCertificate);
+        Set<ConstraintViolation<TrustedCertificate>> violations = validator.validate(trustedCertificate);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
@@ -140,7 +139,8 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
 
     @Override
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
-                                                                String approverComments, ChangeControlStatus status) {
+                                                                String approverComments, ChangeControlStatus status)
+            throws JsonProcessingException, CertificateEncodingException {
         if (!PENDING.equals(changeControlCert.getStatus())) {
             throw new StatusNotPendingException();
         }
@@ -149,37 +149,42 @@ public class TrustedCertificateImplService implements TrustedCertificateService 
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControlCert.getChanger()))
                 throw new InvalidUserForApprovalException();
-            cert = saveTrustedCertificateAfterApprove(changeControlCert);
+            cert = approveCertificate(changeControlCert);
         }
-        changeControlCertService.setApproveInfo(
-                changeControlCert,
-                userName,
-                approverComments,
-                status
-        );
+        changeControlCertService.setApproveInfo(changeControlCert, userName, approverComments, status);
         return cert;
     }
 
-    private TrustedCertificate saveTrustedCertificateAfterApprove(ChangeControlCert changeControlCert) {
+    private TrustedCertificate approveCertificate(ChangeControlCert changeControlCert)
+            throws CertificateEncodingException, JsonProcessingException {
         LOG.info("Approve the Trusted certificate {} action", changeControlCert.getOperation());
-        TrustedCertificate cert = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
+        TrustedCertificate trustedCertificate = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
         Operation operation = changeControlCert.getOperation();
         if (operation.equals(DELETE)) {
-            trustedCertificateRepository.delete(cert);
+            certificateIntegrationService.deleteCertificateByName(trustedCertificate.getCertificateName());
+            trustedCertificateRepository.delete(trustedCertificate);
         } else {
-            validateCertificate(cert);
-            trustedCertificateRepository.save(cert);
+            validateCertificate(trustedCertificate);
+            CertificateDataIntegrationRequest certificateDataIntegrationRequest = new CertificateDataIntegrationRequest(
+                    DatatypeConverter.printBase64Binary(trustedCertificate.getCertificate().getEncoded()),
+                    trustedCertificate.getCertificateName(),
+                    true,
+                    true
+            );
+            certificateIntegrationService.createCertificate(certificateDataIntegrationRequest);
+            trustedCertificateRepository.save(trustedCertificate);
         }
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
-        certLog.setCertificateId(cert.getCertificateId());
+        certLog.setCertificateId(trustedCertificate.getCertificateId());
         changeControlCert.setTrustedCertificateLog(certLog);
         changeControlCertService.save(changeControlCert);
-        return cert;
+        return trustedCertificate;
     }
 
     @Override
     public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256) {
-        LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}", certName, thumbprint, thumbprint256);
+        LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}",
+                certName, thumbprint, thumbprint256);
         List<CertType> certificates = new ArrayList<>();
         Specification<TrustedCertificate> specification = Specification
                 .where(

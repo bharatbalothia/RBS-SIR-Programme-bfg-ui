@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.service;
+package com.ibm.sterling.bfg.app.service.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

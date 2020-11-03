@@ -81,7 +81,8 @@ public class TrustedCertificateDetails {
     }
 
     private void validateCertificateUsingAugmentedService(CertificateValidationService certificateValidationService, X509Certificate x509Certificate,
-                                                          List<Map<String, List<String>>> errors, Map<String, Object> warnings) throws JsonProcessingException, CertificateEncodingException {
+                                                          List<Map<String, List<String>>> errors, Map<String, Object> warnings)
+            throws JsonProcessingException, CertificateEncodingException {
         Map<String, Object> certificateChain = certificateValidationService.getCertificateChain(DatatypeConverter.printBase64Binary(x509Certificate.getEncoded()));
         Object attribute = certificateChain.get("attribute");
         String errorMessage = Optional.ofNullable(attribute)

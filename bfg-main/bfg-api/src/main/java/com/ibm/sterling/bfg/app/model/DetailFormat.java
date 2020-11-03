@@ -1,6 +1,6 @@
-package com.ibm.sterling.bfg.app.model.file;
+package com.ibm.sterling.bfg.app.model;
 
-public class BPDetailFormat {
+public class DetailFormat {
     private String code;
     private String display;
 

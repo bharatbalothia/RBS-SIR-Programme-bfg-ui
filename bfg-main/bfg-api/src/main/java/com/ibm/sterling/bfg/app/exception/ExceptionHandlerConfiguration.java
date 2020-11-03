@@ -11,7 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.*;
 
 @Configuration
-public class RestTemplateExceptionHandler {
+public class ExceptionHandlerConfiguration {
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -20,11 +20,11 @@ public class RestTemplateExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Optional.ofNullable(message)
-                        .map(errMessage -> {
-                                    int errorStartIndex = message.indexOf("[");
-                                    int errorEndIndex = message.lastIndexOf("]");
-                                    return errorStartIndex == -1 || errorEndIndex == -1 ? errMessage :
-                                            errMessage.substring(errorStartIndex, errorEndIndex + 1);
+                        .map(errorMessage -> {
+                                    int errorStartIndex = errorMessage.indexOf("[");
+                                    int errorEndIndex = errorMessage.lastIndexOf("]");
+                                    return errorStartIndex == -1 || errorEndIndex == -1 ? errorMessage :
+                                            errorMessage.substring(errorStartIndex, errorEndIndex + 1);
                                 }
                         ).orElse(message));
     }

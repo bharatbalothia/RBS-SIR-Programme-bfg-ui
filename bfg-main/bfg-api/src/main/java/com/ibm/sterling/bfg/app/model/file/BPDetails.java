@@ -1,24 +1,26 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.ibm.sterling.bfg.app.model.DetailFormat;
+
 import java.util.Optional;
 
 public class BPDetails {
     private String name;
     private String startMode;
-    private BPDetailFormat documentTracking;
-    private BPDetailFormat queue;
-    private BPDetailFormat recoveryLevel;
-    private BPDetailFormat softstopRecoveryLevel;
+    private DetailFormat documentTracking;
+    private DetailFormat queue;
+    private DetailFormat recoveryLevel;
+    private DetailFormat softstopRecoveryLevel;
     private String lifespanDays = "Default";
     private String lifespanHours = "Default";
     private String lifespanType = "System Level";
-    private BPDetailFormat removalMethod;
-    private BPDetailFormat eventReportingLevel;
+    private DetailFormat removalMethod;
+    private DetailFormat eventReportingLevel;
     private String wfdVersion;
-    private BPDetailFormat onfaultProcessing;
-    private BPDetailFormat enableTransaction;
-    private BPDetailFormat persistenceLevel;
-    private BPDetailFormat documentStorage;
+    private DetailFormat onfaultProcessing;
+    private DetailFormat enableTransaction;
+    private DetailFormat persistenceLevel;
+    private DetailFormat documentStorage;
     private String expedite;
     private String deadlineHours;
     private String deadlineMinutes;
@@ -28,7 +30,7 @@ public class BPDetails {
     private String secondNotificationMinutes;
     private String description;
     private String node;
-    private BPDetailFormat nodePreference;
+    private DetailFormat nodePreference;
     private String businessProcess;
 
     public String getName() {
@@ -40,10 +42,10 @@ public class BPDetails {
     }
 
     public String getDocumentTracking() {
-        return Optional.ofNullable(documentTracking).map(BPDetailFormat::getCode).orElse("");
+        return Optional.ofNullable(documentTracking).map(DetailFormat::getCode).orElse("");
     }
 
-    public void setDocumentTracking(BPDetailFormat documentTracking) {
+    public void setDocumentTracking(DetailFormat documentTracking) {
         this.documentTracking = documentTracking;
     }
 
@@ -56,26 +58,26 @@ public class BPDetails {
     }
 
     public String getQueue() {
-        return Optional.ofNullable(queue).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(queue).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setQueue(BPDetailFormat queue) {
+    public void setQueue(DetailFormat queue) {
         this.queue = queue;
     }
 
     public String getRecoveryLevel() {
-        return Optional.ofNullable(recoveryLevel).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(recoveryLevel).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setRecoveryLevel(BPDetailFormat recoveryLevel) {
+    public void setRecoveryLevel(DetailFormat recoveryLevel) {
         this.recoveryLevel = recoveryLevel;
     }
 
     public String getSoftstopRecoveryLevel() {
-        return Optional.ofNullable(softstopRecoveryLevel).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(softstopRecoveryLevel).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setSoftstopRecoveryLevel(BPDetailFormat softstopRecoveryLevel) {
+    public void setSoftstopRecoveryLevel(DetailFormat softstopRecoveryLevel) {
         this.softstopRecoveryLevel = softstopRecoveryLevel;
     }
 
@@ -104,18 +106,18 @@ public class BPDetails {
     }
 
     public String getRemovalMethod() {
-        return Optional.ofNullable(removalMethod).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(removalMethod).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setRemovalMethod(BPDetailFormat removalMethod) {
+    public void setRemovalMethod(DetailFormat removalMethod) {
         this.removalMethod = removalMethod;
     }
 
     public String getEventReportingLevel() {
-        return Optional.ofNullable(eventReportingLevel).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(eventReportingLevel).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setEventReportingLevel(BPDetailFormat eventReportingLevel) {
+    public void setEventReportingLevel(DetailFormat eventReportingLevel) {
         this.eventReportingLevel = eventReportingLevel;
     }
 
@@ -128,34 +130,34 @@ public class BPDetails {
     }
 
     public String getOnfaultProcessing() {
-        return Optional.ofNullable(onfaultProcessing).map(BPDetailFormat::getCode).orElse("");
+        return Optional.ofNullable(onfaultProcessing).map(DetailFormat::getCode).orElse("");
     }
 
-    public void setOnfaultProcessing(BPDetailFormat onfaultProcessing) {
+    public void setOnfaultProcessing(DetailFormat onfaultProcessing) {
         this.onfaultProcessing = onfaultProcessing;
     }
 
     public String getEnableTransaction() {
-        return Optional.ofNullable(enableTransaction).map(BPDetailFormat::getCode).orElse("");
+        return Optional.ofNullable(enableTransaction).map(DetailFormat::getCode).orElse("");
     }
 
-    public void setEnableTransaction(BPDetailFormat enableTransaction) {
+    public void setEnableTransaction(DetailFormat enableTransaction) {
         this.enableTransaction = enableTransaction;
     }
 
     public String getPersistenceLevel() {
-        return Optional.ofNullable(persistenceLevel).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(persistenceLevel).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setPersistenceLevel(BPDetailFormat persistenceLevel) {
+    public void setPersistenceLevel(DetailFormat persistenceLevel) {
         this.persistenceLevel = persistenceLevel;
     }
 
     public String getDocumentStorage() {
-        return Optional.ofNullable(documentStorage).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(documentStorage).map(DetailFormat::getDisplay).orElse("");
     }
 
-    public void setDocumentStorage(BPDetailFormat documentStorage) {
+    public void setDocumentStorage(DetailFormat documentStorage) {
         this.documentStorage = documentStorage;
     }
 
@@ -239,11 +241,12 @@ public class BPDetails {
         this.node = node;
     }
 
-    public void setNodePreference(BPDetailFormat nodePreference) {
+    public void setNodePreference(DetailFormat nodePreference) {
         this.nodePreference = nodePreference;
     }
 
     public String getNodePreference() {
-        return Optional.ofNullable(nodePreference).map(BPDetailFormat::getDisplay).orElse("");
+        return Optional.ofNullable(nodePreference).map(DetailFormat::getDisplay).orElse("");
     }
+
 }

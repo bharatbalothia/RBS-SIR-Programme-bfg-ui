@@ -21,6 +21,9 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   errorMessage: ErrorMessage;
   errorSubscription: Subscription;
 
+  isLoading: boolean;
+  isLoadingSubscription: Subscription;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData
   ) {
@@ -35,6 +38,10 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
     if (this.data.parentError) {
       this.errorSubscription = this.data.parentError.subscribe((evt: ErrorMessage) => this.errorMessage = evt);
     }
+
+    if (this.data.parentLoading) {
+      this.isLoadingSubscription = this.data.parentLoading.subscribe((evt: boolean) => this.isLoading = evt);
+    }
   }
 
   ngOnInit() {
@@ -44,6 +51,9 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.errorSubscription) {
       this.errorSubscription.unsubscribe();
+    }
+    if (this.isLoadingSubscription) {
+      this.isLoadingSubscription.unsubscribe();
     }
   }
 

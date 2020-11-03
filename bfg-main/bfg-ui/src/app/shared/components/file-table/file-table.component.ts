@@ -65,7 +65,7 @@ export class FileTableComponent implements OnInit, OnDestroy {
 
   openFileDetailsDialog = (file: File) => this.fileDialogService.openFileDetailsDialog(file);
 
-  openFileDocumentInfo = (file: File) => this.fileDialogService.openFileDocumentInfo(file);
+  openFileDocumentInfo = (file: File) => this.fileDialogService.openFileDocumentInfo(file, true);
 
   openEntityDetailsDialog = (file: File) => this.fileDialogService.openEntityDetailsDialog(file);
 
@@ -73,7 +73,7 @@ export class FileTableComponent implements OnInit, OnDestroy {
 
   openTransactionsDialog = (file: File) => this.fileDialogService.openTransactionsDialog(file);
 
-  openErrorDetailsDialog = (file: File) => this.fileDialogService.openErrorDetailsDialog(file);
+  openErrorDetailsDialog = (file: File) => this.fileDialogService.openErrorDetailsDialog(file, true);
 
   autoRefreshChange = (value) => {
     if (value) {

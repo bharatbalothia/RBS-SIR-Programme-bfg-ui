@@ -8,6 +8,7 @@
                 </app-tab-content>
             </mat-tab>
         </mat-tab-group>
+        <mat-progress-bar mode="buffer" class="loading-bar" *ngIf="isLoading"></mat-progress-bar>
     </mat-dialog-content>
     <mat-dialog-actions>
         <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
@@ -20,6 +21,7 @@
             <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
         </mat-tab>
     </mat-tab-group>
+    <mat-progress-bar mode="buffer" class="loading-bar" *ngIf="isLoading"></mat-progress-bar>
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="!data.isDragable">
     <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>

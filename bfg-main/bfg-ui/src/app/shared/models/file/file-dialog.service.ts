@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { File } from 'src/app/shared/models/file/file.model';
 import { FileService } from './file.service';
 import { EntityService } from '../entity/entity.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -24,13 +25,17 @@ export class FileDialogService {
 
     errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
     errorMessage: ErrorMessage;
+    isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
     isLoading = false;
+
+    errorMessageChange: Subject<ErrorMessage> = new Subject<ErrorMessage>();
+    isLoadingChange: Subject<boolean> = new Subject<boolean>();
 
     constructor(private fileService: FileService, private dialog: MatDialog, private entityService: EntityService) {
     }
 
     openFileDetailsDialog = (file: File) => {
-        this.createErrorMessageEmitter(file.id);
+        this.createEmitters(file.id);
         return this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
             title: `File - ${file.id}`,
             tabs: getFileDetailsTabs(file),
@@ -45,14 +50,16 @@ export class FileDialogService {
                     workflowID: () => this.openBusinessProcessDialog(file)
                 }
             },
-            parentError: this.errorMessageEmitters[file.id]
-        })).afterClosed().subscribe(() => this.deleteErrorMessageEmitter(file.id));
+            parentError: this.errorMessageEmitters[file.id],
+            parentLoading: this.isLoadingEmitters[file.id],
+        })).afterClosed().subscribe(() => this.deleteEmitters(file.id));
     }
 
     openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
-        .pipe(data => this.setLoading(data))
+        .pipe(data => this.setLoading(data, file.id))
         .subscribe((entity: Entity) => {
             this.isLoading = false;
+            this.emitLoadingEvent(file.id);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `${entity.service}: ${entity.entity}`,
                 tabs: getEntityDetailsTabs(entity),
@@ -62,15 +69,20 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.emitLoadingEvent(file.id);
                 this.errorMessage = getApiErrorMessage(error);
                 this.emitErrorMessageEvent(file.id);
             })
 
 
-    openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
-        .pipe(data => this.setLoading(data))
+    openErrorDetailsDialog = (file: File, рropagateErr?) => this.fileService.getErrorDetailsByCode(file.errorCode)
+        .pipe(data => this.setLoading(data, file.id, рropagateErr))
         .subscribe((data: FileError) => {
             this.isLoading = false;
+            this.emitLoadingEvent(file.id);
+            if (рropagateErr) {
+                this.isLoadingChange.next(false);
+            }
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `${data.code}`,
                 tabs: getErrorDetailsTabs(data),
@@ -80,8 +92,13 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.emitLoadingEvent(file.id);
                 this.errorMessage = getApiErrorMessage(error);
                 this.emitErrorMessageEvent(file.id);
+                if (рropagateErr) {
+                    this.isLoadingChange.next(false);
+                    this.errorMessageChange.next(this.errorMessage);
+                }
             })
 
     openTransactionsDialog = (file: File) =>
@@ -99,10 +116,14 @@ export class FileDialogService {
             },
         }))
 
-    openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
-        .pipe(data => this.setLoading(data))
+    openFileDocumentInfo = (file: File, рropagateErr?) => this.fileService.getDocumentContent(file.docID)
+        .pipe(data => this.setLoading(data, file.id, рropagateErr))
         .subscribe((data: DocumentContent) => {
             this.isLoading = false;
+            if (рropagateErr) {
+                this.isLoadingChange.next(false);
+            }
+            this.emitLoadingEvent(file.id);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
                 title: `File Document Information`,
                 tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
@@ -112,8 +133,13 @@ export class FileDialogService {
         },
             error => {
                 this.isLoading = false;
+                this.emitLoadingEvent(file.id);
                 this.errorMessage = getApiErrorMessage(error);
                 this.emitErrorMessageEvent(file.id);
+                if (рropagateErr) {
+                    this.isLoadingChange.next(false);
+                    this.errorMessageChange.next(this.errorMessage);
+                }
             })
 
 
@@ -130,9 +156,15 @@ export class FileDialogService {
             },
         }))
 
-    setLoading(data) {
+    setLoading(data, id, рropagateErr?) {
         this.errorMessage = null;
+        this.emitErrorMessageEvent(id);
         this.isLoading = true;
+        this.emitLoadingEvent(id);
+        if (рropagateErr) {
+            this.isLoadingChange.next(true);
+            this.errorMessageChange.next(null);
+        }
         return data;
     }
 
@@ -142,13 +174,23 @@ export class FileDialogService {
         }
     }
 
-    createErrorMessageEmitter(id: number) {
-        this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
+    emitLoadingEvent(id: number) {
+        if (this.isLoadingEmitters[id]) {
+            this.isLoadingEmitters[id].emit(this.isLoading);
+        }
     }
 
-    deleteErrorMessageEmitter(id: number) {
+    createEmitters(id: number) {
+        this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
+        this.isLoadingEmitters[id] = new EventEmitter<boolean>();
+    }
+
+    deleteEmitters(id: number) {
         if (this.errorMessageEmitters[id]) {
             this.errorMessageEmitters[id] = null;
+        }
+        if (this.isLoadingEmitters[id]) {
+            this.isLoadingEmitters[id] = null;
         }
     }
 

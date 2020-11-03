@@ -289,4 +289,11 @@ public class SearchService {
         return headers;
     }
 
+    public Optional<List<File>> getFileMonitor() throws JsonProcessingException {
+        SearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        Optional<List<File>> fileList = Optional.ofNullable(objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
+        }));
+        fileList.ifPresent(files -> files.forEach(this::setEntityOfFile));
+        return fileList;
+    }
 }

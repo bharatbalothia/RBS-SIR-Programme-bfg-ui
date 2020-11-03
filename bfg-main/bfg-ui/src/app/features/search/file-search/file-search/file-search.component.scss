@@ -59,49 +59,6 @@
         }
     }
 
-    .mat-table {
-        width: 100%;
-
-        .mat-column-service {
-            flex: 0 0 5% !important;
-            width: 5% !important;
-        }
-
-        .mat-column-error {
-            flex: 0 0 6% !important;
-            width: 6% !important;
-        }
-
-        .mat-column-type,
-        .mat-column-status,
-        .mat-column-WFID,
-        .mat-column-id {
-            flex: 0 0 7% !important;
-            width: 7% !important;
-        }
-
-        .mat-column-transactions {
-            flex: 0 0 8% !important;
-            width: 8% !important;
-        }
-
-        .mat-column-filename {
-            flex: 0 0 19% !important;
-            width: 19% !important;
-        }
-
-        .mat-column-timestamp,
-        .mat-column-reference {
-            flex: 0 0 15% !important;
-            width: 15% !important;
-        }
-
-    }
-
-    .value-table-cell {
-        width: 100%;
-    }
-
     .stepper-actions {
         margin-top: 15px;
 

@@ -17,4 +17,5 @@ export class DisplayTableCellComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  removeEmptiesInArray = (array: any[]) => array.filter(el => el);
 }

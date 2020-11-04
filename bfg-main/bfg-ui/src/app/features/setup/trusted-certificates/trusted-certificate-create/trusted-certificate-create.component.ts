@@ -193,7 +193,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
           .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')) : '',
       issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
-      valid: getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
+      valid:  this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
     });
     this.confirmationPageDataSource = Object.keys(entity)
       .map((key) => ({
@@ -237,5 +237,17 @@ export class TrustedCertificateCreateComponent implements OnInit {
         );
       }
     });
+  }
+
+  hasWarnings(): boolean{
+    return this.errorMessage && this.errorMessage.warnings && this.errorMessage.warnings.length > 0;
+  }
+
+  getValidityMessage(): string{
+    let validityMessage = null;
+    if (this.hasWarnings()){
+      validityMessage = this.getErrorsMessage(this.errorMessage.warnings[0])[0];
+    }
+    return validityMessage;
   }
 }

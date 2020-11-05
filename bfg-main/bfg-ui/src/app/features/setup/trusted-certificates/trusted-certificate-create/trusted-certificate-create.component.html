@@ -89,8 +89,8 @@
                             <h4 class="section-label"></h4>
                             <div class="section-value">
                                 <div class="validity-flag">
-                                    <mat-icon >{{detailsTrustedCertificateFormGroup.get('valid').value === true ? 'check_circle_outline' : 'warning'}}</mat-icon>
-                                    <span>{{getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
+                                    <mat-icon >{{detailsTrustedCertificateFormGroup.get('valid').value === true ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}</mat-icon>
+                                    <span>{{getValidityMessage() || getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
                                 </div>
                             </div>
                         </section>

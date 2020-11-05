@@ -100,6 +100,9 @@ mat-form-field {
 
     .md-drppicker {
 
+        display: flex;
+        flex-direction: column;
+
         &.shown {
             height: 374px;
             left: 0px;

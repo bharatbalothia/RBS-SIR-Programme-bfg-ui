@@ -28,7 +28,7 @@ export const TRANSACTION_SEARCH_DISPLAY_NAMES = {
 
 export const getTransactionSearchDisplayName = (key: string) => TRANSACTION_SEARCH_DISPLAY_NAMES[key] || key;
 
-export const getTransactionDetailsTabs = (transaction: Transaction, actionMapping?: {[id: string]: any}): Tab[] => {
+export const getTransactionDetailsTabs = (transaction: Transaction, actionMapping?: { [id: string]: any }): Tab[] => {
     const mapping = actionMapping || {};
     return [
         {
@@ -47,7 +47,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
                     { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy', 'en-GB') },
                     { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
-                    { fieldName: 'status', fieldValue: transaction.status },
+                    { fieldName: 'status', fieldValue: transaction.statusLabel || transaction.status },
                 ]
             }]
         }

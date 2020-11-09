@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.exception.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
@@ -24,9 +25,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.*;
+
 import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
-import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFIX;
 import static org.springframework.data.domain.PageRequest.of;
 
 @Service
@@ -71,11 +73,11 @@ public class SearchService {
     @Autowired
     private SearchService searchService;
 
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
+
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
-        List<File> fileList = objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
-        });
-        Optional.ofNullable(fileList).ifPresent(files -> files.forEach(this::setEntityOfFile));
-        return convertListToPage(fileSearchCriteria, fileList);
+        return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl));
     }
 
     public Optional<File> getFileById(Integer id) throws JsonProcessingException {
@@ -84,7 +86,7 @@ public class SearchService {
             response = new RestTemplate().exchange(
                     fileSearchUrl + "/" + id,
                     HttpMethod.GET,
-                    new HttpEntity<>(getHttpHeaders()),
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);
         } catch (HttpStatusCodeException e) {
             throw new FileNotFoundException(e.getMessage());
@@ -127,7 +129,7 @@ public class SearchService {
             response = new RestTemplate().exchange(
                     fileSearchUrl + "/" + fileId + "/transactions/" + id,
                     HttpMethod.GET,
-                    new HttpEntity<>(getHttpHeaders()),
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);
         } catch (HttpStatusCodeException e) {
             throw new FileTransactionNotFoundException(e.getMessage());
@@ -153,7 +155,7 @@ public class SearchService {
             response = new RestTemplate().exchange(
                     documentUrl + documentId + "/actions/getpayload?isPlainText=true",
                     HttpMethod.POST,
-                    new HttpEntity<>(getHttpHeaders()),
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);
         } catch (HttpStatusCodeException e) {
             throw new DocumentContentNotFoundException(e.getMessage());
@@ -166,7 +168,7 @@ public class SearchService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 documentUrl + "?documentId=" + documentId,
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         List<Document> documents = Optional.ofNullable(
                 objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
@@ -192,7 +194,7 @@ public class SearchService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 uriBuilder.build().toString(),
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
 
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
@@ -209,7 +211,7 @@ public class SearchService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowStepsUrl + "?fieldList=Full&workFlowId=" + workFlowId,
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         List<WorkflowStep> workflowSteps = Optional.ofNullable(objectMapper.convertValue(
                 objectMapper.readTree(Objects.requireNonNull(response.getBody())), new TypeReference<List<WorkflowStep>>() {
@@ -248,7 +250,7 @@ public class SearchService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowsUrl + identifier,
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         return objectMapper.convertValue(objectMapper.readTree(
                 Objects.requireNonNull(response.getBody())), new TypeReference<BPDetails>() {
@@ -272,28 +274,15 @@ public class SearchService {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",
                 HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
                 new TypeReference<List<BPName>>() {
                 });
     }
 
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        String userCredentials = userName + ":" + password;
-        headers.set(HttpHeaders.AUTHORIZATION,
-                HEADER_PREFIX + Base64.getEncoder().encodeToString(userCredentials.getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return headers;
+    public Optional<List<File>> getFileMonitor() throws JsonProcessingException {
+        return Optional.ofNullable(getListFromSBI(new FileSearchCriteria(), fileSearchUrl));
     }
 
-    public Optional<List<File>> getFileMonitor() throws JsonProcessingException {
-        SearchCriteria fileSearchCriteria = new FileSearchCriteria();
-        Optional<List<File>> fileList = Optional.ofNullable(objectMapper.convertValue(getListFromSBI(fileSearchCriteria, fileSearchUrl), new TypeReference<List<File>>() {
-        }));
-        fileList.ifPresent(files -> files.forEach(this::setEntityOfFile));
-        return fileList;
-    }
 }

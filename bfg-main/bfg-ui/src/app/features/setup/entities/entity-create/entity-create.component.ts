@@ -49,7 +49,7 @@ export class EntityCreateComponent implements OnInit {
 
   isLoading = false;
 
-  summaryDisplayedColumns = ['field', 'value', 'error'];
+  summaryDisplayedColumns = ['field', 'value'];
   summaryPageDataSource;
 
   scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
@@ -570,7 +570,6 @@ export class EntityCreateComponent implements OnInit {
       .map((key) => ({
         field: key,
         value: entity[key],
-        error: getErrorByField(key, this.errorMessage)
       })).filter(el => el.field !== 'changerComments');
   }
 

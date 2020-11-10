@@ -865,12 +865,6 @@
                             <mat-cell *matCellDef="let element"> {{element.value}}
                             </mat-cell>
                         </ng-container>
-                        <ng-container matColumnDef="error">
-                            <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <mat-error class='error-table-cell'>{{element.error}}</mat-error>
-                            </mat-cell>
-                        </ng-container>
                         <ng-container matColumnDef="changerComment">
                             <mat-footer-cell *matFooterCellDef colspan="2">
                                 <mat-form-field>

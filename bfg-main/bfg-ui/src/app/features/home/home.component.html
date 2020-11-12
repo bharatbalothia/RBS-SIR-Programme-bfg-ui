@@ -1,1 +1,74 @@
-<p>home works!</p>
+<mat-card class="home-card">
+    <mat-card-content class="card-content">
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+
+            <div class="system-statistics" *ngIf="systemErrors">
+                <div class="statistics-label">
+                    <h2>System errors</h2>
+                </div>
+                <div class="statistics-value">
+                    <div class="icon-value">
+                        <mat-icon>{{systemErrors.count === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
+                        <h2>There are {{systemErrors.count}} system errors. </h2>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="system-statistics" *ngIf="alerts">
+                <div class="statistics-label">
+                    <h2>SCT Transactions</h2>
+                </div>
+                <div class="statistics-value">
+                    <div class="icon-value">
+                        <mat-icon>{{alerts.SCT_ALERTS_FILE === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
+                        <h2>There are {{alerts.SCT_ALERTS_FILE}} file errors (details).</h2>
+                    </div>
+                    <div class="icon-value">
+                        <mat-icon>{{alerts.SCT_ALERTS_TX === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
+                        <h2>There are {{alerts.SCT_ALERTS_TX}} transaction errors (details).</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-statistics" *ngIf="SCTTraffic">
+                <div class="statistics-label">
+                    <h2>SCT Traffic summary</h2>
+                </div>
+                <div class="statistics-value">
+                    <div class="table-value">
+                        <tr class="header-row">
+                            <th class="header-cell"></th>
+                            <th class="header-cell">Files</th>
+                            <th class="header-cell">Transactions</th>
+                            <th class="header-cell">Payaway</th>
+                        </tr>
+                        <tr class="row">
+                            <td class="cell">Last 60 minutes</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_FILES.HOUR}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_TX.HOUR}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_PAW.HOUR}}</td>
+                        </tr>
+                        <tr class="row">
+                            <td class="cell">Last 24 hours</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_FILES.DAY}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_TX.DAY}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_PAW.DAY}}</td>
+                        </tr>
+                        <tr class="row">
+                            <td class="cell">Last 7 days</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_FILES.WEEK}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_TX.WEEK}}</td>
+                            <td class="cell data-cell">{{SCTTraffic.SCT_PAW.WEEK}}</td>
+                        </tr>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>

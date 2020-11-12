@@ -29,20 +29,28 @@
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
-                        <a mat-icon-button *ngIf="!element.entityLog"
+                        <a mat-icon-button *ngIf="!element.entityLog" class="action-button"
                             [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
                             [state]="{ pageIndex: pageIndex,
                                 pageSize: pageSize,
                                 serviceSearchingValue: serviceSearchingValue,
-                                entityNameSearchingValue: entityNameSearchingValue }">
-                            <mat-icon alt="Edit" title="Edit" inline>edit</mat-icon>
+                                entityNameSearchingValue: entityNameSearchingValue }" alt="Edit" title="Edit">
+                            <div class="action-icon">
+                                <mat-icon inline>edit</mat-icon>edit
+                            </div>
                         </a>
-                        <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteEntity(element)">
-                            <mat-icon alt="Delete" title="Delete">clear</mat-icon>
+                        <button mat-icon-button *ngIf="!element.entityLog" class="action-button" alt="Delete"
+                            title="Delete" (click)="deleteEntity(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
                         </button>
-                        <button mat-icon-button *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT"
-                            (click)="transmitEntity(element)">
-                            <mat-icon alt="Transmit" title="Transmit">explicit</mat-icon>
+                        <button mat-icon-button class="action-button"
+                            *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT"
+                            (click)="transmitEntity(element)" alt="Transmit" title="Transmit">
+                            <div class="action-icon">
+                                <mat-icon>explicit</mat-icon>transmit
+                            </div>
                         </button>
                     </mat-cell>
                 </ng-container>

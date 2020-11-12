@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -27,7 +26,7 @@ public class StatisticsController {
     }
 
     @GetMapping("sct-alerts")
-    public ResponseEntity<List<StatisticalData>> getSCTAlerts() throws JsonProcessingException {
+    public ResponseEntity<Map<String, Integer>> getSCTAlerts() throws JsonProcessingException {
         return ok(statisticsService.getSCTAlerts());
     }
 

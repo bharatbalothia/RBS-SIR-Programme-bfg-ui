@@ -52,15 +52,17 @@ public class StatisticsService {
         });
     }
 
-    public List<StatisticalData> getSCTAlerts() throws JsonProcessingException {
+    public Map<String, Integer> getSCTAlerts() throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
                 sctAlertsUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        return objectMapper.convertValue(root, new TypeReference<List<StatisticalData>>() {
+        List<StatisticalData> statisticalData = objectMapper.convertValue(root, new TypeReference<List<StatisticalData>>() {
         });
+        return statisticalData.stream()
+                .collect(Collectors.toMap(StatisticalData::getType, StatisticalData::getCount));
     }
 
     public Map<String, Map<String, Integer>> getSCTTrafficSummary() throws JsonProcessingException {

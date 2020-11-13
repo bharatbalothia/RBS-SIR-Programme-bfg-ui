@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { Alerts } from 'src/app/shared/models/statistics/alerts.model';
 import { SCTTraffic } from 'src/app/shared/models/statistics/sct-traffic.model';
@@ -11,6 +12,8 @@ import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.mod
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+
+  ROUTING_PATHS = ROUTING_PATHS;
 
   errorMessage: ErrorMessage;
   isLoading = false;

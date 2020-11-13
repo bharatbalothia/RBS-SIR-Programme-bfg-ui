@@ -34,25 +34,44 @@ export class FileDialogService {
     constructor(private fileService: FileService, private dialog: MatDialog, private entityService: EntityService) {
     }
 
-    openFileDetailsDialog = (file: File) => {
+    openFileDetailsDialog = (file: File, рropagateErr?) => {
         this.createEmitters(file.id);
-        return this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-            title: `File - ${file.id}`,
-            tabs: getFileDetailsTabs(file),
-            displayName: getFileSearchDisplayName,
-            isDragable: true,
-            actionData: {
-                actions: {
-                    entity: () => this.openEntityDetailsDialog(file),
-                    errorCode: () => this.openErrorDetailsDialog(file),
-                    transactionTotal: () => this.openTransactionsDialog(file),
-                    filename: () => this.openFileDocumentInfo(file),
-                    workflowID: () => this.openBusinessProcessDialog(file)
+        this.fileService.getFileById(file.id)
+            .pipe(data => this.setLoading(data, file.id, рropagateErr))
+            .subscribe((fileData: File) => {
+                this.isLoading = false;
+                this.emitLoadingEvent(file.id);
+                if (рropagateErr) {
+                    this.isLoadingChange.next(false);
                 }
+                this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+                    title: `File - ${fileData.id}`,
+                    tabs: getFileDetailsTabs(fileData),
+                    displayName: getFileSearchDisplayName,
+                    isDragable: true,
+                    actionData: {
+                        actions: {
+                            entity: () => this.openEntityDetailsDialog(fileData),
+                            errorCode: () => this.openErrorDetailsDialog(fileData),
+                            transactionTotal: () => this.openTransactionsDialog(fileData),
+                            filename: () => this.openFileDocumentInfo(fileData),
+                            workflowID: () => this.openBusinessProcessDialog(fileData)
+                        }
+                    },
+                    parentError: this.errorMessageEmitters[file.id],
+                    parentLoading: this.isLoadingEmitters[file.id],
+                })).afterClosed().subscribe(() => this.deleteEmitters(file.id));
             },
-            parentError: this.errorMessageEmitters[file.id],
-            parentLoading: this.isLoadingEmitters[file.id],
-        })).afterClosed().subscribe(() => this.deleteEmitters(file.id));
+                error => {
+                    this.isLoading = false;
+                    this.emitLoadingEvent(file.id);
+                    this.errorMessage = getApiErrorMessage(error);
+                    this.emitErrorMessageEvent(file.id);
+                    if (рropagateErr) {
+                        this.isLoadingChange.next(false);
+                        this.errorMessageChange.next(this.errorMessage);
+                    }
+                });
     }
 
     openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)

@@ -11,11 +11,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = MQDetailsValidator.class)
+@Constraint(validatedBy = DetailsValidator.class)
 @Documented
-public @interface MQValid {
+public @interface DetailsValid {
 
-    String message() default "MQ details are not valid";
+    String message() default "Details are not valid";
 
     Class<?>[] groups() default {};
 

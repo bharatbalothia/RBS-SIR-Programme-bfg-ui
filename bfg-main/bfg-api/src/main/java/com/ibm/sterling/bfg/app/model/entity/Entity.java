@@ -5,7 +5,7 @@ import com.ibm.sterling.bfg.app.model.validation.gplvalidation.ConvertedStringSi
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteCreationValid;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.RouteUpdateValid;
-import com.ibm.sterling.bfg.app.model.validation.sctvalidation.MQValid;
+import com.ibm.sterling.bfg.app.model.validation.sctvalidation.DetailsValid;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import com.ibm.sterling.bfg.app.model.validation.unique.Unique;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityUpdateUniqueness;
@@ -31,7 +31,7 @@ import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNu
 
 @EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
 @EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
-@MQValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
+@DetailsValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
 @RouteCreationValid(groups = GplValidation.PostValidation.class)
 @RouteUpdateValid(groups = GplValidation.PutValidation.class)
 @javax.persistence.Entity

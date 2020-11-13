@@ -1,8 +1,11 @@
-.mat-dialog-actions {
+.dialog-actions {
 
-    display: block;
+    padding-bottom: 5px;
+    display: flex;
 
-    .close-button {
-        float: right;
+    .save-button {
+        margin-left: auto;
+        margin-right: 8px;
     }
+
 }

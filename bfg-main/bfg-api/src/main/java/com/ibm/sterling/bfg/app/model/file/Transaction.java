@@ -15,7 +15,7 @@ public class Transaction {
     private Integer workflowID;
     private Boolean isoutbound;
     private String direction;
-    private String fileId;
+    private String fileID;
     private String docID;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
@@ -84,12 +84,12 @@ public class Transaction {
         this.docID = docID;
     }
 
-    public String getFileId() {
-        return fileId;
+    public String getFileID() {
+        return fileID;
     }
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
+    public void setFileID(String fileID) {
+        this.fileID = fileID;
     }
 
     public LocalDateTime getTimestamp() {
@@ -115,4 +115,5 @@ public class Transaction {
     public void setDirection(String direction) {
         this.direction = direction;
     }
+
 }

@@ -49,7 +49,7 @@ export class EntityCreateComponent implements OnInit {
 
   isLoading = false;
 
-  summaryDisplayedColumns = ['field', 'value', 'error'];
+  summaryDisplayedColumns = ['field', 'value'];
   summaryPageDataSource;
 
   scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
@@ -323,7 +323,8 @@ export class EntityCreateComponent implements OnInit {
 
   resetMqValidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
-    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;    const requestorDN = this.SWIFTDetailsFormGroup.controls.requestorDN;
+    const responderDN = this.SWIFTDetailsFormGroup.controls.responderDN;
     const requestType = this.SWIFTDetailsFormGroup.controls.requestType;
     const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
     if (value === 'DIRECT') {
@@ -333,12 +334,16 @@ export class EntityCreateComponent implements OnInit {
           this.requiredFields[control] = true;
         }
       }
+      requestorDN.setValidators(Validators.required);
+      responderDN.setValidators(Validators.required);
       requestType.setValidators(Validators.required);
       serviceName.setValidators(Validators.required);
       this.requiredFields = {
         ...this.requiredFields,
+        requestorDN: true,
+        responderDN: true,
         serviceName: true,
-        requestType: true
+        requestType: true,
       };
     } else {
       for (const control in this.mqDetailsFormGroup.controls) {
@@ -347,10 +352,14 @@ export class EntityCreateComponent implements OnInit {
           this.requiredFields[control] = false;
         }
       }
+      requestorDN.clearValidators();
+      responderDN.clearValidators();
       requestType.clearValidators();
       serviceName.clearValidators();
       this.requiredFields = {
         ...this.requiredFields,
+        requestorDN: false,
+        responderDN: false,
         serviceName: false,
         requestType: false
       };
@@ -570,7 +579,6 @@ export class EntityCreateComponent implements OnInit {
       .map((key) => ({
         field: key,
         value: entity[key],
-        error: getErrorByField(key, this.errorMessage)
       })).filter(el => el.field !== 'changerComments');
   }
 

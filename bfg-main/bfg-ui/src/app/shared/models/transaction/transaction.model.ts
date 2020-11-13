@@ -10,6 +10,7 @@ export interface Transaction {
     reference: string;
     isoutbound: boolean;
     status: number;
+    statusLabel: string;
     transactionID: string;
     type: string;
     workflowID: number;

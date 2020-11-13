@@ -16,6 +16,7 @@ import { getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../..
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
+import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -29,6 +30,7 @@ export class TransactionsDialogComponent implements OnInit {
   displayName: (fieldName: string) => string;
 
   errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
+  isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
 
   isLoading = true;
   errorMessage: ErrorMessage;
@@ -42,17 +44,17 @@ export class TransactionsDialogComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   fileId: number;
-  actions;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private fileService: FileService,
+    private fileDialogService: FileDialogService,
     private dialog: MatDialog
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
 
     this.fileId = get(this.data, 'actionData.fileId');
-    this.actions = this.actions = get(this.data, 'actionData.actions');
   }
 
   ngOnInit() {
@@ -87,23 +89,26 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createErrorMessageEmitter(id);
+    this.createEmitters(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
+        const actions: any = {
+          file: () => this.openFileDetailsDialog({ id: fileId }, id),
+          workflowID: () => this.openBusinessProcessDialog(data)
+        };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction -  ${data.id}`,
-          tabs: getTransactionDetailsTabs(data, ...this.actions),
+          tabs: getTransactionDetailsTabs(data, ...actions),
           displayName: getFileSearchDisplayName,
           isDragable: true,
           actionData: {
-            actions: {
-              ...this.actions
-            }
+            actions
           },
-          parentError: this.errorMessageEmitters[id]
-        })).afterClosed().subscribe(() => this.deleteErrorMessageEmitter(fileId));
+          parentError: this.errorMessageEmitters[id],
+          parentLoading: this.isLoadingEmitters[id],
+        })).afterClosed().subscribe(() => this.deleteEmitters(id));
       },
         error => {
           this.isLoading = false;
@@ -111,10 +116,23 @@ export class TransactionsDialogComponent implements OnInit {
         });
   }
 
+  openFileDetailsDialog = (file, transactionId) => {
+    this.fileDialogService.errorMessageChange.subscribe(data => {
+      this.errorMessage = data;
+      this.emitErrorMessageEvent(transactionId);
+    });
+    this.fileDialogService.isLoadingChange.subscribe(data => {
+      this.isLoading = data;
+      this.emitLoadingEvent(transactionId);
+    });
+    this.fileDialogService.openFileDetailsDialog(file, true);
+  }
+
   openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
     .pipe(data => this.setLoading(data))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;
+      this.emitLoadingEvent(transaction.id);
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `Transaction Document Information`,
         tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
@@ -124,6 +142,7 @@ export class TransactionsDialogComponent implements OnInit {
     },
       error => {
         this.isLoading = false;
+        this.emitLoadingEvent(transaction.id);
         this.errorMessage = getApiErrorMessage(error);
         this.emitErrorMessageEvent(transaction.id);
       })
@@ -141,19 +160,30 @@ export class TransactionsDialogComponent implements OnInit {
       },
     }))
 
-  createErrorMessageEmitter(id: number) {
-    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
-  }
-
-  deleteErrorMessageEmitter(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id] = null;
-    }
-  }
-
   emitErrorMessageEvent(id: number) {
     if (this.errorMessageEmitters[id]) {
       this.errorMessageEmitters[id].emit(this.errorMessage);
     }
   }
+
+  emitLoadingEvent(id: number) {
+    if (this.isLoadingEmitters[id]) {
+      this.isLoadingEmitters[id].emit(this.isLoading);
+    }
+  }
+
+  createEmitters(id: number) {
+    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
+    this.isLoadingEmitters[id] = new EventEmitter<boolean>();
+  }
+
+  deleteEmitters(id: number) {
+    if (this.errorMessageEmitters[id]) {
+      this.errorMessageEmitters[id] = null;
+    }
+    if (this.isLoadingEmitters[id]) {
+      this.isLoadingEmitters[id] = null;
+    }
+  }
+
 }

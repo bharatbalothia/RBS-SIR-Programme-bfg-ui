@@ -63,7 +63,7 @@ export class FileTableComponent implements OnInit, OnDestroy {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  openFileDetailsDialog = (file: File) => this.fileDialogService.openFileDetailsDialog(file);
+  openFileDetailsDialog = (file: File) => this.fileDialogService.openFileDetailsDialog(file, true);
 
   openFileDocumentInfo = (file: File) => this.fileDialogService.openFileDocumentInfo(file, true);
 

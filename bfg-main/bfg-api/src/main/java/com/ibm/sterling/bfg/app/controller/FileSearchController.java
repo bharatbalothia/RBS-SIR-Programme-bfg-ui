@@ -56,7 +56,7 @@ public class FileSearchController {
     }
 
     @GetMapping("error/{errorCode}")
-    public ResponseEntity<ErrorDetail> getErrorDetailsByCode(@PathVariable String errorCode) {
+    public ResponseEntity<ErrorDetail> getErrorDetailsByCode(@PathVariable String errorCode) throws JsonProcessingException {
         return ok(propertyService.getErrorDetailsByCode(errorCode)
                 .orElseThrow(ErrorDetailsNotFoundException::new));
     }

@@ -1,0 +1,18 @@
+<mat-card class="transaction-monitor-create-card">
+    <mat-card-header>
+        <mat-card-title>SCT Transaction Results
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <div class="top-error-message">
+            <app-error-template [errorMessage]="errorMessage"></app-error-template>
+        </div>
+        <app-transaction-table [(errorMessage)]="errorMessage" [(isLoading)]="isLoading" [shouldHidePaginator]="true"
+            [shouldHideTableHeader]="true" [getTransactionList]="getTransactionList.bind(this)" [dataSource]="dataSource"
+            [transactions]="transactions">
+        </app-transaction-table>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>

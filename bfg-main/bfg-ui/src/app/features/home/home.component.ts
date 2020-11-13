@@ -5,6 +5,7 @@ import { Alerts } from 'src/app/shared/models/statistics/alerts.model';
 import { SCTTraffic } from 'src/app/shared/models/statistics/sct-traffic.model';
 import { StatisticsService } from 'src/app/shared/models/statistics/statistics.service';
 import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.model';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-home',
@@ -64,4 +65,11 @@ export class HomeComponent implements OnInit {
       this.errorMessage = getApiErrorMessage(error);
     })
 
+  getMinusMonthsDate = (months) => moment().subtract(months, 'months').format('YYYY-MM-DDTHH:mm:ss');
+
+  getMinusHoursDate = (hours) => moment().subtract(hours, 'hours').format('YYYY-MM-DDTHH:mm:ss');
+
+  getMinusDaysDate = (days) => moment().subtract(days, 'days').format('YYYY-MM-DDTHH:mm:ss');
+
+  getCurrentDate = () => moment().format('YYYY-MM-DDTHH:mm:ss');
 }

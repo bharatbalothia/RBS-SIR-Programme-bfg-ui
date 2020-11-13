@@ -46,8 +46,6 @@ export class ErrorMonitorComponent implements OnInit {
 
 
   getFileList(pageIndex: number, pageSize: number) {
-    this.errorMessage = null;
-
     let formData = {
       page: pageIndex.toString(),
       size: pageSize.toString(),
@@ -62,18 +60,19 @@ export class ErrorMonitorComponent implements OnInit {
       };
     }
 
-    this.isLoading = true;
-    this.fileService.getFileList(formData).pipe(take(1)).subscribe((data: FilesWithPagination) => {
-      this.isLoading = false;
-      this.pageIndex = pageIndex;
-      this.pageSize = pageSize;
-      this.files = data;
-      this.updateTable();
-    },
-      (error) => {
+    this.fileService.getFileList(formData)
+      .pipe(data => this.setLoading(data))
+      .pipe(take(1)).subscribe((data: FilesWithPagination) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.files = data;
+        this.updateTable();
+      },
+        (error) => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   updateTable() {

@@ -65,12 +65,13 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     TransmitDialogComponent,
     BusinessProcessDialogComponent,
     FileTableComponent,
+    TransactionTableComponent,
+    
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
-    TransactionTableComponent,
   ],
   imports: [
     CommonModule,
@@ -152,6 +153,8 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     DragableDialogWrapperComponent,
     TransmitDialogComponent,
     FileTableComponent,
+    TransactionTableComponent,
+
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

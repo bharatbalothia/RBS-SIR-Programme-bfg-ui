@@ -21,7 +21,6 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
-import { File } from 'src/app/shared/models/file/file.model';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 
 @Component({
@@ -35,6 +34,7 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   getTransactionStatusIcon = getStatusIcon;
 
   errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
+  isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
 
   isLinear = true;
 
@@ -135,8 +135,6 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
 
 
   getTransactionList(pageIndex: number, pageSize: number) {
-    this.errorMessage = null;
-
     const formData = {
       ...this.searchingParametersFormGroup.value,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
@@ -147,18 +145,19 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     formData.status = formData.trxStatus.status;
     formData.trxStatus = null;
 
-    this.isLoading = true;
-    this.transactionService.getTransactionList(removeEmpties(formData)).pipe(take(1)).subscribe((data: TransactionsWithPagination) => {
-      this.isLoading = false;
-      this.pageIndex = pageIndex;
-      this.pageSize = pageSize;
-      this.transactions = data;
-      this.updateTable();
-    },
-      (error) => {
+    this.transactionService.getTransactionList(removeEmpties(formData))
+      .pipe(data => this.setLoading(data))
+      .pipe(take(1)).subscribe((data: TransactionsWithPagination) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.transactions = data;
+        this.updateTable();
+      },
+        (error) => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
   }
 
   convertDateToFormat = (date: string) => moment(date).isValid() ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : null;
@@ -197,21 +196,32 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  createErrorMessageEmitter(id: number) {
-    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
-  }
-
-  deleteErrorMessageEmitter(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id] = null;
-    }
-  }
-
   emitErrorMessageEvent(id: number) {
     if (this.errorMessageEmitters[id]) {
       this.errorMessageEmitters[id].emit(this.errorMessage);
     }
   }
+
+  emitLoadingEvent(id: number) {
+    if (this.isLoadingEmitters[id]) {
+      this.isLoadingEmitters[id].emit(this.isLoading);
+    }
+  }
+
+  createEmitters(id: number) {
+    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
+    this.isLoadingEmitters[id] = new EventEmitter<boolean>();
+  }
+
+  deleteEmitters(id: number) {
+    if (this.errorMessageEmitters[id]) {
+      this.errorMessageEmitters[id] = null;
+    }
+    if (this.isLoadingEmitters[id]) {
+      this.isLoadingEmitters[id] = null;
+    }
+  }
+
 
   setDirectionFromStatus(fromStatus) {
     if (fromStatus !== '') {
@@ -236,14 +246,14 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createErrorMessageEmitter(id);
+    this.createEmitters(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
         const actions = {
           workflowID: () => this.openBusinessProcessDialog(data),
-          file: () => this.openFileDetailsDialog(fileId)
+          file: () => this.openFileDetailsDialog({ id: fileId }, id)
         };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction - ${data.id}`,
@@ -253,8 +263,9 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
           actionData: {
             actions
           },
-          parentError: this.errorMessageEmitters[id]
-        })).afterClosed().subscribe(() => this.deleteErrorMessageEmitter(fileId));
+          parentError: this.errorMessageEmitters[id],
+          parentLoading: this.isLoadingEmitters[id],
+        })).afterClosed().subscribe(() => this.deleteEmitters(id));
       },
         error => {
           this.isLoading = false;
@@ -263,17 +274,16 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   }
 
 
-  openFileDetailsDialog = (fileId: number) => {
-    this.fileService.getFileById(fileId)
-      .pipe(data => this.setLoading(data))
-      .subscribe((data: File) => {
-        this.isLoading = false;
-        this.fileDialogService.openFileDetailsDialog(data);
-      },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+  openFileDetailsDialog = (file, transactionId) => {
+    this.fileDialogService.errorMessageChange.subscribe(data => {
+      this.errorMessage = data;
+      this.emitErrorMessageEvent(transactionId);
+    });
+    this.fileDialogService.isLoadingChange.subscribe(data => {
+      this.isLoading = data;
+      this.emitLoadingEvent(transactionId);
+    });
+    this.fileDialogService.openFileDetailsDialog(file, true);
   }
 
   openBusinessProcessDialog = (transaction: Transaction) =>

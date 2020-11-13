@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.validation.sctvalidation;
 
-public enum MQDetailsFieldName {
+public enum DetailsFieldName {
 
     ENTITY_PARTICIPANT_TYPE("entityParticipantType"),
     DIRECT_PARTICIPANT("directParticipant"),
@@ -17,9 +17,13 @@ public enum MQDetailsFieldName {
     MQ_SSLSYSTEMCERTID("mqSSLKeyCert"),
     MQ_SSLCACERTID("mqSSLCaCert"),
     MQ_HEADER("mqHeader"),
-    MQ_SESSIONTIMEOUT("mqSessionTimeout");
+    MQ_SESSIONTIMEOUT("mqSessionTimeout"),
+    REQUESTORDN("requestorDN"),
+    RESPONDERDN("responderDN"),
+    SERVICENAME("serviceName"),
+    REQUESTTYPE("requestType");
 
-    MQDetailsFieldName(String fieldName) {
+    DetailsFieldName(String fieldName) {
         this.fieldName = fieldName;
     }
 

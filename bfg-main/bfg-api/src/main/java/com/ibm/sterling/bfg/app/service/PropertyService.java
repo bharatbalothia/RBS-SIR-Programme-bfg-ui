@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -256,32 +257,28 @@ public class PropertyService {
         return null;
     }
 
-    public Optional<ErrorDetail> getErrorDetailsByCode(String errorCode) {
+    public Optional<ErrorDetail> getErrorDetailsByCode(String errorCode) throws JsonProcessingException {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("code", errorCode);
-        Function<String, String> queryStringToGetDataByKey = attributeValue ->
-                "?_where=con(" + PROPERTY_KEY + "," + attributeValue + ")";
-        Arrays.asList(settings.getFileErrorPostfixKey())
-                .forEach(value -> {
-                    try {
-                        errorDetails.put(value.toLowerCase(), getPropertyList(settings.getFileUrl() +
-                                queryStringToGetDataByKey.apply(
-                                        errorCode + "." + value)
-                        ).stream()
-                                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE)))
-                                .collect(Collectors.toList())
-                                .stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining("")));
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+        List<String> errorKeys = Arrays.stream(settings.getFileErrorPostfixKey())
+                .map(value -> errorCode + "." + value)
+                .collect(Collectors.toList());
+        errorDetails.putAll(getPropertiesByPartialKey(errorKeys, settings.getFileUrl()).stream()
+                .flatMap(property -> {
+                            String propertyKey = property.get(PROPERTY_KEY);
+                            return Collections.singletonMap(
+                                    propertyKey.substring(propertyKey.lastIndexOf(".") + 1).toLowerCase(),
+                                    property.get(PROPERTY_VALUE)
+                            ).entrySet().stream();
+                        }
+                ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        return Optional.ofNullable(objectMapper.convertValue(errorDetails, ErrorDetail.class))
+                .flatMap(details -> {
+                    if (StringUtils.isEmpty(details.getName()) && StringUtils.isEmpty(details.getDescription())) {
+                        return Optional.empty();
                     }
+                    return Optional.of(details);
                 });
-        ErrorDetail errorDetail = objectMapper.convertValue(errorDetails, ErrorDetail.class);
-        if (errorDetail.getName().isEmpty() && errorDetail.getDescription().isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(errorDetail);
     }
 
     public Map<String, List<String>> getMQDetails() throws JsonProcessingException {

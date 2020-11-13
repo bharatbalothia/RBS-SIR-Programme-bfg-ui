@@ -1,0 +1,1 @@
+org.springframework.context.ApplicationListener=com.ibm.sterling.bfg.app.config.DynamicPropertiesListener

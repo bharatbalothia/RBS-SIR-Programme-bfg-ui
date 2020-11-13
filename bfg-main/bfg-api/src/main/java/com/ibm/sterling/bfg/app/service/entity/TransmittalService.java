@@ -22,10 +22,10 @@ public class TransmittalService {
     @Value("${transmittal.url}")
     private String transmittalUrl;
 
-    @Value("${file.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${file.password}")
+    @Value("${api.password}")
     private String password;
 
     @Autowired

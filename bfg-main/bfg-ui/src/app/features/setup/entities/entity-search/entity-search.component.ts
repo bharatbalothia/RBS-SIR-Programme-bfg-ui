@@ -35,6 +35,7 @@ export class EntitySearchComponent implements OnInit {
 
   entityNameSearchingValue = '';
   serviceSearchingValue = '';
+  DNSearchingValue = '';
 
   isLoading = true;
   errorMessage: ErrorMessage;
@@ -61,6 +62,7 @@ export class EntitySearchComponent implements OnInit {
 
     this.entityNameSearchingValue = window.history.state.entityNameSearchingValue || '';
     this.serviceSearchingValue = window.history.state.serviceSearchingValue || '';
+    this.DNSearchingValue = window.history.state.DNSearchingValue || '';
 
     this.getEntityList(this.pageIndex, this.pageSize);
   }
@@ -75,6 +77,7 @@ export class EntitySearchComponent implements OnInit {
     this.entityService.getEntityList(removeEmpties({
       entity: this.entityNameSearchingValue || null,
       service: this.serviceSearchingValue || null,
+      swiftDN: this.DNSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).pipe(data => this.setLoading(data)).subscribe((data: EntitiesWithPagination) => {

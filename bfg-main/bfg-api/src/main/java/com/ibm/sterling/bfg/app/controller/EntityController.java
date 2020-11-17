@@ -56,8 +56,9 @@ public class EntityController {
     public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
                                         @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
                                         @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
-        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName);
+                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                        @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN) {
+        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName, swiftDN);
     }
 
     @GetMapping("pending")

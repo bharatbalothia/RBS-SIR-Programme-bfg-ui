@@ -9,10 +9,13 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <div class="delete-actions">
-        <mat-form-field>
-            <mat-label>Changer Comments</mat-label>
-            <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
-        </mat-form-field>
+        <div class="form-field-section">
+            <mat-form-field>
+                <mat-label>Changer Comments</mat-label>
+                <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
+            </mat-form-field>
+            <app-tooltip *ngIf="tooltip" [tip]="tooltip"></app-tooltip>
+        </div>
         <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
         <button mat-raised-button color='primary'
             [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)"

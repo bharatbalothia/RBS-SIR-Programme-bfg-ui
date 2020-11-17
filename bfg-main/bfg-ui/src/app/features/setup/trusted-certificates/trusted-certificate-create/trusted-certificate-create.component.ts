@@ -18,6 +18,7 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { TrustedCertificateValidators } from 'src/app/shared/models/trustedCertificate/trusted-certificate-validator';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -57,6 +58,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     private trustedCertificateService: TrustedCertificateService,
     private dialog: MatDialog,
     private trustedCertificateValidators: TrustedCertificateValidators,
+    private toolTip: TooltipService,
   ) { }
 
   ngOnInit(): void {
@@ -193,7 +195,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
           .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')) : '',
       issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
-      valid:  this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
+      valid: this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
     });
     this.confirmationPageDataSource = Object.keys(entity)
       .map((key) => ({
@@ -239,15 +241,25 @@ export class TrustedCertificateCreateComponent implements OnInit {
     });
   }
 
-  hasWarnings(): boolean{
+  hasWarnings(): boolean {
     return this.errorMessage && this.errorMessage.warnings && this.errorMessage.warnings.length > 0;
   }
 
-  getValidityMessage(): string{
+  getValidityMessage(): string {
     let validityMessage = null;
-    if (this.hasWarnings()){
+    if (this.hasWarnings()) {
       validityMessage = this.getErrorsMessage(this.errorMessage.warnings[0])[0];
     }
     return validityMessage;
+  }
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'trusted-cert',
+      qualifier: step,
+      mode: 'create',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
   }
 }

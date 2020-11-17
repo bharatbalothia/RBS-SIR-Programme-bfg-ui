@@ -13,13 +13,16 @@
         <mat-step [stepControl]="uploadTrustedCertificateFormGroup">
             <form [formGroup]="uploadTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
-                <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
-                    (change)="handleFileInput($event.target.files)" hidden />
-                <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
-                    [disabled]="isLoading">
-                    <mat-icon>file_upload</mat-icon>
-                    Upload Trusted Certificate
-                </button>
+                <section class="form-field-section">
+                    <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
+                        (change)="handleFileInput($event.target.files)" hidden />
+                    <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
+                        [disabled]="isLoading">
+                        <mat-icon>file_upload</mat-icon>
+                        Upload Trusted Certificate
+                    </button>
+                    <app-tooltip [tip]="getTooltip('file', 'file-path')"></app-tooltip>
+                </section>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperNext class="action-button">Next</button>
                 </div>
@@ -28,18 +31,22 @@
         <mat-step *ngIf="detailsTrustedCertificateFormGroup" [stepControl]="detailsTrustedCertificateFormGroup">
             <form [formGroup]="detailsTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Details of Trusted Certificate</ng-template>
-                <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
-                    <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
-                    <input matInput formControlName="name" required>
-                    <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
-                        <mat-error class="error-message"
-                            *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
-                            {{validation.message}}</mat-error>
-                    </mat-error>
-                    <mat-error class="error-message" *ngIf="getErrorByField('name')">
-                        {{getErrorByField('name')}}
-                    </mat-error>
-                </mat-form-field>
+                <section class="form-field-section">
+                    <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
+                        <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
+                        <input matInput formControlName="name" required>
+                        <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
+                            <mat-error class="error-message"
+                                *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
+                        </mat-error>
+                        <mat-error class="error-message" *ngIf="getErrorByField('name')">
+                            {{getErrorByField('name')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>
+                </section>
+
                 <div class="ts-item-section">
                     <h3 class="ts-item-section-title">Summary:</h3>
                     <div class="ts-item-section-value">
@@ -89,7 +96,9 @@
                             <h4 class="section-label"></h4>
                             <div class="section-value">
                                 <div class="validity-flag">
-                                    <mat-icon >{{detailsTrustedCertificateFormGroup.get('valid').value === true ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}</mat-icon>
+                                    <mat-icon>
+                                        {{detailsTrustedCertificateFormGroup.get('valid').value === true ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
+                                    </mat-icon>
                                     <span>{{getValidityMessage() || getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
                                 </div>
                             </div>
@@ -111,14 +120,17 @@
                         </section>
                     </div>
                 </div>
-                <mat-form-field>
-                    <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
-                    </mat-label>
-                    <textarea matInput formControlName="changerComments"></textarea>
-                    <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
-                        {{getErrorByField('changerComments')}}
-                    </mat-error>
-                </mat-form-field>
+                <section class="form-field-section">
+                    <mat-form-field>
+                        <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
+                        </mat-label>
+                        <textarea matInput formControlName="changerComments"></textarea>
+                        <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
+                            {{getErrorByField('changerComments')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>
+                </section>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                     <button mat-raised-button matStepperNext class="action-button">Next</button>

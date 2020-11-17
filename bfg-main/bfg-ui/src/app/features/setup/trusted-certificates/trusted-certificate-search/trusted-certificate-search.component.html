@@ -6,18 +6,31 @@
         <app-error-template [errorMessage]="errorMessage"></app-error-template>
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by Certificate Name</mat-label>
-                <input matInput [(ngModel)]="certificateNameSearchingValue">
-            </mat-form-field>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by SHA-1 Thumbprint</mat-label>
-                <input matInput [(ngModel)]="thumbprintSearchingValue">
-            </mat-form-field>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by SHA-2 Thumbprint</mat-label>
-                <input matInput [(ngModel)]="thumbprint256SearchingValue">
-            </mat-form-field>
+
+            <div class="search-field">
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by Certificate Name</mat-label>
+                    <input matInput [(ngModel)]="certificateNameSearchingValue">
+                </mat-form-field>
+                <app-tooltip [tip]="getTooltip('search', 'by-cert-name')"></app-tooltip>
+            </div>
+
+            <div class="search-field">
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by SHA-1 Thumbprint</mat-label>
+                    <input matInput [(ngModel)]="thumbprintSearchingValue">
+                </mat-form-field>
+                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')"></app-tooltip>
+            </div>
+
+            <div class="search-field">
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by SHA-2 Thumbprint</mat-label>
+                    <input matInput [(ngModel)]="thumbprint256SearchingValue">
+                </mat-form-field>
+                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')"></app-tooltip>
+            </div>
+
             <button color="primary" mat-raised-button
                 (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
         </div>

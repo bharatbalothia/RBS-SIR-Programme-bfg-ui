@@ -13,6 +13,10 @@
         }
     }
 
+    .form-field-section {
+        display: flex;
+    }
+
     .ts-item-section {
         display: -ms-grid;
         display: grid;
@@ -55,7 +59,7 @@
                     -ms-flex-direction: column;
                     flex-direction: column;
 
-                    .validity-flag{
+                    .validity-flag {
                         display: flex;
                         align-items: center;
                         -ms-flex-direction: row;

@@ -12,7 +12,7 @@
                     <mat-label>Search by Certificate Name</mat-label>
                     <input matInput [(ngModel)]="certificateNameSearchingValue">
                 </mat-form-field>
-                <app-tooltip [tip]="getTooltip('search', 'by-cert-name')"></app-tooltip>
+                <app-tooltip [tip]="getTooltip('search', 'by-cert-name')" position="below"></app-tooltip>
             </div>
 
             <div class="search-field">
@@ -20,7 +20,7 @@
                     <mat-label>Search by SHA-1 Thumbprint</mat-label>
                     <input matInput [(ngModel)]="thumbprintSearchingValue">
                 </mat-form-field>
-                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')"></app-tooltip>
+                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
             </div>
 
             <div class="search-field">
@@ -28,7 +28,7 @@
                     <mat-label>Search by SHA-2 Thumbprint</mat-label>
                     <input matInput [(ngModel)]="thumbprint256SearchingValue">
                 </mat-form-field>
-                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')"></app-tooltip>
+                <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
             </div>
 
             <button color="primary" mat-raised-button

@@ -120,7 +120,7 @@
                         </section>
                     </div>
                 </div>
-                <section class="form-field-section">
+                <div class="form-field-section">
                     <mat-form-field>
                         <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
                         </mat-label>
@@ -129,8 +129,8 @@
                             {{getErrorByField('changerComments')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>
-                </section>
+                    <app-tooltip [tip]="getTooltip('edit-tc', 'changerComments')"></app-tooltip>
+                </div>
                 <div class='stepper-actions'>
                     <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                     <button mat-raised-button matStepperNext class="action-button">Next</button>

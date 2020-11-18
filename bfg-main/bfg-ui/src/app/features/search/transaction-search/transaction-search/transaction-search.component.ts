@@ -22,6 +22,7 @@ import { BusinessProcessDialogComponent } from 'src/app/shared/components/busine
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-transaction-search',
@@ -79,7 +80,8 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     private transactionService: TransactionService,
     private fileService: FileService,
     private dialog: MatDialog,
-    private fileDialogService: FileDialogService
+    private fileDialogService: FileDialogService,
+    private toolTip: TooltipService,
   ) { }
 
   ngOnInit(): void {
@@ -330,6 +332,16 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     if (get(event, 'target.value', null) === '') {
       control.setValue(null);
     }
+  }
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'sct-search',
+      qualifier: step,
+      mode: 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
   }
 
 }

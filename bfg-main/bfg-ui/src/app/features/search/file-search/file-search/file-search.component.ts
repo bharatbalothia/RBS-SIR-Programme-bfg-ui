@@ -14,6 +14,7 @@ import { STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get } from 'lodash';
 import * as moment from 'moment';
 import { FileTableComponent } from 'src/app/shared/components/file-table/file-table.component';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-file-search',
@@ -57,7 +58,8 @@ export class FileSearchComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private fileService: FileService
+    private fileService: FileService,
+    private toolTip: TooltipService,
   ) { }
 
   ngOnInit(): void {
@@ -231,5 +233,15 @@ export class FileSearchComponent implements OnInit {
     if (get(event, 'target.value', null) === '') {
       control.setValue(null);
     }
+  }
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'file-search',
+      qualifier: step,
+      mode: 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getFileSearchDisplayName(field);
   }
 }

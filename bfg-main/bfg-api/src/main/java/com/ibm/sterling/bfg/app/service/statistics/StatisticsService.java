@@ -29,10 +29,10 @@ public class StatisticsService {
     @Value("${sctTrafficSummary.url}")
     private String sctTrafficSummaryUrl;
 
-    @Value("${file.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${file.password}")
+    @Value("${api.password}")
     private String password;
 
     @Autowired

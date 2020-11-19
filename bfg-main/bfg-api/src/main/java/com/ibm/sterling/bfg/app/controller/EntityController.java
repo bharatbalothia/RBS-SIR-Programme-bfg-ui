@@ -113,6 +113,19 @@ public class EntityController {
                 }).orElseThrow(ChangeControlNotFoundException::new);
     }
 
+    @GetMapping("changeControl/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<ChangeControl> getChangeControlById(@PathVariable String id) {
+        return changeControlService.findPendingChangeById(id)
+                .map(changeControl -> {
+                    EntityLog entityLog = changeControl.getEntityLog();
+                    entityLog.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(entityLog.getInboundRequestType()));
+                    changeControl.setEntityLog(entityLog);
+                    return ok().body(changeControl);
+                }).orElseThrow(ChangeControlNotFoundException::new);
+    }
+
     @PostMapping
     @PreAuthorize("@entityPermissionEvaluator.checkCreatePermission(#entity)")
     public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {

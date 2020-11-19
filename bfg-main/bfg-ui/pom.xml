@@ -6,35 +6,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>bfg-ui</artifactId>
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<build.settings></build.settings>
-			</properties>
-		</profile>
-		<profile>
-			<id>test</id>
-			<properties>
-				<build.settings>-testing</build.settings>
-			</properties>
-		</profile>
-		<profile>
-			<id>poc</id>
-			<properties>
-				<build.settings>-poc</build.settings>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev-fyre</id>
-			<properties>
-				<build.settings>-dev-fyre</build.settings>
-			</properties>
-		</profile>
-	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -71,7 +42,7 @@
 							<goal>npm</goal>
 						</goals>
 						<configuration>
-							<arguments>run build${build.settings}</arguments>
+							<arguments>run build-prod</arguments>
 						</configuration>
 					</execution>
 				</executions>

@@ -22,6 +22,8 @@ export class DeleteDialogComponent implements OnInit {
   id: string;
   changerComments: string;
 
+  tooltip;
+
   displayName: (fieldName: string) => string;
   deleteAction: (id: string, changerComments: string) => any;
 
@@ -36,6 +38,8 @@ export class DeleteDialogComponent implements OnInit {
 
     this.displayName = this.data.displayName;
     this.deleteAction = get(this.data, 'actionData.deleteAction');
+
+    this.tooltip = get(this.data, 'tooltip');
   }
 
   ngOnInit() {

@@ -37,6 +37,17 @@ export const routes: Routes = [
             ]
         }
     },
+    { path: ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT + '/:changeId', component: EntityCreateComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: [
+                ENTITY_PERMISSIONS.CREATE_SCT,
+                ENTITY_PERMISSIONS.CREATE_GPL,
+                ENTITY_PERMISSIONS.EDIT_SCT,
+                ENTITY_PERMISSIONS.EDIT_GPL
+            ]
+        }
+    },
     { path: ROUTING_PATHS.SEARCH, component: EntitySearchComponent,
         canActivate: [PermissionsGuardService],
         data: {

@@ -33,10 +33,26 @@
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
+                        <a mat-icon-button
+                            *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+                            class="action-button"
+                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
+                            [state]="{ 
+                                pageIndex: pageIndex, 
+                                pageSize: pageSize, 
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue
+                            }" alt="Edit" title="Edit">
+                            <div class="action-icon">
+                                <mat-icon inline>edit</mat-icon>edit
+                            </div>
+                        </a>
                         <a mat-icon-button *ngIf="!element.entityLog" class="action-button"
                             [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
                             [state]="{ pageIndex: pageIndex,
                                 pageSize: pageSize,
+                                previousURL: getCurrentRoute(),
                                 serviceSearchingValue: serviceSearchingValue,
                                 entityNameSearchingValue: entityNameSearchingValue }" alt="Edit" title="Edit">
                             <div class="action-icon">

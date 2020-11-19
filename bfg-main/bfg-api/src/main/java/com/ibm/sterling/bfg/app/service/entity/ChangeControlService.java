@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
+import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.repository.entity.ChangeControlRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +26,9 @@ public class ChangeControlService {
 
     @Autowired
     private ChangeControlRepository changeControlRepository;
+
+    @Autowired
+    private EntityValidationComponent entityValidation;
 
     public List<ChangeControl> listAll() {
         return changeControlRepository.findAll();
@@ -79,9 +83,14 @@ public class ChangeControlService {
     }
 
     public void updateChangeControl(ChangeControl changeControl, Entity entity) {
+        Operation operation = changeControl.getOperation();
+        if (!operation.equals(Operation.DELETE)) {
+            entityValidation.validateEntity(entity, operation);
+        }
         if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                && (changeControl.getOperation().equals(Operation.CREATE) ||
-                changeControl.getOperation().equals(Operation.UPDATE))) {
+                && (operation.equals(Operation.CREATE) ||
+                operation.equals(Operation.UPDATE))) {
+            changeControl.setChangerComments(entity.getChangerComments());
             EntityLog entityLog = new EntityLog(entity);
             switch (changeControl.getOperation()) {
                 case CREATE:
@@ -93,6 +102,7 @@ public class ChangeControlService {
                     entityLog.setService(changeControl.getResultMeta2());
                     break;
             }
+
             entityLog.setEntityLogId(changeControl.getEntityLog().getEntityLogId());
             changeControl.setEntityLog(entityLog);
             save(changeControl);

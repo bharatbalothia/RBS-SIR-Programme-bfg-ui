@@ -6,14 +6,12 @@ import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
 import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
 

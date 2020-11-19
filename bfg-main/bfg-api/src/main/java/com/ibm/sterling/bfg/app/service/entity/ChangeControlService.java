@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -92,21 +91,13 @@ public class ChangeControlService {
                 operation.equals(Operation.UPDATE))) {
             changeControl.setChangerComments(entity.getChangerComments());
             EntityLog entityLog = new EntityLog(entity);
-            switch (changeControl.getOperation()) {
-                case CREATE:
-                    changeControl.setResultMeta1(entityLog.getEntity());
-                    changeControl.setResultMeta2(entityLog.getService());
-                    break;
-                case UPDATE:
-                    entityLog.setEntity(changeControl.getResultMeta1());
-                    entityLog.setService(changeControl.getResultMeta2());
-                    break;
+            if (operation.equals(Operation.CREATE)) {
+                changeControl.setResultMeta1(entityLog.getEntity());
+                changeControl.setResultMeta2(entityLog.getService());
             }
-
             entityLog.setEntityLogId(changeControl.getEntityLog().getEntityLogId());
             changeControl.setEntityLog(entityLog);
             save(changeControl);
         }
     }
-
 }

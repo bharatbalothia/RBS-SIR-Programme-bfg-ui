@@ -29,7 +29,8 @@
                         <button mat-button *ngIf="element.changeID" (click)="openApprovingDialog(element)">
                             <mat-icon inline>format_list_numbered</mat-icon> Version manager
                         </button>
-                        <a mat-icon-button *ngIf="element.changeID && isTheSameUser(element.changer)"
+                        <a mat-icon-button
+                            *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
                             class="action-button"
                             [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
                             [state]="{ 

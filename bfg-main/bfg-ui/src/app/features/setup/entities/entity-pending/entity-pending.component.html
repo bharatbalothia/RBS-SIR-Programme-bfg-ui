@@ -13,7 +13,7 @@
             <button mat-button (click)="openApprovingDialog(element)">
               <mat-icon inline>format_list_numbered</mat-icon> Version manager
             </button>
-            <a mat-icon-button *ngIf="isTheSameUser(element.changer)" class="action-button"
+            <a mat-icon-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)" class="action-button"
               [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
               [state]="{ pageIndex: pageIndex, pageSize: pageSize, previousURL: getCurrentRoute()}" alt="Edit" title="Edit">
               <div class="action-icon">

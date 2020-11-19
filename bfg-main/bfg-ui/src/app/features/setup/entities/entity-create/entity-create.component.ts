@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { ENTITY_VALIDATION_MESSAGES } from '../validation-messages';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -26,6 +26,7 @@ import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.servic
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 @Component({
   selector: 'app-entity-create',
@@ -211,7 +212,7 @@ export class EntityCreateComponent implements OnInit {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{ value: entity.entity, disabled: this.isEditing() }, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -295,7 +296,7 @@ export class EntityCreateComponent implements OnInit {
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{ value: entity.entity, disabled: this.isEditing() }, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -343,8 +344,8 @@ export class EntityCreateComponent implements OnInit {
 
   resetMqValidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
-    const sessionTimeout =
-      this.mqDetailsFormGroup.controls.mqSessionTimeout; const requestorDN = this.SWIFTDetailsFormGroup.controls.requestorDN;
+    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;
+    const requestorDN = this.SWIFTDetailsFormGroup.controls.requestorDN;
     const responderDN = this.SWIFTDetailsFormGroup.controls.responderDN;
     const requestType = this.SWIFTDetailsFormGroup.controls.requestType;
     const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
@@ -710,7 +711,8 @@ export class EntityCreateComponent implements OnInit {
   }
 
   tryToProceed() {
-    if (this.isAuthorizedToProceed()) {
+    if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit()) {
+      this.stepper.selected.completed = true;
       this.stepper.next();
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
@@ -718,6 +720,11 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
+  tryToProceedPendingEdit = () => this.pendingChange
+    && this.pendingChange.operation !== CHANGE_OPERATION.DELETE
+    && this.auth.isTheSameUser(this.pendingChange.changer)
+
   getInboundRequestTypes = (value) => value && Object.keys(value).map(el => ({ key: el, value: value[el] }));
 
+  isChangeControlNotCreateStatus = () => get(this.pendingChange, 'operation') !== CHANGE_OPERATION.CREATE;
 }

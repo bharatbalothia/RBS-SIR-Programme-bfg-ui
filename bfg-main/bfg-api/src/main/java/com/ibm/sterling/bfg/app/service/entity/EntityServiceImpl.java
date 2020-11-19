@@ -3,14 +3,13 @@ package com.ibm.sterling.bfg.app.service.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.*;
-import com.ibm.sterling.bfg.app.model.entity.EntityType;
-import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
+import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
-import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
+import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
@@ -25,15 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
 
 @Service
 @Transactional
@@ -54,7 +49,7 @@ public class EntityServiceImpl implements EntityService {
     private SWIFTNetRoutingRuleService swiftNetRoutingRuleService;
 
     @Autowired
-    private Validator validator;
+    private EntityValidationComponent entityValidation;
 
     @Override
     public boolean existsByServiceAndEntity(String service, String entity) {
@@ -90,39 +85,9 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    private Class getEntityValidationGroup(Entity entity, Operation operation) {
-        Map<String, Map<Operation, Class>> entityOperationMap = new HashMap<String, Map<Operation, Class>>() {
-            {
-                put("GPL", new HashMap<Operation, Class>() {
-                            {
-                                put(CREATE, GplValidation.PostValidation.class);
-                                put(UPDATE, GplValidation.PutValidation.class);
-
-                            }
-                        }
-                );
-                put("SCT", new HashMap<Operation, Class>() {
-                            {
-                                put(CREATE, SctValidation.PostValidation.class);
-                                put(UPDATE, SctValidation.PutValidation.class);
-                            }
-                        }
-                );
-            }
-        };
-        return entityOperationMap.get(entity.getService()).get(operation);
-    }
-
-    private void validateEntity(Entity entity, Operation operation) {
-        Set<ConstraintViolation<Entity>> violations = validator.validate(entity, getEntityValidationGroup(entity, operation));
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-    }
-
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
-            validateEntity(entity, operation);
+            entityValidation.validateEntity(entity, operation);
         }
         LOG.info("Trying to save entity {} to change control", entity);
         ChangeControl changeControl = new ChangeControl();
@@ -171,7 +136,7 @@ public class EntityServiceImpl implements EntityService {
         );
         Operation operation = changeControl.getOperation();
         if (!operation.equals(Operation.DELETE)) {
-            validateEntity(entity, operation);
+            entityValidation.validateEntity(entity, operation);
         } else {
             entity.setDeleted(Boolean.TRUE);
             entity.setService("DEL_" + entity.getEntityId() + "_" + entity.getService());

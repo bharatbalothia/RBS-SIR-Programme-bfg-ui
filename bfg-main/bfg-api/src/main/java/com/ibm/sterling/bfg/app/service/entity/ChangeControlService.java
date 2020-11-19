@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
+import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.repository.entity.ChangeControlRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +25,9 @@ public class ChangeControlService {
 
     @Autowired
     private ChangeControlRepository changeControlRepository;
+
+    @Autowired
+    private EntityValidationComponent entityValidation;
 
     public List<ChangeControl> listAll() {
         return changeControlRepository.findAll();
@@ -81,24 +84,22 @@ public class ChangeControlService {
     }
 
     public void updateChangeControl(ChangeControl changeControl, Entity entity) {
+        Operation operation = changeControl.getOperation();
+        if (!operation.equals(Operation.DELETE)) {
+            entityValidation.validateEntity(entity, operation);
+        }
         if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                && (changeControl.getOperation().equals(Operation.CREATE) ||
-                changeControl.getOperation().equals(Operation.UPDATE))) {
+                && (operation.equals(Operation.CREATE) ||
+                operation.equals(Operation.UPDATE))) {
+            changeControl.setChangerComments(entity.getChangerComments());
             EntityLog entityLog = new EntityLog(entity);
-            switch (changeControl.getOperation()) {
-                case CREATE:
-                    changeControl.setResultMeta1(entityLog.getEntity());
-                    changeControl.setResultMeta2(entityLog.getService());
-                    break;
-                case UPDATE:
-                    entityLog.setEntity(changeControl.getResultMeta1());
-                    entityLog.setService(changeControl.getResultMeta2());
-                    break;
+            if (operation.equals(Operation.CREATE)) {
+                changeControl.setResultMeta1(entityLog.getEntity());
+                changeControl.setResultMeta2(entityLog.getService());
             }
             entityLog.setEntityLogId(changeControl.getEntityLog().getEntityLogId());
             changeControl.setEntityLog(entityLog);
             save(changeControl);
         }
     }
-
 }

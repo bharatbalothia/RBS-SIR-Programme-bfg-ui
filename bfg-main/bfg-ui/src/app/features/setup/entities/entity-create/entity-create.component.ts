@@ -220,7 +220,7 @@ export class EntityCreateComponent implements OnInit {
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
             ],
-            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
             updateOn: 'blur'
           }],
           maxBulksPerFile: [entity.maxBulksPerFile, {
@@ -304,7 +304,7 @@ export class EntityCreateComponent implements OnInit {
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
             ],
-            asyncValidators: !this.isEditing() && this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
+            asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
             updateOn: 'blur'
           }],
           routeInbound: [entity.routeInbound, Validators.required],

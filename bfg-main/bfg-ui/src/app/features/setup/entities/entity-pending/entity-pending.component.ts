@@ -16,6 +16,8 @@ import { ApprovingDialogComponent } from 'src/app/shared/components/approving-di
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-entity-pending',
@@ -24,6 +26,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 })
 export class EntityPendingComponent implements OnInit {
 
+  ROUTING_PATHS = ROUTING_PATHS;
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
 
   isLoading = true;
@@ -40,7 +43,8 @@ export class EntityPendingComponent implements OnInit {
   constructor(
     private entityService: EntityService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -157,5 +161,9 @@ export class EntityPendingComponent implements OnInit {
             }
           })));
   }
+
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
+
+  getCurrentRoute = () => this.router.url;
 
 }

@@ -43,6 +43,14 @@ export class EntityService {
     return this.http.get<Entity>(this.apiUrl + 'pending/' + changeId);
   }
 
+  getPendingChangeById(changeId) {
+    return this.http.get<ChangeControl>(this.apiUrl + 'changeControl/' + changeId);
+  }
+
+  editPendingEntity(changeId, entity: Entity) {
+    return this.http.put<Entity>(this.apiUrl + 'pending/' + changeId, entity);
+  }
+
   getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<ChangeControlsWithPagination>(this.apiUrl + 'pending', { params });
   }

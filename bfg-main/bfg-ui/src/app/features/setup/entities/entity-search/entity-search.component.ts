@@ -21,6 +21,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dialog/transmit-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-entity-search',
@@ -50,7 +51,8 @@ export class EntitySearchComponent implements OnInit {
   constructor(
     private entityService: EntityService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -228,4 +230,7 @@ export class EntitySearchComponent implements OnInit {
     }));
   }
 
+  getCurrentRoute = () => this.router.url;
+
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
 }

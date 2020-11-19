@@ -25,6 +25,7 @@ import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 
 @Component({
   selector: 'app-entity-create',
@@ -76,6 +77,8 @@ export class EntityCreateComponent implements OnInit {
   editableEntity: Entity;
   selectedService = '';
 
+  pendingChange: ChangeControl;
+
   requiredFields: { [filedName: string]: boolean } = {};
 
   constructor(
@@ -86,7 +89,7 @@ export class EntityCreateComponent implements OnInit {
     private activatedRouter: ActivatedRoute,
     private router: Router,
     private toolTip: TooltipService,
-    private auth: AuthService
+    private auth: AuthService,
   ) { }
 
   ngOnInit() {
@@ -95,23 +98,40 @@ export class EntityCreateComponent implements OnInit {
     });
     this.initializeFormGroups(this.getEntityDefaultValue());
     this.activatedRouter.params.subscribe(params => {
-      if (params.entityId) {
-        this.entityService.getEntityById(params.entityId).pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
-          this.isLoading = false;
-          this.editableEntity = data;
-          this.entityTypeFormGroup = this.formBuilder.group({
-            service: [this.editableEntity.service, Validators.required]
-          });
-          this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
-          this.markAllFieldsTouched();
-        },
-          error => {
-            this.isLoading = false;
-            this.errorMessage = getApiErrorMessage(error);
-          });
+      if (params.entityId || params.changeId) {
+        if (params.changeId) {
+          this.entityService.getPendingChangeById(params.changeId)
+            .pipe(data => this.setLoading(data)).subscribe((data: ChangeControl) => {
+              this.isLoading = false;
+              this.pendingChange = data;
+              this.getEntityById(this.entityService.getPendingEntityById(this.pendingChange.changeID));
+            },
+              error => {
+                this.isLoading = false;
+                this.errorMessage = getApiErrorMessage(error);
+              });
+        }
+        else {
+          this.getEntityById(this.entityService.getEntityById(params.entityId));
+        }
       }
     });
   }
+
+  getEntityById = (getEntity) =>
+    getEntity.pipe(data => this.setLoading(data)).subscribe((data: Entity) => {
+      this.isLoading = false;
+      this.editableEntity = data;
+      this.entityTypeFormGroup = this.formBuilder.group({
+        service: [this.editableEntity.service, Validators.required]
+      });
+      this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
+      this.markAllFieldsTouched();
+    },
+      error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      })
 
   initializeFormGroups(entity: Entity) {
     this.entityPageFormGroup = this.formBuilder.group({});
@@ -323,7 +343,8 @@ export class EntityCreateComponent implements OnInit {
 
   resetMqValidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
-    const sessionTimeout = this.mqDetailsFormGroup.controls.mqSessionTimeout;    const requestorDN = this.SWIFTDetailsFormGroup.controls.requestorDN;
+    const sessionTimeout =
+      this.mqDetailsFormGroup.controls.mqSessionTimeout; const requestorDN = this.SWIFTDetailsFormGroup.controls.requestorDN;
     const responderDN = this.SWIFTDetailsFormGroup.controls.responderDN;
     const requestType = this.SWIFTDetailsFormGroup.controls.requestType;
     const serviceName = this.SWIFTDetailsFormGroup.controls.serviceName;
@@ -492,7 +513,13 @@ export class EntityCreateComponent implements OnInit {
         const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
-          entityAction = this.entityService.editEntity(removeNullOrUndefined({ ...editableEntity, ...entity }));
+          if (this.pendingChange) {
+            entityAction =
+              this.entityService.editPendingEntity(this.pendingChange.changeID, removeNullOrUndefined({ ...editableEntity, ...entity }));
+          }
+          else {
+            entityAction = this.entityService.editEntity(removeNullOrUndefined({ ...editableEntity, ...entity }));
+          }
         }
         else {
           entityAction = this.entityService.createEntity(removeNullOrUndefined(entity));
@@ -507,7 +534,12 @@ export class EntityCreateComponent implements OnInit {
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {
               if (isEditing) {
-                this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+                const previousURL = get(window.history.state, 'previousURL');
+                if (previousURL) {
+                  this.router.navigate([previousURL], { state: window.history.state });
+                } else {
+                  this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+                }
               }
               else {
                 this.stepper.reset();
@@ -545,7 +577,12 @@ export class EntityCreateComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (this.isEditing()) {
-          this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+          const previousURL = get(window.history.state, 'previousURL');
+          if (previousURL) {
+            this.router.navigate([previousURL], { state: window.history.state });
+          } else {
+            this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
+          }
         }
         else {
           this.router.navigate(['/' + ROUTING_PATHS.ENTITIES]);

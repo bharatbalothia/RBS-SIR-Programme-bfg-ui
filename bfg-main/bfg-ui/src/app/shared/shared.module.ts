@@ -46,6 +46,7 @@ import { TransmitDialogComponent } from './components/transmit-dialog/transmit-d
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { FileTableComponent } from './components/file-table/file-table.component';
+import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
 
 
 @NgModule({
@@ -64,6 +65,8 @@ import { FileTableComponent } from './components/file-table/file-table.component
     TransmitDialogComponent,
     BusinessProcessDialogComponent,
     FileTableComponent,
+    TransactionTableComponent,
+    
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
@@ -150,6 +153,8 @@ import { FileTableComponent } from './components/file-table/file-table.component
     DragableDialogWrapperComponent,
     TransmitDialogComponent,
     FileTableComponent,
+    TransactionTableComponent,
+
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,

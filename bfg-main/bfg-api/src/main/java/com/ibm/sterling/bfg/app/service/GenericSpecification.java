@@ -1,9 +1,12 @@
 package com.ibm.sterling.bfg.app.service;
 
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class GenericSpecification {
 
@@ -18,10 +21,19 @@ public class GenericSpecification {
             if (value != null) {
                 predicates.add(cb.equal(root.get(field), value));
             } else {
+                BiFunction<From, String, Predicate> valueContains = (object, fieldValue) ->
+                        cb.like(cb.lower(object.get(fieldValue)), "%" + finalText + "%");
                 if ("pending".equals(finalText)) {
                     predicates.add(cb.equal(root.get(field), 0));
+                } else if ("swiftDN".equals(field)) {
+                    From from;
+                    if ("ChangeControl".equals(root.getModel().getName())) {
+                        from = root.join("entityLog");
+                    } else from = root;
+                    predicates.add(valueContains.apply(from, "requestorDN"));
+                    predicates.add(valueContains.apply(from, "responderDN"));
                 } else {
-                    predicates.add(cb.like(cb.lower(root.get(field)), "%" + finalText + "%"));
+                    predicates.add(valueContains.apply(root, field));
                 }
             }
             return cb.or(predicates.toArray(new Predicate[]{}));

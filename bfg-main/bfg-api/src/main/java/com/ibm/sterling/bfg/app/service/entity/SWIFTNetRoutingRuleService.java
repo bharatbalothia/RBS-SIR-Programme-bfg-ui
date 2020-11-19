@@ -39,10 +39,10 @@ public class SWIFTNetRoutingRuleService {
     @Value("${routingRule.delete.url}")
     private String routingRuleDeleteUrl;
 
-    @Value("${file.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${file.password}")
+    @Value("${api.password}")
     private String password;
 
     @Autowired

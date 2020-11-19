@@ -26,10 +26,10 @@ public class CertificateIntegrationService {
     @Value("${trustedDigitalCertificates.url}")
     private String trustedDigitalCertificatesUrl;
 
-    @Value("${file.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${file.password}")
+    @Value("${api.password}")
     private String password;
 
     @Autowired

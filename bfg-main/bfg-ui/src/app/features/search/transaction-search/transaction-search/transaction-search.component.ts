@@ -14,6 +14,7 @@ import { TransactionService } from 'src/app/shared/models/transaction/transactio
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { TransactionTableComponent } from 'src/app/shared/components/transaction-table/transaction-table.component';
 import { ActivatedRoute } from '@angular/router';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-transaction-search',
@@ -65,7 +66,8 @@ export class TransactionSearchComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private transactionService: TransactionService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toolTip: TooltipService
   ) {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.startDate) {
@@ -224,6 +226,16 @@ export class TransactionSearchComponent implements OnInit {
     if (get(event, 'target.value', null) === '') {
       control.setValue(null);
     }
+  }
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'sct-search',
+      qualifier: step,
+      mode: 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
   }
 
 }

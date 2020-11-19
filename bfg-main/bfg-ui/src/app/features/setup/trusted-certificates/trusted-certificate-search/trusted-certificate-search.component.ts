@@ -19,6 +19,7 @@ import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/co
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -49,7 +50,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
   constructor(
     private trustedCertificateService: TrustedCertificateService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toolTip: TooltipService,
   ) { }
 
   ngOnInit(): void {
@@ -252,7 +254,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
       actionData: {
         id: trustedCertificate.certificateId,
         deleteAction: (id: string, changerComments: string) => this.trustedCertificateService.deleteTrustedCertificate(id, changerComments)
-      }
+      },
+      tooltip: this.getTooltip('delete-tc', 'changerComments', 'delete')
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
         this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
@@ -267,4 +270,13 @@ export class TrustedCertificateSearchComponent implements OnInit {
     });
   }
 
+  getTooltip(step: string, field: string, mode?: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'trusted-cert',
+      qualifier: step,
+      mode: mode ? mode : 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
+  }
 }

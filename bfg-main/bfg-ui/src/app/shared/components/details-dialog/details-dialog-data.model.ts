@@ -1,5 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import { ErrorMessage } from 'src/app/core/utils/error-template';
+import { TooltipKey } from '../tooltip/tooltip.model';
+
 export interface DetailsDialogData {
     title: string;
     tabs?: Tab[];
@@ -9,6 +11,7 @@ export interface DetailsDialogData {
     parentError?: EventEmitter<ErrorMessage>;
     parentLoading?: EventEmitter<boolean>;
     displayName?: (fieldName: string) => string;
+    tooltip?: string;
 }
 
 export interface Tab {

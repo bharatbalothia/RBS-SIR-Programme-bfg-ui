@@ -30,10 +30,10 @@ public class PermissionsService {
     @Value("${groups.url}")
     private String groupsUrl;
 
-    @Value("${permissions.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${permissions.password}")
+    @Value("${api.password}")
     private String password;
 
     @Value("${property.useraccountGroupsKey}")

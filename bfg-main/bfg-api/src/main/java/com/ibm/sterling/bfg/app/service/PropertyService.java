@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,6 +36,12 @@ public class PropertyService {
 
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
+
+    @Value("${api.userName}")
+    private String userName;
+
+    @Value("${api.password}")
+    private String password;
 
     public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
@@ -312,7 +319,7 @@ public class PropertyService {
         ResponseEntity<String> responseEntity = new RestTemplate().exchange(
                 propertyUrl,
                 HttpMethod.GET,
-                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(settings.getUserName(), settings.getPassword())),
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class
         );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(responseEntity.getBody()));

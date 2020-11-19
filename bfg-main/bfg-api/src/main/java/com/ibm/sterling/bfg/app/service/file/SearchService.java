@@ -49,10 +49,10 @@ public class SearchService {
     @Value("${workflows.url}")
     private String workflowsUrl;
 
-    @Value("${file.userName}")
+    @Value("${api.userName}")
     private String userName;
 
-    @Value("${file.password}")
+    @Value("${api.password}")
     private String password;
 
     @Value("${property.fileStatusPrefixKey}")

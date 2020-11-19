@@ -41,8 +41,10 @@ export const routes: Routes = [
         canActivate: [PermissionsGuardService],
         data: {
             permissions: [
-                // ENTITY_PERMISSIONS.EDIT_SCT,
-                // ENTITY_PERMISSIONS.EDIT_GPL
+                ENTITY_PERMISSIONS.CREATE_SCT,
+                ENTITY_PERMISSIONS.CREATE_GPL,
+                ENTITY_PERMISSIONS.EDIT_SCT,
+                ENTITY_PERMISSIONS.EDIT_GPL
             ]
         }
     },

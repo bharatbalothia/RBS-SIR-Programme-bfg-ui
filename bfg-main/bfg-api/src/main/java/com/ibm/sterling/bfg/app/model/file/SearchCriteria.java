@@ -22,6 +22,12 @@ public class SearchCriteria {
     private Integer start = 0;
     @JsonIgnore
     private Integer totalRows;
+    @JsonProperty("is-error")
+    @JsonAlias("isError")
+    private Boolean isError;
+    @JsonProperty("exclude-archive")
+    @JsonAlias("excludeArchive")
+    private Boolean excludeArchive;
 
     public SearchCriteria() {
     }
@@ -111,6 +117,22 @@ public class SearchCriteria {
 
     public void setTotalRows(Integer totalRows) {
         this.totalRows = totalRows;
+    }
+
+    public Boolean getIsError() {
+        return isError;
+    }
+
+    public void setIsError(Boolean error) {
+        isError = error;
+    }
+
+    public Boolean getExcludeArchive() {
+        return excludeArchive;
+    }
+
+    public void setExcludeArchive(Boolean excludeArchive) {
+        this.excludeArchive = excludeArchive;
     }
 
 }

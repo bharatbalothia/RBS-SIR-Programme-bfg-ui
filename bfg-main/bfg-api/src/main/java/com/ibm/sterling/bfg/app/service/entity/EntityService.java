@@ -28,7 +28,7 @@ public interface EntityService extends FieldValueExists {
 
     Entity saveEntityToChangeControl(Entity entity, Operation operation);
 
-    Page<EntityType> findEntities(Pageable pageable, String entity, String service);
+    Page<EntityType> findEntities(Pageable pageable, String entity, String service, String swiftDN);
 
     boolean fieldValueExistsBesidesItself(Integer entityId, Object value, String fieldName) throws UnsupportedOperationException;
 

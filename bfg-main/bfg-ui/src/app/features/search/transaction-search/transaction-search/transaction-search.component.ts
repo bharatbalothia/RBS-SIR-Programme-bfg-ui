@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { get } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
@@ -7,41 +7,31 @@ import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-templ
 import * as moment from 'moment';
 import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { TransactionCriteriaData } from 'src/app/shared/models/transaction/transaction-criteria.model';
-import { getTransactionSearchDisplayName, getTransactionDetailsTabs } from '../transaction-search-display-names';
+import { getTransactionSearchDisplayName } from '../transaction-search-display-names';
 import { MatTableDataSource } from '@angular/material/table';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-import { MatDialog } from '@angular/material/dialog';
 import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
-import { getStatusIcon } from 'src/app/core/constants/status-icon';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { FileService } from 'src/app/shared/models/file/file.service';
-import { Subscription, interval } from 'rxjs';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
-import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
-import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
-import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
+import { TransactionTableComponent } from 'src/app/shared/components/transaction-table/transaction-table.component';
+import { ActivatedRoute } from '@angular/router';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 
 @Component({
   selector: 'app-transaction-search',
   templateUrl: './transaction-search.component.html',
   styleUrls: ['./transaction-search.component.scss']
 })
-export class TransactionSearchComponent implements OnInit, OnDestroy {
+export class TransactionSearchComponent implements OnInit {
 
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
-  getTransactionStatusIcon = getStatusIcon;
-
-  errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
-  isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
 
   isLinear = true;
 
-  autoRefreshing: Subscription;
-
   errorMessage: ErrorMessage;
   isLoading = false;
+
+  @ViewChild(TransactionTableComponent)
+  transactionTableComponent: TransactionTableComponent;
 
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
@@ -72,15 +62,25 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
 
   pageIndex = 0;
   pageSize = 100;
-  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private formBuilder: FormBuilder,
     private transactionService: TransactionService,
-    private fileService: FileService,
-    private dialog: MatDialog,
-    private fileDialogService: FileDialogService
-  ) { }
+    private activatedRoute: ActivatedRoute,
+    private toolTip: TooltipService
+  ) {
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.startDate) {
+        this.defaultSelectedData = {
+          from: {
+            startDate: moment(params.startDate).hours(0).minutes(0).seconds(0),
+            endDate: moment().hours(0).minutes(0).seconds(0),
+          },
+          to: null
+        };
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initializeSearchingParametersFormGroup();
@@ -169,10 +169,10 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   onStepChange(event) {
     if (event.selectedIndex === 1) {
       this.getTransactionList(this.pageIndex, this.pageSize);
-      this.autoRefreshChange(true);
+      this.transactionTableComponent.autoRefreshChange(true);
     }
     else {
-      this.autoRefreshChange(false);
+      this.transactionTableComponent.autoRefreshChange(false);
     }
   }
 
@@ -189,39 +189,6 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
   onStatusSelect = (event) => {
     this.setDirectionFromStatus(event.value);
   }
-
-  getSearchingTableHeader(totalElements: number, pageSize: number, page: number) {
-    const start = (page * pageSize) - (pageSize - 1);
-    const end = Math.min(start + pageSize - 1, totalElements);
-    return `Items ${start}-${end} of ${totalElements}`;
-  }
-
-  emitErrorMessageEvent(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id].emit(this.errorMessage);
-    }
-  }
-
-  emitLoadingEvent(id: number) {
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id].emit(this.isLoading);
-    }
-  }
-
-  createEmitters(id: number) {
-    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
-    this.isLoadingEmitters[id] = new EventEmitter<boolean>();
-  }
-
-  deleteEmitters(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id] = null;
-    }
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id] = null;
-    }
-  }
-
 
   setDirectionFromStatus(fromStatus) {
     if (fromStatus !== '') {
@@ -245,77 +212,6 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createEmitters(id);
-    this.fileService.getTransactionById(fileId, id)
-      .pipe(data => this.setLoading(data))
-      .subscribe((data: Transaction) => {
-        this.isLoading = false;
-        const actions = {
-          workflowID: () => this.openBusinessProcessDialog(data),
-          file: () => this.openFileDetailsDialog({ id: fileId }, id)
-        };
-        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-          title: `SCT Transaction - ${data.id}`,
-          tabs: getTransactionDetailsTabs(data, actions),
-          displayName: getTransactionSearchDisplayName,
-          isDragable: true,
-          actionData: {
-            actions
-          },
-          parentError: this.errorMessageEmitters[id],
-          parentLoading: this.isLoadingEmitters[id],
-        })).afterClosed().subscribe(() => this.deleteEmitters(id));
-      },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
-  }
-
-
-  openFileDetailsDialog = (file, transactionId) => {
-    this.fileDialogService.errorMessageChange.subscribe(data => {
-      this.errorMessage = data;
-      this.emitErrorMessageEvent(transactionId);
-    });
-    this.fileDialogService.isLoadingChange.subscribe(data => {
-      this.isLoading = data;
-      this.emitLoadingEvent(transactionId);
-    });
-    this.fileDialogService.openFileDetailsDialog(file, true);
-  }
-
-  openBusinessProcessDialog = (transaction: Transaction) =>
-    this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
-      title: `Business Process Detail`,
-      tabs: [],
-      displayName: getBusinessProcessDisplayName,
-      isDragable: true,
-      actionData: {
-        id: transaction.workflowID,
-        actions: {
-        }
-      },
-    }))
-
-  autoRefreshChange = (value) => {
-    if (value) {
-      this.autoRefreshing = interval(60000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
-    }
-    else if (this.autoRefreshing) {
-      this.autoRefreshing.unsubscribe();
-    }
-  }
-
-  getDirectionIcon(direction: string) {
-    return direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';
-  }
-
-  ngOnDestroy(): void {
-    this.autoRefreshChange(false);
-  }
-
   isInvalidFromDate = (date) => {
     const endDate = get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null);
     return endDate && moment(endDate).isBefore(date);
@@ -330,6 +226,16 @@ export class TransactionSearchComponent implements OnInit, OnDestroy {
     if (get(event, 'target.value', null) === '') {
       control.setValue(null);
     }
+  }
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'sct-search',
+      qualifier: step,
+      mode: 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
   }
 
 }

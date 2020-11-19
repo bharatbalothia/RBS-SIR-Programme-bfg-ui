@@ -14,6 +14,7 @@ export const ROUTING_PATHS = {
   HOME: 'home',
 
   // monitor routes
+  TRANSACTION_MONITOR: 'transaction-monitor',
   FILE_MONITOR: 'file-monitor',
   ERROR_MONITOR: 'error-monitor',
 

@@ -176,7 +176,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Page<EntityType> findEntities(Pageable pageable, String entity, String service) {
+    public Page<EntityType> findEntities(Pageable pageable, String entity, String service, String swiftDN) {
         LOG.info("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entityResults = new ArrayList<>();
         Specification<Entity> specification = Specification
@@ -185,10 +185,12 @@ public class EntityServiceImpl implements EntityService {
                 .and(
                         GenericSpecification.filter(service, "service"))
                 .and(
-                        GenericSpecification.filter("false", "deleted")
+                        GenericSpecification.filter("false", "deleted"))
+                .and(
+                        GenericSpecification.filter(swiftDN, "swiftDN")
                 );
         List<Entity> entities = entityRepository.findAll(specification);
-        List<ChangeControl> controls = changeControlService.findAllPending(entity, service);
+        List<ChangeControl> controls = changeControlService.findAllPending(entity, service, swiftDN);
         entities.removeIf(dbEntity ->
                 controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
         );

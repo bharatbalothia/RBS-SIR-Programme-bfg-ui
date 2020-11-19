@@ -128,6 +128,9 @@ export class EntityCreateComponent implements OnInit {
       });
       this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
       this.markAllFieldsTouched();
+      if (this.editableEntity && !(this.isAuthorizedToProceed() && this.tryToProceedPendingEdit())) {
+        this.entityTypeFormGroup.addControl('disableProceed', new FormControl('', [Validators.required]));
+      }
     },
       error => {
         this.isLoading = false;
@@ -712,7 +715,6 @@ export class EntityCreateComponent implements OnInit {
 
   tryToProceed() {
     if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit()) {
-      this.stepper.selected.completed = true;
       this.stepper.next();
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
@@ -721,8 +723,8 @@ export class EntityCreateComponent implements OnInit {
   }
 
   tryToProceedPendingEdit = () => this.pendingChange
-    && this.pendingChange.operation !== CHANGE_OPERATION.DELETE
-    && this.auth.isTheSameUser(this.pendingChange.changer)
+    ? (this.pendingChange.operation !== CHANGE_OPERATION.DELETE
+    && this.auth.isTheSameUser(this.pendingChange.changer)) : true
 
   getInboundRequestTypes = (value) => value && Object.keys(value).map(el => ({ key: el, value: value[el] }));
 

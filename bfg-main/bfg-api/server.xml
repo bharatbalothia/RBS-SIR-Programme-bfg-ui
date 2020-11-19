@@ -7,8 +7,8 @@
         <feature>passwordUtilities-1.0</feature>
     </featureManager>
 
-    <authData id="jdbcAuthData" user="{aes}AEOZn8ChxUFdjT+d1Bssdvo0cGoyI9BTXR5PJGtNJTdy"
-              password="{aes}AJmY9rYBsBOD1bOgw8KfhFdRR8RIt8xJcSvJHfFtt1IE"/>
+    <authData id="jdbcAuthData" user="{aes}AFPyhBzDyKq35PHuVlODJJE7VISNX7KmQdy+n6+wRJbNBepw9y7Wj7FpqOQP6r9s/Q=="
+              password="{aes}APx0A6x9prXban0JjKepU49xbEGNzBD8lZPogL0e4w4f"/>
     <authData id="apiAuthData" user="{aes}AIs50WaNwyQLAFNC0nFumQLfghkdfU5FUkr2Tin0nkZX"
               password="{aes}APcth/ngBlMPWFeXPq3vEHnrWTOXkqfp65ECdzRZTrha"/>
 

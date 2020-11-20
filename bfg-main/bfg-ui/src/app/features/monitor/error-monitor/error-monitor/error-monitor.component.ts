@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
-import { isEmpty } from 'lodash';
 import { take } from 'rxjs/operators';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FILE_BP_STATE } from 'src/app/shared/models/file/file-constants';
@@ -24,18 +22,12 @@ export class ErrorMonitorComponent implements OnInit {
   pageIndex = 0;
   pageSize = 100;
 
-  URLParams;
-
   constructor(
     private fileService: FileService,
-    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.URLParams = params;
-      this.getFileList(this.pageIndex, this.pageSize);
-    });
+    this.getFileList(this.pageIndex, this.pageSize);
   }
 
   setLoading(data) {
@@ -46,19 +38,11 @@ export class ErrorMonitorComponent implements OnInit {
 
 
   getFileList(pageIndex: number, pageSize: number) {
-    let formData = {
+    const formData = {
       page: pageIndex.toString(),
       size: pageSize.toString(),
       bpstate: FILE_BP_STATE.RED
     };
-
-    if (!isEmpty(this.URLParams)) {
-      formData = {
-        page: pageIndex.toString(),
-        size: pageSize.toString(),
-        ...this.URLParams
-      };
-    }
 
     this.fileService.getFileList(formData)
       .pipe(data => this.setLoading(data))

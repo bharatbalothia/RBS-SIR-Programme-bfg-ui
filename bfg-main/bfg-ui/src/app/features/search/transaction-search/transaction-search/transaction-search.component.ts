@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { get } from 'lodash';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { get, isEmpty } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
@@ -15,13 +15,14 @@ import { getDirectionStringValue } from 'src/app/shared/models/file/file-directi
 import { TransactionTableComponent } from 'src/app/shared/components/transaction-table/transaction-table.component';
 import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-transaction-search',
   templateUrl: './transaction-search.component.html',
   styleUrls: ['./transaction-search.component.scss']
 })
-export class TransactionSearchComponent implements OnInit {
+export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
 
@@ -32,6 +33,8 @@ export class TransactionSearchComponent implements OnInit {
 
   @ViewChild(TransactionTableComponent)
   transactionTableComponent: TransactionTableComponent;
+
+  @ViewChild('stepper') stepper: MatHorizontalStepper;
 
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
@@ -63,29 +66,42 @@ export class TransactionSearchComponent implements OnInit {
   pageIndex = 0;
   pageSize = 100;
 
+  URLParams;
+
   constructor(
     private formBuilder: FormBuilder,
     private transactionService: TransactionService,
     private activatedRoute: ActivatedRoute,
-    private toolTip: TooltipService
-  ) {
+    private toolTip: TooltipService,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
+      this.URLParams = { ...params };
       if (params.startDate) {
         this.defaultSelectedData = {
           from: {
-            startDate: moment(params.startDate).hours(0).minutes(0).seconds(0),
-            endDate: moment().hours(0).minutes(0).seconds(0),
+            startDate: moment(params.startDate),
+            endDate: moment(params.startDate),
           },
           to: null
         };
+        delete this.URLParams.startDate;
       }
+      this.initializeSearchingParametersFormGroup();
+      this.getTransactionCriteriaData();
     });
   }
 
-  ngOnInit(): void {
-    this.initializeSearchingParametersFormGroup();
-    this.getTransactionCriteriaData();
+  ngAfterViewInit() {
+    if (!this.isURLParamsEmpty()) {
+      this.stepper.next();
+      this.cdr.detectChanges();
+    }
   }
+
+  isURLParamsEmpty = () => isEmpty(this.URLParams);
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
@@ -137,12 +153,13 @@ export class TransactionSearchComponent implements OnInit {
   getTransactionList(pageIndex: number, pageSize: number) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
+      ...!isEmpty(this.URLParams) && this.URLParams,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
-    formData.status = formData.trxStatus.status;
+    formData.status = get(formData, 'trxStatus.status');
     formData.trxStatus = null;
 
     this.transactionService.getTransactionList(removeEmpties(formData))

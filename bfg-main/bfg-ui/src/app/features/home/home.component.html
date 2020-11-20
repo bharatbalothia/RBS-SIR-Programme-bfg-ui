@@ -24,18 +24,17 @@
                     <div class="icon-value">
                         <mat-icon>{{alerts.SCT_ALERTS_FILE === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
                         <h2>There are
-                            <a class="header-link"
-                                [routerLink]="['/' + (alerts.SCT_ALERTS_FILE === 0 ? ROUTING_PATHS.FILE_SEARCH : ROUTING_PATHS.ERROR_MONITOR)]"
-                                [queryParams]="alerts.SCT_ALERTS_FILE > 0 && {isError:true, excludeArchive: true, service:'SCT'}">{{alerts.SCT_ALERTS_FILE}}</a>
+                            <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
+                                [queryParams]="alerts.SCT_ALERTS_FILE > 0 && {isError:true, excludeArchive: true, service:'SCT', startDate: 'none'}">
+                                {{alerts.SCT_ALERTS_FILE}}</a>
                             file
                             errors (details).</h2>
                     </div>
                     <div class="icon-value">
                         <mat-icon>{{alerts.SCT_ALERTS_TX === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
                         <h2>There are
-                            <a class="header-link"
-                                [routerLink]="['/' + (alerts.SCT_ALERTS_TX === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                [queryParams]="alerts.SCT_ALERTS_TX > 0 ? {isError:true, hasMessageId: true, excludeArchive: true} : {startDate: getMinusMonthsDate(1)}">
+                            <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                [queryParams]="alerts.SCT_ALERTS_TX > 0 ? {isError:true, hasMessageId: true, excludeArchive: true, startDate: 'none'} : {startDate: getMinusMonthsDate(1)}">
                                 {{alerts.SCT_ALERTS_TX}}
                             </a>
                             transaction errors (details).</h2>
@@ -58,24 +57,21 @@
                         <tr class="row">
                             <td class="cell">Last 60 minutes</td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_FILES.HOUR === 0 ? ROUTING_PATHS.FILE_SEARCH : ROUTING_PATHS.ERROR_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_FILES.HOUR > 0 && {from: getMinusHoursDate(1), to: getCurrentDate(), service:'SCT'}">
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_FILES.HOUR > 0 && {startDate: getMinusHoursDate(1), service:'SCT'}">
                                     {{SCTTraffic.SCT_FILES.HOUR}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_TX.HOUR === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {from: getMinusHoursDate(1), to: getCurrentDate(), service:'SCT', direction: 'outbound'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: 'outbound'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_TX.HOUR}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_PAW.HOUR === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {from: getMinusHoursDate(1), to: getCurrentDate(), service:'SCT', direction: 'payaway'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: 'payaway'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_PAW.HOUR}}
                                 </a>
@@ -84,24 +80,21 @@
                         <tr class="row">
                             <td class="cell">Last 24 hours</td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_FILES.DAY === 0 ? ROUTING_PATHS.FILE_SEARCH : ROUTING_PATHS.ERROR_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_FILES.DAY > 0 && {from: getMinusDaysDate(1), to: getCurrentDate(), service:'SCT'}">
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_FILES.DAY > 0 && {startDate: getMinusDaysDate(1), service:'SCT'}">
                                     {{SCTTraffic.SCT_FILES.DAY}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_TX.DAY === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {from: getMinusDaysDate(1), to: getCurrentDate(), service:'SCT', direction: 'outbound'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: 'outbound'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_TX.DAY}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_PAW.DAY === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {from: getMinusDaysDate(1), to: getCurrentDate(), service:'SCT', direction: 'payaway'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: 'payaway'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_PAW.DAY}}
                                 </a>
@@ -110,24 +103,21 @@
                         <tr class="row">
                             <td class="cell">Last 7 days</td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_FILES.WEEK === 0 ? ROUTING_PATHS.FILE_SEARCH : ROUTING_PATHS.ERROR_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_FILES.WEEK > 0 && {from: getMinusDaysDate(7), to: getCurrentDate(), service:'SCT'}">
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_FILES.WEEK > 0 && {startDate: getMinusDaysDate(7), service:'SCT'}">
                                     {{SCTTraffic.SCT_FILES.WEEK}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_TX.WEEK === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {from: getMinusDaysDate(7), to: getCurrentDate(), service:'SCT', direction: 'outbound'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: 'outbound'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_TX.WEEK}}
                                 </a>
                             </td>
                             <td class="cell data-cell">
-                                <a class="header-link"
-                                    [routerLink]="['/' + (SCTTraffic.SCT_PAW.WEEK === 0 ? ROUTING_PATHS.SCT_TRANSACTION_SEARCH : ROUTING_PATHS.TRANSACTION_MONITOR)]"
-                                    [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {from: getMinusDaysDate(7), to: getCurrentDate(), service:'SCT', direction: 'payaway'} 
+                                <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
+                                    [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: 'payaway'} 
                                     : {startDate: getMinusMonthsDate(1)}">
                                     {{SCTTraffic.SCT_PAW.WEEK}}
                                 </a>

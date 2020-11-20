@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
@@ -11,17 +11,19 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import * as moment from 'moment';
 import { FileTableComponent } from 'src/app/shared/components/file-table/file-table.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { ActivatedRoute } from '@angular/router';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-file-search',
   templateUrl: './file-search.component.html',
   styleUrls: ['./file-search.component.scss']
 })
-export class FileSearchComponent implements OnInit {
+export class FileSearchComponent implements OnInit, AfterViewInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
   FILE_STATUS_ICON = STATUS_ICON;
@@ -33,6 +35,8 @@ export class FileSearchComponent implements OnInit {
 
   @ViewChild(FileTableComponent)
   fileTableComponent: FileTableComponent;
+
+  @ViewChild('stepper') stepper: MatHorizontalStepper;
 
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
@@ -56,16 +60,43 @@ export class FileSearchComponent implements OnInit {
   pageIndex = 0;
   pageSize = 100;
 
+  URLParams;
+
   constructor(
     private formBuilder: FormBuilder,
     private fileService: FileService,
     private toolTip: TooltipService,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    this.initializeSearchingParametersFormGroup();
-    this.getFileCriteriaData();
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.URLParams = { ...params };
+      if (params.startDate) {
+        this.defaultSelectedData = {
+          from: params.startDate === 'none' ? null : {
+            startDate: moment(params.startDate),
+            endDate: moment(params.startDate)
+          },
+          to: null
+        };
+        delete this.URLParams.startDate;
+      }
+      this.initializeSearchingParametersFormGroup();
+      this.getFileCriteriaData();
+    });
+
   }
+
+  ngAfterViewInit() {
+    if (!this.isURLParamsEmpty()) {
+      this.stepper.next();
+      this.cdr.detectChanges();
+    }
+  }
+
+  isURLParamsEmpty = () => isEmpty(this.URLParams);
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
@@ -125,13 +156,14 @@ export class FileSearchComponent implements OnInit {
 
     const formData = {
       ...this.searchingParametersFormGroup.value,
+      ...!isEmpty(this.URLParams) && this.URLParams,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
       outbound: getDirectionBooleanValue(get(this.searchingParametersFormGroup.get('direction'), 'value')),
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
-    formData.status = formData.fileStatus.status;
+    formData.status = get(formData, 'fileStatus.status');
     formData.fileStatus = null;
     formData.direction = null;
 

@@ -14,7 +14,6 @@ export const ROUTING_PATHS = {
   HOME: 'home',
 
   // monitor routes
-  TRANSACTION_MONITOR: 'transaction-monitor',
   FILE_MONITOR: 'file-monitor',
   ERROR_MONITOR: 'error-monitor',
 
@@ -26,4 +25,4 @@ export const ROUTING_PATHS = {
   // setup routes
   ENTITIES: 'entities',
   TRUSTED_CERTIFICATES: 'trusted-certificates'
-  };
+};

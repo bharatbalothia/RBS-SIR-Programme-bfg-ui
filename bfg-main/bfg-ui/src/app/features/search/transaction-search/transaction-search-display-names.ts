@@ -42,12 +42,12 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'reference', fieldValue: transaction.reference },
                     { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: 'transactionID' in mapping },
                     { fieldName: 'type', fieldValue: transaction.type },
-                    { fieldName: 'direction', fieldValue: titleCase(transaction.direction) },
-                    { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy, HH:mm:ss', 'en-GB') },
+                    { fieldName: 'direction', fieldValue: titleCase(transaction.direction), icon: getDirectionIcon(transaction.direction) },
+                    { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy HH:mm:ss', 'en-GB') },
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
                     { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy', 'en-GB') },
                     { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
-                    { fieldName: 'status', fieldValue: transaction.statusLabel || transaction.status },
+                    { fieldName: 'status', fieldValue: transaction.statusLabel || transaction.status + ' [no description available]' },
                 ]
             }]
         }
@@ -67,3 +67,6 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
 ].filter(el => el);
 
 const titleCase = (str: string): string => str ? str[0].toUpperCase() + str.slice(1) : '';
+
+export const getDirectionIcon = (direction: string) =>
+    direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';

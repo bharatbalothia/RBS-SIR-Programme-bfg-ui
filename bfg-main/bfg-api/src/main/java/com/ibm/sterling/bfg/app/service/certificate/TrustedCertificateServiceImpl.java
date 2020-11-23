@@ -63,6 +63,9 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     private CertificateIntegrationService certificateIntegrationService;
 
     @Autowired
+    private TrustedCertificateDetailsService trustedCertificateDetailsService;
+
+    @Autowired
     private Validator validator;
 
     @Override
@@ -93,17 +96,15 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                             NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE_LOG and SCT_TRUSTED_CERTIFICATE by " + id)
                     );
         }
-        return new TrustedCertificateDetails(x509Certificate, certificateValidationService, trustedCertificateRepository,
-                changeControlCertRepository, true);
+        return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
-                                                                         String certificateName,
-                                                                         String comment)
+                                                                         String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
-        TrustedCertificateDetails trustedCertificateDetails = new TrustedCertificateDetails(x509Certificate,
-                certificateValidationService, trustedCertificateRepository, changeControlCertRepository, false);
-        if (!trustedCertificateDetails.isValid())
+        TrustedCertificateDetails trustedCertificateDetails =
+                trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
+        if (!trustedCertificateDetails.getIsValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certificateName);

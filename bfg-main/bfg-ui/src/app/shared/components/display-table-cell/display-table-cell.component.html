@@ -1,5 +1,6 @@
-<div *ngIf="!_array.isArray(value)" [attr.xml]="xml">
+<div class="cell-value" *ngIf="!_array.isArray(value)" [attr.xml]="xml">
     {{xml ? (value | xml) : value}}
+    <mat-icon *ngIf="icon">{{icon}}</mat-icon>
 </div>
 <ul class="list-group" *ngIf="_array.isArray(value)">
     <li *ngFor="let item of removeEmptiesInArray(value)" class="list-group-item">

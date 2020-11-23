@@ -3,16 +3,14 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotValidException;
-import com.ibm.sterling.bfg.app.model.certificate.CertType;
-import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
+import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
+import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateDetailsService;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +56,9 @@ public class CertificateController {
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
 
+    @Autowired
+    private TrustedCertificateDetailsService trustedCertificateDetailsService;
+
     @GetMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<CertType> getCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
@@ -72,8 +73,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile file)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
-        return ok(new TrustedCertificateDetails(getX509Certificate(file), certificateValidationService,
-                trustedCertificateRepository, changeControlCertRepository, false));
+        return ok(trustedCertificateDetailsService.getTrustedCertificateDetails(getX509Certificate(file), false));
     }
 
     @PostMapping

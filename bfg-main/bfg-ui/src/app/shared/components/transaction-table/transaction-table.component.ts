@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { getTransactionDetailsTabs, getTransactionSearchDisplayName } from 'src/app/features/search/transaction-search/transaction-search-display-names';
+import { getDirectionIcon, getTransactionDetailsTabs, getTransactionSearchDisplayName } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
 import { FileDialogService } from '../../models/file/file-dialog.service';
 import { FileService } from '../../models/file/file.service';
@@ -23,6 +23,7 @@ import { DetailsDialogComponent } from '../details-dialog/details-dialog.compone
 export class TransactionTableComponent implements OnInit, OnDestroy {
 
   getTransactionStatusIcon = getStatusIcon;
+  getDirectionIcon = getDirectionIcon;
 
   @Input() getTransactionList: (pageIndex: number, pageSize: number) => any;
   @Input() errorMessage: ErrorMessage;
@@ -170,10 +171,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
     else if (this.autoRefreshing) {
       this.autoRefreshing.unsubscribe();
     }
-  }
-
-  getDirectionIcon(direction: string) {
-    return direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';
   }
 
   ngOnDestroy(): void {

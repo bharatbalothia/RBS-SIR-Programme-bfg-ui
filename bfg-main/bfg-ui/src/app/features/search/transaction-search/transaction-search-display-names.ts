@@ -47,7 +47,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
                     { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy', 'en-GB') },
                     { fieldName: 'settleAmount', fieldValue: formatNumber(transaction.settleAmount, 'en-GB', '1.2-2') },
-                    { fieldName: 'status', fieldValue: transaction.statusLabel || transaction.status },
+                    { fieldName: 'status', fieldValue: transaction.statusLabel || '[no description available]' },
                 ]
             }]
         }

@@ -49,7 +49,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'timestamp', fieldValue: formatDate(file.timestamp, 'dd/MM/yyyy HH:mm:ss', 'en-GB') },
         { fieldName: 'workflowID', fieldValue: file.workflowID, isActionButton: true },
         { fieldName: 'messageID', fieldValue: file.messageID },
-        { fieldName: 'status', fieldValue: file.statusLabel || file.status },
+        { fieldName: 'status', fieldValue: file.statusLabel || '[no description available]' },
         { fieldName: 'errorCode', fieldValue: file.errorCode, isActionButton: true },
         { fieldName: 'transactionTotal', fieldValue: file.transactionTotal, isActionButton: true }
     ],

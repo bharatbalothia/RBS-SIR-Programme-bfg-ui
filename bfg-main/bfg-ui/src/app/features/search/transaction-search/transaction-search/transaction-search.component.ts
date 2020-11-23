@@ -81,7 +81,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       this.URLParams = { ...params };
       if (params.startDate) {
         this.defaultSelectedData = {
-          from: {
+          from: params.startDate === 'none' ? null : {
             startDate: moment(params.startDate),
             endDate: moment(params.startDate),
           },

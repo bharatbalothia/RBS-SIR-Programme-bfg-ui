@@ -12,6 +12,8 @@ export class DisplayTableCellComponent implements OnInit {
 
   @Input() xml;
 
+  @Input() icon;
+
   constructor() { }
 
   ngOnInit(): void {

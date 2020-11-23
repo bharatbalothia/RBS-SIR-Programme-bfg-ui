@@ -27,7 +27,7 @@ public class DynamicPropertiesListener implements ApplicationListener<Applicatio
             props.put("spring.datasource.password", passwordDecode(new String(jdbcAuthData.getPassword())));
             props.put("api.userName", passwordDecode(apiAuthData.getUserName()));
             props.put("api.password", passwordDecode(new String(apiAuthData.getPassword())));
-            environment.getPropertySources().addFirst(new PropertiesPropertySource("dynamicProperties", props));
+            environment.getPropertySources().addLast(new PropertiesPropertySource("dynamicProperties", props));
         } catch (LoginException e) {
             LOG.error("LoginException in onApplicationEvent of DynamicPropertiesListener: " + e.getMessage());
         }

@@ -46,10 +46,17 @@ public class EntityPermissionEvaluator {
         return isAllowed(permission.apply("EDIT", entityToEdit.getService()));
     }
 
-    public boolean checkEditPendingPermission(String id, String serviceFromEntity) {
+    public boolean checkEditPendingEntityChangePermission(String id, String serviceFromEntity) {
         ChangeControl changeControl = controlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         String service = changeControl.getOperation().equals(Operation.CREATE) ? serviceFromEntity : changeControl.getResultMeta2();
+        return isAllowed(permission.apply(changeControl.getOperation().getOperationPerm(), service));
+    }
+
+    public boolean checkDeletePendingEntityChangePermission(String id) {
+        ChangeControl changeControl = controlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        String service = changeControl.getResultMeta2();
         return isAllowed(permission.apply(changeControl.getOperation().getOperationPerm(), service));
     }
 

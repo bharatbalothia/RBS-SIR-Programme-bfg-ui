@@ -152,11 +152,8 @@ public class EntityController {
                 .orElseThrow(ChangeControlNotFoundException::new);
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
             throw new InvalidUserForUpdatePendingEntityException();
-        if (changeControlService.deleteChangeControl(changeControl)) {
-            return new ResponseEntity<>(id, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        changeControlService.deleteChangeControl(changeControl);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

@@ -103,13 +103,9 @@ public class ChangeControlService {
         }
     }
 
-    public boolean deleteChangeControl(ChangeControl changeControl) {
+    public void deleteChangeControl(ChangeControl changeControl) {
         if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)) {
             changeControlRepository.delete(changeControl);
-            if (!findById(changeControl.getChangeID()).isPresent()) {
-                return true;
-            }
         }
-        return false;
     }
 }

@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.exception.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
@@ -111,9 +112,15 @@ public class CertificateController {
                 .orElseThrow(CertificateNotFoundException::new);
     }
 
+    @GetMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
+        return changeControlCertService.findById(id).map(cc -> ok().body(cc)).orElseThrow(ChangeControlCertNotFoundException::new);
+    }
+
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+    public Page<ChangeControlCert> getPendingCertificate(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
                 new ArrayList<>(changeControlCertService.findAllPending()), PageRequest.of(page, size));

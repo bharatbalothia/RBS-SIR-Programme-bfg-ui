@@ -14,7 +14,8 @@ public enum CertificateErrorCode implements ErrorCode {
     FileNotValidException("CER_FILE_NOT_VALID_CODE", "CER_FILE_NOT_VALID_MSG", "CER_FILE_NOT_VALID_STATUS"),
     AccessDeniedException("CER_ACCESS_DENIED_CODE", "CER_ACCESS_DENIED_MSG", "CER_ACCESS_DENIED_STATUS"),
     InvalidUserForApprovalException("CER_INVALID_APPROVE_USER_CODE", "CER_INVALID_APPROVE_USER_MSG", "CER_INVALID_APPROVE_USER_STATUS"),
-    StatusNotPendingException("CER_STATUS_NOT_PENDING_CODE", "CER_STATUS_NOT_PENDING_MSG", "CER_STATUS_NOT_PENDING_STATUS");
+    StatusNotPendingException("CER_STATUS_NOT_PENDING_CODE", "CER_STATUS_NOT_PENDING_MSG", "CER_STATUS_NOT_PENDING_STATUS"),
+    ChangeControlCertNotFoundException("CC_NOT_FOUND_CODE", "CC_NOT_FOUND_MSG", "CC_NOT_FOUND_STATUS");
 
     CertificateErrorCode(String value, String msg, String status) {
         this.val = value;

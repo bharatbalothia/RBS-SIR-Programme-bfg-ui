@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.model.audit.ActionType;
+import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
+import com.ibm.sterling.bfg.app.model.audit.EventType;
+import com.ibm.sterling.bfg.app.model.audit.Type;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
@@ -13,6 +17,7 @@ import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
+import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +52,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private SWIFTNetRoutingRuleService swiftNetRoutingRuleService;
+
+    @Autowired
+    private AdminAuditService adminAuditService;
 
     @Autowired
     private EntityValidationComponent entityValidation;
@@ -98,6 +106,16 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
         entity.setChangeID(changeControlService.save(changeControl).getChangeID());
+        adminAuditService.fireAdminAuditEvent(
+                new AdminAuditEventRequest(
+                        changeControl.getChanger(),
+                        ActionType.valueOf(operation.name()),
+                        EventType.REQUESTED,
+                        Type.ENTITY,
+                        changeControl.getChangeID(),
+                        String.valueOf(changeControl.getEntityLog().getEntityLogId())
+                )
+        );
         return entity;
     }
 

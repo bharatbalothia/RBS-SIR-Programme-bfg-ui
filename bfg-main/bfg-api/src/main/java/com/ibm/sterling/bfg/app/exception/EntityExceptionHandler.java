@@ -62,6 +62,13 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 
+    @ExceptionHandler(InvalidEventException.class)
+    public ResponseEntity handleInvalidEventException(InvalidEventException ex) {
+        ErrorMessage errorMessage = errorConfig.getErrorMessage(
+                EntityErrorCode.InvalidEventException, Collections.singletonList(ex.getErrors()));
+        return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

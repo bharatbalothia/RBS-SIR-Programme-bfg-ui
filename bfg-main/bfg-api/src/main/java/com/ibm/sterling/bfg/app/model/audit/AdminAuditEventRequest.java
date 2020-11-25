@@ -1,5 +1,7 @@
 package com.ibm.sterling.bfg.app.model.audit;
 
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
+
 public class AdminAuditEventRequest {
     private String actionBy;
     private String actionType;
@@ -16,6 +18,17 @@ public class AdminAuditEventRequest {
         this.type = type.attributeName();
         this.changeID = changeID;
         this.actionValue = actionValue;
+    }
+
+    public AdminAuditEventRequest(ChangeControl changeControl) {
+        this(
+                changeControl.getChanger(),
+                ActionType.valueOf(changeControl.getOperation().name()),
+                EventType.valueOf(changeControl.getStatus().name()),
+                Type.ENTITY,
+                changeControl.getChangeID(),
+                changeControl.getResultMeta1()
+        );
     }
 
     public AdminAuditEventRequest() {

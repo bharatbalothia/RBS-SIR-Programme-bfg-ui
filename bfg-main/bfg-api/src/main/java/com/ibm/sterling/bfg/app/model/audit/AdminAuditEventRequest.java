@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.audit;
 
+import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 
 public class AdminAuditEventRequest {
@@ -28,6 +29,17 @@ public class AdminAuditEventRequest {
                 Type.ENTITY,
                 changeControl.getChangeID(),
                 changeControl.getResultMeta1()
+        );
+    }
+
+    public AdminAuditEventRequest(ChangeControlCert changeControlCert, String actionBy) {
+        this(
+                actionBy,
+                ActionType.valueOf(changeControlCert.getOperation().name()),
+                EventType.valueOf(changeControlCert.getStatus().name()),
+                Type.TRUSTED_CERTIFICATE,
+                changeControlCert.getChangeID(),
+                changeControlCert.getResultMeta1()
         );
     }
 

@@ -120,6 +120,7 @@ public class EntityServiceImpl implements EntityService {
             entity = approveEntity(changeControl);
         }
         changeControlService.setApproveInfo(changeControl, userName, approverComments, status);
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControl, changeControl.getApprover()));
         return entity;
     }
 

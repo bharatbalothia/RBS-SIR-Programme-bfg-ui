@@ -110,10 +110,10 @@ public class EntityServiceImpl implements EntityService {
                 new AdminAuditEventRequest(
                         changeControl.getChanger(),
                         ActionType.valueOf(operation.name()),
-                        EventType.REQUESTED,
+                        EventType.valueOf(changeControl.getStatus().name()),
                         Type.ENTITY,
                         changeControl.getChangeID(),
-                        String.valueOf(changeControl.getEntityLog().getEntityLogId())
+                        entity.getEntity()
                 )
         );
         return entity;

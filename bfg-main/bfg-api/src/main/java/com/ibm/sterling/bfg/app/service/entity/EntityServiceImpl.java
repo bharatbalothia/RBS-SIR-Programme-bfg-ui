@@ -103,7 +103,7 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
         entity.setChangeID(changeControlService.save(changeControl).getChangeID());
-        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControl));
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControl, changeControl.getChanger()));
         return entity;
     }
 

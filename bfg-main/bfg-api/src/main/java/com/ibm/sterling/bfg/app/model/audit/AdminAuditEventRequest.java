@@ -20,9 +20,9 @@ public class AdminAuditEventRequest {
         this.actionValue = actionValue;
     }
 
-    public AdminAuditEventRequest(ChangeControl changeControl) {
+    public AdminAuditEventRequest(ChangeControl changeControl, String actionBy) {
         this(
-                changeControl.getChanger(),
+                actionBy,
                 ActionType.valueOf(changeControl.getOperation().name()),
                 EventType.valueOf(changeControl.getStatus().name()),
                 Type.ENTITY,

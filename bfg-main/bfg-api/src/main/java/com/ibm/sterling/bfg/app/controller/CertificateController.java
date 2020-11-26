@@ -118,6 +118,15 @@ public class CertificateController {
         return changeControlCertService.findById(id).map(cc -> ok().body(cc)).orElseThrow(ChangeControlCertNotFoundException::new);
     }
 
+    @PutMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
+    public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String comments) throws Exception {
+        ChangeControlCert changeControlCert = changeControlCertService.findById(id).orElseThrow(ChangeControlCertNotFoundException::new);
+        return ok().body(certificateService.editChangeControl(changeControlCert, name, comments));
+    }
+
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<ChangeControlCert> getPendingCertificate(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,

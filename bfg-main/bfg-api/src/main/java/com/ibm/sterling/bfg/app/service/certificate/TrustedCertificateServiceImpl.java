@@ -99,6 +99,28 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
     }
 
+    @Override
+    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments)
+            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
+        if (!PENDING.equals(changeControlCert.getStatus())) {
+            throw new StatusNotPendingException();
+        }
+        if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
+            String name = Optional.ofNullable(certName).orElse(null);
+            String comments = Optional.ofNullable(changerComments).orElse(null);
+            TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
+            trustedCertificateLog.setCertificateName(name);
+            TrustedCertificate trustedCertificate = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
+            validateCertificate(trustedCertificate);
+            changeControlCert.setResultMeta1(name);
+            changeControlCert.setChangerComments(comments);
+            changeControlCertService.save(changeControlCert);
+            trustedCertificate.setChangerComments(changerComments);
+            return trustedCertificate;
+        }
+        return null;
+    }
+
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                          String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {

@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
@@ -30,7 +30,7 @@ public class EntityLog {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_LOG_IDSEQ")
     @GenericGenerator(
             name = "SCT_ENTITY_LOG_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ENTITY_LOG_ID_"),

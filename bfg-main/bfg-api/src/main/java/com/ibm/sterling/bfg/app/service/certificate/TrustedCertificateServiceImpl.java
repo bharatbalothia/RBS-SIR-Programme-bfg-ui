@@ -1,13 +1,13 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
-import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotValidException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
@@ -33,9 +33,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.DELETE;
 
 @Service
 public class TrustedCertificateServiceImpl implements TrustedCertificateService {

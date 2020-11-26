@@ -1,8 +1,8 @@
 package com.ibm.sterling.bfg.app.service.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
-import com.ibm.sterling.bfg.app.exception.InvalidEventException;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import com.ibm.sterling.bfg.app.exception.audit.InvalidEventException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

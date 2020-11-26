@@ -3,12 +3,12 @@ package com.ibm.sterling.bfg.app.service.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
@@ -29,8 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
 @Transactional

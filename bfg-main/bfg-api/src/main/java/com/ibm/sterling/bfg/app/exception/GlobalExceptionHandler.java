@@ -1,6 +1,5 @@
 package com.ibm.sterling.bfg.app.exception;
 
-import com.ibm.sterling.bfg.app.config.ErrorConfig;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import com.ibm.sterling.bfg.app.model.exception.GlobalErrorCode;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LogManager.getLogger(GlobalExceptionHandler.class);
 
     @Autowired
-    private ErrorConfig errorConfig;
+    private ErrorMessageHandler errorMessageHandler;
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
@@ -36,9 +35,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String testErrorName = errorName;
         ErrorMessage errorMessage;
         if (Arrays.stream(GlobalErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
-            errorMessage = errorConfig.getErrorMessage(GlobalErrorCode.valueOf(errorName));
+            errorMessage = errorMessageHandler.getErrorMessage(GlobalErrorCode.valueOf(errorName));
         else {
-            errorMessage = errorConfig.getErrorMessage(GlobalErrorCode.FAIL,
+            errorMessage = errorMessageHandler.getErrorMessage(GlobalErrorCode.FAIL,
                     Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
         }
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
@@ -50,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
-        ErrorMessage errorMessage = errorConfig.getErrorMessage(
+        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 GlobalErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION,
                 Collections.singletonList(
                         Collections.singletonMap(ex.getMethod(),

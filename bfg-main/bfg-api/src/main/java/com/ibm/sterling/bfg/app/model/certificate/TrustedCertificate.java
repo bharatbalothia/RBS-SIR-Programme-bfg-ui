@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.model.validation.unique.UniqueBICertificate;
 import com.ibm.sterling.bfg.app.model.validation.unique.Unique;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateService;
@@ -29,7 +29,7 @@ public class TrustedCertificate implements CertType {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_TRUSTED_CERT_IDSEQ")
     @GenericGenerator(
             name = "SCT_TRUSTED_CERT_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "CERT_ID_"),

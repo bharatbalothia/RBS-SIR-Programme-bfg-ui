@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.repository.certificate;
 
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

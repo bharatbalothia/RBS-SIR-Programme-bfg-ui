@@ -37,6 +37,7 @@
 
 .mat-table {
     border-collapse: collapse;
+    width: 100%;
 
     .mat-header-cell,
     .mat-cell,
@@ -90,13 +91,9 @@
         width: 24% !important;
     }
 
-    .mat-column-nodeExecuted,
-    .mat-column-statusReport,
-    .mat-column-docId,
-    .mat-column-instanceData {
-        flex: 0 0 8% !important;
-        width: 8% !important;
-
+    .mat-column-docId {
+        flex: 0 0 6% !important;
+        width: 6% !important;
     }
 
 }

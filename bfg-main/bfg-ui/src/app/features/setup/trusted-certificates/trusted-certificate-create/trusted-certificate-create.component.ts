@@ -85,8 +85,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
           .pipe(data => this.setLoading(data)).subscribe((data: ChangeControl) => {
             this.isLoading = false;
             this.pendingChange = data;
-            this.validateTrustedCertificateById(this.pendingChange.trustedCertificateLog.certificateId
-              || this.pendingChange.trustedCertificateLog.certificateLogId);
+            this.validateTrustedCertificateById(this.pendingChange.trustedCertificateLog);
           },
             error => {
               this.isLoading = false;
@@ -96,12 +95,12 @@ export class TrustedCertificateCreateComponent implements OnInit {
     });
   }
 
-  validateTrustedCertificateById = (certificateId) =>
-    this.trustedCertificateService.validateCertificateById(certificateId)
+  validateTrustedCertificateById = (certificate: TrustedCertificate) =>
+    this.trustedCertificateService.validateCertificateById(certificate.certificateId || certificate.certificateLogId)
       .pipe(data => this.setLoading(data))
       .subscribe((data: TrustedCertificate) => {
         this.isLoading = false;
-        this.initializeDetailsFormGroups(data);
+        this.initializeDetailsFormGroups({ ...data, certificateName: certificate.certificateName });
         if (data.certificateErrors || data.certificateWarnings) {
           this.errorMessage = this.getErrorsAndWarnings(data);
         }
@@ -118,7 +117,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({
-      name: [this.getTrustedCertificateName(trustedCertificate), {
+      name: [trustedCertificate.certificateName || this.getTrustedCertificateName(trustedCertificate), {
         validators: [
           Validators.required,
           Validators.pattern(TRUSTED_CERTIFICATE_NAME)

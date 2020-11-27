@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
-import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormGroupDirective, FormControl } from '@angular/forms';
 import {
   getTrustedCertificateDisplayName,
   getTrustedCertificateItemInfoValues,
@@ -19,6 +19,11 @@ import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-rege
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { TrustedCertificateValidators } from 'src/app/shared/models/trustedCertificate/trusted-certificate-validator';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -53,12 +58,19 @@ export class TrustedCertificateCreateComponent implements OnInit {
   detailsTrustedCertificateFormGroup: FormGroup;
   confirmationTrustedCertificateFormGroup: FormGroup;
 
+  editableTrustedCertificate: TrustedCertificate;
+  pendingChange: ChangeControl;
+  changeId: string;
+
   constructor(
     private formBuilder: FormBuilder,
     private trustedCertificateService: TrustedCertificateService,
     private dialog: MatDialog,
     private trustedCertificateValidators: TrustedCertificateValidators,
     private toolTip: TooltipService,
+    private activatedRouter: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -66,7 +78,43 @@ export class TrustedCertificateCreateComponent implements OnInit {
       trustedCertificateFile: ['', Validators.required]
     });
     this.initializeDetailsFormGroups(this.getTrustedCertificateDefaultValue());
+    this.activatedRouter.params.subscribe(params => {
+      if (params.changeId) {
+        this.changeId = params.changeId;
+        this.trustedCertificateService.getPendingChangeById(params.changeId)
+          .pipe(data => this.setLoading(data)).subscribe((data: ChangeControl) => {
+            this.isLoading = false;
+            this.pendingChange = data;
+            this.validateTrustedCertificateById(this.pendingChange.trustedCertificateLog.certificateId
+              || this.pendingChange.trustedCertificateLog.certificateLogId);
+          },
+            error => {
+              this.isLoading = false;
+              this.errorMessage = getApiErrorMessage(error);
+            });
+      }
+    });
   }
+
+  validateTrustedCertificateById = (certificateId) =>
+    this.trustedCertificateService.validateCertificateById(certificateId)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: TrustedCertificate) => {
+        this.isLoading = false;
+        this.initializeDetailsFormGroups(data);
+        if (data.certificateErrors || data.certificateWarnings) {
+          this.errorMessage = this.getErrorsAndWarnings(data);
+        }
+        if (this.pendingChange && !(this.tryToProceedPendingEdit())) {
+          this.detailsTrustedCertificateFormGroup.addControl('disableProceed', new FormControl('', [Validators.required]));
+        }
+      },
+        error => {
+          this.isLoading = false;
+          this.shouldShowErrorMessage = true;
+          this.errorMessage = getApiErrorMessage(error);
+          this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setErrors({ invalid: true });
+        })
 
   initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({
@@ -168,19 +216,32 @@ export class TrustedCertificateCreateComponent implements OnInit {
   cancelTrustedCertificate() {
     const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Cancel creation of the ${trustedCertificateName} Trusted Certificate`,
-      text: `Are you sure to cancel the creation of the ${trustedCertificateName} Trusted Certificate?`,
-      yesCaption: `Cancel creation`,
+      title: `Cancel ${this.changeId ? 'editing' : 'creation'} of the ${trustedCertificateName} Trusted Certificate`,
+      text: `Are you sure to cancel the  ${this.changeId ? 'editing' : 'creation'} of the ${trustedCertificateName} Trusted Certificate ? `,
+      yesCaption: `Cancel  ${this.changeId ? 'editing' : 'creation'}`,
       yesCaptionColor: 'warn',
       noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.errorMessage = null;
-        this.stepper.reset();
-        this.resetAllForms();
+        if (this.changeId) {
+          this.goToPreviousPage();
+        } else {
+          this.errorMessage = null;
+          this.stepper.reset();
+          this.resetAllForms();
+        }
       }
     });
+  }
+
+  goToPreviousPage = () => {
+    const previousURL = get(window.history.state, 'previousURL');
+    if (previousURL) {
+      this.router.navigate([previousURL], { state: window.history.state });
+    } else {
+      this.router.navigate(['/' + ROUTING_PATHS.TRUSTED_CERTIFICATES + '/' + ROUTING_PATHS.PENDING], { state: window.history.state });
+    }
   }
 
   resetAllForms() {
@@ -188,7 +249,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
   }
 
   getConfirmationFieldsSource() {
-    const entity = removeEmpties({
+    const trustedCertificate = removeEmpties({
       ...this.detailsTrustedCertificateFormGroup.value,
       authChainReport: (get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || []).length !== 0 ?
         this.detailsTrustedCertificateFormGroup.get('authChainReport').value
@@ -197,10 +258,10 @@ export class TrustedCertificateCreateComponent implements OnInit {
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
       valid: this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
     });
-    this.confirmationPageDataSource = Object.keys(entity)
+    this.confirmationPageDataSource = Object.keys(trustedCertificate)
       .map((key) => ({
         field: key,
-        value: entity[key],
+        value: trustedCertificate[key],
         error: getErrorByField(key, this.errorMessage)
       }));
   }
@@ -208,27 +269,41 @@ export class TrustedCertificateCreateComponent implements OnInit {
   sendTrustedCertificate() {
     const trustedCertificateName = this.detailsTrustedCertificateFormGroup.get('name').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Create ${trustedCertificateName} trusted certificate`,
-      text: `Are you sure to create ${trustedCertificateName} trusted certificate?`,
-      yesCaption: 'Create',
+      title: `Save ${trustedCertificateName} trusted certificate`,
+      text: `Are you sure to save ${trustedCertificateName} trusted certificate ? `,
+      yesCaption: 'Save',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
-      const formData: FormData = new FormData();
-      formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
-      formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
-      formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
       if (result) {
-        this.trustedCertificateService.createTrustedCertificate(formData).pipe(data => this.setLoading(data)).subscribe(
+        let sendTrustedCertificate = null;
+        if (this.pendingChange) {
+          sendTrustedCertificate = this.trustedCertificateService.editPendingChange(this.pendingChange.changeID,
+            {
+              name: this.detailsTrustedCertificateFormGroup.get('name').value,
+              comments: this.detailsTrustedCertificateFormGroup.get('changerComments').value
+            });
+        } else {
+          const formData: FormData = new FormData();
+          formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
+          formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
+          formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
+          sendTrustedCertificate = this.trustedCertificateService.createTrustedCertificate(formData);
+        }
+        sendTrustedCertificate.pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Trusted Certificate created`,
-              text: `Trusted Certificate ${trustedCertificateName} has been created`,
+              title: `Trusted Certificate ${this.changeId ? 'edited' : 'created'}`,
+              text: `Trusted Certificate ${trustedCertificateName} has been ${this.changeId ? 'edited' : 'created'}`,
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {
-              this.stepper.reset();
-              this.resetAllForms();
+              if (this.changeId) {
+                this.goToPreviousPage();
+              } else {
+                this.stepper.reset();
+                this.resetAllForms();
+              }
             });
           },
           (error) => {
@@ -262,4 +337,16 @@ export class TrustedCertificateCreateComponent implements OnInit {
     });
     return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
   }
+
+  tryToProceed() {
+    if (this.tryToProceedPendingEdit()) {
+      this.stepper.next();
+    } else {
+      this.authService.showForbidden();
+    }
+  }
+
+  tryToProceedPendingEdit = () => this.pendingChange
+    ? (this.pendingChange.operation !== CHANGE_OPERATION.DELETE
+      && this.authService.isTheSameUser(this.pendingChange.changer)) : true
 }

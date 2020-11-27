@@ -20,6 +20,8 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { Router } from '@angular/router';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -30,6 +32,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
+  CHANGE_OPERATION = CHANGE_OPERATION;
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
@@ -52,6 +55,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     private authService: AuthService,
     private dialog: MatDialog,
     private toolTip: TooltipService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +63,11 @@ export class TrustedCertificateSearchComponent implements OnInit {
       this.pageIndex = window.history.state.pageIndex;
       this.pageSize = window.history.state.pageSize;
     }
+
+    this.certificateNameSearchingValue = window.history.state.certificateNameSearchingValue || '';
+    this.thumbprintSearchingValue = window.history.state.thumbprintSearchingValue || '';
+    this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
+
     this.getTrustedCertificateList(this.pageIndex, this.pageSize);
   }
 
@@ -279,4 +288,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
     });
     return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
   }
+
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
+
+  getCurrentRoute = () => this.router.url;
 }

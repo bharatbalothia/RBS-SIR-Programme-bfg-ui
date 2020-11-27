@@ -6,6 +6,7 @@ import { TrustedCertificatesWithPagination } from './trusted-certificates-with-p
 import { Observable } from 'rxjs';
 import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
 import { ChangeResolution } from '../changeControl/change-resolution.model';
+import { ChangeControl } from '../changeControl/change-control.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,14 @@ export class TrustedCertificateService {
 
   getPendingChanges(params?: { page?: string; size?: string }): Observable<ChangeControlsWithPagination> {
     return this.http.get<ChangeControlsWithPagination>(this.apiUrl + 'pending', { params });
+  }
+
+  getPendingChangeById(changeId) {
+    return this.http.get<ChangeControl>(this.apiUrl + 'pending/' + changeId);
+  }
+
+  editPendingChange(changeId, params: { name: string, comments?: string }) {
+    return this.http.put<ChangeControl>(this.apiUrl + 'pending/' + changeId, params);
   }
 
   getCertificateById(certificateId: string) {

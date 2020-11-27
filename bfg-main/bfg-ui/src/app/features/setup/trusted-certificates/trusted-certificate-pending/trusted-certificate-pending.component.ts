@@ -17,6 +17,9 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { removeEmpties } from 'src/app/shared/utils/utils';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -26,6 +29,8 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 export class TrustedCertificatePendingComponent implements OnInit {
 
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
+  ROUTING_PATHS = ROUTING_PATHS;
+  CHANGE_OPERATION = CHANGE_OPERATION;
 
   isLoading = true;
   isLoadingDetails = false;
@@ -42,7 +47,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
   constructor(
     private trustedCertificateService: TrustedCertificateService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -157,9 +163,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
 
-  isTheSameUser(user: string) {
-    return this.authService.getUserName() === user;
-  }
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   openInfoDialog(changeControl: ChangeControl) {
     this.addCertificateBeforeToChangeControl(changeControl)
@@ -230,4 +234,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
             }
           })));
   }
+
+  getCurrentRoute = () => this.router.url;
+
 }

@@ -85,7 +85,10 @@ export class TrustedCertificateCreateComponent implements OnInit {
           .pipe(data => this.setLoading(data)).subscribe((data: ChangeControl) => {
             this.isLoading = false;
             this.pendingChange = data;
-            this.validateTrustedCertificateById(this.pendingChange.trustedCertificateLog);
+            this.validateTrustedCertificateById({
+              ...this.pendingChange.trustedCertificateLog,
+              changerComments: this.pendingChange.changerComments
+            });
           },
             error => {
               this.isLoading = false;
@@ -100,7 +103,11 @@ export class TrustedCertificateCreateComponent implements OnInit {
       .pipe(data => this.setLoading(data))
       .subscribe((data: TrustedCertificate) => {
         this.isLoading = false;
-        this.initializeDetailsFormGroups({ ...data, certificateName: certificate.certificateName });
+        this.initializeDetailsFormGroups({
+          ...data,
+          certificateName: certificate.certificateName,
+          changerComments: certificate.changerComments
+        });
         if (data.certificateErrors || data.certificateWarnings) {
           this.errorMessage = this.getErrorsAndWarnings(data);
         }
@@ -121,7 +128,10 @@ export class TrustedCertificateCreateComponent implements OnInit {
         validators: [
           Validators.required,
           Validators.pattern(TRUSTED_CERTIFICATE_NAME)
-        ]
+        ],
+        asyncValidators:
+          this.trustedCertificateValidators.trustedCertificateExistsValidator(),
+        updateOn: 'blur'
       }],
       serialNumber: [trustedCertificate.serialNumber],
       thumbprint: [trustedCertificate.thumbprint],
@@ -130,7 +140,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
       issuer: [trustedCertificate.issuer],
       subject: [trustedCertificate.subject],
       authChainReport: [trustedCertificate.authChainReport],
-      changerComments: [''],
+      changerComments: [trustedCertificate.changerComments],
       valid: [trustedCertificate.valid],
     }, { validators: this.trustedCertificateValidators.isTrustedCertificateHasErrors(trustedCertificate) });
   }

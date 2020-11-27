@@ -7,5 +7,6 @@ export const TRUSTED_CERTIFICATE_VALIDATION_MESSAGES = {
             type: 'pattern',
             message: `The Trusted Certificate ${getTrustedCertificateDisplayName('name')} can only contain the following characters: a-z A-Z 0-9 -_:. {space}`
         },
+        { type: 'nameExists', message: `The Trusted Certificate with this name already exists` },
     ]
 };

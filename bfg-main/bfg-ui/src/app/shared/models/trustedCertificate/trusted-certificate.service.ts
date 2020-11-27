@@ -64,4 +64,12 @@ export class TrustedCertificateService {
     return this.http.delete(this.apiUrl + certificateId, { params: changerComments && { changerComments } });
   }
 
+  isTrustedCertificateNameExists(name: string): Observable<boolean> {
+    return this.http.get<boolean>(this.apiUrl + 'existence', {
+      params: {
+        name,
+      }
+    });
+  }
+
 }

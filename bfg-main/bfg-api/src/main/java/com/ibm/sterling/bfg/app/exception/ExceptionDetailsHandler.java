@@ -97,7 +97,7 @@ public class ExceptionDetailsHandler {
         else
             errorMessage = errorMessageHandler.getErrorMessage(
                     Enum.valueOf(errorCode, "FAIL"),
-                    ex.getMessage(),
+                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()),
                     null
             );
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());

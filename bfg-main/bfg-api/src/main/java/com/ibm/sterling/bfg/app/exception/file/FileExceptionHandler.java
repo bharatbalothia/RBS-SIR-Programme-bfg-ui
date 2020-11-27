@@ -16,8 +16,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -73,45 +71,20 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-        List<Object> errors = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(Collections.singletonMap(error.getField(), error.getDefaultMessage()));
-        }
-        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(Collections.singletonMap(error.getObjectName(), error.getDefaultMessage()));
-        }
-        ErrorMessage errorMessage =
-                errorMessageHandler.getErrorMessage(FileErrorCode.METHOD_ARGUMENT_NOT_VALID_EXCEPTION, errors);
-        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                               HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return exceptionDetailsHandler.handleMethodArgumentNotValid(ex, FileErrorCode.class);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex) {
-        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(FileErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION,
-                Collections.singletonList(Collections.singletonMap(ex.getName(),
-                        ex.getName() + " should be of type " +
-                                Objects.requireNonNull(ex.getRequiredType()).getName())));
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), errorMessage.getHttpStatus());
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        return exceptionDetailsHandler.handleMethodArgumentTypeMismatch(ex, FileErrorCode.class);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        String errorName = ex.getClass().getName();
-        errorName = errorName.substring(errorName.lastIndexOf(".") + 1);
-        LOG.info("File error name: " + errorName);
-        String testErrorName = errorName;
-        ErrorMessage errorMessage;
-        if (Arrays.stream(FileErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
-            errorMessage = errorMessageHandler.getErrorMessage(FileErrorCode.valueOf(errorName));
-        else errorMessage = errorMessageHandler.getErrorMessage(FileErrorCode.FAIL,
-                Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
-        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+        LOG.info("File exception: " + ex.getMessage());
+        return exceptionDetailsHandler.handleAll(ex, FileErrorCode.class);
     }
 
 }

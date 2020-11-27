@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -27,28 +25,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
 
+    @Autowired
+    private ExceptionDetailsHandler exceptionDetailsHandler;
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        String errorName = ex.getClass().getName();
-        errorName = errorName.substring(errorName.lastIndexOf(".") + 1);
-        LOG.info("Global error name: " + errorName);
-        final String testErrorName = errorName;
-        ErrorMessage errorMessage;
-        if (Arrays.stream(GlobalErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
-            errorMessage = errorMessageHandler.getErrorMessage(GlobalErrorCode.valueOf(errorName));
-        else {
-            errorMessage = errorMessageHandler.getErrorMessage(GlobalErrorCode.FAIL,
-                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
-        }
-        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+        LOG.info("Global exception: " + ex.getMessage());
+        return exceptionDetailsHandler.handleAll(ex, GlobalErrorCode.class);
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
-            HttpRequestMethodNotSupportedException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+                                                                         HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 GlobalErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION,
                 Collections.singletonList(

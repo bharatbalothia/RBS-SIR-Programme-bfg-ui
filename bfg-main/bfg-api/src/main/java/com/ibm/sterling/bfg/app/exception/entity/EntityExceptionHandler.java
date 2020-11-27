@@ -14,9 +14,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -75,78 +72,31 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-        List<Object> errors = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(Collections.singletonMap(error.getField(), error.getDefaultMessage()));
-        }
-        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(Collections.singletonMap(error.getObjectName(), error.getDefaultMessage()));
-        }
-        ErrorMessage errorMessage =
-                errorMessageHandler.getErrorMessage(EntityErrorCode.METHOD_ARGUMENT_NOT_VALID_EXCEPTION, errors);
-        return new ResponseEntity<>(
-                errorMessage, errorMessage.getHttpStatus());
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                               HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return exceptionDetailsHandler.handleMethodArgumentNotValid(ex, EntityErrorCode.class);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolation(
-            ConstraintViolationException ex) {
-        List<Object> errors = new ArrayList<>();
-        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            String propertyName;
-            String propertyPath = violation.getPropertyPath().toString();
-            if (StringUtils.isEmpty(propertyPath))
-                propertyName = "entity";
-            else propertyName = propertyPath.substring(propertyPath.lastIndexOf(".") + 1);
-            errors.add(Collections.singletonMap(propertyName, violation.getMessage()));
-        }
-        ErrorMessage errorMessage =
-                errorMessageHandler.getErrorMessage(EntityErrorCode.METHOD_ARGUMENT_NOT_VALID_EXCEPTION, errors);
-        return new ResponseEntity<>(
-                errorMessage, errorMessage.getHttpStatus());
+    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+        return exceptionDetailsHandler.handleConstraintViolation(ex, EntityErrorCode.class);
     }
 
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-        ErrorMessage errorMessage =
-                errorMessageHandler.getErrorMessage(EntityErrorCode.METHOD_MISSING_ARGUMENT_EXCEPTION,
-                        Collections.singletonList(Collections.singletonMap(ex.getParameterName(), ex.getParameterName() + " parameter is missing")));
-        return new ResponseEntity<>(
-                errorMessage, new HttpHeaders(), errorMessage.getHttpStatus());
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
+                                                                          HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return exceptionDetailsHandler.handleMissingServletRequestParameter(ex, EntityErrorCode.class);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex) {
-        ErrorMessage errorMessage =
-                errorMessageHandler.getErrorMessage(EntityErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION,
-                        Collections.singletonList(Collections.singletonMap(ex.getName(),
-                                ex.getName() + " should be of type " +
-                                        Objects.requireNonNull(ex.getRequiredType()).getName())));
-        return new ResponseEntity<>(
-                errorMessage, new HttpHeaders(), errorMessage.getHttpStatus());
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        return exceptionDetailsHandler.handleMethodArgumentTypeMismatch(ex, EntityErrorCode.class);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        String errorName = ex.getClass().getName();
-        errorName = errorName.substring(errorName.lastIndexOf(".") + 1);
-        LOG.info("Entity error name: " + errorName);
-        String testErrorName = errorName;
-        ErrorMessage errorMessage;
-        if (Arrays.stream(EntityErrorCode.values()).anyMatch(value -> value.name().equals(testErrorName)))
-            errorMessage = errorMessageHandler.getErrorMessage(EntityErrorCode.valueOf(errorName));
-        else
-            errorMessage = errorMessageHandler.getErrorMessage(EntityErrorCode.FAIL,
-                    Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse(ex.getMessage()), null);
-        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+        LOG.info("Entity exception: " + ex.getMessage());
+        return exceptionDetailsHandler.handleAll(ex, EntityErrorCode.class);
     }
 
 }

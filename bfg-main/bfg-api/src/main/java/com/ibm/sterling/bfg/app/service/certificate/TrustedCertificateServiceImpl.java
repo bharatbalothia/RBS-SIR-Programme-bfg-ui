@@ -106,19 +106,30 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
             throw new StatusNotPendingException();
         }
         if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
-            String name = Optional.ofNullable(certName).orElse(null);
-            String comments = Optional.ofNullable(changerComments).orElse(null);
             TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
-            trustedCertificateLog.setCertificateName(name);
+            Optional.ofNullable(certName).ifPresent(name -> {
+                trustedCertificateLog.setCertificateName(name);
+                changeControlCert.setResultMeta1(name);
+            });
             TrustedCertificate trustedCertificate = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
             validateCertificate(trustedCertificate);
-            changeControlCert.setResultMeta1(name);
-            changeControlCert.setChangerComments(comments);
+
+            Optional.ofNullable(changerComments).ifPresent(comments -> {
+                changeControlCert.setChangerComments(comments);
+                trustedCertificate.setChangerComments(changerComments);
+            });
             changeControlCertService.save(changeControlCert);
-            trustedCertificate.setChangerComments(changerComments);
             return trustedCertificate;
         }
         return null;
+    }
+
+    @Override
+    public Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException {
+        LOG.info("Trusted certificate exists by {} name", name);
+        return trustedCertificateRepository.existsByCertificateName(name) ||
+        Optional.ofNullable(certificateIntegrationService.getCertificateByName(name))
+                .isPresent();
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,

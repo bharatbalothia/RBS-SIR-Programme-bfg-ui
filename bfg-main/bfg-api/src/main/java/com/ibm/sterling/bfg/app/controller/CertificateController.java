@@ -121,9 +121,10 @@ public class CertificateController {
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String comments) throws Exception {
+                                                                      @RequestBody Map<String, Object> edit) throws Exception {
         ChangeControlCert changeControlCert = changeControlCertService.findById(id).orElseThrow(ChangeControlCertNotFoundException::new);
+        String name = String.valueOf(edit.get("name"));
+        String comments = String.valueOf(edit.get("comments"));
         return ok().body(certificateService.editChangeControl(changeControlCert, name, comments));
     }
 
@@ -157,4 +158,8 @@ public class CertificateController {
         return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }
 
+    @GetMapping("/existence")
+    public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
+        return ok(certificateService.existsByNameInDbAndBI(name));
+    }
 }

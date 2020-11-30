@@ -66,6 +66,12 @@
                                 <mat-icon>clear</mat-icon>delete
                             </div>
                         </button>
+                        <button mat-icon-button *ngIf="element.changeID && isTheSameUser(element.changer)" class="action-button" alt="Delete"
+                            title="Delete" (click)="deletePendingChange(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
+                        </button>
                         <button mat-icon-button class="action-button"
                             *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT"
                             (click)="transmitEntity(element)" alt="Transmit" title="Transmit">

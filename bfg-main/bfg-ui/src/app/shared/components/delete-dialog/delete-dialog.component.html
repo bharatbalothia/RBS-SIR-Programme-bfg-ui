@@ -9,7 +9,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <div class="delete-actions">
-        <div class="form-field-section">
+        <div class="form-field-section" *ngIf="!shouldHideComments">
             <mat-form-field>
                 <mat-label>Changer Comments</mat-label>
                 <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>

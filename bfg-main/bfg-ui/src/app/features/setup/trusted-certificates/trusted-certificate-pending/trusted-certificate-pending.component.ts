@@ -20,6 +20,7 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { Router } from '@angular/router';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -233,6 +234,38 @@ export class TrustedCertificatePendingComponent implements OnInit {
               });
             }
           })));
+  }
+
+  deletePendingChange(changeControl: ChangeControl) {
+    this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
+        .then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+          title: `Delete ${validatedChangeControl.changeID}`,
+          yesCaption: 'Cancel',
+          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
+          displayName: getTrustedCertificateDisplayName,
+          actionData: {
+            errorMessage: {
+              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+              warnings: get(validatedChangeControl, 'warnings'),
+              errors: get(validatedChangeControl, 'errors')
+            },
+            shouldHideComments: true,
+            id: validatedChangeControl.changeID,
+            deleteAction: (id: string) => this.trustedCertificateService.deletePendingChange(id)
+          },
+        })).afterClosed().subscribe(data => {
+          if (get(data, 'refreshList')) {
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Trusted Certificate deleted`,
+              text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.getPendingChanges(this.pageIndex, this.pageSize);
+            });
+          }
+        })));
   }
 
   getCurrentRoute = () => this.router.url;

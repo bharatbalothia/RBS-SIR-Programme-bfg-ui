@@ -36,6 +36,8 @@ export class DeleteDialogComponent implements OnInit {
 
     this.id = get(this.data, 'actionData.id');
 
+    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+
     this.displayName = this.data.displayName;
     this.deleteAction = get(this.data, 'actionData.deleteAction');
 

@@ -63,6 +63,12 @@
                                 <mat-icon inline>edit</mat-icon>edit
                             </div>
                         </a>
+                        <button mat-icon-button *ngIf="element.changeID && isTheSameUser(element.changer)"
+                            class="action-button" alt="Delete" title="Delete" (click)="deletePendingChange(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
+                        </button>
                     </mat-cell>
                 </ng-container>
 

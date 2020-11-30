@@ -41,4 +41,6 @@ public interface TrustedCertificateService extends FieldValueExists {
     TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException;
 
     Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException;
+
+    void deleteChangeControl(ChangeControlCert changeControlCert);
 }

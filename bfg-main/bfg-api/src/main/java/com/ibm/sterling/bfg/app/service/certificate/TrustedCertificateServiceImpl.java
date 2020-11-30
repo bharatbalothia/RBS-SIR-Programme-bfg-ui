@@ -102,9 +102,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     @Override
     public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
-        if (!PENDING.equals(changeControlCert.getStatus())) {
-            throw new StatusNotPendingException();
-        }
+        checkStatusOfChangeControl(changeControlCert);
         if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
             TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
             Optional.ofNullable(certName).ifPresent(name -> {
@@ -130,6 +128,19 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         return trustedCertificateRepository.existsByCertificateName(name) ||
         Optional.ofNullable(certificateIntegrationService.getCertificateByName(name))
                 .isPresent();
+    }
+
+    @Override
+    public void deleteChangeControl(ChangeControlCert changeControlCert) {
+        LOG.info("Deleting pending {}", changeControlCert);
+        checkStatusOfChangeControl(changeControlCert);
+        changeControlCertRepository.delete(changeControlCert);
+    }
+
+    private void checkStatusOfChangeControl(ChangeControlCert changeControlCert) {
+        if (!PENDING.equals(changeControlCert.getStatus())) {
+            throw new StatusNotPendingException();
+        }
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
@@ -175,9 +186,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
                                                                 String approverComments, ChangeControlStatus status)
             throws JsonProcessingException, CertificateEncodingException {
-        if (!PENDING.equals(changeControlCert.getStatus())) {
-            throw new StatusNotPendingException();
-        }
+        checkStatusOfChangeControl(changeControlCert);
         TrustedCertificate cert = new TrustedCertificate();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         if (ACCEPTED.equals(status)) {

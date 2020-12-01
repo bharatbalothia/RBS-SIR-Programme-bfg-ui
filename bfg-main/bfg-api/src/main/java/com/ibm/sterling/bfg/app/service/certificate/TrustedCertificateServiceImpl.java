@@ -100,8 +100,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments)
-            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
+    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) {
         checkStatusOfChangeControl(changeControlCert);
         if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
             TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
@@ -126,8 +125,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     public Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException {
         LOG.info("Trusted certificate exists by {} name", name);
         return trustedCertificateRepository.existsByCertificateName(name) ||
-        Optional.ofNullable(certificateIntegrationService.getCertificateByName(name))
-                .isPresent();
+                Optional.ofNullable(certificateIntegrationService.getCertificateByName(name)).isPresent();
     }
 
     @Override

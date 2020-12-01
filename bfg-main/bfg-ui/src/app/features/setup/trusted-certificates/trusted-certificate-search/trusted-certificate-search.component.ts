@@ -20,6 +20,8 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { Router } from '@angular/router';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -30,6 +32,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
+  CHANGE_OPERATION = CHANGE_OPERATION;
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
@@ -52,6 +55,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     private authService: AuthService,
     private dialog: MatDialog,
     private toolTip: TooltipService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +63,11 @@ export class TrustedCertificateSearchComponent implements OnInit {
       this.pageIndex = window.history.state.pageIndex;
       this.pageSize = window.history.state.pageSize;
     }
+
+    this.certificateNameSearchingValue = window.history.state.certificateNameSearchingValue || '';
+    this.thumbprintSearchingValue = window.history.state.thumbprintSearchingValue || '';
+    this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
+
     this.getTrustedCertificateList(this.pageIndex, this.pageSize);
   }
 
@@ -158,6 +167,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
       if (certificateId) {
         this.isLoadingDetails = true;
+        this.errorMessage = null;
         this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
           .then(data => {
             this.isLoadingDetails = false;
@@ -270,6 +280,38 @@ export class TrustedCertificateSearchComponent implements OnInit {
     });
   }
 
+  deletePendingChange(changeControl: ChangeControl) {
+    this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
+        .then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+          title: `Delete ${validatedChangeControl.changeID}`,
+          yesCaption: 'Cancel',
+          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
+          displayName: getTrustedCertificateDisplayName,
+          actionData: {
+            errorMessage: {
+              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+              warnings: get(validatedChangeControl, 'warnings'),
+              errors: get(validatedChangeControl, 'errors')
+            },
+            shouldHideComments: true,
+            id: validatedChangeControl.changeID,
+            deleteAction: (id: string) => this.trustedCertificateService.deletePendingChange(id)
+          },
+        })).afterClosed().subscribe(data => {
+          if (get(data, 'refreshList')) {
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Pending Change deleted`,
+              text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+            });
+          }
+        })));
+  }
+
   getTooltip(step: string, field: string, mode?: string): string {
     const toolTip = this.toolTip.getTooltip({
       type: 'trusted-cert',
@@ -279,4 +321,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
     });
     return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
   }
+
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
+
+  getCurrentRoute = () => this.router.url;
 }

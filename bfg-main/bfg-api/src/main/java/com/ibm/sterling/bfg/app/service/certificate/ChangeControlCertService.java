@@ -2,7 +2,9 @@ package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changeControl.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +29,9 @@ public class ChangeControlCertService {
 
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
+
+    @Autowired
+    private Validator validator;
 
     public List<ChangeControlCert> listAll() {
         return changeControlCertRepository.findAll();
@@ -79,5 +89,4 @@ public class ChangeControlCertService {
                 .findAll(specification)
                 .stream());
     }
-
 }

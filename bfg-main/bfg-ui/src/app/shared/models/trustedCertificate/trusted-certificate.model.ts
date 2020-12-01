@@ -2,6 +2,7 @@ import { ErrorsField } from 'src/app/core/utils/error-template';
 
 export interface TrustedCertificate {
     certificateId?: string;
+    certificateLogId?: string;
     certificateName: string;
     serialNumber: string;
     thumbprint: string;

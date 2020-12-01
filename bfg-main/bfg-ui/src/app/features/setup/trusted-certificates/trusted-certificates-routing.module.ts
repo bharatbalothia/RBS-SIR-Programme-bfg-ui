@@ -24,6 +24,13 @@ export const routes: Routes = [
         }
     },
     {
+        path: ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT + '/:changeId', component: TrustedCertificateCreateComponent,
+        canActivate: [PermissionsGuardService],
+        data: {
+            permissions: ['FB_UI_TRUSTED_CERTS_NEW']
+        }
+    },
+    {
         path: ROUTING_PATHS.SEARCH, component: TrustedCertificateSearchComponent,
         canActivate: [PermissionsGuardService],
         data: {

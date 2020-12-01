@@ -42,7 +42,8 @@
                                 pageSize: pageSize, 
                                 previousURL: getCurrentRoute(),
                                 serviceSearchingValue: serviceSearchingValue,
-                                entityNameSearchingValue: entityNameSearchingValue
+                                entityNameSearchingValue: entityNameSearchingValue,
+                                DNSearchingValue: DNSearchingValue
                             }" alt="Edit" title="Edit">
                             <div class="action-icon">
                                 <mat-icon inline>edit</mat-icon>edit
@@ -61,6 +62,12 @@
                         </a>
                         <button mat-icon-button *ngIf="!element.entityLog" class="action-button" alt="Delete"
                             title="Delete" (click)="deleteEntity(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
+                        </button>
+                        <button mat-icon-button *ngIf="element.changeID && isTheSameUser(element.changer)" class="action-button" alt="Delete"
+                            title="Delete" (click)="deletePendingChange(element)">
                             <div class="action-icon">
                                 <mat-icon>clear</mat-icon>delete
                             </div>

@@ -36,4 +36,9 @@ public interface TrustedCertificateService extends FieldValueExists {
     TrustedCertificateDetails findCertificateDataById(String id) throws JsonProcessingException, InvalidNameException,
             NoSuchAlgorithmException, java.security.cert.CertificateEncodingException;
 
+    TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException;
+
+    Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException;
+
+    void deleteChangeControl(ChangeControlCert changeControlCert);
 }

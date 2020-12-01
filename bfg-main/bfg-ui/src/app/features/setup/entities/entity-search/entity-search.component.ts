@@ -225,6 +225,34 @@ export class EntitySearchComponent implements OnInit {
     }));
   }
 
+  deletePendingChange(changeControl: ChangeControl) {
+    this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
+        .then((changeCtrl: ChangeControl) =>
+          changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+            title: `Delete ${changeCtrl.changeID}`,
+            yesCaption: 'Cancel',
+            tabs: getPendingChangesTabs(changeCtrl),
+            displayName: getEntityDisplayName,
+            actionData: {
+              id: changeCtrl.changeID,
+              shouldHideComments: true,
+              deleteAction: (id: string) => this.entityService.deletePendingChange(id)
+            }
+          })).afterClosed().subscribe(data => {
+            if (get(data, 'refreshList')) {
+              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+                title: `Pending Change deleted`,
+                text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
+                shouldHideYesCaption: true,
+                noCaption: 'Back'
+              })).afterClosed().subscribe(() => {
+                this.getEntityList(this.pageIndex, this.pageSize);
+              });
+            }
+          })));
+  }
+
   transmitEntity(entity: Entity) {
     this.dialog.open(TransmitDialogComponent, new DetailsDialogConfig({
       title: `Transmit File for the Entity ID ${entity.entity}`,

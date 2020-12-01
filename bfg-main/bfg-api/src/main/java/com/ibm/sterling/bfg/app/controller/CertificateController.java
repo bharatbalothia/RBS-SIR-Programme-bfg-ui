@@ -1,6 +1,8 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.sterling.bfg.app.exception.ChangeControlCertNotFoundException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingTrustedCertException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -111,10 +114,18 @@ public class CertificateController {
                 .orElseThrow(CertificateNotFoundException::new);
     }
 
+    @GetMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
+        return changeControlCertService.findById(id)
+                .map(cc -> ok().body(cc))
+                .orElseThrow(ChangeControlCertNotFoundException::new);
+    }
+
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+    public Page<ChangeControlCert> getPendingCertificate(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+                                                         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
                 new ArrayList<>(changeControlCertService.findAllPending()), PageRequest.of(page, size));
     }
@@ -123,6 +134,36 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) {
         return ok().body(certificateService.findById(id));
+    }
+
+    @PutMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
+    public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
+                                                                      @RequestBody Map<String, Object> edit) {
+        ChangeControlCert changeControlCert = getChangeControlCert(id);
+        checkPermissionForEditChangeControl(changeControlCert);
+        String name = String.valueOf(edit.get("name"));
+        String comments = String.valueOf(edit.get("comments"));
+        return ok().body(certificateService.editChangeControl(changeControlCert, name, comments));
+    }
+
+    @DeleteMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
+    public ResponseEntity<ChangeControlCert> deletePendingCertificates(@PathVariable(name = "id") String id) {
+        ChangeControlCert changeControlCert = getChangeControlCert(id);
+        checkPermissionForEditChangeControl(changeControlCert);
+        certificateService.deleteChangeControl(changeControlCert);
+        return ok().body(changeControlCert);
+    }
+
+    private void checkPermissionForEditChangeControl(ChangeControlCert changeControlCert) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControlCert.getChanger()))
+            throw new InvalidUserForUpdatePendingTrustedCertException();
+    }
+
+    private ChangeControlCert getChangeControlCert(@PathVariable(name = "id") String id) {
+        return changeControlCertService.findById(id)
+                .orElseThrow(ChangeControlCertNotFoundException::new);
     }
 
     @GetMapping("/validate/{id}")
@@ -139,6 +180,11 @@ public class CertificateController {
         TrustedCertificate cert = certificateService.findById(id);
         Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
         return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
+    }
+
+    @GetMapping("/existence")
+    public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
+        return ok(certificateService.existsByNameInDbAndBI(name));
     }
 
 }

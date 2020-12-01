@@ -24,6 +24,8 @@ export class DeleteDialogComponent implements OnInit {
 
   tooltip;
 
+  shouldHideComments = false;
+
   displayName: (fieldName: string) => string;
   deleteAction: (id: string, changerComments: string) => any;
 
@@ -36,10 +38,13 @@ export class DeleteDialogComponent implements OnInit {
 
     this.id = get(this.data, 'actionData.id');
 
+    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+
     this.displayName = this.data.displayName;
     this.deleteAction = get(this.data, 'actionData.deleteAction');
 
     this.tooltip = get(this.data, 'tooltip');
+    this.shouldHideComments = get(this.data, 'actionData.shouldHideComments');
   }
 
   ngOnInit() {
@@ -49,8 +54,8 @@ export class DeleteDialogComponent implements OnInit {
   updateSections() {
     this.data.tabs.forEach((tab, index) => {
       if (tab.tabSections) {
-        tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
-          .filter(item => !isUndefined(item.fieldValue)));
+        tab.tabSections.forEach(section => section.sectionItems ? section.sectionItems = section.sectionItems
+          .filter(item => !isUndefined(item.fieldValue)) : null);
       }
       this.tabs[index] = tab;
     });

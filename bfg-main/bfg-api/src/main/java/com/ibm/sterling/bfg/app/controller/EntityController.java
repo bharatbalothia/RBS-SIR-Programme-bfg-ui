@@ -17,6 +17,7 @@ import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -130,7 +131,7 @@ public class EntityController {
     }
 
     @PutMapping("pending/{id}")
-    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingPermission(#id, #entity.getService())")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingEntityChangePermission(#id, #entity.getService())")
     public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
@@ -138,6 +139,17 @@ public class EntityController {
             throw new InvalidUserForUpdatePendingEntityException();
         changeControlService.updateChangeControl(changeControl, entity);
         return ok(changeControl);
+    }
+
+    @DeleteMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkDeletePendingEntityChangePermission(#id)")
+    public ResponseEntity<?> deletePendingEntity(@PathVariable String id) {
+        ChangeControl changeControl = changeControlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
+            throw new InvalidUserForUpdatePendingEntityException();
+        changeControlService.deleteChangeControl(changeControl);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

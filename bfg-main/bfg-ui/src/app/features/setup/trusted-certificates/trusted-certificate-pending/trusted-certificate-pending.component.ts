@@ -257,8 +257,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Trusted Certificate deleted`,
-              text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
+              title: `Pending Change deleted`,
+              text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {

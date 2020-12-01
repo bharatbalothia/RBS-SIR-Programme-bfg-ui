@@ -167,6 +167,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
       if (certificateId) {
         this.isLoadingDetails = true;
+        this.errorMessage = null;
         this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
           .then(data => {
             this.isLoadingDetails = false;
@@ -300,8 +301,8 @@ export class TrustedCertificateSearchComponent implements OnInit {
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {
             this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Trusted Certificate deleted`,
-              text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
+              title: `Pending Change deleted`,
+              text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {

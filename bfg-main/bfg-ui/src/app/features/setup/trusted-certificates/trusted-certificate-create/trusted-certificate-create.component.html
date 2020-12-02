@@ -1,6 +1,6 @@
 <mat-card class="trusted-certificate-create-card">
     <mat-card-header>
-        <mat-card-title>Create Trusted Certificate
+        <mat-card-title>{{ changeId ? 'Edit' : 'Create'}} Trusted Certificate
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
@@ -10,7 +10,7 @@
     </mat-card-content>
     <mat-horizontal-stepper #stepper [linear]="isLinear"
         (selectionChange)="getConfirmationFieldsSource(); onStepChange($event.selectedIndex)">
-        <mat-step [stepControl]="uploadTrustedCertificateFormGroup">
+        <mat-step [stepControl]="uploadTrustedCertificateFormGroup" *ngIf="!changeId">
             <form [formGroup]="uploadTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
                 <section class="form-field-section">
@@ -24,12 +24,12 @@
                     <app-tooltip [tip]="getTooltip('file', 'file-path')"></app-tooltip>
                 </section>
                 <div class='stepper-actions'>
-                    <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
                 </div>
             </form>
         </mat-step>
         <mat-step *ngIf="detailsTrustedCertificateFormGroup" [stepControl]="detailsTrustedCertificateFormGroup">
-            <form [formGroup]="detailsTrustedCertificateFormGroup">
+            <form [formGroup]="detailsTrustedCertificateFormGroup" *ngIf="!isLoading">
                 <ng-template matStepLabel>Details of Trusted Certificate</ng-template>
                 <section class="form-field-section">
                     <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
@@ -132,8 +132,8 @@
                     <app-tooltip [tip]="getTooltip('edit-tc', 'changerComments')"></app-tooltip>
                 </div>
                 <div class='stepper-actions'>
-                    <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                    <button mat-raised-button matStepperNext class="action-button">Next</button>
+                    <button mat-raised-button matStepperPrevious class="action-button" *ngIf="!changeId">Back</button>
+                    <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
                     <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
                         Cancel</button>
                 </div>
@@ -166,10 +166,11 @@
             </mat-table>
             <div class='stepper-actions'>
                 <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                <button mat-raised-button class="action-button" color='primary'
-                    (click)="sendTrustedCertificate()">Create</button>
                 <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
                     Cancel</button>
+                <button mat-raised-button class="action-button" color='primary'
+                    (click)="sendTrustedCertificate()">Save</button>
+
             </div>
         </mat-step>
     </mat-horizontal-stepper>

@@ -1,15 +1,14 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.config.ErrorConfig;
-import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdatePendingEntityException;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.service.*;
 import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
@@ -18,6 +17,7 @@ import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,9 +35,6 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("api/entities")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
-
-    @Autowired
-    private ErrorConfig errorConfig;
 
     @Autowired
     private PropertyService propertyService;
@@ -134,7 +131,7 @@ public class EntityController {
     }
 
     @PutMapping("pending/{id}")
-    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingPermission(#id, #entity.getService())")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingEntityChangePermission(#id, #entity.getService())")
     public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
@@ -142,6 +139,17 @@ public class EntityController {
             throw new InvalidUserForUpdatePendingEntityException();
         changeControlService.updateChangeControl(changeControl, entity);
         return ok(changeControl);
+    }
+
+    @DeleteMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkDeletePendingEntityChangePermission(#id)")
+    public ResponseEntity<?> deletePendingEntity(@PathVariable String id) {
+        ChangeControl changeControl = changeControlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
+            throw new InvalidUserForUpdatePendingEntityException();
+        changeControlService.deleteChangeControl(changeControl);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

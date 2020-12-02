@@ -17,6 +17,10 @@ import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-templ
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { removeEmpties } from 'src/app/shared/utils/utils';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { Router } from '@angular/router';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -26,6 +30,8 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 export class TrustedCertificatePendingComponent implements OnInit {
 
   getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
+  ROUTING_PATHS = ROUTING_PATHS;
+  CHANGE_OPERATION = CHANGE_OPERATION;
 
   isLoading = true;
   isLoadingDetails = false;
@@ -42,7 +48,8 @@ export class TrustedCertificatePendingComponent implements OnInit {
   constructor(
     private trustedCertificateService: TrustedCertificateService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -157,9 +164,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
 
-  isTheSameUser(user: string) {
-    return this.authService.getUserName() === user;
-  }
+  isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   openInfoDialog(changeControl: ChangeControl) {
     this.addCertificateBeforeToChangeControl(changeControl)
@@ -230,4 +235,39 @@ export class TrustedCertificatePendingComponent implements OnInit {
             }
           })));
   }
+
+  deletePendingChange(changeControl: ChangeControl) {
+    this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
+        .then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+          title: `Delete ${validatedChangeControl.changeID}`,
+          yesCaption: 'Cancel',
+          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
+          displayName: getTrustedCertificateDisplayName,
+          actionData: {
+            errorMessage: {
+              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+              warnings: get(validatedChangeControl, 'warnings'),
+              errors: get(validatedChangeControl, 'errors')
+            },
+            shouldHideComments: true,
+            id: validatedChangeControl.changeID,
+            deleteAction: (id: string) => this.trustedCertificateService.deletePendingChange(id)
+          },
+        })).afterClosed().subscribe(data => {
+          if (get(data, 'refreshList')) {
+            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+              title: `Pending Change deleted`,
+              text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
+              shouldHideYesCaption: true,
+              noCaption: 'Back'
+            })).afterClosed().subscribe(() => {
+              this.getPendingChanges(this.pageIndex, this.pageSize);
+            });
+          }
+        })));
+  }
+
+  getCurrentRoute = () => this.router.url;
+
 }

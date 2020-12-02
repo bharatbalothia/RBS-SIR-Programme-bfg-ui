@@ -1,10 +1,10 @@
 package com.ibm.sterling.bfg.app.security;
 
-import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +46,19 @@ public class EntityPermissionEvaluator {
         return isAllowed(permission.apply("EDIT", entityToEdit.getService()));
     }
 
-    public boolean checkEditPendingPermission(String id, String serviceFromEntity) {
+    public boolean checkEditPendingEntityChangePermission(String id, String serviceFromEntity) {
         ChangeControl changeControl = controlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
-        String service = changeControl.getOperation().equals(Operation.CREATE) ? serviceFromEntity : changeControl.getResultMeta2();
+        Operation operation = changeControl.getOperation();
+        if (operation.equals(Operation.DELETE)) return false;
+        String service = operation.equals(Operation.CREATE) ? serviceFromEntity : changeControl.getResultMeta2();
+        return isAllowed(permission.apply(operation.getOperationPerm(), service));
+    }
+
+    public boolean checkDeletePendingEntityChangePermission(String id) {
+        ChangeControl changeControl = controlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        String service = changeControl.getResultMeta2();
         return isAllowed(permission.apply(changeControl.getOperation().getOperationPerm(), service));
     }
 

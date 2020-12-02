@@ -1,8 +1,8 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
-import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;

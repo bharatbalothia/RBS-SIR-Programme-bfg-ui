@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.security.AuthenticationFailedException;
 import com.ibm.sterling.bfg.app.model.security.Login;
 import com.ibm.sterling.bfg.app.model.security.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -38,7 +38,6 @@ public class CredentialsService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> loginMap = loginRequest.retrieveFields();
-
         String userCredentials = restTemplate.postForObject(
                 authenticationUrl + loginRequest.urlPostfix(),
                 new HttpEntity<>(loginMap, headers),
@@ -46,15 +45,17 @@ public class CredentialsService {
         );
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
         JsonNode user = root.get("user");
+        Optional.ofNullable(user.get("authenticated"))
+                .filter(JsonNode::asBoolean)
+                .orElseThrow(() -> new AuthenticationFailedException("Authentication failed. Invalid Username or Password."));
         List<String> permissionList = permissionsService.getPermissionList(loginRequest);
-
-        return Optional.ofNullable(user.get("authenticated"))
-                .filter(JsonNode::asBoolean).map(auth -> new UserCredentials(
-                        user.get("name").asText(),
-                        null,
-                        permissionList.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList())
-                )).orElseThrow(() -> new BadCredentialsException("Authentication failed"));
+        return new UserCredentials(
+                user.get("name").asText(),
+                null,
+                permissionList.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList())
+        );
     }
+
 }

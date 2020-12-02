@@ -19,6 +19,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-entity-pending',
@@ -155,6 +156,34 @@ export class EntityPendingComponent implements OnInit {
               this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
                 title: `Entity ${get(data, 'status').toLowerCase()}`,
                 text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+                shouldHideYesCaption: true,
+                noCaption: 'Back'
+              })).afterClosed().subscribe(() => {
+                this.getPendingChanges(this.pageIndex, this.pageSize);
+              });
+            }
+          })));
+  }
+
+  deletePendingChange(changeControl: ChangeControl) {
+    this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
+        .then((changeCtrl: ChangeControl) =>
+          changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+            title: `Delete ${changeCtrl.changeID}`,
+            yesCaption: 'Cancel',
+            tabs: getPendingChangesTabs(changeCtrl),
+            displayName: getEntityDisplayName,
+            actionData: {
+              id: changeCtrl.changeID,
+              shouldHideComments: true,
+              deleteAction: (id: string) => this.entityService.deletePendingChange(id)
+            }
+          })).afterClosed().subscribe(data => {
+            if (get(data, 'refreshList')) {
+              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
+                title: `Pending Change deleted`,
+                text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
                 shouldHideYesCaption: true,
                 noCaption: 'Back'
               })).afterClosed().subscribe(() => {

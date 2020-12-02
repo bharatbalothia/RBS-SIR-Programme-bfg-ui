@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.EntityApprovalException;
-import com.ibm.sterling.bfg.app.config.APIDetailsHandler;
-import com.ibm.sterling.bfg.app.exception.SWIFTNetRoutingRuleException;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.exception.entity.EntityApprovalException;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import com.ibm.sterling.bfg.app.exception.entity.SWIFTNetRoutingRuleException;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfgUiRestResponse;
@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.*;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.*;
 
 @Service
 public class SWIFTNetRoutingRuleService {

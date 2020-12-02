@@ -1,13 +1,13 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.CertificateNotFoundException;
-import com.ibm.sterling.bfg.app.exception.CertificateNotValidException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotValidException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
@@ -33,9 +33,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.DELETE;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.DELETE;
 
 @Service
 public class TrustedCertificateServiceImpl implements TrustedCertificateService {
@@ -99,6 +99,48 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
     }
 
+    @Override
+    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) {
+        checkStatusOfChangeControl(changeControlCert);
+        if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
+            TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
+            Optional.ofNullable(certName).ifPresent(name -> {
+                trustedCertificateLog.setCertificateName(name);
+                changeControlCert.setResultMeta1(name);
+            });
+            TrustedCertificate trustedCertificate = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
+            validateCertificate(trustedCertificate);
+
+            Optional.ofNullable(changerComments).ifPresent(comments -> {
+                changeControlCert.setChangerComments(comments);
+                trustedCertificate.setChangerComments(changerComments);
+            });
+            changeControlCertService.save(changeControlCert);
+            return trustedCertificate;
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException {
+        LOG.info("Trusted certificate exists by {} name", name);
+        return trustedCertificateRepository.existsByCertificateName(name) ||
+                Optional.ofNullable(certificateIntegrationService.getCertificateByName(name)).isPresent();
+    }
+
+    @Override
+    public void deleteChangeControl(ChangeControlCert changeControlCert) {
+        LOG.info("Deleting pending {}", changeControlCert);
+        checkStatusOfChangeControl(changeControlCert);
+        changeControlCertRepository.delete(changeControlCert);
+    }
+
+    private void checkStatusOfChangeControl(ChangeControlCert changeControlCert) {
+        if (!PENDING.equals(changeControlCert.getStatus())) {
+            throw new StatusNotPendingException();
+        }
+    }
+
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
                                                                          String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
@@ -142,9 +184,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
                                                                 String approverComments, ChangeControlStatus status)
             throws JsonProcessingException, CertificateEncodingException {
-        if (!PENDING.equals(changeControlCert.getStatus())) {
-            throw new StatusNotPendingException();
-        }
+        checkStatusOfChangeControl(changeControlCert);
         TrustedCertificate cert = new TrustedCertificate();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         if (ACCEPTED.equals(status)) {

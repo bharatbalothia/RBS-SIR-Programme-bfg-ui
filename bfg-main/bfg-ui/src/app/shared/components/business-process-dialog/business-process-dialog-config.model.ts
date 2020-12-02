@@ -4,7 +4,7 @@ import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 export class BusinessProcessDialogConfig extends MatDialogConfig<DetailsDialogData> {
     constructor(data: DetailsDialogData) {
         super();
-        this.width = '100%';
+        this.width = '1000px';
         this.maxHeight = '100vh';
         this.disableClose = false;
         this.data = data;

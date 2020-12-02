@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +45,9 @@ public class EntityController {
 
     @Autowired
     private TransmittalService transmittalService;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
 
     @GetMapping
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
@@ -75,7 +76,7 @@ public class EntityController {
                 changeControl,
                 String.valueOf(approve.get("approverComments")),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
-        ).map(record -> ok().body(record))
+        ).map(ResponseEntity::ok)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -94,7 +95,7 @@ public class EntityController {
                         record.setInboundDir(Boolean.TRUE);
                         record.setInboundRoutingRule(Boolean.TRUE);
                     }
-                    return ok().body(record);
+                    return ok(record);
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
@@ -107,7 +108,7 @@ public class EntityController {
                     entity.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
                     );
-                    return ok().body(entity);
+                    return ok(entity);
                 }).orElseThrow(ChangeControlNotFoundException::new);
     }
 
@@ -120,7 +121,7 @@ public class EntityController {
                     entityLog.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(entityLog.getInboundRequestType()));
                     changeControl.setEntityLog(entityLog);
-                    return ok().body(changeControl);
+                    return ok(changeControl);
                 }).orElseThrow(ChangeControlNotFoundException::new);
     }
 
@@ -135,8 +136,7 @@ public class EntityController {
     public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForUpdateChangeControlException();
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
         changeControlService.updateChangeControl(changeControl, entity);
         return ok(changeControl);
     }
@@ -146,8 +146,7 @@ public class EntityController {
     public ResponseEntity<?> deletePendingEntity(@PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForUpdateChangeControlException();
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
         changeControlService.deleteChangeControl(changeControl);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }

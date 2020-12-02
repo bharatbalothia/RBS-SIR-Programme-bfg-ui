@@ -74,7 +74,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificate findById(String id) {
+    public TrustedCertificate getTrustedCertificateById(String id) {
         LOG.info("Trusted certificate by id {}", id);
         return trustedCertificateRepository.findById(id)
                 .orElseThrow(() -> new CertificateNotFoundException(NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE"));

@@ -1,8 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
-import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
@@ -10,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
 import com.ibm.sterling.bfg.app.service.certificate.ChangeControlCertService;
 import com.ibm.sterling.bfg.app.service.certificate.TrustedCertificateDetailsService;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,6 +59,9 @@ public class CertificateController {
 
     @Autowired
     private TrustedCertificateDetailsService trustedCertificateDetailsService;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
 
     @GetMapping
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
@@ -103,8 +104,7 @@ public class CertificateController {
     @PostMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
     public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
-        ChangeControlCert changeControlCert = changeControlCertService.findById(String.valueOf(approve.get("changeID")))
-                .orElseThrow(CertificateNotFoundException::new);
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(String.valueOf(approve.get("changeID")));
         return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
                 changeControlCert,
                 String.valueOf(approve.get("approverComments")),
@@ -117,9 +117,7 @@ public class CertificateController {
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
-        return changeControlCertService.findById(id)
-                .map(changeControlCert -> ok().body(changeControlCert))
-                .orElseThrow(ChangeControlCertNotFoundException::new);
+        return ok(changeControlCertService.getChangeControlById(id));
     }
 
     @GetMapping("pending")
@@ -133,51 +131,41 @@ public class CertificateController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<TrustedCertificate> getCertificateById(@PathVariable(name = "id") String id) {
-        return ok().body(certificateService.findById(id));
+        return ok(certificateService.getTrustedCertificateById(id));
     }
 
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
                                                                       @RequestBody Map<String, Object> edit) {
-        ChangeControlCert changeControlCert = getChangeControlCert(id);
-        checkPermissionForEditChangeControl(changeControlCert);
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(id);
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));
         String comments = String.valueOf(edit.get("comments"));
-        return ok().body(certificateService.editChangeControl(changeControlCert, name, comments));
+        return ok(certificateService.editChangeControl(changeControlCert, name, comments));
     }
 
     @DeleteMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<ChangeControlCert> deletePendingCertificates(@PathVariable(name = "id") String id) {
-        ChangeControlCert changeControlCert = getChangeControlCert(id);
-        checkPermissionForEditChangeControl(changeControlCert);
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(id);
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         certificateService.deleteChangeControl(changeControlCert);
-        return ok().body(changeControlCert);
-    }
-
-    private void checkPermissionForEditChangeControl(ChangeControlCert changeControlCert) {
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControlCert.getChanger()))
-            throw new InvalidUserForUpdateChangeControlException();
-    }
-
-    private ChangeControlCert getChangeControlCert(@PathVariable(name = "id") String id) {
-        return changeControlCertService.findById(id)
-                .orElseThrow(ChangeControlCertNotFoundException::new);
+        return ok(changeControlCert);
     }
 
     @GetMapping("/validate/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
             NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
-        return ok().body(certificateService.findCertificateDataById(id));
+        return ok(certificateService.findCertificateDataById(id));
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
     public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
             throws CertificateException {
-        TrustedCertificate cert = certificateService.findById(id);
+        TrustedCertificate cert = certificateService.getTrustedCertificateById(id);
         Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
         return ok(certificateService.saveCertificateToChangeControl(cert, Operation.DELETE));
     }

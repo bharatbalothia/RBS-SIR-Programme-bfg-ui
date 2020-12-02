@@ -35,7 +35,7 @@ export class AuthService {
 
   autoLogIn() {
     if (!this.user.value) {
-      const userData: User = JSON.parse(localStorage.getItem(this.USER_STORAGE_NAME));
+      const userData: User = JSON.parse(sessionStorage.getItem(this.USER_STORAGE_NAME));
       if (userData) {
         this.user.next(userData);
       }
@@ -47,7 +47,7 @@ export class AuthService {
       .pipe(
         tap(user => {
           this.user.next(user);
-          localStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
+          sessionStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
         })
       );
   }
@@ -57,14 +57,14 @@ export class AuthService {
       .pipe(
         tap(user => {
           this.user.next(user);
-          localStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
+          sessionStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
         })
       );
   }
 
   logOut() {
     this.user.next(null);
-    localStorage.removeItem(this.USER_STORAGE_NAME);
+    sessionStorage.removeItem(this.USER_STORAGE_NAME);
     this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
   }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdatePendingEntityException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
@@ -136,7 +136,7 @@ public class EntityController {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForUpdatePendingEntityException();
+            throw new InvalidUserForUpdateChangeControlException();
         changeControlService.updateChangeControl(changeControl, entity);
         return ok(changeControl);
     }
@@ -147,7 +147,7 @@ public class EntityController {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControl.getChanger()))
-            throw new InvalidUserForUpdatePendingEntityException();
+            throw new InvalidUserForUpdateChangeControlException();
         changeControlService.deleteChangeControl(changeControl);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }

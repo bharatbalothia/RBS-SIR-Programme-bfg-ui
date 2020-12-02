@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingTrustedCertException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
@@ -158,7 +158,7 @@ public class CertificateController {
 
     private void checkPermissionForEditChangeControl(ChangeControlCert changeControlCert) {
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changeControlCert.getChanger()))
-            throw new InvalidUserForUpdatePendingTrustedCertException();
+            throw new InvalidUserForUpdateChangeControlException();
     }
 
     private ChangeControlCert getChangeControlCert(@PathVariable(name = "id") String id) {

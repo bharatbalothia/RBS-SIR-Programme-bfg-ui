@@ -27,7 +27,7 @@ public class ChangeControlCertService {
         return changeControlCertRepository.findAll();
     }
 
-    public ChangeControlCert getChangeControlById(String id) {
+    public ChangeControlCert getChangeControlCertById(String id) {
         LOGGER.info("Certificate change control by id {}", id);
         return changeControlCertRepository.findById(id)
                 .orElseThrow(ChangeControlCertNotFoundException::new);

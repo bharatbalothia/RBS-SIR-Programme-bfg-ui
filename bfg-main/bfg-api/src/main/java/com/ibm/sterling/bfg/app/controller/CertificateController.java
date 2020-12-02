@@ -104,7 +104,7 @@ public class CertificateController {
     @PostMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
     public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
-        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(String.valueOf(approve.get("changeID")));
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(String.valueOf(approve.get("changeID")));
         return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
                 changeControlCert,
                 String.valueOf(approve.get("approverComments")),
@@ -117,7 +117,7 @@ public class CertificateController {
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
-        return ok(changeControlCertService.getChangeControlById(id));
+        return ok(changeControlCertService.getChangeControlCertById(id));
     }
 
     @GetMapping("pending")
@@ -138,7 +138,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
                                                                       @RequestBody Map<String, Object> edit) {
-        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(id);
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));
         String comments = String.valueOf(edit.get("comments"));
@@ -148,7 +148,7 @@ public class CertificateController {
     @DeleteMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<ChangeControlCert> deletePendingCertificates(@PathVariable(name = "id") String id) {
-        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlById(id);
+        ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         certificateService.deleteChangeControl(changeControlCert);
         return ok(changeControlCert);

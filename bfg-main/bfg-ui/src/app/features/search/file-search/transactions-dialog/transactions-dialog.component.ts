@@ -134,7 +134,7 @@ export class TransactionsDialogComponent implements OnInit {
       this.isLoading = false;
       this.emitLoadingEvent(transaction.id);
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Transaction Document Information`,
+        title: `Primary Document`,
         tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
         displayName: getFileSearchDisplayName,
         isDragable: true

@@ -56,7 +56,7 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
 
 export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent): Tab[] => [
     {
-        tabTitle: 'Document Info',
+        tabTitle: 'Document',
         tabSections: [{
             sectionItems: [
                 documentContent.document && { fieldName: 'processID', fieldValue: documentContent.processID },

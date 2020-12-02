@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.ChangeControlCertNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingTrustedCertException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;

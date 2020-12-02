@@ -3,16 +3,18 @@ package com.ibm.sterling.bfg.app.service.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForApprovalException;
-import com.ibm.sterling.bfg.app.exception.StatusNotPendingException;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
 import com.ibm.sterling.bfg.app.model.validation.unique.EntityFieldName;
 import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
+import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.ACCEPTED;
-import static com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
 @Transactional
@@ -47,6 +49,9 @@ public class EntityServiceImpl implements EntityService {
 
     @Autowired
     private SWIFTNetRoutingRuleService swiftNetRoutingRuleService;
+
+    @Autowired
+    private AdminAuditService adminAuditService;
 
     @Autowired
     private EntityValidationComponent entityValidation;
@@ -98,6 +103,7 @@ public class EntityServiceImpl implements EntityService {
         changeControl.setResultMeta2(entity.getService());
         changeControl.setEntityLog(new EntityLog(entity));
         entity.setChangeID(changeControlService.save(changeControl).getChangeID());
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControl, changeControl.getChanger()));
         return entity;
     }
 
@@ -114,6 +120,7 @@ public class EntityServiceImpl implements EntityService {
             entity = approveEntity(changeControl);
         }
         changeControlService.setApproveInfo(changeControl, userName, approverComments, status);
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControl, changeControl.getApprover()));
         return entity;
     }
 

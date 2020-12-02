@@ -5,8 +5,8 @@ import com.ibm.sterling.bfg.app.model.certificate.CertType;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +23,7 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     TrustedCertificate findById(String id);
 
-    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
-                                                                  String certName,
-                                                                  String comment)
+    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
 
     TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) throws CertificateException;
@@ -38,9 +36,10 @@ public interface TrustedCertificateService extends FieldValueExists {
     TrustedCertificateDetails findCertificateDataById(String id) throws JsonProcessingException, InvalidNameException,
             NoSuchAlgorithmException, java.security.cert.CertificateEncodingException;
 
-    TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException;
+    TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments);
 
     Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException;
 
     void deleteChangeControl(ChangeControlCert changeControlCert);
+
 }

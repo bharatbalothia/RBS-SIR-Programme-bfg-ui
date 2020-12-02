@@ -1,15 +1,14 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.config.ErrorConfig;
-import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingEntityException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdatePendingEntityException;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.service.*;
 import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
@@ -36,9 +35,6 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("api/entities")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
-
-    @Autowired
-    private ErrorConfig errorConfig;
 
     @Autowired
     private PropertyService propertyService;

@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.validation;
 
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
 import com.ibm.sterling.bfg.app.model.validation.sctvalidation.SctValidation;
@@ -12,11 +12,12 @@ import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.UPDATE;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.UPDATE;
 
 @Component
 public class EntityValidationComponent {
+
     @Autowired
     private Validator validator;
 

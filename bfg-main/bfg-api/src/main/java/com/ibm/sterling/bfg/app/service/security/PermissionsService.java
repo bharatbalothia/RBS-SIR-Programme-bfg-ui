@@ -74,10 +74,8 @@ public class PermissionsService {
         return authorityList.stream().flatMap(auth -> {
                     Set<String> permissionSet = getAuthoritySet.apply(auth, "permissions");
                     Set<String> groupSet = getAuthoritySet.apply(auth, "groups");
-                    if (!groupSet.isEmpty()) {
-                        groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
-                        groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
-                    }
+                    groupSet.removeIf(isNotNeededAuthorityPredicate(userAccountGroups));
+                    groupSet.forEach(group -> permissionSet.addAll(permissions.get(group)));
                     permissionSet.removeIf(isNotNeededAuthorityPredicate(userAccountPermissions));
                     return permissionSet.stream();
                 }

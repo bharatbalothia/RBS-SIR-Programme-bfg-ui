@@ -11,7 +11,9 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
 public class UniqueBICertificateValidator implements ConstraintValidator<UniqueBICertificate, Object> {
+
     private static final Logger LOG = LogManager.getLogger(UniqueBICertificateValidator.class);
+
     @Autowired
     private CertificateIntegrationService certificateIntegrationService;
 

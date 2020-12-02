@@ -2,7 +2,7 @@ package com.ibm.sterling.bfg.app.model.certificate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator;
 import com.ibm.sterling.bfg.app.utils.StringToMapConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +25,7 @@ public class TrustedCertificateLog {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_TRUSTED_CERT_LOG_IDSEQ")
     @GenericGenerator(
             name = "SCT_TRUSTED_CERT_LOG_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "CERT_LOG_ID_"),

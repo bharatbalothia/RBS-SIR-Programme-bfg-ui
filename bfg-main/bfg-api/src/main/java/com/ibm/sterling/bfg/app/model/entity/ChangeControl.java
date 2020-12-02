@@ -1,9 +1,9 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.ObjectTypeConstants;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.ObjectTypeConstants;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,7 +28,7 @@ public class ChangeControl implements ObjectTypeConstants, Comparable<ChangeCont
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFG_CHANGE_CONTROL_IDSEQ")
     @GenericGenerator(
             name = "SFG_CHANGE_CONTROL_IDSEQ",
-            strategy = "com.ibm.sterling.bfg.app.model.changeControl.ChangeControlIdSequenceGenerator",
+            strategy = "com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),
                     @Parameter(name = ChangeControlIdSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "ID_"),

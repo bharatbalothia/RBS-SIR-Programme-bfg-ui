@@ -1,10 +1,13 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.*;
+import com.ibm.sterling.bfg.app.exception.ChangeControlCertNotFoundException;
+import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingTrustedCertException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.certificate.*;
-import com.ibm.sterling.bfg.app.model.changeControl.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.certificate.CertificateValidationService;
@@ -33,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ibm.sterling.bfg.app.model.changeControl.Operation.CREATE;
+import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -114,13 +117,15 @@ public class CertificateController {
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
-        return changeControlCertService.findById(id).map(cc -> ok().body(cc)).orElseThrow(ChangeControlCertNotFoundException::new);
+        return changeControlCertService.findById(id)
+                .map(changeControlCert -> ok().body(changeControlCert))
+                .orElseThrow(ChangeControlCertNotFoundException::new);
     }
 
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<ChangeControlCert> getPendingCertificate(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+                                                         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
                 new ArrayList<>(changeControlCertService.findAllPending()), PageRequest.of(page, size));
     }
@@ -134,7 +139,7 @@ public class CertificateController {
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> editPendingCertificates(@PathVariable(name = "id") String id,
-                                                                      @RequestBody Map<String, Object> edit) throws Exception {
+                                                                      @RequestBody Map<String, Object> edit) {
         ChangeControlCert changeControlCert = getChangeControlCert(id);
         checkPermissionForEditChangeControl(changeControlCert);
         String name = String.valueOf(edit.get("name"));
@@ -157,9 +162,9 @@ public class CertificateController {
     }
 
     private ChangeControlCert getChangeControlCert(@PathVariable(name = "id") String id) {
-        return changeControlCertService.findById(id).orElseThrow(ChangeControlCertNotFoundException::new);
+        return changeControlCertService.findById(id)
+                .orElseThrow(ChangeControlCertNotFoundException::new);
     }
-
 
     @GetMapping("/validate/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
@@ -181,4 +186,5 @@ public class CertificateController {
     public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
         return ok(certificateService.existsByNameInDbAndBI(name));
     }
+
 }

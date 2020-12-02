@@ -1,9 +1,9 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.ErrorDetailsNotFoundException;
-import com.ibm.sterling.bfg.app.exception.FileNotFoundException;
-import com.ibm.sterling.bfg.app.exception.FileTransactionNotFoundException;
+import com.ibm.sterling.bfg.app.exception.file.ErrorDetailsNotFoundException;
+import com.ibm.sterling.bfg.app.exception.file.FileNotFoundException;
+import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
 import com.ibm.sterling.bfg.app.service.file.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;

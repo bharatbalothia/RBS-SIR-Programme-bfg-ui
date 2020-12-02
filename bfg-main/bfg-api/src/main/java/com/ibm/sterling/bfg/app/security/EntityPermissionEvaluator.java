@@ -1,10 +1,10 @@
 package com.ibm.sterling.bfg.app.security;
 
-import com.ibm.sterling.bfg.app.exception.ChangeControlNotFoundException;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
-import com.ibm.sterling.bfg.app.model.changeControl.Operation;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;

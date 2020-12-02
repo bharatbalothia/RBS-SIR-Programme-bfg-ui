@@ -118,7 +118,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
         return changeControlCertService.findById(id)
-                .map(cc -> ok().body(cc))
+                .map(changeControlCert -> ok().body(changeControlCert))
                 .orElseThrow(ChangeControlCertNotFoundException::new);
     }
 

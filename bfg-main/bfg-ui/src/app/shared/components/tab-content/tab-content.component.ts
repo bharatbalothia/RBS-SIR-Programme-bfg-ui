@@ -48,5 +48,5 @@ export class TabContentComponent implements OnInit {
   isAllTabEmpty = () => !this.tab.tableObject
     && this.tab.tabSections.filter(el => el.sectionItems && el.sectionItems.length > 0).length === 0
 
-  getNoDataLabel = (value: string) => `No ${value ? value.toLowerCase() : 'data'} detected.`;
+  getNoDataLabel = (value: string) => this.tab.noContentLabel || `No ${value ? value.toLowerCase() : 'data'} detected.`;
 }

@@ -3,6 +3,7 @@ import { File } from 'src/app/shared/models/file/file.model';
 import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { formatDate } from '@angular/common';
+import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -72,5 +73,17 @@ export const getErrorDetailsTabs = (fileError: FileError): Tab[] => [
                 { fieldName: 'description', fieldValue: fileError.description },
             ]
         }]
+    }
+].filter(el => el);
+
+export const getFileDocumentInfoTabs = (documentContent: DocumentContent): Tab[] => [
+    {
+        tabTitle: 'Message Contents',
+        tabSections: [{
+            sectionItems: [
+                { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
+            ].filter(el => el.fieldValue)
+        }],
+        noContentLabel: 'No Message matches your selection criteria.'
     }
 ].filter(el => el);

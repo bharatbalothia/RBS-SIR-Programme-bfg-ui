@@ -295,7 +295,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
           const formData: FormData = new FormData();
           formData.append('file', this.trustedCertificateFile, this.trustedCertificateFile.name);
           formData.append('name', this.detailsTrustedCertificateFormGroup.get('name').value);
-          formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value);
+          formData.append('comments', this.detailsTrustedCertificateFormGroup.get('changerComments').value || '');
           sendTrustedCertificate = this.trustedCertificateService.createTrustedCertificate(formData);
         }
         sendTrustedCertificate.pipe(data => this.setLoading(data)).subscribe(

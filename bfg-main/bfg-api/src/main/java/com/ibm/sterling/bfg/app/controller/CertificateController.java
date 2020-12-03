@@ -109,8 +109,7 @@ public class CertificateController {
                 changeControlCert,
                 String.valueOf(approve.get("approverComments")),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
-        ).map(record -> ok()
-                .body(record))
+        ).map(ResponseEntity::ok)
                 .orElseThrow(CertificateNotFoundException::new);
     }
 

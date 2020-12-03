@@ -1,6 +1,13 @@
 .no-data {
     padding-top: 10px;
     padding-left: 10px;
+    display: flex;
+    align-items: center;
+
+    .no-data-icon {
+        width: auto;
+        padding-right: 5px;
+    }
 }
 
 .mat-table {

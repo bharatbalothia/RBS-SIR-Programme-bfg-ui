@@ -69,29 +69,6 @@
         }
     }
 
-    .mat-table {
-        width: 100%;
-
-        .mat-column-id,
-        .mat-column-status,
-        .mat-column-settleAmount,
-        .mat-column-WFID {
-            flex: 0 0 9% !important;
-            width: 9% !important;
-        }
-
-        .mat-column-type,
-        .mat-column-settleDate {
-            flex: 0 0 10% !important;
-            width: 10% !important;
-        }
-
-        .mat-column-timestamp {
-            flex: 0 0 15% !important;
-            width: 15% !important;
-        }
-    }
-
     .value-table-cell {
         width: 100%;
     }

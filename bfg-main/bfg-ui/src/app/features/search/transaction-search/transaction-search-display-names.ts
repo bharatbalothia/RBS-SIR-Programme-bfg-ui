@@ -56,13 +56,14 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
 
 export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent): Tab[] => [
     {
-        tabTitle: 'Document Info',
+        tabTitle: 'Document',
         tabSections: [{
             sectionItems: [
-                { fieldName: 'processID', fieldValue: documentContent.processID },
+                documentContent.document && { fieldName: 'processID', fieldValue: documentContent.processID, isActionButton: true },
                 { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
-            ]
-        }]
+            ].filter(el => el && el.fieldValue)
+        }],
+        noContentLabel: { label: 'Document contains no data' }
     }
 ].filter(el => el);
 

@@ -74,7 +74,7 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
         return Optional.ofNullable(entityService.getEntityAfterApprove(
                 changeControl,
-                String.valueOf(approve.get("approverComments")),
+                Optional.ofNullable(approve.get("approverComments")).map(String::valueOf).orElse(null),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
         ).map(ResponseEntity::ok)
                 .orElseThrow(EntityNotFoundException::new);

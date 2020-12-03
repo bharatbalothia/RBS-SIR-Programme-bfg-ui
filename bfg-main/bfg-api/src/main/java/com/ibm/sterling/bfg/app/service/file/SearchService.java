@@ -158,7 +158,7 @@ public class SearchService {
                     new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);
         } catch (HttpStatusCodeException e) {
-            throw new DocumentContentNotFoundException(e.getMessage());
+            return Collections.singletonMap("document", null);
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody())).get("response");
         return Collections.singletonMap("document", jsonNode.asText());

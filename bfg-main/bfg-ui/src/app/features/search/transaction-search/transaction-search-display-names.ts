@@ -63,7 +63,7 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
                 { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
             ].filter(el => el && el.fieldValue)
         }],
-        noContentLabel: 'Document contains no data'
+        noContentLabel: { label: 'Document contains no data' }
     }
 ].filter(el => el);
 

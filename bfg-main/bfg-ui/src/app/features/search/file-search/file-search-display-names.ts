@@ -84,6 +84,6 @@ export const getFileDocumentInfoTabs = (documentContent: DocumentContent): Tab[]
                 { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
             ].filter(el => el.fieldValue)
         }],
-        noContentLabel: 'No Message matches your selection criteria.'
+        noContentLabel: { label: 'No Message matches your selection criteria.', icon: 'warning' }
     }
 ].filter(el => el);

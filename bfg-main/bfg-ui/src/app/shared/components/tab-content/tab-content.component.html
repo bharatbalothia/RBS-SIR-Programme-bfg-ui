@@ -1,4 +1,7 @@
-<div class="no-data" *ngIf="this.isAllTabEmpty()">{{getNoDataLabel(tab.tabTitle)}}</div>
+<div class="no-data" *ngIf="this.isAllTabEmpty()">
+    <mat-icon class="no-data-icon">{{getNoDataIcon()}}</mat-icon>
+    {{getNoDataLabel(tab.tabTitle)}}
+</div>
 <mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
     [dataSource]="dataSource.sectionItems">
     <ng-container matColumnDef="tableTitle">

@@ -1,11 +1,14 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.exception.InvalidUserForUpdatePendingTrustedCertException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
-import com.ibm.sterling.bfg.app.model.certificate.*;
+import com.ibm.sterling.bfg.app.model.certificate.CertType;
+import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -107,7 +110,7 @@ public class CertificateController {
                 .orElseThrow(CertificateNotFoundException::new);
         return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
                 changeControlCert,
-                String.valueOf(approve.get("approverComments")),
+                Optional.ofNullable(approve.get("approverComments")).map(String::valueOf).orElse(null),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
         ).map(record -> ok()
                 .body(record))
@@ -143,8 +146,8 @@ public class CertificateController {
         ChangeControlCert changeControlCert = getChangeControlCert(id);
         checkPermissionForEditChangeControl(changeControlCert);
         String name = String.valueOf(edit.get("name"));
-        String comments = String.valueOf(edit.get("comments"));
-        return ok().body(certificateService.editChangeControl(changeControlCert, name, comments));
+        return ok().body(certificateService.editChangeControl(
+                changeControlCert, name, Optional.ofNullable(edit.get("comments")).map(String::valueOf).orElse(null)));
     }
 
     @DeleteMapping("pending/{id}")

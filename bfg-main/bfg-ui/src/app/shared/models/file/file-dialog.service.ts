@@ -1,13 +1,12 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { FileError } from './file-error.model';
-import { getErrorDetailsTabs, getFileDetailsTabs, getFileSearchDisplayName } from 'src/app/features/search/file-search/file-search-display-names';
+import { getErrorDetailsTabs, getFileDetailsTabs, getFileDocumentInfoTabs, getFileSearchDisplayName } from 'src/app/features/search/file-search/file-search-display-names';
 import { DetailsDialogConfig } from '../../components/details-dialog/details-dialog-config.model';
 import { DetailsDialogComponent } from '../../components/details-dialog/details-dialog.component';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { Entity } from '../entity/entity.model';
 import { TransactionsDialogComponent } from 'src/app/features/search/file-search/transactions-dialog/transactions-dialog.component';
-import { getTransactionDocumentInfoTabs } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { DocumentContent } from './document-content.model';
 import { BusinessProcessDialogConfig } from '../../components/business-process-dialog/business-process-dialog-config.model';
 import { BusinessProcessDialogComponent } from '../../components/business-process-dialog/business-process-dialog.component';
@@ -144,8 +143,8 @@ export class FileDialogService {
             }
             this.emitLoadingEvent(file.id);
             this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-                title: `File Document Information`,
-                tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
+                title: file.filename,
+                tabs: getFileDocumentInfoTabs(data),
                 displayName: getFileSearchDisplayName,
                 isDragable: true
             }));

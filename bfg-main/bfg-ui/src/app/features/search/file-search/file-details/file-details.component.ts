@@ -15,8 +15,7 @@ import { DocumentContent } from 'src/app/shared/models/file/document-content.mod
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { File } from 'src/app/shared/models/file/file.model';
 import { FileService } from 'src/app/shared/models/file/file.service';
-import { getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
-import { getErrorDetailsTabs, getFileDetailsTabs, getFileSearchDisplayName } from '../file-search-display-names';
+import { getErrorDetailsTabs, getFileDetailsTabs, getFileDocumentInfoTabs, getFileSearchDisplayName } from '../file-search-display-names';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 
 @Component({
@@ -82,7 +81,7 @@ export class FileDetailsComponent implements OnInit {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `File Document Information`,
-        tabs: getTransactionDocumentInfoTabs({ ...data, processID: file.workflowID }),
+        tabs: getFileDocumentInfoTabs(data),
         displayName: getFileSearchDisplayName,
         isDragable: true
       }));

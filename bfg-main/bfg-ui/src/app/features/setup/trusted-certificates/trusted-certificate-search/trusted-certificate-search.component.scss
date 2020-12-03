@@ -24,67 +24,33 @@
 
         }
 
-        .mat-table {
+        .table-container {
             width: 100%;
+            overflow-x: auto;
 
-            .action-button {
-                width: auto;
-                margin-right: 10px;
+            .mat-table {
 
-                .action-icon {
-                    display: flex;
-                    align-items: center;
-
-                    .mat-icon-inline {
-                        width: 24px;
-                    }
+                .mat-column-action {
+                    min-width: 300px;
                 }
+
+                .mat-column-changes {
+                    min-width: 90px;
+                }
+
+                .mat-column-name {
+                    min-width: 250px;
+                }
+
+                .mat-column-thumbprint {
+                    min-width: 250px;
+                }
+
+                .mat-column-thumbprint256 {
+                    min-width: 250px;
+                }
+
             }
-
-            .mat-column-action {
-                word-wrap: break-word !important;
-                white-space: unset !important;
-                flex: 0 0 16% !important;
-                width: 16% !important;
-                overflow-wrap: break-word;
-                word-wrap: break-word;
-
-                word-break: break-word;
-
-                -ms-hyphens: auto;
-                -moz-hyphens: auto;
-                -webkit-hyphens: auto;
-                hyphens: auto;
-            }
-
-            .mat-column-changes {
-                word-wrap: break-word !important;
-                white-space: unset !important;
-                flex: 0 0 11% !important;
-                width: 11% !important;
-                overflow-wrap: break-word;
-                word-wrap: break-word;
-
-                word-break: break-word;
-
-                -ms-hyphens: auto;
-                -moz-hyphens: auto;
-                -webkit-hyphens: auto;
-                hyphens: auto;
-            }
-
-            .mat-column-name {
-                word-break: break-all;
-            }
-
-            .mat-column-thumbprint {
-                word-break: break-all;
-            }
-
-            .mat-column-thumbprint256 {
-                word-break: break-all;
-            }
-
         }
 
         .mat-spinner {

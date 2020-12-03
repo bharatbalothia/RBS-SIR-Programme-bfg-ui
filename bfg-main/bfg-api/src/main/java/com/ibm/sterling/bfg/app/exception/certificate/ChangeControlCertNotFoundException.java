@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.exception;
+package com.ibm.sterling.bfg.app.exception.certificate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

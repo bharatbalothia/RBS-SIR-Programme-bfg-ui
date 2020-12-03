@@ -3,8 +3,10 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -61,6 +63,11 @@ public class APIDetailsHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
+    }
+
+    public void checkPermissionForUpdateChangeControl(String changer) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changer))
+            throw new InvalidUserForUpdateChangeControlException();
     }
 
 }

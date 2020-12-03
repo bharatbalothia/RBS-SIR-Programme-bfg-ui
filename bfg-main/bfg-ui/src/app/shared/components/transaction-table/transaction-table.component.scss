@@ -1,0 +1,37 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+
+    .mat-table {
+
+        .mat-column-status {
+            min-width: 60px;
+        }
+
+        .mat-column-WFID,
+        .mat-column-id {
+            min-width: 80px;
+        }
+
+        .mat-column-settleAmount {
+            min-width: 80px;
+        }
+
+        .mat-column-transactionID {
+            min-width: 110px;
+        }
+
+        .mat-column-type {
+            min-width: 90px;
+        }
+
+        .mat-column-settleDate {
+            min-width: 80px;
+        }
+
+        .mat-column-timestamp {
+            min-width: 140px;
+        }
+
+    }
+}

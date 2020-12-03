@@ -59,7 +59,7 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
         tabTitle: 'Document',
         tabSections: [{
             sectionItems: [
-                documentContent.document && { fieldName: 'processID', fieldValue: documentContent.processID },
+                documentContent.document && { fieldName: 'processID', fieldValue: documentContent.processID, isActionButton: true },
                 { fieldName: 'document', fieldValue: documentContent.document, isXML: true },
             ].filter(el => el && el.fieldValue)
         }],

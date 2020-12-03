@@ -22,24 +22,30 @@
 
         }
 
-        .mat-table {
+        .table-container {
             width: 100%;
+            overflow-x: auto;
 
-            .action-button {
-                width: auto;
-                margin-right: 10px;
+            .mat-table {
 
-                .action-icon {
-                    display: flex;
-                    align-items: center;
+                .mat-column-action {
+                    min-width: 300px;
+                }
 
-                    .mat-icon-inline {
-                        width: 24px;
-                    }
+                .mat-column-changes {
+                    min-width: 80px;
+                }
+
+                .mat-column-entity {
+                    min-width: 200px;
+                }
+
+                .mat-column-service {
+                    min-width: 50px;
                 }
             }
-
         }
+
 
         .mat-spinner {
             height: 100px;

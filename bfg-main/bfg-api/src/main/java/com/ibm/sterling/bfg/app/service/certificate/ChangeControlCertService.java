@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
+import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -12,7 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,9 +27,10 @@ public class ChangeControlCertService {
         return changeControlCertRepository.findAll();
     }
 
-    public Optional<ChangeControlCert> findById(String id) {
+    public ChangeControlCert getChangeControlCertById(String id) {
         LOGGER.info("Certificate change control by id {}", id);
-        return changeControlCertRepository.findById(id);
+        return changeControlCertRepository.findById(id)
+                .orElseThrow(ChangeControlCertNotFoundException::new);
     }
 
     public ChangeControlCert save(ChangeControlCert changeControl) {

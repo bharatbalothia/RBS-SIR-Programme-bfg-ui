@@ -56,6 +56,11 @@ mat-form-field {
 
 .mat-table {
 
+    .mat-row,
+    .mat-header-row {
+        min-width: min-content;
+    }
+
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
@@ -69,10 +74,26 @@ mat-form-field {
         line-height: normal;
         text-align: left;
         min-width: 10px;
+        padding-right: 10px;
     }
 
     .mat-cell>.mat-button {
         padding: 0;
+    }
+
+    .action-button {
+        width: auto;
+        margin-right: 10px;
+        word-break: normal;
+
+        .action-icon {
+            display: flex;
+            align-items: center;
+
+            .mat-icon-inline {
+                width: 24px;
+            }
+        }
     }
 }
 
@@ -116,6 +137,7 @@ mat-form-field {
 
 .mat-select-panel {
     max-height: 400px !important;
+
     .mat-option {
         height: 2em !important;
     }

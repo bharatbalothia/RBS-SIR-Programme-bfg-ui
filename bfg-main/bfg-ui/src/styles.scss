@@ -54,13 +54,30 @@ mat-form-field {
     }
 }
 
+.main {
+    .mat-card {
+        margin: 15px 15px 15px 15px;
+        position: absolute;
+        bottom: 0;
+        top: 64px;
+        overflow: auto;
+        left: 0px;
+        right: 0px;
+    }
+}
+
 .mat-table {
+
+    display: inline-block;
+    margin-right: 15px;
 
     .mat-row,
     .mat-header-row {
         border-width: none;
         border-bottom-width: none;
         border-style: none;
+        display: inline-flex;
+        min-width: 100%;
     }
 
     .mat-header-cell,

@@ -4,107 +4,104 @@
 <h3 *ngIf="!shouldHideTableHeader && files && files.totalElements">
     {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
 </h3>
-<div class="mat-elevation-z8">
-    <div class="table-container">
-        <mat-table [dataSource]="dataSource">
+<div class="table-container">
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-            <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-icon [svgIcon]="getFileStatusIcon(element.status)"></mat-icon>
-                    &nbsp;{{element.status}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-icon [svgIcon]="getFileStatusIcon(element.status)"></mat-icon>
+                &nbsp;{{element.status}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openFileDetailsDialog(element)">
-                        {{element.id}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openFileDetailsDialog(element)">
+                    {{element.id}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="filename">
-                <mat-header-cell *matHeaderCellDef> Filename </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openFileDocumentInfo(element)">
-                        {{element.filename}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="filename">
+            <mat-header-cell *matHeaderCellDef> Filename </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openFileDocumentInfo(element)">
+                    {{element.filename}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="reference">
-                <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.reference}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="reference">
+            <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.reference}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.type}}
-                    <mat-icon>{{element.outbound ? 'call_made' : 'call_received'}}</mat-icon>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.type}}
+                <mat-icon>{{element.outbound ? 'call_made' : 'call_received'}}</mat-icon>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="service">
-                <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.service}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="service">
+            <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.service}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="timestamp">
-                <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.timestamp | date:'dd/MM/yyyy, HH:mm:ss'}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="timestamp">
+            <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.timestamp | date:'dd/MM/yyyy, HH:mm:ss'}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="WFID">
-                <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openBusinessProcessDialog(element)">
-                        {{element.workflowID}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="WFID">
+            <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openBusinessProcessDialog(element)">
+                    {{element.workflowID}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="error">
-                <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openErrorDetailsDialog(element)">
-                        {{element.errorCode}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="error">
+            <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openErrorDetailsDialog(element)">
+                    {{element.errorCode}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="transactions">
-                <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button [disabled]="element.transactionTotal <= 0" mat-button
-                        (click)="openTransactionsDialog(element)">
-                        <mat-icon inline>info</mat-icon>&nbsp;info
-                    </button>
+        <ng-container matColumnDef="transactions">
+            <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button [disabled]="element.transactionTotal <= 0" mat-button (click)="openTransactionsDialog(element)">
+                    <mat-icon inline>info</mat-icon>&nbsp;info
+                </button>
 
-                </mat-cell>
-            </ng-container>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="noData">
-                <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-                    No records found.
-                </mat-footer-cell>
-            </ng-container>
+        <ng-container matColumnDef="noData">
+            <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                No records found.
+            </mat-footer-cell>
+        </ng-container>
 
-            <mat-footer-row *matFooterRowDef="['noData']"
-                [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
-            </mat-footer-row>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-    </div>
+        <mat-footer-row *matFooterRowDef="['noData']"
+            [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+        </mat-footer-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
     <app-table-paginator *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
         [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
         [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"

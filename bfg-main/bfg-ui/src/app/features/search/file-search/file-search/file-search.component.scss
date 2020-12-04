@@ -1,6 +1,12 @@
 .file-search-create-card {
     margin: 15px 15px 15px 15px;
-
+    position: absolute;
+    bottom: 0;
+    top: 64px;
+    overflow: auto;
+    /* right: 0; */
+    left: 0px;
+    right: 0px;
     .top-error-message {
         margin-left: 24px;
     }

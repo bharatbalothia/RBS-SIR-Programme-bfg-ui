@@ -58,7 +58,17 @@ mat-form-field {
 
     .mat-row,
     .mat-header-row {
-        min-width: min-content;
+        border-width: none;
+        border-bottom-width: none;
+        border-style: none;
+    }
+
+    .mat-header-cell,
+    .mat-cell {
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-style: solid;
+        border-bottom-color: rgba(0, 0, 0, .12);
     }
 
     .mat-header-cell,

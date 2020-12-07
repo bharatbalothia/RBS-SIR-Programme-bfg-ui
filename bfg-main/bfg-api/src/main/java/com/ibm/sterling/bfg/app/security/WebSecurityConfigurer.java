@@ -57,7 +57,7 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .antMatcher("/api/**")
+                .antMatcher("/bfgui/api/**")
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
@@ -67,7 +67,7 @@ class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/api/auth/signin", "/api/auth/sso");
+                .antMatchers("/bfgui/api/auth/signin", "/bfgui/api/auth/sso");
     }
 
     @Bean

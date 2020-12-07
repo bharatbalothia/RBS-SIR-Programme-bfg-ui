@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("api/statistics")
+@RequestMapping("bfgui/api/statistics")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class StatisticsController {
 

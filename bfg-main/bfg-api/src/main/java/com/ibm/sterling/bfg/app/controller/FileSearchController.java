@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("api/files")
+@RequestMapping("bfgui/api/files")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class FileSearchController {
 

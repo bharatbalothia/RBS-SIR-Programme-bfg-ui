@@ -30,7 +30,7 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("api/entities")
+@RequestMapping("bfgui/api/entities")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
 

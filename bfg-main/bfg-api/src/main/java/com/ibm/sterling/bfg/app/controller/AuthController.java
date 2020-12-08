@@ -17,7 +17,7 @@ import java.util.Collections;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("bfgui/api/auth")
+@RequestMapping("api/auth")
 public class AuthController {
 
     @Autowired

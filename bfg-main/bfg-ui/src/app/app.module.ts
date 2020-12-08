@@ -25,7 +25,7 @@ registerLocaleData(localeEnGb, 'en-GB');
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en-GB' },
-    { provide: APP_BASE_HREF, useValue: '/bfgui' }
+    { provide: APP_BASE_HREF, useValue: '/' + (window.location.pathname.split('/')[1] || '') + '/' }
   ],
   bootstrap: [AppComponent],
 })

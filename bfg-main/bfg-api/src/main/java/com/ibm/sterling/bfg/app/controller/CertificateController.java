@@ -41,7 +41,7 @@ import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("api/certificates")
+@RequestMapping("bfgui/api/certificates")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class CertificateController {
 
@@ -139,7 +139,7 @@ public class CertificateController {
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> updatePendingCertificates(@PathVariable(name = "id") String id,
-                                                                      @RequestBody Map<String, Object> edit) {
+                                                                        @RequestBody Map<String, Object> edit) {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));

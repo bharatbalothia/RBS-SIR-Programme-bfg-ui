@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,12 +52,7 @@ public class ExceptionDetailsHandler {
             ConstraintViolationException ex, Class<E> errorCode) {
         List<Object> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            String propertyName;
-            String propertyPath = violation.getPropertyPath().toString();
-            if (StringUtils.isEmpty(propertyPath))
-                propertyName = "entity";
-            else propertyName = propertyPath.substring(propertyPath.lastIndexOf(".") + 1);
-            errors.add(Collections.singletonMap(propertyName, violation.getMessage()));
+            errors.add(Collections.singletonMap(violation.getPropertyPath(), violation.getMessage()));
         }
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"), errors);

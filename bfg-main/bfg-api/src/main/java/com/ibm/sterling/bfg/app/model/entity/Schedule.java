@@ -13,6 +13,7 @@ import com.ibm.sterling.bfg.app.utils.StringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -39,8 +40,6 @@ public class Schedule implements Serializable {
     private Entity entity;
 
     @Column(name = "ISWINDOW")
-    @NotNull(message = "Type has to be present",
-            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean isWindow = Boolean.TRUE;
 
     @Column(name = "TIMESTART")
@@ -68,7 +67,8 @@ public class Schedule implements Serializable {
     @Column(name = "TRANSTHRESHOLD")
     private Integer transThreshold;
 
-    @NotNull(message = "ACTIVE has to be present")
+    @NotNull(message = "ACTIVE has to be present",
+            groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     private Boolean active = Boolean.TRUE;
 
     @Column(name = "NEXTRUN")

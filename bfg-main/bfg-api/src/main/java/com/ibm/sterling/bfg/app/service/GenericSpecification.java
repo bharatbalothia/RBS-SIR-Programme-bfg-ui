@@ -6,12 +6,13 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class GenericSpecification {
 
     public static <T> Specification<T> filter(String text, String field) {
-        final String finalText = text.toLowerCase();
+        final String finalText = Optional.ofNullable(text).map(String::toLowerCase).orElse("");
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -30,8 +31,13 @@ public class GenericSpecification {
                     if ("ChangeControl".equals(root.getModel().getName())) {
                         from = root.join("entityLog");
                     } else from = root;
-                    predicates.add(valueContains.apply(from, "requestorDN"));
-                    predicates.add(valueContains.apply(from, "responderDN"));
+                    if (finalText.isEmpty()) {
+                        predicates.add(from.get("requestorDN").isNull());
+                        predicates.add(from.get("responderDN").isNull());
+                    } else {
+                        predicates.add(valueContains.apply(from, "requestorDN"));
+                        predicates.add(valueContains.apply(from, "responderDN"));
+                    }
                 } else {
                     predicates.add(valueContains.apply(root, field));
                 }

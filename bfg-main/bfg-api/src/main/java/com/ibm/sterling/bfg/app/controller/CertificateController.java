@@ -41,7 +41,7 @@ import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("bfgui/api/certificates")
+@RequestMapping("api/certificates")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class CertificateController {
 

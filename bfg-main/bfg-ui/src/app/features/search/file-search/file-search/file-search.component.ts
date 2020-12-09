@@ -189,7 +189,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.getFileList(this.pageIndex, this.pageSize);
+      this.getFileList(0, this.pageSize);
       this.fileTableComponent.autoRefreshChange(true);
     }
     else {

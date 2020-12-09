@@ -271,4 +271,11 @@ public class EntityServiceImpl implements EntityService {
                 .orElse(null);
     }
 
+    @Override
+    public void updatePendingEntity(ChangeControl changeControl, Entity entity) {
+        
+        changeControlService.updateChangeControl(changeControl, entity);
+
+    }
+
 }

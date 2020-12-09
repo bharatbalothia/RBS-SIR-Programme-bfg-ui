@@ -32,6 +32,18 @@ public class AdminAuditEventRequest {
         );
     }
 
+    public AdminAuditEventRequest(ChangeControl changeControl, EventType eventType,
+                                  String actionBy, String previousName) {
+        this(
+                actionBy,
+                ActionType.valueOf(changeControl.getOperation().name()),
+                eventType,
+                Type.ENTITY,
+                changeControl.getChangeID(),
+                previousName + " -> " + changeControl.getResultMeta1()
+        );
+    }
+
     public AdminAuditEventRequest(ChangeControlCert changeControlCert, String actionBy) {
         this(
                 actionBy,
@@ -40,6 +52,18 @@ public class AdminAuditEventRequest {
                 Type.TRUSTED_CERTIFICATE,
                 changeControlCert.getChangeID(),
                 changeControlCert.getResultMeta1()
+        );
+    }
+
+    public AdminAuditEventRequest(ChangeControlCert changeControlCert, EventType eventType,
+                                  String actionBy, String previousName) {
+        this(
+                actionBy,
+                ActionType.valueOf(changeControlCert.getOperation().name()),
+                eventType,
+                Type.TRUSTED_CERTIFICATE,
+                changeControlCert.getChangeID(),
+                previousName + " -> " + changeControlCert.getResultMeta1()
         );
     }
 

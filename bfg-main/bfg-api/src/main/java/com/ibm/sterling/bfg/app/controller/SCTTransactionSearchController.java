@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("bfgui/api/transactions")
+@RequestMapping("api/transactions")
 @PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class SCTTransactionSearchController {
 

@@ -7,7 +7,7 @@
 
 	<default-error-page uri="/index.html"/>
 	<reload-interval value="3"/>
-	<context-root uri="/" />
+	<context-root uri="/bfgui" />
 	<enable-directory-browsing value="false"/>
 	<enable-file-serving value="true"/>
 	<enable-reloading value="true"/>

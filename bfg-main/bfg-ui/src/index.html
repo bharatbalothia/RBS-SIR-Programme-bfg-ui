@@ -1,20 +1,23 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+  <base href="/">
+  <script>
+    (function () {
+      window['base-href'] = '/' + window.location.pathname.split('/')[1];
+    })();
+  </script>
   <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge">
   <title>BFG UI</title>
-  <base href="/" id="baseHref">
-  <script>
-  (function() {
-    document.getElementById('baseHref').href = '/' + window.location.pathname.split('/')[1] + "/";
-  })();
-  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <body class="mat-typography">
   <app-root></app-root>
 </body>
+
 </html>

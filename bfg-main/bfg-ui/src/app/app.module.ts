@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { registerLocaleData } from '@angular/common';
+import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import localeEnGb from '@angular/common/locales/en-GB';
 
 registerLocaleData(localeEnGb, 'en-GB');
@@ -24,6 +24,7 @@ registerLocaleData(localeEnGb, 'en-GB');
     BrowserAnimationsModule
   ],
   providers: [
+    { provide: APP_BASE_HREF, useValue: window['base-href'] || '/' },
     { provide: LOCALE_ID, useValue: 'en-GB' }
   ],
   bootstrap: [AppComponent],

@@ -185,7 +185,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.getTransactionList(this.pageIndex, this.pageSize);
+      this.getTransactionList(0, this.pageSize);
       this.transactionTableComponent.autoRefreshChange(true);
     }
     else {

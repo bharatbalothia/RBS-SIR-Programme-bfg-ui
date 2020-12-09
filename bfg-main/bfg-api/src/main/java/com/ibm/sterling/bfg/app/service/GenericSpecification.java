@@ -31,13 +31,8 @@ public class GenericSpecification {
                     if ("ChangeControl".equals(root.getModel().getName())) {
                         from = root.join("entityLog");
                     } else from = root;
-                    if (finalText.isEmpty()) {
-                        predicates.add(from.get("requestorDN").isNull());
-                        predicates.add(from.get("responderDN").isNull());
-                    } else {
-                        predicates.add(valueContains.apply(from, "requestorDN"));
-                        predicates.add(valueContains.apply(from, "responderDN"));
-                    }
+                    predicates.add(valueContains.apply(from, "requestorDN"));
+                    predicates.add(valueContains.apply(from, "responderDN"));
                 } else {
                     predicates.add(valueContains.apply(root, field));
                 }

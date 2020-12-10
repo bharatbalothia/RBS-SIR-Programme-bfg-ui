@@ -31,11 +31,11 @@ Navigate to bfg-ui folder and run `mvn clean install -Ppoc` to build UI module. 
 
 Open this links to see that application is up and running
 
-http://localhost:9080/index.html
+http://localhost:9080/bfgui/index.html
 
-http://localhost:9080/test
+http://localhost:9080/bfgui/test
 
 
 ## API Docs
 
-http://localhost:9080/swagger-ui.html 
+http://localhost:9080/bfgui/swagger-ui.html 

@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundExcepti
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
@@ -12,6 +13,7 @@ import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertReposito
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
+import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +66,9 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
 
     @Autowired
     private TrustedCertificateDetailsService trustedCertificateDetailsService;
+
+    @Autowired
+    private AdminAuditService adminAuditService;
 
     @Autowired
     private Validator validator;
@@ -177,6 +182,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         changeControlCert.setResultMeta3(cert.getThumbprint256());
         changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(cert));
         cert.setChangeID(changeControlCertService.save(changeControlCert).getChangeID());
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getChanger()));
         return cert;
     }
 
@@ -193,6 +199,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
             cert = approveCertificate(changeControlCert);
         }
         changeControlCertService.setApproveInfo(changeControlCert, userName, approverComments, status);
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
         return cert;
     }
 

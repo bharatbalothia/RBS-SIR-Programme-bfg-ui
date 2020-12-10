@@ -31,6 +31,8 @@ public class GenericSpecification {
                     if ("ChangeControl".equals(root.getModel().getName())) {
                         from = root.join("entityLog");
                     } else from = root;
+                    if (finalText.isEmpty())
+                        predicates.add(cb.and(from.get("requestorDN").isNull(), from.get("responderDN").isNull()));
                     predicates.add(valueContains.apply(from, "requestorDN"));
                     predicates.add(valueContains.apply(from, "responderDN"));
                 } else {

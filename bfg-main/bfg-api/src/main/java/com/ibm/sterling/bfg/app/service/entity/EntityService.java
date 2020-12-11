@@ -41,4 +41,5 @@ public interface EntityService extends FieldValueExists {
                                                               String inboundService, List<String> inboundRequestType,
                                                               Integer entityId);
 
+    void updatePendingEntity(ChangeControl changeControl, Entity entity);
 }

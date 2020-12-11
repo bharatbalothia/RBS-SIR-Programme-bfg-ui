@@ -3,7 +3,9 @@ package com.ibm.sterling.bfg.app.model.audit;
 public enum EventType {
     ACCEPTED("approved"),
     REJECTED("rejected"),
-    PENDING("requested");
+    PENDING("requested"),
+    REQUEST_EDITED("request-edited"),
+    REQUEST_CANCELLED("request-cancelled");
 
     EventType(String attributeName) {
         this.attributeName = attributeName;

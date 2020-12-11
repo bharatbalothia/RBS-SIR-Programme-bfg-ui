@@ -7,6 +7,7 @@ import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
+import com.ibm.sterling.bfg.app.model.audit.EventType;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
@@ -269,6 +270,16 @@ public class EntityServiceImpl implements EntityService {
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public void updatePendingEntity(ChangeControl changeControl, Entity entity) {
+        String currentName = changeControl.getResultMeta1();
+        String newName = entity.getEntity();
+        String actionValue = currentName.equals(newName) ? currentName : currentName + " -> " + newName;
+        changeControlService.updateChangeControl(changeControl, entity);
+        adminAuditService.fireAdminAuditEvent(
+                new AdminAuditEventRequest(changeControl, EventType.REQUEST_EDITED, actionValue));
     }
 
 }

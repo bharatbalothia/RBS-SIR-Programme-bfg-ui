@@ -105,7 +105,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) {
+    public TrustedCertificate updatePendingCertificate(ChangeControlCert changeControlCert, String certName, String changerComments) {
         checkStatusOfChangeControl(changeControlCert);
         if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
             TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();

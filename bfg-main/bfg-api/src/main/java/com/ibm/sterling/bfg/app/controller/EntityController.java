@@ -137,7 +137,7 @@ public class EntityController {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
-        changeControlService.updateChangeControl(changeControl, entity);
+        entityService.updatePendingEntity(changeControl, entity);
         return ok(changeControl);
     }
 

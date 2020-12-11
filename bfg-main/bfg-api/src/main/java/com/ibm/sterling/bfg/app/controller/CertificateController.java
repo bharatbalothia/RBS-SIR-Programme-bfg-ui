@@ -143,7 +143,7 @@ public class CertificateController {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));
-        return ok(certificateService.editChangeControl(changeControlCert, name, Optional.ofNullable(edit.get("comments")).map(String::valueOf).orElse(null)));
+        return ok(certificateService.updatePendingCertificate(changeControlCert, name, Optional.ofNullable(edit.get("comments")).map(String::valueOf).orElse(null)));
     }
 
     @DeleteMapping("pending/{id}")

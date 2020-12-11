@@ -139,7 +139,7 @@ public class CertificateController {
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificate> updatePendingCertificates(@PathVariable(name = "id") String id,
-                                                                      @RequestBody Map<String, Object> edit) {
+                                                                        @RequestBody Map<String, Object> edit) {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));

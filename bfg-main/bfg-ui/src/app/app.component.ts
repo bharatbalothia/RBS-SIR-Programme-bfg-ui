@@ -13,15 +13,15 @@ export class AppComponent {
   ) {
     this.matIconRegistry.addSvgIcon(
       'cancel-red-button',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/icons/cancel-red-button.svg')
+      this.domSanitizer.bypassSecurityTrustResourceUrl('./assets/icons/cancel-red-button.svg')
     );
     this.matIconRegistry.addSvgIcon(
       'green-circle-with-check',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/icons/green-circle-with-check.svg')
+      this.domSanitizer.bypassSecurityTrustResourceUrl('./assets/icons/green-circle-with-check.svg')
     );
     this.matIconRegistry.addSvgIcon(
       'yellow-round-error',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/icons/yellow-round-error.svg')
+      this.domSanitizer.bypassSecurityTrustResourceUrl('./assets/icons/yellow-round-error.svg')
     );
   }
 }

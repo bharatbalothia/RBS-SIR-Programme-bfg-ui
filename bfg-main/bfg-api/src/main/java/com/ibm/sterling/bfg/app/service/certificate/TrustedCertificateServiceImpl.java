@@ -151,7 +151,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
                 trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
-        if (!trustedCertificateDetails.getIsValid())
+        if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certificateName);

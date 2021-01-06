@@ -73,7 +73,7 @@ public class TrustedCertificateDetailsService {
         validateCertificateUsingAugmentedService(x509Certificate, trustedCertificateDetails, errors, warnings);
         if (!errors.isEmpty()) {
             trustedCertificateDetails.setCertificateErrors(errors);
-            trustedCertificateDetails.setIsValid(false);
+            trustedCertificateDetails.setValid(false);
         }
         if (!warnings.isEmpty()) {
             trustedCertificateDetails.setCertificateWarnings(Collections.singletonList(warnings));

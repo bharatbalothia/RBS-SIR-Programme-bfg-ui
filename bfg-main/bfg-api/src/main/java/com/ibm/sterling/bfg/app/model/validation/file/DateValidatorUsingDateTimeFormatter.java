@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model.validation;
+package com.ibm.sterling.bfg.app.model.validation.file;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

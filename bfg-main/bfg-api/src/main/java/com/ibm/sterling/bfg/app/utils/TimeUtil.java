@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
@@ -76,5 +77,15 @@ public class TimeUtil {
 
     public static LocalDateTime formatStringToLocalDateTime(String date) {
         return LocalDateTime.parse(date);
+    }
+
+    public static boolean isStringDateBefore(String from, String to) {
+        try {
+            LocalDateTime dateFrom = LocalDateTime.parse(from);
+            LocalDateTime dateTo = LocalDateTime.parse(to);
+            return dateFrom.isBefore(dateTo);
+        } catch (DateTimeParseException exception) {
+            return false;
+        }
     }
 }

@@ -64,6 +64,18 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    public boolean existsByMailboxPathOut(String mailboxPathOut) {
+        LOG.info("exists by mailboxPathOut: {}", mailboxPathOut);
+        return entityRepository.existsByMailboxPathOut(mailboxPathOut);
+    }
+
+    @Override
+    public boolean existsByMqQueueOut(String mqQueueOut) {
+        LOG.info("exists by mqQueueOut: {}", mqQueueOut);
+        return entityRepository.existsByMqQueueOut(mqQueueOut);
+    }
+
+    @Override
     public List<Entity> listAll() {
         return entityRepository.findAll();
     }

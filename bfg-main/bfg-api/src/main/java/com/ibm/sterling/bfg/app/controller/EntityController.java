@@ -170,9 +170,30 @@ public class EntityController {
         return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 
-    @GetMapping("/existence")
+    @GetMapping("/existence/entity-service")
     public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ok(entityService.existsByServiceAndEntity(service, entity));
+    }
+
+    @GetMapping("/existence/mailbox")
+    public ResponseEntity<?> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
+        return ok(entityService.existsByMailboxPathOut(mailboxPathOut));
+    }
+
+    @GetMapping("/existence/queue")
+    public ResponseEntity<?> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
+        return ok(entityService.existsByMqQueueOut(mqQueueOut));
+    }
+
+    @GetMapping("/existence/route-attributes")
+    public ResponseEntity<?> getRequestType(@RequestParam String inboundRequestorDN,
+                                            @RequestParam String inboundResponderDN,
+                                            @RequestParam String inboundService,
+                                            @RequestParam List<String> inboundRequestType) {
+        return Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
+                inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
+                .map(entity -> ok(Boolean.TRUE))
+                .orElse(ok(Boolean.FALSE));
     }
 
     @GetMapping("inbound-request-type")

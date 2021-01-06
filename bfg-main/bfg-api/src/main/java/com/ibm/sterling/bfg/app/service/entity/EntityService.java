@@ -42,4 +42,8 @@ public interface EntityService extends FieldValueExists {
                                                               Integer entityId);
 
     void updatePendingEntity(ChangeControl changeControl, Entity entity);
+
+    boolean existsByMailboxPathOut(String mailboxPathOut);
+
+    boolean existsByMqQueueOut(String mqQueueOut);
 }

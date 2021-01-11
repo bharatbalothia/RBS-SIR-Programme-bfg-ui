@@ -553,13 +553,14 @@ export class EntityCreateComponent implements OnInit {
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
+        const schedules = get(this.schedulesFormGroup, 'controls.schedules.value');
         const entity = {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
-          schedules: get(this.schedulesFormGroup, 'controls.schedules.value'),
+          schedules: this.isCloneAction && schedules ? schedules.map(el => ({ ...el, scheduleId: null })) : schedules,
           inboundRequestorDN: get(this.entityPageFormGroup.controls.inboundRequestorDN, 'value'),
           inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
           inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
@@ -626,15 +627,15 @@ export class EntityCreateComponent implements OnInit {
     const entity = this.entityPageFormGroup.get('entity');
     const entityName = entity ? entity.value : 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
-      text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
-      yesCaption: `Cancel ${this.isEditing() ? 'editing' : 'creation'}`,
+      title: `Cancel ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
+      text: `Are you sure to cancel the ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
+      yesCaption: `Cancel ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'}`,
       yesCaptionColor: 'warn',
       noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (this.isEditing()) {
+        if (this.isEditing() || this.isCloneAction) {
           const previousURL = get(window.history.state, 'previousURL');
           if (previousURL) {
             this.router.navigate([previousURL], { state: window.history.state });

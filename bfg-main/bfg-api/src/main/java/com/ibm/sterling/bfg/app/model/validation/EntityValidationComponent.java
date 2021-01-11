@@ -95,6 +95,22 @@ public class EntityValidationComponent {
             entity.setNonRepudiation(Boolean.FALSE);
             entity.setE2eSigning(null);
         }
+        entity.setCdNode(null);
+        entity.setIdfWTOMsgId(null);
+        entity.setDnfWTOMsgId(null);
+        entity.setDvfWTOMsgId(null);
+        entity.setSdfWTOMsgId(null);
+        entity.setRsfWTOMsgId(null);
+        entity.setCdfWTOMsgId(null);
+        entity.setMsrWTOMsgId(null);
+        entity.setPsrWTOMsgId(null);
+        entity.setDrrWTOMsgId(null);
+        entity.setRtfWTOMsgId(null);
+        entity.setMbpWTOMsgId(null);
+        entity.setIrishStep2(Boolean.FALSE);
+        entity.setPauseInbound(Boolean.FALSE);
+        entity.setPauseOutbound(Boolean.FALSE);
+        entity.setRouteOutbound(Boolean.TRUE);
     }
 
 }

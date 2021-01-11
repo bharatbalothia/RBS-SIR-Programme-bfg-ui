@@ -147,7 +147,7 @@ export class EntityCreateComponent implements OnInit {
         this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
         this.markAllFieldsTouched();
       }
-      if (this.editableEntity && !(this.isAuthorizedToProceed() && this.tryToProceedPendingEdit())) {
+      if (this.editableEntity && !(this.isAuthorizedToProceed() && this.tryToProceedPendingEdit() && this.tryToProceedEdit())) {
         this.entityTypeFormGroup.addControl('disableProceed', new FormControl('', [Validators.required]));
       }
     },
@@ -769,7 +769,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   tryToProceed() {
-    if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit()) {
+    if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit() && this.tryToProceedEdit()) {
       this.stepper.next();
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
@@ -780,6 +780,9 @@ export class EntityCreateComponent implements OnInit {
   tryToProceedPendingEdit = () => this.pendingChange
     ? (this.pendingChange.operation !== CHANGE_OPERATION.DELETE
       && this.auth.isTheSameUser(this.pendingChange.changer)) : true
+
+  tryToProceedEdit = () => this.editableEntity
+    ? (this.editableEntity.service === ENTITY_SERVICE_TYPE.SCT || this.editableEntity.service === ENTITY_SERVICE_TYPE.GPL) : true
 
   getInboundRequestTypes = (value) => value && Object.keys(value).map(el => ({ key: el, value: value[el] }));
 

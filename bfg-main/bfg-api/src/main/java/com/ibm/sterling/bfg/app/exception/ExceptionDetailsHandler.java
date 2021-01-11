@@ -16,6 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.*;
 
 @Component
@@ -56,6 +57,13 @@ public class ExceptionDetailsHandler {
         }
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"), errors);
+        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+    }
+
+    public <E extends Enum<E> & ErrorCode> ResponseEntity<Object> handleValidationException(
+            ValidationException ex, Class<E> errorCode) {
+        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
+                Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"), Collections.singletonList(ex.getMessage()));
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

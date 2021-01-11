@@ -82,9 +82,9 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return exceptionDetailsHandler.handleConstraintViolation(ex, EntityErrorCode.class);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Object> handleValidationException(ValidationException ex) {
-        return exceptionDetailsHandler.handleValidationException(ex, EntityErrorCode.class);
+    @ExceptionHandler(FieldsValidationException.class)
+    public ResponseEntity<Object> handleValidationException(FieldsValidationException ex) {
+        return exceptionDetailsHandler.handleFieldsValidation(ex, EntityErrorCode.class);
     }
 
     @Override

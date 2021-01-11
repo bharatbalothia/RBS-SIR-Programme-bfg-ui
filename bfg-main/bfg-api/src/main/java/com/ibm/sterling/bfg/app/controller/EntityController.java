@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
 import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,7 +198,9 @@ public class EntityController {
         Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
         .ifPresent(entity -> {
-            throw new ValidationException("Entity properties should be unique for requester DN, responder DN, service, and request types. These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel");
+            throw new FieldsValidationException("Entity properties should be unique for requester DN, responder DN, service, and request types. These match the entity " +
+                    entity.getEntity() + ". Please correct the properties and try again, or cancel",
+                    "routingRules");
         });
         return ok(Boolean.FALSE);
     }

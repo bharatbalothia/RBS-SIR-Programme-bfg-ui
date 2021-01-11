@@ -83,7 +83,7 @@ public class TimeUtil {
         try {
             LocalDateTime dateFrom = LocalDateTime.parse(from);
             LocalDateTime dateTo = LocalDateTime.parse(to);
-            return dateFrom.isBefore(dateTo);
+            return !dateFrom.isAfter(dateTo);
         } catch (DateTimeParseException exception) {
             return false;
         }

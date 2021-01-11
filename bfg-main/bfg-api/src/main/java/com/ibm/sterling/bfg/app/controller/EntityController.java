@@ -20,8 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -190,10 +193,12 @@ public class EntityController {
                                             @RequestParam String inboundResponderDN,
                                             @RequestParam String inboundService,
                                             @RequestParam List<String> inboundRequestType) {
-        return Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
+        Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
-                .map(entity -> ok(Boolean.TRUE))
-                .orElse(ok(Boolean.FALSE));
+        .ifPresent(entity -> {
+            throw new ValidationException("Entity properties should be unique for requester DN, responder DN, service, and request types. These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel");
+        });
+        return ok(Boolean.FALSE);
     }
 
     @GetMapping("inbound-request-type")

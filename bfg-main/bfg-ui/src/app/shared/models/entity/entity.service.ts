@@ -64,12 +64,37 @@ export class EntityService {
   }
 
   isEntityExists(service: string, entity: string): Observable<boolean> {
-    return this.http.get<boolean>(this.apiUrl + 'existence', {
+    return this.http.get<boolean>(this.apiUrl + 'existence/entity-service', {
       params: {
         service,
         entity
       }
     });
+  }
+
+  isMailboxPathOutExists(mailboxPathOut: string): Observable<boolean> {
+    return this.http.get<boolean>(this.apiUrl + 'existence/mailbox', {
+      params: {
+        mailboxPathOut
+      }
+    });
+  }
+
+  isMqQueueOutExists(mqQueueOut: string): Observable<boolean> {
+    return this.http.get<boolean>(this.apiUrl + 'existence/queue', {
+      params: {
+        mqQueueOut
+      }
+    });
+  }
+
+  isRouteAttributesExists(params: {
+    inboundRequestorDN: string,
+    inboundResponderDN: string,
+    inboundService: string,
+    inboundRequestType: string[]
+  }): Observable<boolean> {
+    return this.http.get<boolean>(this.apiUrl + 'existence/route-attributes', { params });
   }
 
   getScheduleFileTypes() {

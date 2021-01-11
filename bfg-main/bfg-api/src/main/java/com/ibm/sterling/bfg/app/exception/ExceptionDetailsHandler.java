@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.exception;
 
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
 import com.ibm.sterling.bfg.app.model.exception.ErrorCode;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.*;
 
 @Component
@@ -56,6 +58,14 @@ public class ExceptionDetailsHandler {
         }
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"), errors);
+        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+    }
+
+    public <E extends Enum<E> & ErrorCode> ResponseEntity<Object> handleFieldsValidation(
+            FieldsValidationException ex, Class<E> errorCode) {
+        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
+                Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"),
+                Collections.singletonList(Collections.singletonMap(ex.getErrorCause(), ex.getMessage())));
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

@@ -4,6 +4,7 @@ import { EntityService } from './entity.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError, take } from 'rxjs/operators';
 import { BIC11, BIC8 } from 'src/app/core/constants/validation-regexes';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 @Injectable({
   providedIn: 'root'
@@ -23,12 +24,34 @@ export class EntityValidators {
     };
   }
 
+  mailboxPathOutValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.entityService.isMailboxPathOutExists(control.value).pipe(
+        take(1),
+        map(exists => {
+          return exists ? { mailboxPathOutExists: true } : null;
+        }), catchError(() => of(null))
+      );
+    };
+  }
+
+  mqQueueOutValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.entityService.isMqQueueOutExists(control.value).pipe(
+        take(1),
+        map(exists => {
+          return exists ? { mqQueueOutExists: true } : null;
+        }), catchError(() => of(null))
+      );
+    };
+  }
+
   entityPatternByServiceValidator(service: AbstractControl): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const pattern = service.value === 'GPL' ? BIC11 : BIC8;
       const error = service.value === 'GPL' ? 'patternBIC11' : 'patternBIC8';
       const match = pattern.test(control.value);
-      return match ? null : { [error]: true } ;
+      return match ? null : { [error]: true };
     };
   }
 
@@ -37,10 +60,10 @@ export class EntityValidators {
       const participantType = control.get('entityParticipantType');
       const directParticipant = control.get('directParticipant');
 
-      if (participantType.value === 'INDIRECT' && directParticipant.validator == null){
+      if (participantType.value === 'INDIRECT' && directParticipant.validator == null) {
         directParticipant.setValidators(Validators.required);
         directParticipant.updateValueAndValidity();
-      } else if ( participantType.value !== 'INDIRECT' && directParticipant.validator != null) {
+      } else if (participantType.value !== 'INDIRECT' && directParticipant.validator != null) {
         directParticipant.clearValidators();
         directParticipant.updateValueAndValidity();
       }

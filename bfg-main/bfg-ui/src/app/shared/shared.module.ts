@@ -47,7 +47,8 @@ import { BusinessProcessDialogComponent } from './components/business-process-di
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { FileTableComponent } from './components/file-table/file-table.component';
 import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
-
+import { OverlayInfoComponent } from './components/overlay-info/overlay-info.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     BusinessProcessDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
-    
+    OverlayInfoComponent,
+
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
@@ -106,7 +108,8 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     NgxDaterangepickerMd.forRoot({
       format: 'DD/MM/YYYY, HH:mm',
       displayFormat: 'DD/MM/YYYY, HH:mm',
-    })
+    }),
+    OverlayModule
   ],
   exports: [
     // Modules
@@ -140,6 +143,7 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     DragDropModule,
     MatSlideToggleModule,
     NgxDaterangepickerMd,
+    OverlayModule,
 
     // Components
     ConfirmDialogComponent,
@@ -154,6 +158,7 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     TransmitDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
+    OverlayInfoComponent,
 
     // Directives
     InputLowercaseDirective,

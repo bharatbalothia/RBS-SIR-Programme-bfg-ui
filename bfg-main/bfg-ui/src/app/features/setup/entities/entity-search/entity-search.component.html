@@ -31,6 +31,17 @@
                     <ng-container matColumnDef="action">
                         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                         <mat-cell *matCellDef="let element">
+                            <a mat-icon-button *ngIf="!element.entityLog" class="action-button"
+                                [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.CLONE, element.entityId]"
+                                [state]="{ pageIndex: pageIndex,
+                                pageSize: pageSize,
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue }" alt="Clone" title="Clone">
+                                <div class="action-icon">
+                                    <mat-icon inline>add</mat-icon>clone
+                                </div>
+                            </a>
                             <button mat-button class="action-button" *ngIf="element.changeID"
                                 (click)="openApprovingDialog(element)">
                                 <div class="action-icon">

@@ -3,7 +3,7 @@ import { getEntityDisplayName } from './entity-display-names';
 export const ENTITY_VALIDATION_MESSAGES = {
     service: [
         { type: 'required', message: `${getEntityDisplayName('service')} is required` },
-        { type: 'forbidden', message: `You don't have enough permissions to proceed with this ${getEntityDisplayName('service')}`}
+        { type: 'forbidden', message: `You don't have enough permissions to proceed with this ${getEntityDisplayName('service')}` }
     ],
     entity: [
         { type: 'required', message: `${getEntityDisplayName('entity')} is required` },
@@ -13,11 +13,11 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     inboundRequestorDN: [
         { type: 'required', message: `${getEntityDisplayName('inboundRequestorDN')} is required` },
-        { type: 'pattern', message: `${getEntityDisplayName('inboundRequestorDN')} should be [ou={ou}]o={BIC8},o=swift format` }
+        { type: 'pattern', message: `${getEntityDisplayName('inboundRequestorDN')} should be [ou={ou}]o={BIC8},o=swift format` },
     ],
     inboundResponderDN: [
         { type: 'required', message: `${getEntityDisplayName('inboundResponderDN')} is required` },
-        { type: 'pattern', message: `${getEntityDisplayName('inboundResponderDN')} should be [ou={ou}]o={BIC8},o=swift format` }
+        { type: 'pattern', message: `${getEntityDisplayName('inboundResponderDN')} should be [ou={ou}]o={BIC8},o=swift format` },
     ],
     inboundService: [
         { type: 'required', message: `${getEntityDisplayName('inboundService')} is required` },
@@ -60,6 +60,10 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     mailboxPathOut: [
         { type: 'required', message: `${getEntityDisplayName('mailboxPathOut')} is required` },
+        { type: 'mailboxPathOutExists', message: `${getEntityDisplayName('entity')} with this ${getEntityDisplayName('mailboxPathOutExists')} already exists` },
+    ],
+    mqQueueOut: [
+        { type: 'mqQueueOutExists', message: `${getEntityDisplayName('entity')} with this ${getEntityDisplayName('mqQueueOut')} already exists` },
     ],
     directParticipant: [
         { type: 'required', message: `${getEntityDisplayName('directParticipant')} is required if ${getEntityDisplayName('entityParticipantType')} is INDIRECT` },

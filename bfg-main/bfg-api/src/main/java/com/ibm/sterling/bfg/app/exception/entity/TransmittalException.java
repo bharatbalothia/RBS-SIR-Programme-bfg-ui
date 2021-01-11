@@ -21,5 +21,4 @@ public class TransmittalException extends RuntimeException {
     public HttpStatus getHttpStatus() {
         return httpStatus;
     }
-
 }

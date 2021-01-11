@@ -152,3 +152,8 @@ mat-form-field {
         height: 2em !important;
     }
 }
+
+// Set default width of toast messages
+.toast-container .ngx-toastr {
+  width: 350px;
+}

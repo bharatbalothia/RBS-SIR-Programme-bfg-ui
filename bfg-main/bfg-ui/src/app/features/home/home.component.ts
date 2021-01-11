@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { Alerts } from 'src/app/shared/models/statistics/alerts.model';
 import { SCTTraffic } from 'src/app/shared/models/statistics/sct-traffic.model';
 import { StatisticsService } from 'src/app/shared/models/statistics/statistics.service';
@@ -16,7 +15,6 @@ export class HomeComponent implements OnInit {
 
   ROUTING_PATHS = ROUTING_PATHS;
 
-  errorMessage: ErrorMessage;
   isLoading = false;
 
   systemErrors: SystemErrors;
@@ -32,7 +30,6 @@ export class HomeComponent implements OnInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -44,7 +41,6 @@ export class HomeComponent implements OnInit {
     },
       error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
       })
 
   getAlerts = () => this.statisticsService.getAlerts().pipe(data => this.setLoading(data)).subscribe((data: Alerts) => {
@@ -53,7 +49,6 @@ export class HomeComponent implements OnInit {
   },
     error => {
       this.isLoading = false;
-      this.errorMessage = getApiErrorMessage(error);
     })
 
   getSCTTraffic = () => this.statisticsService.getSCTTraffic().pipe(data => this.setLoading(data)).subscribe((data: SCTTraffic) => {
@@ -62,7 +57,6 @@ export class HomeComponent implements OnInit {
   },
     error => {
       this.isLoading = false;
-      this.errorMessage = getApiErrorMessage(error);
     })
 
   getMinusMonthsDate = (months) => moment().subtract(months, 'months').format('YYYY-MM-DDTHH:mm:ss');

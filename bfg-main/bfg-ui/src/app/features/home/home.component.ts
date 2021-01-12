@@ -65,11 +65,11 @@ export class HomeComponent implements OnInit {
       this.errorMessage = getApiErrorMessage(error);
     })
 
-  getMinusMonthsDate = (months) => moment().subtract(months, 'months').format('YYYY-MM-DDTHH:mm:ss');
+  getMinusMonthsDate = (months) => moment().utcOffset(0).subtract(months, 'months').format('YYYY-MM-DDTHH:mm:ss');
 
-  getMinusHoursDate = (hours) => moment().subtract(hours, 'hours').format('YYYY-MM-DDTHH:mm:ss');
+  getMinusHoursDate = (hours) => moment().utcOffset(0).subtract(hours, 'hours').format('YYYY-MM-DDTHH:mm:ss');
 
-  getMinusDaysDate = (days) => moment().subtract(days, 'days').format('YYYY-MM-DDTHH:mm:ss');
+  getMinusDaysDate = (days) => moment().utcOffset(0).subtract(days, 'days').format('YYYY-MM-DDTHH:mm:ss');
 
-  getCurrentDate = () => moment().format('YYYY-MM-DDTHH:mm:ss');
+  getCurrentDate = () => moment().utcOffset(0).format('YYYY-MM-DDTHH:mm:ss');
 }

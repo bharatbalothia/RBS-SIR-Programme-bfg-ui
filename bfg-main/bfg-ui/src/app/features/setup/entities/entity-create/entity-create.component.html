@@ -273,6 +273,10 @@
                                 {{getErrorByField('mailboxPathIn')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathIn"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')"
                             [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
                     </section>
@@ -289,6 +293,10 @@
                                 {{getErrorByField('mailboxPathOut')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
                             [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
                     </section>
@@ -316,6 +324,10 @@
                                 {{getErrorByField('mqQueueOut')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
                             [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>
                     </section>

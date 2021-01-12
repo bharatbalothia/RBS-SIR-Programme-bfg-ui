@@ -140,6 +140,9 @@ export class EntityCreateComponent implements OnInit {
           inboundResponderDN: '',
           inboundService: '',
           inboundRequestType: [],
+          mailboxPathIn: '',
+          mailboxPathOut: '',
+          mqQueueOut: '',
         };
         this.onServiceSelect(this.editableEntity.service.toUpperCase(), clonedFormEditableEntity);
       }

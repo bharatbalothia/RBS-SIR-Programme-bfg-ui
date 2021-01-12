@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
 import { getFileSearchDisplayName } from '../file-search-display-names';
@@ -17,6 +17,10 @@ import { FileTableComponent } from 'src/app/shared/components/file-table/file-ta
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatHorizontalStepper } from '@angular/material/stepper';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { CrossFieldErrorMatcher } from 'src/app/shared/classes/CrossFieldErrorMatcher';
+import { dateRangeValidator } from 'src/app/shared/models/search/validators';
+import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 
 @Component({
   selector: 'app-file-search',
@@ -25,32 +29,27 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 })
 export class FileSearchComponent implements OnInit, AfterViewInit {
 
-  getFileSearchDisplayName = getFileSearchDisplayName;
-  FILE_STATUS_ICON = STATUS_ICON;
-
-  isLinear = true;
-
-  errorMessage: ErrorMessage;
-  isLoading = false;
-
   @ViewChild(FileTableComponent)
   fileTableComponent: FileTableComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
+  errorMatcher: ErrorStateMatcher;
+  errorMessage: ErrorMessage;
+
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
 
-  defaultSelectedData: { from: { startDate, endDate }, to: { startDate, endDate } } = {
-    from: {
-      startDate: moment().subtract(1, 'days').hours(0).minutes(0).seconds(0),
-      endDate: moment().subtract(1, 'days').hours(0).minutes(0).seconds(0)
-    },
-    to: {
-      startDate: moment().add(1, 'days').hours(23).minutes(59).seconds(0),
-      endDate: moment().add(1, 'days').hours(23).minutes(59).seconds(0)
-    }
+  getSearchValidationMessage = getSearchValidationMessage;
+  getFileSearchDisplayName = getFileSearchDisplayName;
+  FILE_STATUS_ICON = STATUS_ICON;
 
+  isLinear = true;
+  isLoading = false;
+
+  defaultSelectedData: { from: moment.Moment, to: moment.Moment } = {
+    from: moment().subtract(1, 'days').startOf('day'),
+    to: moment().add(1, 'days').endOf('day')
   };
 
   criteriaFilterObject = { direction: '', service: '' };
@@ -68,17 +67,15 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     private toolTip: TooltipService,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
+    this.errorMatcher = new CrossFieldErrorMatcher();
     this.activatedRoute.queryParams.subscribe(params => {
       this.URLParams = { ...params };
       if (params.startDate) {
         this.defaultSelectedData = {
-          from: params.startDate === 'none' ? null : {
-            startDate: moment(params.startDate),
-            endDate: moment(params.startDate)
-          },
+          from: params.startDate === 'none' ? null : moment(params.startDate),
           to: null
         };
         delete this.URLParams.startDate;
@@ -86,7 +83,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       this.initializeSearchingParametersFormGroup();
       this.getFileCriteriaData();
     });
-
   }
 
   ngAfterViewInit() {
@@ -110,7 +106,10 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       type: [''],
       from: [this.defaultSelectedData.from],
       to: [this.defaultSelectedData.to]
+    }, {
+      validators: [dateRangeValidator('controls.from.value', 'controls.to.value')]
     });
+
     this.criteriaFilterObject = { direction: '', service: '' };
   }
 
@@ -157,8 +156,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
-      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
-      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       outbound: getDirectionBooleanValue(get(this.searchingParametersFormGroup.get('direction'), 'value')),
       page: pageIndex.toString(),
       size: pageSize.toString()
@@ -181,7 +180,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       });
   }
 
-  convertDateToFormat = (date: string) => moment(date).isValid() ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : null;
+  convertDateToFormat = (date: moment.Moment | null) => date && date.format('YYYY-MM-DDTHH:mm:ss');
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.files.content);
@@ -248,22 +247,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       if (refreshRequired) {
         this.getFileCriteriaData();
       }
-    }
-  }
-
-  isInvalidFromDate = (date) => {
-    const endDate = get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null);
-    return endDate && moment(endDate).isBefore(date);
-  }
-
-  isInvalidToDate = (date) => {
-    const startDate = get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null);
-    return startDate && moment(date).isBefore(startDate);
-  }
-
-  onDateChange = (event, control: AbstractControl) => {
-    if (get(event, 'target.value', null) === '') {
-      control.setValue(null);
     }
   }
 

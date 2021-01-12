@@ -12,6 +12,8 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-material-components/datetime-picker": "^2.0.4",
+    "@angular-material-components/moment-adapter": "^2.0.2",
     "@angular/animations": "~9.1.2",
     "@angular/cdk": "^9.2.1",
     "@angular/common": "~9.1.2",
@@ -26,7 +28,6 @@
     "classlist.js": "^1.1.20150312",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
-    "ngx-daterangepicker-material": "^4.0.1",
     "ngx-toastr": "^12.1.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",

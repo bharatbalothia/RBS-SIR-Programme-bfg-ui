@@ -14,7 +14,6 @@
             <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <app-error-template [errorMessage]="errorMessage"></app-error-template>
             <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
                 <section>
                     <mat-form-field>

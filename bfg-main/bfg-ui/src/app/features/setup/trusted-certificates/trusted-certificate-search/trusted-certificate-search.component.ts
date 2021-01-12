@@ -10,7 +10,6 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
@@ -37,8 +36,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
   thumbprint256SearchingValue = '';
-
-  errorMessage: ErrorMessage;
 
   isLoading = true;
   isLoadingDetails = false;
@@ -73,7 +70,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   getTrustedCertificateList(pageIndex: number, pageSize: number) {
     this.isLoading = true;
-    this.errorMessage = null;
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
       certName: this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
@@ -89,7 +85,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
     },
       (error) => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
       });
   }
 
@@ -116,7 +111,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {
@@ -152,7 +146,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {
@@ -167,7 +160,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
       const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
       if (certificateId) {
         this.isLoadingDetails = true;
-        this.errorMessage = null;
         this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
           .then(data => {
             this.isLoadingDetails = false;
@@ -175,7 +167,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {

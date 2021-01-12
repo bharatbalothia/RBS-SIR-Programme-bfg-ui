@@ -11,6 +11,9 @@
               password="{aes}AJmY9rYBsBOD1bOgw8KfhFdRR8RIt8xJcSvJHfFtt1IE"/>
     <authData id="apiAuthData" user="{aes}AIs50WaNwyQLAFNC0nFumQLfghkdfU5FUkr2Tin0nkZX"
               password="{aes}APcth/ngBlMPWFeXPq3vEHnrWTOXkqfp65ECdzRZTrha"/>
+    <authData id="tokenSecretAuthData"
+              user="{aes}AAuJv4RXt1fUNhNPonX8+yC+tMvyWE5AplZHKYtiD1RwQw99Ul/Mlk/snNrj6ohJpI64t+ezALvuJPo4Jb1WFv8="
+              password="{aes}APfU7FjRMPdVFEnECbCjVjOHXLsPjqwdOV4QRNPItaBrzo5BmeQ0si0XaiLZZfPQYw=="/>
 
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint" host="${default.host}" httpPort="${default.http.port}" httpsPort="9443"/>

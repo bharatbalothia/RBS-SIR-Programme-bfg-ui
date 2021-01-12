@@ -4,9 +4,6 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <div class="top-error-message">
-            <app-error-template [errorMessage]="errorMessage"></app-error-template>
-        </div>
         <mat-tab-group *ngIf="tabs" class="file-details-tabs">
             <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
                 <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [actions]="actions">

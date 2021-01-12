@@ -14,7 +14,7 @@ public class TrustedCertificateDetails {
     private Map<String, List<String>> issuer;
     private Map<String, List<String>> subject;
     private List<Map<String, String>> authChainReport = null;
-    private boolean isValid = true;
+    private boolean valid = true;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String, List<String>>> certificateErrors;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -52,8 +52,8 @@ public class TrustedCertificateDetails {
         return authChainReport;
     }
 
-    public boolean getIsValid() {
-        return isValid;
+    public boolean isValid() {
+        return valid;
     }
 
     public List<Map<String, List<String>>> getCertificateErrors() {
@@ -96,8 +96,8 @@ public class TrustedCertificateDetails {
         this.authChainReport = authChainReport;
     }
 
-    public void setIsValid(boolean isValid) {
-        this.isValid = isValid;
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 
     public void setCertificateErrors(List<Map<String, List<String>>> certificateErrors) {

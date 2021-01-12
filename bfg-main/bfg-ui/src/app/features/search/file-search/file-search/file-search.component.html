@@ -3,11 +3,6 @@
         <mat-card-title>File Search Monitor
         </mat-card-title>
     </mat-card-header>
-    <mat-card-content class="card-content">
-        <div class="top-error-message">
-            <app-error-template [errorMessage]="errorMessage"></app-error-template>
-        </div>
-    </mat-card-content>
     <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
         <mat-step [stepControl]="searchingParametersFormGroup">
             <form [formGroup]="searchingParametersFormGroup">

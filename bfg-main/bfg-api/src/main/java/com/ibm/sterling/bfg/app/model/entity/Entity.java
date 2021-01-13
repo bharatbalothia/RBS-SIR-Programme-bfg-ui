@@ -124,7 +124,7 @@ public class Entity implements EntityType {
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "COMPRESSION")
     private Boolean compression = Boolean.FALSE;
-    @NotNull(message = "MAILBOXPATHIN has to be present",
+    @NotBlank(message = "MAILBOXPATHIN has to be present",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAILBOXPATHIN")
@@ -134,7 +134,7 @@ public class Entity implements EntityType {
             fieldName = "MAILBOXPATHOUT",
             message = "MAILBOXPATHOUT has to be unique",
             groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
-    @NotNull(message = "MAILBOXPATHOUT has to be present",
+    @NotBlank(message = "MAILBOXPATHOUT has to be present",
             groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAILBOXPATHOUT")

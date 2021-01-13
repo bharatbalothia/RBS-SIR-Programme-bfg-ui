@@ -277,8 +277,8 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')"
                             [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['mailboxPathOut'] || 'mailboxPathOut'}}</mat-label>
                             <input matInput formControlName="mailboxPathOut" required>
                             <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathOut">
@@ -308,8 +308,8 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueIn')"
                             [tip]="getTooltip('mqQueueIn', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQueueOut'] || 'mqQueueOut'}}</mat-label>
                             <input matInput formControlName="mqQueueOut">
                             <mat-error *ngFor="let validation of entityValidationMessages.mqQueueOut">

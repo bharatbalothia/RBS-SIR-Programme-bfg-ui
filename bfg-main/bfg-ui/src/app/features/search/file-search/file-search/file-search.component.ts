@@ -113,6 +113,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   initMinMaxDate() {
     this.minDate = this.defaultSelectedData.from;
     this.maxDate = this.defaultSelectedData.to;
+    this.searchingParametersFormGroup.controls.from.markAsTouched();
+    this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
 
   getFileCriteriaData = () => {

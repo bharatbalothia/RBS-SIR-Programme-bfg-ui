@@ -88,8 +88,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         };
         delete this.URLParams.startDate;
       }
-      this.initMinMaxDate();
       this.initializeSearchingParametersFormGroup();
+      this.initMinMaxDate();
       this.getTransactionCriteriaData();
     });
   }
@@ -124,6 +124,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   initMinMaxDate() {
     this.minDate = this.defaultSelectedData.from;
     this.maxDate = this.defaultSelectedData.to;
+    this.searchingParametersFormGroup.controls.from.markAsTouched();
+    this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
 
   getTransactionCriteriaData = () =>

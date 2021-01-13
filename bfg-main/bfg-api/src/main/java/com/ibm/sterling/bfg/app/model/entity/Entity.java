@@ -14,10 +14,9 @@ import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.DebugStringToIntegerConverter;
 import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -25,8 +24,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 
 @EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
 @EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
@@ -37,7 +34,6 @@ import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNu
 @Table(name = "SCT_ENTITY")
 public class Entity implements EntityType {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LogManager.getLogger(Entity.class);
 
     @Id
     @Column(name = "ENTITY_ID")
@@ -128,6 +124,9 @@ public class Entity implements EntityType {
                     SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "COMPRESSION")
     private Boolean compression = Boolean.FALSE;
+    @NotNull(message = "MAILBOXPATHIN has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAILBOXPATHIN")
     private String mailboxPathIn = "";
     @Unique(
@@ -135,6 +134,9 @@ public class Entity implements EntityType {
             fieldName = "MAILBOXPATHOUT",
             message = "MAILBOXPATHOUT has to be unique",
             groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
+    @NotNull(message = "MAILBOXPATHOUT has to be present",
+            groups = {GplValidation.PostValidation.class, GplValidation.PutValidation.class,
+                    SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Column(name = "MAILBOXPATHOUT")
     private String mailboxPathOut = "";
     @Column(name = "MQQUEUEIN")
@@ -303,22 +305,8 @@ public class Entity implements EntityType {
     @Valid
     private List<Schedule> schedules = new ArrayList<>();
 
-    @PrePersist
-    @PreUpdate
-    public void init() {
-        LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
-        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
-        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
-        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
-    }
-
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public static Logger getLog() {
-        return LOG;
     }
 
     public Integer getEntityId() {

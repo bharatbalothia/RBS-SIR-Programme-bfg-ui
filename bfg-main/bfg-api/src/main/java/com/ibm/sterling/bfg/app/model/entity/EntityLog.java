@@ -6,8 +6,6 @@ import com.ibm.sterling.bfg.app.utils.StringTimeToIntegerMinuteConverter;
 import com.ibm.sterling.bfg.app.utils.StringToListConverter;
 import com.ibm.sterling.bfg.app.utils.StringToScheduleListConverter;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -18,13 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
-
 @Entity
 @Table(name = "SCT_ENTITY_LOG")
 public class EntityLog {
-    private static final Logger LOG = LogManager.getLogger(EntityLog.class);
-
     @Id
     @Column(name = "ENTITY_LOG_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCT_ENTITY_LOG_IDSEQ")
@@ -270,16 +264,6 @@ public class EntityLog {
         this.schedules = entity.getSchedules();
         this.schedules.forEach(
                 schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTime(schedule.getTimeStart())));
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void init() {
-        LOG.debug("Setting {} + {} defaults for mailbox MQ and SWIFT fields.", entity, service);
-        if (checkStringEmptyOrNull(mailboxPathIn)) mailboxPathIn = entity + "_" + service;
-        if (checkStringEmptyOrNull(mailboxPathOut)) mailboxPathOut = entity + "_" + service;
-        if (checkStringEmptyOrNull(mqQueueIn)) mqQueueIn = entity + "_" + service;
-        if (checkStringEmptyOrNull(mqQueueOut)) mqQueueOut = entity + "_" + service;
     }
 
     public String getEntityLogId() {

@@ -62,10 +62,10 @@ public class EntityValidationComponent {
             entity.setMaxTransfersPerBulk(0);
             entity.setStartOfDay("00:00");
             entity.setEndOfDay("00:00");
-            entity.setMailboxPathIn(null);
-            entity.setMailboxPathOut(null);
-            entity.setMqQueueIn(null);
-            entity.setMqQueueOut(null);
+            entity.setMailboxPathIn(entity.getEntity() + "_GPL");
+            entity.setMailboxPathOut(entity.getEntity() + "_GPL");
+            entity.setMqQueueIn(entity.getEntity() + "_GPL");
+            entity.setMqQueueOut(entity.getEntity() + "_GPL");
             entity.setCompression(Boolean.FALSE);
             entity.setEntityParticipantType(null);
             entity.setDirectParticipant(null);

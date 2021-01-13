@@ -13,10 +13,8 @@ import { get } from 'lodash';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { Router } from '@angular/router';
@@ -35,7 +33,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   isLoading = true;
   isLoadingDetails = false;
-  errorMessage: ErrorMessage;
 
   changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
@@ -68,7 +65,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
       },
         error => {
           this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
         });
   }
 
@@ -95,7 +91,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {
@@ -131,7 +126,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {
@@ -153,7 +147,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
           },
             error => {
               this.isLoadingDetails = false;
-              this.errorMessage = getApiErrorMessage(error);
             });
       }
       else {

@@ -5,9 +5,6 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <div class="top-error-message">
-            <app-error-template [errorMessage]="errorMessage"></app-error-template>
-        </div>
         <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getSummaryFieldsSource()">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">

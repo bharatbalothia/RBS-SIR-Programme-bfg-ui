@@ -50,9 +50,9 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { NotificationHttpInterceptor } from './services/NotificationHttpInterceptor';
 import { NotificationService } from './services/NotificationService';
 import { ToastrModule } from 'ngx-toastr';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -121,10 +121,6 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd.forRoot({
-      format: 'DD/MM/YYYY, HH:mm',
-      displayFormat: 'DD/MM/YYYY, HH:mm',
-    }),
     OverlayModule,
     ToastrModule.forRoot(),
     NgxMatDatetimePickerModule,
@@ -162,7 +158,6 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd,
     OverlayModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,

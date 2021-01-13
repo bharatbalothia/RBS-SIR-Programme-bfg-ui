@@ -37,7 +37,7 @@ public class AuthExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity handleAuthenticationFailedException(AuthenticationFailedException ex) {
-        ErrorMessage error = errorMessageHandler.getErrorMessage(AuthErrorCode.FAIL);
+        ErrorMessage error = errorMessageHandler.getErrorMessage(AuthErrorCode.BadCredentialsException);
         Optional.ofNullable(ex.getMessage()).ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
     }

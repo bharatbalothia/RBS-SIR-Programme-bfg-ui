@@ -4,11 +4,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.*;
 import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
 
 public class TimeUtil {
@@ -76,5 +78,16 @@ public class TimeUtil {
 
     public static LocalDateTime formatStringToLocalDateTime(String date) {
         return LocalDateTime.parse(date);
+    }
+
+    public static boolean isStringDateBefore(String from, String to) {
+        try {
+            if (checkStringEmptyOrNull(from) || checkStringEmptyOrNull(to)) return true;
+            LocalDateTime dateFrom = LocalDateTime.parse(from);
+            LocalDateTime dateTo = LocalDateTime.parse(to);
+            return !dateFrom.isAfter(dateTo);
+        } catch (DateTimeParseException exception) {
+            return false;
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.*;
+import com.ibm.sterling.bfg.app.model.validation.file.FromToDateValid;
 
 import javax.validation.constraints.Min;
 
+@FromToDateValid
 public class SearchCriteria {
     private String type;
     private String service;
@@ -135,4 +137,8 @@ public class SearchCriteria {
         this.excludeArchive = excludeArchive;
     }
 
+    @JsonIgnore
+    public boolean isDateValid() {
+        return true;
+    }
 }

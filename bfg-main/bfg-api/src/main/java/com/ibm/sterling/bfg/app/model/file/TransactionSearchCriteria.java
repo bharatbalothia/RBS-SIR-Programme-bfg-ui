@@ -1,7 +1,8 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.*;
-import com.ibm.sterling.bfg.app.model.validation.DateValid;
+import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
+import com.ibm.sterling.bfg.app.utils.TimeUtil;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -81,4 +82,9 @@ public class TransactionSearchCriteria extends SearchCriteria {
         this.hasMessageId = hasMessageId;
     }
 
+    @JsonIgnore
+    @Override
+    public boolean isDateValid() {
+        return TimeUtil.isStringDateBefore(settlementFrom, settlementTo);
+    }
 }

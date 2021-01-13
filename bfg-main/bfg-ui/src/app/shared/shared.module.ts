@@ -43,13 +43,26 @@ import { DisableControlDirective } from './directives/disable-control.directive'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
-import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { FileTableComponent } from './components/file-table/file-table.component';
 import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
 import { NotificationHttpInterceptor } from './services/NotificationHttpInterceptor';
 import { NotificationService } from './services/NotificationService';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
+const DATE_FORMAT: NgxMatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY, HH:mm',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY, HH:mm',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [
@@ -105,11 +118,10 @@ import { ToastrModule } from 'ngx-toastr';
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd.forRoot({
-      format: 'DD/MM/YYYY, HH:mm',
-      displayFormat: 'DD/MM/YYYY, HH:mm',
-    }),
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatDatepickerModule
   ],
   exports: [
     // Modules
@@ -142,7 +154,9 @@ import { ToastrModule } from 'ngx-toastr';
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatDatepickerModule,
 
     // Components
     ConfirmDialogComponent,
@@ -171,6 +185,10 @@ import { ToastrModule } from 'ngx-toastr';
       multi: true
     },
     NotificationService,
+    {
+      provide: NGX_MAT_DATE_FORMATS,
+      useValue: DATE_FORMAT
+    }
     // { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })

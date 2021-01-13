@@ -14,11 +14,9 @@ export class TokenInterceptor implements HttpInterceptor {
         req: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
-        console.log('expired');
         return next.handle(req)
             .pipe(
                 catchError((error: any) => {
-                    console.log(error);
                     if (error instanceof HttpErrorResponse) {
                         if (error.status === 401) {
                             this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);

@@ -1,6 +1,7 @@
 <mat-card class="entity-create-card">
     <mat-card-header>
-        <mat-card-title>{{editableEntity ? 'Edit ' + editableEntity.entity + ' entity' : 'Create Entity'}}
+        <mat-card-title>{{editableEntity ? (isCloneAction ? 'Clone entity' : 'Edit ' + editableEntity.entity + '
+            entity') : 'Create Entity'}}
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
@@ -38,8 +39,9 @@
             <mat-step *ngIf="entityPageFormGroup" [stepControl]="entityPageFormGroup">
                 <form [formGroup]="entityPageFormGroup">
                     <ng-template matStepLabel>Complete entity page</ng-template>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('entity')">
+
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('entity')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
                             <input matInput formControlName="entity" required>
                             <mat-error *ngFor="let validation of entityValidationMessages.entity">
@@ -51,12 +53,16 @@
                                 {{getErrorByField('entity')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.entity"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
                         </app-tooltip>
                     </section>
                     <section *ngIf="entityPageFormGroup.get('routeInbound')" class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['routeInbound'] || 'routeInbound'}}:*</label>
+                        <label class='radio-group-label'>{{entityDisplayNames['routeInbound'] ||
+                            'routeInbound'}}:*</label>
                         <mat-radio-group formControlName='routeInbound'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -79,10 +85,14 @@
                                 {{getErrorByField('inboundRequestorDN')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundRequestorDN"></app-overlay-info>
+
                         <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('inboundResponderDN')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundResponderDN')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
                             <input matInput formControlName="inboundResponderDN" appInputLowercase required>
                             <mat-error *ngFor="let validation of entityValidationMessages.inboundResponderDN">
@@ -94,11 +104,15 @@
                                 {{getErrorByField('inboundResponderDN')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundResponderDN"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
                             [tip]="getTooltip('inboundResponderDN', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('inboundService')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundService')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundService'] || 'inboundService'}}</mat-label>
                             <input matInput formControlName="inboundService" required>
                             <mat-error *ngFor="let validation of entityValidationMessages.inboundService">
@@ -110,11 +124,15 @@
                                 {{getErrorByField('inboundService')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundService"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
                             [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('inboundRequestType')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundRequestType')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
                             <mat-select formControlName="inboundRequestType" multiple
                                 [required]="get(requiredFields,'inboundRequestType')">
@@ -142,6 +160,10 @@
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundRequestType"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
                             [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
                     </section>
@@ -158,8 +180,8 @@
                             [tip]="getTooltip('inboundDir', 'entity')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundRoutingRule')">
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['inboundRoutingRule'] || 'inboundRoutingRule'}}:*</label>
+                        <label class='radio-group-label'>{{entityDisplayNames['inboundRoutingRule'] ||
+                            'inboundRoutingRule'}}:*</label>
                         <mat-radio-group formControlName='inboundRoutingRule'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -248,11 +270,12 @@
                                 {{getErrorByField('mailboxPathIn')}}
                             </mat-error>
                         </mat-form-field>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')"
                             [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['mailboxPathOut'] || 'mailboxPathOut'}}</mat-label>
                             <input matInput formControlName="mailboxPathOut" required>
                             <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathOut">
@@ -264,6 +287,10 @@
                                 {{getErrorByField('mailboxPathOut')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
                             [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
                     </section>
@@ -278,14 +305,23 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueIn')"
                             [tip]="getTooltip('mqQueueIn', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['mqQueueOut'] || 'mqQueueOut'}}</mat-label>
                             <input matInput formControlName="mqQueueOut">
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQueueOut">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('mqQueueOut').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('mqQueueOut')">
                                 {{getErrorByField('mqQueueOut')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
                             [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>
                     </section>
@@ -335,7 +371,8 @@
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button"
+                            (click)="validateRouteAttributes()">Next</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
@@ -736,8 +773,8 @@
                         <app-tooltip [tip]="getTooltip('snF', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['deliveryNotification'] || 'deliveryNotification'}}:</label>
+                        <label class='radio-group-label'>{{entityDisplayNames['deliveryNotification'] ||
+                            'deliveryNotification'}}:</label>
                         <mat-radio-group formControlName='deliveryNotification'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -748,8 +785,8 @@
                         <app-tooltip [tip]="getTooltip('deliveryNotification', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('nonRepudiation')">
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] || 'nonRepudiation'}}:</label>
+                        <label class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] ||
+                            'nonRepudiation'}}:</label>
                         <mat-radio-group formControlName='nonRepudiation'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -882,7 +919,9 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button class="action-button" color='primary'
-                            (click)="sendEntity(isEditing())">{{isEditing() ? 'Edit' : 'Create'}}</button>
+                            (click)="sendEntity(!isCloneAction && isEditing())">{{!isCloneAction && isEditing() ? 'Edit'
+                            :
+                            'Create'}}</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>

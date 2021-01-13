@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
 import com.ibm.sterling.bfg.app.model.entity.*;
 import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
@@ -170,9 +171,34 @@ public class EntityController {
         return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
     }
 
-    @GetMapping("/existence")
+    @GetMapping("/existence/entity-service")
     public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ok(entityService.existsByServiceAndEntity(service, entity));
+    }
+
+    @GetMapping("/existence/mailbox")
+    public ResponseEntity<?> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
+        return ok(entityService.existsByMailboxPathOut(mailboxPathOut));
+    }
+
+    @GetMapping("/existence/queue")
+    public ResponseEntity<?> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
+        return ok(entityService.existsByMqQueueOut(mqQueueOut));
+    }
+
+    @GetMapping("/existence/route-attributes")
+    public ResponseEntity<?> getRequestType(@RequestParam String inboundRequestorDN,
+                                            @RequestParam String inboundResponderDN,
+                                            @RequestParam String inboundService,
+                                            @RequestParam List<String> inboundRequestType) {
+        Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
+                inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
+                .ifPresent(entity -> {
+                    throw new FieldsValidationException("Entity properties should be unique for requester DN, responder DN, service, and request types. " +
+                            "These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel",
+                            "routingRules");
+                });
+        return ok(Boolean.FALSE);
     }
 
     @GetMapping("inbound-request-type")

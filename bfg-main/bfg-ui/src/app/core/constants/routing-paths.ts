@@ -5,6 +5,7 @@ export const ROUTING_PATHS = {
   SEARCH: 'search',
   PENDING: 'pending',
   EDIT: 'edit',
+  CLONE: 'clone',
   PAGE_NOT_FOUND: '**',
 
   // login routes

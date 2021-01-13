@@ -45,12 +45,14 @@ import { TransmitDialogComponent } from './components/transmit-dialog/transmit-d
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
 import { FileTableComponent } from './components/file-table/file-table.component';
 import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
+import { OverlayInfoComponent } from './components/overlay-info/overlay-info.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { NotificationHttpInterceptor } from './services/NotificationHttpInterceptor';
 import { NotificationService } from './services/NotificationService';
 import { ToastrModule } from 'ngx-toastr';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -81,6 +83,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     BusinessProcessDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
+    OverlayInfoComponent,
 
     // Directives
     InputLowercaseDirective,
@@ -118,6 +121,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
+    OverlayModule,
     ToastrModule.forRoot(),
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
@@ -154,6 +158,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
+    OverlayModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
     MatDatepickerModule,
@@ -171,6 +176,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     TransmitDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
+    OverlayInfoComponent,
 
     // Directives
     InputLowercaseDirective,

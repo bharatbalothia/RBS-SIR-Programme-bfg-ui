@@ -1,5 +1,5 @@
 export interface Schedule {
-    scheduleID: number;
+    scheduleId: number;
     entityId: number;
     isWindow: boolean;
     timeStart: string;

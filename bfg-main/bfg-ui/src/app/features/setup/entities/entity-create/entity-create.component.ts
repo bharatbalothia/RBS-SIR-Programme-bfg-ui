@@ -13,7 +13,7 @@ import { EntityValidators } from '../../../../shared/models/entity/entity-valida
 import { SWIFT_DN, TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ENTITY_SERVICE_TYPE, ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
@@ -27,6 +27,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { catchError, map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-entity-create',
@@ -82,6 +83,8 @@ export class EntityCreateComponent implements OnInit {
 
   requiredFields: { [filedName: string]: boolean } = {};
 
+  isCloneAction = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -113,6 +116,9 @@ export class EntityCreateComponent implements OnInit {
               });
         }
         else {
+          if (this.router.url.includes(ROUTING_PATHS.CLONE)) {
+            this.isCloneAction = true;
+          }
           this.getEntityById(this.entityService.getEntityById(params.entityId));
         }
       }
@@ -126,9 +132,24 @@ export class EntityCreateComponent implements OnInit {
       this.entityTypeFormGroup = this.formBuilder.group({
         service: [this.editableEntity.service, Validators.required]
       });
-      this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
-      this.markAllFieldsTouched();
-      if (this.editableEntity && !(this.isAuthorizedToProceed() && this.tryToProceedPendingEdit())) {
+      if (this.isCloneAction) {
+        const clonedFormEditableEntity = {
+          ...this.editableEntity,
+          entity: '',
+          inboundRequestorDN: '',
+          inboundResponderDN: '',
+          inboundService: '',
+          inboundRequestType: [],
+          mailboxPathOut: '',
+          mqQueueOut: '',
+        };
+        this.onServiceSelect(this.editableEntity.service.toUpperCase(), clonedFormEditableEntity);
+      }
+      else {
+        this.onServiceSelect(this.editableEntity.service.toUpperCase(), this.editableEntity);
+        this.markAllFieldsTouched();
+      }
+      if (this.editableEntity && !(this.isAuthorizedToProceed() && this.tryToProceedPendingEdit() && this.tryToProceedEdit())) {
         this.entityTypeFormGroup.addControl('disableProceed', new FormControl('', [Validators.required]));
       }
     },
@@ -215,7 +236,7 @@ export class EntityCreateComponent implements OnInit {
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() }, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() && !this.isCloneAction }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -248,9 +269,18 @@ export class EntityCreateComponent implements OnInit {
             ]
           }],
           mailboxPathIn: [entity.mailboxPathIn, Validators.required],
-          mailboxPathOut: [entity.mailboxPathOut, Validators.required],
+          mailboxPathOut: [entity.mailboxPathOut, {
+            validators: [
+              Validators.required
+            ],
+            asyncValidators: this.entityValidators.mailboxPathOutValidator(),
+            updateOn: 'blur'
+          }],
           mqQueueIn: [entity.mqQueueIn],
-          mqQueueOut: [entity.mqQueueOut],
+          mqQueueOut: [entity.mqQueueOut, {
+            asyncValidators: this.entityValidators.mqQueueOutValidator(),
+            updateOn: 'blur'
+          }],
           compression: [entity.compression],
           entityParticipantType: [entity.entityParticipantType],
           directParticipant: [entity.directParticipant]
@@ -299,7 +329,7 @@ export class EntityCreateComponent implements OnInit {
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
-          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() }, {
+          entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() && !this.isCloneAction }, {
             validators: [
               Validators.required,
               this.entityValidators.entityPatternByServiceValidator(this.entityTypeFormGroup.controls.service)
@@ -328,7 +358,7 @@ export class EntityCreateComponent implements OnInit {
           this.inboundRequestTypeList = this.getInboundRequestTypes(data);
           if (this.isEditing()) {
             this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
-              .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[]).includes(el.value)));
+              .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[] || []).includes(el.value)));
           }
         }, error => {
           this.isLoading = false;
@@ -344,6 +374,33 @@ export class EntityCreateComponent implements OnInit {
         break;
     }
   }
+
+  validateRouteAttributes = () => {
+    if (this.entityTypeFormGroup.get('service').value === ENTITY_SERVICE_TYPE.GPL && this.entityPageFormGroup.valid) {
+      const inboundRequestorDN = this.entityPageFormGroup.get('inboundRequestorDN').value;
+      const inboundResponderDN = this.entityPageFormGroup.get('inboundResponderDN').value;
+      const inboundService = this.entityPageFormGroup.get('inboundService').value;
+      const inboundRequestType = this.entityPageFormGroup.get('inboundRequestType').value || [];
+
+      this.entityService.isRouteAttributesExists({
+        inboundRequestorDN,
+        inboundResponderDN,
+        inboundService,
+        inboundRequestType: inboundRequestType.map(el => el.key).toString()
+      }).pipe(data => this.setLoading(data)).subscribe((data) => {
+        this.isLoading = false;
+        this.stepper.next();
+      },
+        error => {
+          this.isLoading = false;
+          this.errorMessage = getApiErrorMessage(error);
+        });
+    }
+    else {
+      this.stepper.next();
+    }
+  }
+
 
   resetMqValidators(value) {
     const port = this.mqDetailsFormGroup.controls.mqPort;
@@ -498,13 +555,14 @@ export class EntityCreateComponent implements OnInit {
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
       if (result) {
+        const schedules = get(this.schedulesFormGroup, 'controls.schedules.value');
         const entity = {
           ...this.entityTypeFormGroup.value,
           ...this.entityPageFormGroup.value,
           ...this.SWIFTDetailsFormGroup.value,
           ...this.summaryPageFormGroup.value,
-          ...this.schedulesFormGroup && this.schedulesFormGroup.value,
           ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
+          schedules: this.isCloneAction && schedules ? schedules.map(el => ({ ...el, scheduleId: null })) : schedules,
           inboundRequestorDN: get(this.entityPageFormGroup.controls.inboundRequestorDN, 'value'),
           inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
           inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
@@ -514,7 +572,6 @@ export class EntityCreateComponent implements OnInit {
           inboundRoutingRule: get(this.entityPageFormGroup.controls.inboundRoutingRule, 'value'),
         };
         let entityAction: Observable<Entity>;
-        const edi = this.editableEntity;
         if (isEditing) {
           const editableEntity = this.editableEntity;
           if (this.pendingChange) {
@@ -537,7 +594,7 @@ export class EntityCreateComponent implements OnInit {
               shouldHideYesCaption: true,
               noCaption: 'Back'
             })).afterClosed().subscribe(() => {
-              if (isEditing) {
+              if (isEditing || this.isCloneAction) {
                 const previousURL = get(window.history.state, 'previousURL');
                 if (previousURL) {
                   this.router.navigate([previousURL], { state: window.history.state });
@@ -572,15 +629,15 @@ export class EntityCreateComponent implements OnInit {
     const entity = this.entityPageFormGroup.get('entity');
     const entityName = entity ? entity.value : 'new';
     const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Cancel ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
-      text: `Are you sure to cancel the ${this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
-      yesCaption: `Cancel ${this.isEditing() ? 'editing' : 'creation'}`,
+      title: `Cancel ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity`,
+      text: `Are you sure to cancel the ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'} of the ${entityName} entity?`,
+      yesCaption: `Cancel ${!this.isCloneAction && this.isEditing() ? 'editing' : 'creation'}`,
       yesCaptionColor: 'warn',
       noCaption: 'Back'
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (this.isEditing()) {
+        if (this.isEditing() || this.isCloneAction) {
           const previousURL = get(window.history.state, 'previousURL');
           if (previousURL) {
             this.router.navigate([previousURL], { state: window.history.state });
@@ -714,7 +771,7 @@ export class EntityCreateComponent implements OnInit {
   }
 
   tryToProceed() {
-    if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit()) {
+    if (this.isAuthorizedToProceed() && this.tryToProceedPendingEdit() && this.tryToProceedEdit()) {
       this.stepper.next();
     } else {
       this.entityTypeFormGroup.get('service').setErrors({ forbidden: true });
@@ -724,9 +781,14 @@ export class EntityCreateComponent implements OnInit {
 
   tryToProceedPendingEdit = () => this.pendingChange
     ? (this.pendingChange.operation !== CHANGE_OPERATION.DELETE
-    && this.auth.isTheSameUser(this.pendingChange.changer)) : true
+      && this.auth.isTheSameUser(this.pendingChange.changer)) : true
+
+  tryToProceedEdit = () => this.editableEntity
+    ? (this.editableEntity.service === ENTITY_SERVICE_TYPE.SCT || this.editableEntity.service === ENTITY_SERVICE_TYPE.GPL) : true
 
   getInboundRequestTypes = (value) => value && Object.keys(value).map(el => ({ key: el, value: value[el] }));
 
   isChangeControlNotCreateStatus = () => get(this.pendingChange, 'operation') !== CHANGE_OPERATION.CREATE;
+
+
 }

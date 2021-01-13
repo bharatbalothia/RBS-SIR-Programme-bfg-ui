@@ -52,7 +52,7 @@ export class AuthService {
       );
   }
 
-  ssoLogIn(credentials: SSOCredentials): Observable<User>{
+  ssoLogIn(credentials: SSOCredentials): Observable<User> {
     return this.http.post<User>(this.apiUrl + 'sso', credentials)
       .pipe(
         tap(user => {
@@ -80,7 +80,7 @@ export class AuthService {
     return null;
   }
 
-  isTheSameUser(user: string){
+  isTheSameUser(user: string) {
     return this.getUserName() === user;
   }
 
@@ -88,20 +88,20 @@ export class AuthService {
     if (this.isAuthenticated()) {
       return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).permissions;
     }
-    return null;
+    return [];
   }
 
-  isEnoughPermissions(requiredPermissions: string[]): boolean{
+  isEnoughPermissions(requiredPermissions: string[]): boolean {
     let enoughPermissions = false;
     const userPermissions = this.getUserPermissions();
-    if (!requiredPermissions || requiredPermissions.length === 0){
+    if (!requiredPermissions || requiredPermissions.length === 0) {
       return true;
     }
-    requiredPermissions.forEach( element => enoughPermissions = enoughPermissions || userPermissions.includes(element));
+    requiredPermissions.forEach(element => enoughPermissions = enoughPermissions || userPermissions.includes(element));
     return enoughPermissions;
   }
 
-  showForbidden(){
+  showForbidden() {
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Forbidden`,
       text: `You don't have enough permissions to proceed`,
@@ -111,18 +111,18 @@ export class AuthService {
   }
 
   checkPermissions(requiredPermissions: string[]) {
-    if (!this.isEnoughPermissions(requiredPermissions)){
+    if (!this.isEnoughPermissions(requiredPermissions)) {
       this.showForbidden();
     }
   }
 
-  isValidSSOLink(queryParams): boolean{
+  isValidSSOLink(queryParams): boolean {
     return queryParams && queryParams.userName && queryParams.nodeName && queryParams.dlssoToken;
   }
 
-  extractSSOCredentials(queryParams: Params): SSOCredentials{
-    const credentials: SSOCredentials = {userName : '', dlssoToken: '', nodeName: ''};
-    if (this.isValidSSOLink(queryParams)){
+  extractSSOCredentials(queryParams: Params): SSOCredentials {
+    const credentials: SSOCredentials = { userName: '', dlssoToken: '', nodeName: '' };
+    if (this.isValidSSOLink(queryParams)) {
       credentials.userName = queryParams.userName;
       credentials.dlssoToken = queryParams.dlssoToken;
       credentials.nodeName = queryParams.nodeName;

@@ -81,12 +81,21 @@
                   <mat-form-field>
                     <mat-label>{{getTransactionSearchDisplayName('from')}}</mat-label>
                     <input 
-                      matInput [ngxMatDatetimePicker]="fromPicker"
+                      matInput
+                      [ngxMatDatetimePicker]="fromPicker"
                       placeholder="Choose a date"
-                      [formControl]="searchingParametersFormGroup.controls['from']" 
+                      [formControl]="searchingParametersFormGroup.controls['from']"
+                      [max]="maxDate"
+                      (dateChange)="handleDate($event, 'minDate')"
                     />
                     <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
                     <ngx-mat-datetime-picker #fromPicker> </ngx-mat-datetime-picker>
+                    <mat-error class="error-message" *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+                      {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+                    </mat-error>
+                    <mat-error class="error-message" *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+                      {{getSearchValidationMessage('incorrect')}}
+                    </mat-error>
                   </mat-form-field>
                   <app-tooltip [tip]="getTooltip('search', 'settlement-from')"></app-tooltip>
                 </section>
@@ -98,12 +107,13 @@
                       [ngxMatDatetimePicker]="toPicker"
                       placeholder="Choose a date"
                       [formControl]="searchingParametersFormGroup.controls['to']"
-                      [errorStateMatcher]="errorMatcher"
+                      [min]="minDate"
+                      (dateChange)="handleDate($event, 'maxDate')"
                     />
                     <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
                     <ngx-mat-datetime-picker #toPicker></ngx-mat-datetime-picker>
-                    <mat-error class="error-message" *ngIf="searchingParametersFormGroup.hasError('to')">
-                      {{getSearchValidationMessage('dateRange')}}
+                    <mat-error class="error-message" *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+                      {{getSearchValidationMessage('maxDateLessThanMinDate')}}
                     </mat-error>
                     <mat-error class="error-message" *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
                       {{getSearchValidationMessage('incorrect')}}

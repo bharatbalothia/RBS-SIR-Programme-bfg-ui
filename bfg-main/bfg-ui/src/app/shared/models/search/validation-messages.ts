@@ -1,5 +1,6 @@
 export const SEARCH_VALIDATION_MESSAGES = {
-  dateRange: 'To date should not be less than from date',
+  minDateMoreThanMaxDate: 'From date should not be more than to date',
+  maxDateLessThanMinDate: 'To date should not be less than from date',
   incorrect: 'Incorrect datetime'
 };
 

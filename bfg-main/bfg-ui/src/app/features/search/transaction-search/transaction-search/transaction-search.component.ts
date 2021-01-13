@@ -16,9 +16,6 @@ import { TransactionTableComponent } from 'src/app/shared/components/transaction
 import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { CrossFieldErrorMatcher } from 'src/app/shared/classes/CrossFieldErrorMatcher';
-import { dateRangeValidator } from 'src/app/shared/models/search/validators';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 
 @Component({
@@ -33,8 +30,10 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
-  errorMatcher: ErrorStateMatcher;
   errorMessage: ErrorMessage;
+
+  minDate: moment.Moment = null;
+  maxDate: moment.Moment = null;
 
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
@@ -80,7 +79,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.errorMatcher = new CrossFieldErrorMatcher();
     this.activatedRoute.queryParams.subscribe(params => {
       this.URLParams = { ...params };
       if (params.startDate) {
@@ -90,6 +88,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         };
         delete this.URLParams.startDate;
       }
+      this.initMinMaxDate();
       this.initializeSearchingParametersFormGroup();
       this.getTransactionCriteriaData();
     });
@@ -118,10 +117,13 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       type: [''],
       from: [this.defaultSelectedData.from],
       to: [this.defaultSelectedData.to]
-    }, {
-        validators: [dateRangeValidator('controls.from.value', 'controls.to.value')]
     });
     this.criteriaFilterObject = { direction: '', trxStatus: '' };
+  }
+
+  initMinMaxDate() {
+    this.minDate = this.defaultSelectedData.from;
+    this.maxDate = this.defaultSelectedData.to;
   }
 
   getTransactionCriteriaData = () =>
@@ -242,6 +244,14 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       fieldName: field
     });
     return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
+  }
+
+  handleDate(event: any, field: string) {
+    const date: moment.Moment = event.value;
+
+    if (date) {
+      this[field] = date;
+    }
   }
 
 }

@@ -1,9 +1,13 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.*;
-import com.ibm.sterling.bfg.app.model.validation.DateValid;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
+import com.ibm.sterling.bfg.app.utils.TimeUtil;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
 public class FileSearchCriteria extends SearchCriteria {
@@ -87,6 +91,12 @@ public class FileSearchCriteria extends SearchCriteria {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isDateValid() {
+        return TimeUtil.isStringDateBefore(from, to);
     }
 
 }

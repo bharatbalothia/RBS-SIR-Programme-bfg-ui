@@ -140,7 +140,6 @@ export class EntityCreateComponent implements OnInit {
           inboundResponderDN: '',
           inboundService: '',
           inboundRequestType: [],
-          mailboxPathIn: '',
           mailboxPathOut: '',
           mqQueueOut: '',
         };

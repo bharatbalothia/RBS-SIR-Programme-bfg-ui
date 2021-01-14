@@ -4,7 +4,7 @@
         </mat-card-title>
     </mat-card-header>
     <mat-horizontal-stepper #stepper [linear]="isLinear"
-        (selectionChange)="getConfirmationFieldsSource(); onStepChange($event.selectedIndex)">
+        (selectionChange)="getConfirmationFieldsSource()">
         <mat-step [stepControl]="uploadTrustedCertificateFormGroup" *ngIf="!changeId">
             <form [formGroup]="uploadTrustedCertificateFormGroup">
                 <ng-template matStepLabel>Upload Trusted Certificate</ng-template>

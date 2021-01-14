@@ -148,7 +148,7 @@
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Search results</ng-template>
-            <app-file-table [(errorMessage)]="errorMessage" [(isLoading)]="isLoading" [shouldAutoRefresh]="false"
+            <app-file-table [(isLoading)]="isLoading" [shouldAutoRefresh]="false"
                 [pageIndex]="pageIndex" [pageSize]="pageSize" [getFileList]="getFileList.bind(this)"
                 [dataSource]="dataSource" [files]="files">
             </app-file-table>

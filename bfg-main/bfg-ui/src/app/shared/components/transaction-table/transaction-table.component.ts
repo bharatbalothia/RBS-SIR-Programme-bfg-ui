@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionSearchDisplayName } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
 import { FileDialogService } from '../../models/file/file-dialog.service';
@@ -26,7 +25,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
   getDirectionIcon = getDirectionIcon;
 
   @Input() getTransactionList: (pageIndex: number, pageSize: number) => any;
-  @Input() errorMessage: ErrorMessage;
   @Input() dataSource: MatTableDataSource<Transaction>;
   @Input() transactions: TransactionsWithPagination;
   @Input() isLoading = false;
@@ -36,10 +34,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
   @Input() shouldHideTableHeader = false;
   @Input() shouldAutoRefresh = true;
 
-  errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
-  isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
-
-  @Output() errorMessageChange: EventEmitter<ErrorMessage> = new EventEmitter<ErrorMessage>();
   @Output() isLoadingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   autoRefreshing: Subscription;
@@ -68,8 +62,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
-    this.errorMessageChange.emit(null);
     this.isLoading = true;
     this.isLoadingChange.emit(true);
     return data;
@@ -81,34 +73,7 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
     return `Items ${start}-${end} of ${totalElements}`;
   }
 
-  emitErrorMessageEvent(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id].emit(this.errorMessage);
-    }
-  }
-
-  emitLoadingEvent(id: number) {
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id].emit(this.isLoading);
-    }
-  }
-
-  createEmitters(id: number) {
-    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
-    this.isLoadingEmitters[id] = new EventEmitter<boolean>();
-  }
-
-  deleteEmitters(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id] = null;
-    }
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id] = null;
-    }
-  }
-
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createEmitters(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
@@ -116,7 +81,7 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
         this.isLoadingChange.emit(false)
         const actions = {
           workflowID: () => this.openBusinessProcessDialog(data),
-          file: () => this.openFileDetailsDialog({ id: fileId }, id)
+          file: () => this.openFileDetailsDialog({ id: fileId })
         };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction - ${data.id}`,
@@ -125,31 +90,16 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
           isDragable: true,
           actionData: {
             actions
-          },
-          parentError: this.errorMessageEmitters[id],
-          parentLoading: this.isLoadingEmitters[id],
-        })).afterClosed().subscribe(() => this.deleteEmitters(id));
+          }
+        }));
       },
         error => {
           this.isLoading = false;
-          this.isLoadingChange.emit(false)
-          this.errorMessage = getApiErrorMessage(error);
-          this.errorMessageChange.emit(this.errorMessage);
+          this.isLoadingChange.emit(false);
         });
   }
 
-
-  openFileDetailsDialog = (file, transactionId) => {
-    this.fileDialogService.errorMessageChange.subscribe(data => {
-      this.errorMessage = data;
-      this.emitErrorMessageEvent(transactionId);
-    });
-    this.fileDialogService.isLoadingChange.subscribe(data => {
-      this.isLoading = data;
-      this.emitLoadingEvent(transactionId);
-    });
-    this.fileDialogService.openFileDetailsDialog(file, true);
-  }
+  openFileDetailsDialog = file => this.fileDialogService.openFileDetailsDialog(file, true);
 
   openBusinessProcessDialog = (transaction: Transaction) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({

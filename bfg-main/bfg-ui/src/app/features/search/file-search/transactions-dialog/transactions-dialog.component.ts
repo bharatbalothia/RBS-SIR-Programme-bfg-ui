@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, EventEmitter } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { FileService } from 'src/app/shared/models/file/file.service';
@@ -7,7 +7,6 @@ import { take } from 'rxjs/operators';
 import { get } from 'lodash';
 import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { getFileSearchDisplayName } from '../file-search-display-names';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
@@ -29,12 +28,7 @@ export class TransactionsDialogComponent implements OnInit {
 
   displayName: (fieldName: string) => string;
 
-  errorMessageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
-  isLoadingEmitters: { [id: number]: EventEmitter<boolean> } = {};
-
   isLoading = true;
-  errorMessage: ErrorMessage;
-
   transactions: TransactionsWithPagination;
   displayedColumns: string[] = ['id', 'transactionID', 'settleDate', 'settleAmount', 'type', 'status', 'workflowID'];
   dataSource: MatTableDataSource<Transaction>;
@@ -53,7 +47,6 @@ export class TransactionsDialogComponent implements OnInit {
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
-
     this.fileId = get(this.data, 'actionData.fileId');
   }
 
@@ -72,10 +65,8 @@ export class TransactionsDialogComponent implements OnInit {
         this.transactions = data;
         this.updateTable();
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
   updateTable() {
@@ -83,19 +74,17 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.createEmitters(id);
     this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
         const actions: any = {
-          file: () => this.openFileDetailsDialog({ id: fileId }, id),
+          file: () => this.openFileDetailsDialog({ id: fileId }),
           workflowID: () => this.openBusinessProcessDialog(data)
         };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
@@ -106,25 +95,13 @@ export class TransactionsDialogComponent implements OnInit {
           actionData: {
             actions
           },
-          parentError: this.errorMessageEmitters[id],
-          parentLoading: this.isLoadingEmitters[id],
-        })).afterClosed().subscribe(() => this.deleteEmitters(id));
+        }));
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
-  openFileDetailsDialog = (file, transactionId) => {
-    this.fileDialogService.errorMessageChange.subscribe(data => {
-      this.errorMessage = data;
-      this.emitErrorMessageEvent(transactionId);
-    });
-    this.fileDialogService.isLoadingChange.subscribe(data => {
-      this.isLoading = data;
-      this.emitLoadingEvent(transactionId);
-    });
+  openFileDetailsDialog = file => {
     this.fileDialogService.openFileDetailsDialog(file, true);
   }
 
@@ -132,7 +109,6 @@ export class TransactionsDialogComponent implements OnInit {
     .pipe(data => this.setLoading(data))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;
-      this.emitLoadingEvent(transaction.id);
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: data.document ? transaction.docID : `Primary Document`,
         tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
@@ -145,12 +121,8 @@ export class TransactionsDialogComponent implements OnInit {
         },
       }));
     },
-      error => {
-        this.isLoading = false;
-        this.emitLoadingEvent(transaction.id);
-        this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMessageEvent(transaction.id);
-      })
+      error => this.isLoading = false
+    )
 
   openBusinessProcessDialog = (transaction: Transaction) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
@@ -164,31 +136,4 @@ export class TransactionsDialogComponent implements OnInit {
         }
       },
     }))
-
-  emitErrorMessageEvent(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id].emit(this.errorMessage);
-    }
-  }
-
-  emitLoadingEvent(id: number) {
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id].emit(this.isLoading);
-    }
-  }
-
-  createEmitters(id: number) {
-    this.errorMessageEmitters[id] = new EventEmitter<ErrorMessage>();
-    this.isLoadingEmitters[id] = new EventEmitter<boolean>();
-  }
-
-  deleteEmitters(id: number) {
-    if (this.errorMessageEmitters[id]) {
-      this.errorMessageEmitters[id] = null;
-    }
-    if (this.isLoadingEmitters[id]) {
-      this.isLoadingEmitters[id] = null;
-    }
-  }
-
 }

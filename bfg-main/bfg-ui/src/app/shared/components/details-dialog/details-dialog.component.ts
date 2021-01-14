@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined, get } from 'lodash';
 import { ErrorMessage } from 'src/app/core/utils/error-template';
 import { Subscription } from 'rxjs';
+import { NotificationService } from '../../services/NotificationService';
 
 @Component({
   selector: 'app-details-dialog',
@@ -18,14 +19,15 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   tabs: Tab[] = [];
 
   actions;
-  errorMessage: ErrorMessage;
-  errorSubscription: Subscription;
+  // errorMessage: ErrorMessage;
+  // errorSubscription: Subscription;
 
   isLoading: boolean;
   isLoadingSubscription: Subscription;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData
+    @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
+    private notificationService: NotificationService
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
@@ -33,11 +35,15 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
 
     this.actions = get(this.data, 'actionData.actions');
 
-    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
-
-    if (this.data.parentError) {
-      this.errorSubscription = this.data.parentError.subscribe((evt: ErrorMessage) => this.errorMessage = evt);
+    if (get(this.data, 'actionData.errorMessage')) {
+      this.notificationService.showErrorWithWarningMessage(get(this.data, 'actionData.errorMessage'));
     }
+
+    // this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+
+    // if (this.data.parentError) {
+    //   this.errorSubscription = this.data.parentError.subscribe((evt: ErrorMessage) => this.errorMessage = evt);
+    // }
 
     if (this.data.parentLoading) {
       this.isLoadingSubscription = this.data.parentLoading.subscribe((evt: boolean) => this.isLoading = evt);
@@ -49,9 +55,9 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.errorSubscription) {
-      this.errorSubscription.unsubscribe();
-    }
+    // if (this.errorSubscription) {
+    //   this.errorSubscription.unsubscribe();
+    // }
     if (this.isLoadingSubscription) {
       this.isLoadingSubscription.unsubscribe();
     }

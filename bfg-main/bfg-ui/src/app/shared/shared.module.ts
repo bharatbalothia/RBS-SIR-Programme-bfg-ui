@@ -30,7 +30,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DisplayTableCellComponent } from './components/display-table-cell/display-table-cell.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
-import { ErrorTemplateComponent } from './components/error-template/error-template.component';
 import { ApprovingDialogComponent } from './components/approving-dialog/approving-dialog.component';
 import { NumberOnlyDirective } from './directives/number-only.directive';
 import { TablePaginatorComponent } from './components/table-paginator/table-paginator.component';
@@ -73,7 +72,6 @@ const DATE_FORMAT: NgxMatDateFormats = {
     DetailsDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
-    ErrorTemplateComponent,
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,
@@ -167,7 +165,6 @@ const DATE_FORMAT: NgxMatDateFormats = {
     ConfirmDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
-    ErrorTemplateComponent,
     ApprovingDialogComponent,
     TablePaginatorComponent,
     DeleteDialogComponent,

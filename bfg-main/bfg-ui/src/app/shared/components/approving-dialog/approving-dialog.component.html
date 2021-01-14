@@ -1,5 +1,4 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
-<app-error-template [errorMessage]="errorMessage"></app-error-template>
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
@@ -19,7 +18,7 @@
             <button *ngIf="approveAction" mat-raised-button color="warn"
                 (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
             <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
-                [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)">Accept</button>
+                [disabled]="hasErrors">Accept</button>
         </div>
     </div>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ErrorMessage, getErrorsMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
+import { NotificationService } from '../../services/NotificationService';
 
 @Component({
   selector: 'app-delete-dialog',
@@ -11,13 +11,11 @@ import { get, isUndefined } from 'lodash';
 })
 export class DeleteDialogComponent implements OnInit {
 
-  getErrorsMessage = getErrorsMessage;
-
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];
 
   isLoading = false;
-  errorMessage: ErrorMessage;
+  hasErrors = false;
 
   id: string;
   changerComments: string;
@@ -32,13 +30,19 @@ export class DeleteDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<DeleteDialogComponent>,
+    private notificationService: NotificationService
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
 
     this.id = get(this.data, 'actionData.id');
 
-    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+    const errorMessage = get(this.data, 'actionData.errorMessage');
+
+    if (errorMessage) {
+      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
+      this.notificationService.showErrorWithWarningMessage(errorMessage);
+    }
 
     this.displayName = this.data.displayName;
     this.deleteAction = get(this.data, 'actionData.deleteAction');
@@ -63,15 +67,15 @@ export class DeleteDialogComponent implements OnInit {
 
   deletingAction() {
     this.isLoading = true;
-    this.errorMessage = null;
+    this.hasErrors = false;
     this.deleteAction(this.id, this.changerComments)
       .subscribe(() => {
         this.isLoading = false;
         this.dialog.close({ refreshList: true });
       },
-        (error) => {
+        error => {
           this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
+          this.hasErrors = true;
         });
   }
 

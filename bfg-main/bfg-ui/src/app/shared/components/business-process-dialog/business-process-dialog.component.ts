@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
 import { take } from 'rxjs/operators';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { getBusinessProcessDetailsTabs, getBusinessProcessDisplayName, getBusinessProcessDocumentInfoTabs } from '../../models/business-process/business-process-display-names';
 import { BusinessProcessDocumentContent } from '../../models/business-process/business-process-document-content.model';
 import { BusinessProcessHeader } from '../../models/business-process/business-process-header.model';
@@ -12,6 +11,7 @@ import { BusinessProcess } from '../../models/business-process/business-process.
 import { BusinessProcessService } from '../../models/business-process/business-process.service';
 import { WorkflowStepWithPagination } from '../../models/business-process/workflow-step-with-pagination.model';
 import { WorkflowStep } from '../../models/business-process/workflow-step.model';
+import { NotificationService } from '../../services/NotificationService';
 import { DetailsDialogConfig } from '../details-dialog/details-dialog-config.model';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
@@ -25,16 +25,10 @@ export class BusinessProcessDialogComponent implements OnInit {
 
   displayName: (fieldName: string) => string;
 
-  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
-
   isLoading = true;
   isBPHeaderLoading = false;
 
   currentDate = Date.now();
-
-  errorMessage: ErrorMessage;
-
-  stepsWarnings: ErrorMessage;
 
   bpHeader: BusinessProcessHeader;
 
@@ -64,7 +58,8 @@ export class BusinessProcessDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialog,
-    private businessProcessService: BusinessProcessService
+    private businessProcessService: BusinessProcessService,
+    private notificationService: NotificationService
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
@@ -98,7 +93,6 @@ export class BusinessProcessDialogComponent implements OnInit {
         error => {
           this.isLoading = false;
           this.isBPHeaderLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
         });
   }
 
@@ -110,17 +104,15 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.bpHeader = data;
 
         if (!this.workflowSteps.fullTracking) {
-          this.stepsWarnings = {
+          this.notificationService.showWarningMessage({
             warnings: [{ warning: ERROR_MESSAGES.fullTrackingSteps }],
             code: null,
             message: null
-          };
+          });
         }
       },
-        error => {
-          this.isBPHeaderLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isBPHeaderLoading = false
+      );
   }
 
   openBPDetails = (bpRef) => {
@@ -137,10 +129,8 @@ export class BusinessProcessDialogComponent implements OnInit {
           },
         }));
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
   openStepDocumentInfo = (step: WorkflowStep) => this.businessProcessService.getDocumentContent(step.docId)
@@ -154,35 +144,16 @@ export class BusinessProcessDialogComponent implements OnInit {
         isDragable: true
       }));
     },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      })
+      error => this.isLoading = false
+    )
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.workflowSteps.content);
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
-  }
-
-  createErrorMesageEmitter(id: number) {
-    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
-  }
-
-  deleteErrorMesageEmitter(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id] = null;
-    }
-  }
-
-  emitErrorMesageEvent(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id].emit(this.errorMessage);
-    }
   }
 
   shouldShowBPContent = () => get(this.workflowSteps, 'content.length');

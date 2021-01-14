@@ -13,7 +13,6 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
@@ -33,7 +32,6 @@ export class EntityPendingComponent implements OnInit {
   CHANGE_OPERATION = CHANGE_OPERATION;
 
   isLoading = true;
-  errorMessage: ErrorMessage;
 
   changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
@@ -55,7 +53,6 @@ export class EntityPendingComponent implements OnInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -69,10 +66,8 @@ export class EntityPendingComponent implements OnInit {
         this.changeControls = data;
         this.updateTable();
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
   updateTable() {
@@ -86,10 +81,7 @@ export class EntityPendingComponent implements OnInit {
         .then(data => {
           this.isLoading = false;
           return ({ ...changeControl, entityBefore: data });
-        }).catch(error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        }).catch(error => this.isLoading = false);
     }
     else {
       return new Promise((res) => res(changeControl));
@@ -103,7 +95,6 @@ export class EntityPendingComponent implements OnInit {
         return ({ ...changeControl, entityLog: data });
       }).catch(error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
         return null;
       })
 

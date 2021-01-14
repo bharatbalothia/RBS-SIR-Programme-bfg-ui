@@ -3,7 +3,6 @@
         <mat-card-title>Entities</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <app-error-template [errorMessage]="errorMessage"></app-error-template>
         <div class="search-by-content">
             <h3 class="search-by-label">Search by</h3>
             <mat-form-field class="search-by-field">
@@ -27,20 +26,33 @@
         <div class="table-container">
             <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="entities">
 
-                <ng-container matColumnDef="action">
-                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button mat-button class="action-button" *ngIf="element.changeID"
-                            (click)="openApprovingDialog(element)">
-                            <div class="action-icon">
-                                <mat-icon inline>format_list_numbered</mat-icon> Version manager
-                            </div>
-                        </button>
-                        <a mat-icon-button
-                            *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
-                            class="action-button"
-                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
-                            [state]="{ 
+                    <ng-container matColumnDef="action">
+                        <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <a mat-icon-button
+                                *ngIf="!element.entityLog && (element.service === SERVICE_TYPE.SCT || element.service === SERVICE_TYPE.GPL)"
+                                class="action-button"
+                                [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.CLONE, element.entityId]"
+                                [state]="{ pageIndex: pageIndex,
+                                pageSize: pageSize,
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue }" alt="Clone" title="Clone">
+                                <div class="action-icon">
+                                    <mat-icon inline>add</mat-icon>clone
+                                </div>
+                            </a>
+                            <button mat-button class="action-button" *ngIf="element.changeID"
+                                (click)="openApprovingDialog(element)">
+                                <div class="action-icon">
+                                    <mat-icon inline>format_list_numbered</mat-icon> Version manager
+                                </div>
+                            </button>
+                            <a mat-icon-button
+                                *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+                                class="action-button"
+                                [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
+                                [state]="{ 
                                 pageIndex: pageIndex, 
                                 pageSize: pageSize, 
                                 previousURL: getCurrentRoute(),
@@ -48,13 +60,15 @@
                                 entityNameSearchingValue: entityNameSearchingValue,
                                 DNSearchingValue: DNSearchingValue
                             }" alt="Edit" title="Edit">
-                            <div class="action-icon">
-                                <mat-icon inline>edit</mat-icon>edit
-                            </div>
-                        </a>
-                        <a mat-icon-button *ngIf="!element.entityLog" class="action-button"
-                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
-                            [state]="{ pageIndex: pageIndex,
+                                <div class="action-icon">
+                                    <mat-icon inline>edit</mat-icon>edit
+                                </div>
+                            </a>
+                            <a mat-icon-button
+                                *ngIf="!element.entityLog && (element.service === SERVICE_TYPE.SCT || element.service === SERVICE_TYPE.GPL)"
+                                class="action-button"
+                                [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
+                                [state]="{ pageIndex: pageIndex,
                                 pageSize: pageSize,
                                 previousURL: getCurrentRoute(),
                                 serviceSearchingValue: serviceSearchingValue,

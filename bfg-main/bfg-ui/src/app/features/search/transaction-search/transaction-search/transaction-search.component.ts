@@ -3,9 +3,9 @@ import { get, isEmpty } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
-import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
+import { getApiErrorMessage, ErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import * as moment from 'moment';
-import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { TransactionCriteriaData } from 'src/app/shared/models/transaction/transaction-criteria.model';
 import { getTransactionSearchDisplayName } from '../transaction-search-display-names';
 import { MatTableDataSource } from '@angular/material/table';
@@ -16,6 +16,7 @@ import { TransactionTableComponent } from 'src/app/shared/components/transaction
 import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
+import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 
 @Component({
   selector: 'app-transaction-search',
@@ -24,26 +25,27 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 })
 export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
-  getTransactionSearchDisplayName = getTransactionSearchDisplayName;
-
-  isLinear = true;
-
-  errorMessage: ErrorMessage;
-  isLoading = false;
-
   @ViewChild(TransactionTableComponent)
   transactionTableComponent: TransactionTableComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
+  errorMessage: ErrorMessage;
+
+  minDate: moment.Moment = null;
+  maxDate: moment.Moment = null;
+
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
 
-  defaultSelectedData: { from: { startDate, endDate }, to: { startDate, endDate } } = {
-    from: {
-      startDate: moment().hours(0).minutes(0).seconds(0),
-      endDate: moment().hours(0).minutes(0).seconds(0),
-    },
+  getSearchValidationMessage = getSearchValidationMessage;
+  getTransactionSearchDisplayName = getTransactionSearchDisplayName;
+
+  isLinear = true;
+  isLoading = false;
+
+  defaultSelectedData: { from: moment.Moment, to: moment.Moment } = {
+    from: moment().startOf('day'),
     to: null
   };
 
@@ -81,15 +83,13 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       this.URLParams = { ...params };
       if (params.startDate) {
         this.defaultSelectedData = {
-          from: params.startDate === 'none' ? null : {
-            startDate: moment(params.startDate),
-            endDate: moment(params.startDate),
-          },
+          from: params.startDate === 'none' ? null : moment(params.startDate),
           to: null
         };
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
+      this.initMinMaxDate();
       this.getTransactionCriteriaData();
     });
   }
@@ -102,6 +102,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   }
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
+
+  getErrorByField = (key) => getErrorByField(key, this.errorMessage);
 
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
@@ -117,6 +119,13 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       to: [this.defaultSelectedData.to]
     });
     this.criteriaFilterObject = { direction: '', trxStatus: '' };
+  }
+
+  initMinMaxDate() {
+    this.minDate = this.defaultSelectedData.from;
+    this.maxDate = this.defaultSelectedData.to;
+    this.searchingParametersFormGroup.controls.from.markAsTouched();
+    this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
 
   getTransactionCriteriaData = () =>
@@ -154,8 +163,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
-      from: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null)),
-      to: this.convertDateToFormat(get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null)),
+      from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
+      to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
@@ -177,7 +186,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         });
   }
 
-  convertDateToFormat = (date: string) => moment(date).isValid() ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : null;
+  convertDateToFormat = (date: moment.Moment | null) => date && date.format('YYYY-MM-DDTHH:mm:ss');
 
   updateTable() {
     this.dataSource = new MatTableDataSource(this.transactions.content);
@@ -185,7 +194,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.getTransactionList(this.pageIndex, this.pageSize);
+      this.getTransactionList(0, this.pageSize);
       this.transactionTableComponent.autoRefreshChange(true);
     }
     else {
@@ -229,22 +238,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isInvalidFromDate = (date) => {
-    const endDate = get(this.searchingParametersFormGroup.get('to'), 'value.endDate', null);
-    return endDate && moment(endDate).isBefore(date);
-  }
-
-  isInvalidToDate = (date) => {
-    const startDate = get(this.searchingParametersFormGroup.get('from'), 'value.startDate', null);
-    return startDate && moment(date).isBefore(startDate);
-  }
-
-  onDateChange = (event, control: AbstractControl) => {
-    if (get(event, 'target.value', null) === '') {
-      control.setValue(null);
-    }
-  }
-
   getTooltip(step: string, field: string): string {
     const toolTip = this.toolTip.getTooltip({
       type: 'sct-search',
@@ -253,6 +246,14 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       fieldName: field
     });
     return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
+  }
+
+  handleDate(event: any, field: string) {
+    const date: moment.Moment = event.value;
+
+    if (date) {
+      this[field] = date;
+    }
   }
 
 }

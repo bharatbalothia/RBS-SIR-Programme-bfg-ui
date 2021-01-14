@@ -24,6 +24,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { NotificationService } from 'src/app/shared/services/NotificationService';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -71,6 +72,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     private activatedRouter: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -110,6 +112,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
         });
         if (data.certificateErrors || data.certificateWarnings) {
           this.errorMessage = this.getErrorsAndWarnings(data);
+          this.notificationService.showErrorWithWarningMessage(this.errorMessage);
         }
         if (this.pendingChange && !(this.tryToProceedPendingEdit())) {
           this.detailsTrustedCertificateFormGroup.addControl('disableProceed', new FormControl('', [Validators.required]));
@@ -189,6 +192,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
         this.stepper.next();
         if (data.certificateErrors || data.certificateWarnings) {
           this.errorMessage = this.getErrorsAndWarnings(data);
+          this.notificationService.showErrorWithWarningMessage(this.errorMessage);
         }
       }, error => {
         this.isLoading = false;

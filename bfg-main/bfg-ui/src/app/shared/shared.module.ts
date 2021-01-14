@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@angular/cdk/layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -44,10 +43,28 @@ import { DisableControlDirective } from './directives/disable-control.directive'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TransmitDialogComponent } from './components/transmit-dialog/transmit-dialog.component';
 import { BusinessProcessDialogComponent } from './components/business-process-dialog/business-process-dialog.component';
-import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { FileTableComponent } from './components/file-table/file-table.component';
 import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
+import { OverlayInfoComponent } from './components/overlay-info/overlay-info.component';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { NotificationHttpInterceptor } from './services/NotificationHttpInterceptor';
+import { NotificationService } from './services/NotificationService';
+import { ToastrModule } from 'ngx-toastr';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 
+const DATE_FORMAT: NgxMatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY, HH:mm',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY, HH:mm',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [
@@ -66,7 +83,8 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     BusinessProcessDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
-    
+    OverlayInfoComponent,
+
     // Directives
     InputLowercaseDirective,
     NumberOnlyDirective,
@@ -103,10 +121,11 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd.forRoot({
-      format: 'DD/MM/YYYY, HH:mm',
-      displayFormat: 'DD/MM/YYYY, HH:mm',
-    })
+    OverlayModule,
+    ToastrModule.forRoot(),
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatDatepickerModule
   ],
   exports: [
     // Modules
@@ -139,7 +158,10 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     MatTabsModule,
     DragDropModule,
     MatSlideToggleModule,
-    NgxDaterangepickerMd,
+    OverlayModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatDatepickerModule,
 
     // Components
     ConfirmDialogComponent,
@@ -154,6 +176,7 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     TransmitDialogComponent,
     FileTableComponent,
     TransactionTableComponent,
+    OverlayInfoComponent,
 
     // Directives
     InputLowercaseDirective,
@@ -162,6 +185,16 @@ import { TransactionTableComponent } from './components/transaction-table/transa
     DisableControlDirective
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: NotificationHttpInterceptor,
+      multi: true
+    },
+    NotificationService,
+    {
+      provide: NGX_MAT_DATE_FORMATS,
+      useValue: DATE_FORMAT
+    }
     // { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
   ]
 })

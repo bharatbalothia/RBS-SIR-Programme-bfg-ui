@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundExcepti
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
@@ -12,6 +13,7 @@ import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertReposito
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
+import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,6 +68,9 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     private TrustedCertificateDetailsService trustedCertificateDetailsService;
 
     @Autowired
+    private AdminAuditService adminAuditService;
+
+    @Autowired
     private Validator validator;
 
     @Override
@@ -100,7 +105,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public TrustedCertificate editChangeControl(ChangeControlCert changeControlCert, String certName, String changerComments) {
+    public TrustedCertificate updatePendingCertificate(ChangeControlCert changeControlCert, String certName, String changerComments) {
         checkStatusOfChangeControl(changeControlCert);
         if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
             TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
@@ -146,7 +151,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
                 trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
-        if (!trustedCertificateDetails.getIsValid())
+        if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certificateName);
@@ -177,6 +182,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         changeControlCert.setResultMeta3(cert.getThumbprint256());
         changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(cert));
         cert.setChangeID(changeControlCertService.save(changeControlCert).getChangeID());
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getChanger()));
         return cert;
     }
 
@@ -193,6 +199,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
             cert = approveCertificate(changeControlCert);
         }
         changeControlCertService.setApproveInfo(changeControlCert, userName, approverComments, status);
+        adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
         return cert;
     }
 

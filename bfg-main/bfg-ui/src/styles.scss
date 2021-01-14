@@ -178,3 +178,16 @@ mat-form-field {
         height: 2em !important;
     }
 }
+
+// Override default toast css rules
+.toast-container .ngx-toastr {
+  width: 350px; // set width of toast
+
+  .toast-title {
+    letter-spacing: 0.3px; // set space between letters in the title
+  }
+
+  ul li {
+    margin-left: -10px; // set negative indent for list
+  }
+}

@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.exception;
 
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
 import com.ibm.sterling.bfg.app.model.exception.ErrorCode;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,15 +53,18 @@ public class ExceptionDetailsHandler {
             ConstraintViolationException ex, Class<E> errorCode) {
         List<Object> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            String propertyName;
-            String propertyPath = violation.getPropertyPath().toString();
-            if (StringUtils.isEmpty(propertyPath))
-                propertyName = "entity";
-            else propertyName = propertyPath.substring(propertyPath.lastIndexOf(".") + 1);
-            errors.add(Collections.singletonMap(propertyName, violation.getMessage()));
+            errors.add(Collections.singletonMap(violation.getPropertyPath(), violation.getMessage()));
         }
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"), errors);
+        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+    }
+
+    public <E extends Enum<E> & ErrorCode> ResponseEntity<Object> handleFieldsValidation(
+            FieldsValidationException ex, Class<E> errorCode) {
+        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
+                Enum.valueOf(errorCode, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION"),
+                Collections.singletonList(Collections.singletonMap(ex.getErrorCause(), ex.getMessage())));
         return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
     }
 

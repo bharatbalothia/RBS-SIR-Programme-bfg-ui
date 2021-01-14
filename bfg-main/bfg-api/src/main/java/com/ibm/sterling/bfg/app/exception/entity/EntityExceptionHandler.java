@@ -82,6 +82,11 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return exceptionDetailsHandler.handleConstraintViolation(ex, EntityErrorCode.class);
     }
 
+    @ExceptionHandler(FieldsValidationException.class)
+    public ResponseEntity<Object> handleValidationException(FieldsValidationException ex) {
+        return exceptionDetailsHandler.handleFieldsValidation(ex, EntityErrorCode.class);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {

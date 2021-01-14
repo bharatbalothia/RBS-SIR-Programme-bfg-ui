@@ -7,6 +7,7 @@ import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
+import com.ibm.sterling.bfg.app.model.audit.EventType;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.*;
@@ -60,6 +61,18 @@ public class EntityServiceImpl implements EntityService {
     public boolean existsByServiceAndEntity(String service, String entity) {
         LOG.info("exists by {} and {}", service, entity);
         return entityRepository.existsByServiceAndEntityAllIgnoreCase(service, entity);
+    }
+
+    @Override
+    public boolean existsByMailboxPathOut(String mailboxPathOut) {
+        LOG.info("exists by mailboxPathOut: {}", mailboxPathOut);
+        return entityRepository.existsByMailboxPathOut(mailboxPathOut);
+    }
+
+    @Override
+    public boolean existsByMqQueueOut(String mqQueueOut) {
+        LOG.info("exists by mqQueueOut: {}", mqQueueOut);
+        return entityRepository.existsByMqQueueOut(mqQueueOut);
     }
 
     @Override
@@ -269,6 +282,16 @@ public class EntityServiceImpl implements EntityService {
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public void updatePendingEntity(ChangeControl changeControl, Entity entity) {
+        String currentName = changeControl.getResultMeta1();
+        String newName = entity.getEntity();
+        String actionValue = currentName.equals(newName) ? currentName : currentName + " -> " + newName;
+        changeControlService.updateChangeControl(changeControl, entity);
+        adminAuditService.fireAdminAuditEvent(
+                new AdminAuditEventRequest(changeControl, EventType.REQUEST_EDITED, actionValue));
     }
 
 }

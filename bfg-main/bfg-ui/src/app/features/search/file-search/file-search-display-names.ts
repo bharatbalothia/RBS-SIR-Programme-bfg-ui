@@ -41,7 +41,7 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'fileID', fieldValue: file.id },
-        { fieldName: 'entity', fieldValue: file.entity.entity, isActionButton: true },
+        { fieldName: 'entity', fieldValue: file.entity.entity || 'None', isActionButton: !!file.entity.entity },
         { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },

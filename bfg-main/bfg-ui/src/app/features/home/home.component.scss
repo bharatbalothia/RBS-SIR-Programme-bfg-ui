@@ -1,66 +1,35 @@
 .home-card {
     position: static !important;
 
-    .top-error-message {
-        margin-left: 24px;
-    }
+    table {
+      border-collapse: collapse;
+      font-size: 20px;
 
-    .mat-form-field {
-        width: 100%;
+      .table-header {
+        font-weight: bold;
+        text-align: center;
+      }
 
-        .error-message {
-            white-space: pre-wrap;
-        }
-    }
+      .left-table-header {
+        text-align: right;
+      }
 
-    .system-statistics {
+      .sct-link {
+        text-align: center;
+      }
 
+      .icon-value {
         display: flex;
         align-items: center;
-        padding-bottom: 15px;
 
-        .statistics-label {
-            width: 200px;
-            display: inline-block;
-
-            h2 {
-                font-weight: bold;
-                margin: 0;
-            }
-
+        .value {
+          display: inline-block;
+          margin-left: 5px;
         }
-
-        .statistics-value {
-
-            display: flex;
-            flex-direction: column;
-
-            .icon-value {
-                display: inline-flex;
-                align-items: center;
-            }
-
-            .table-value {
-
-                .header-cell,
-                .data-cell {
-                    padding: 10px;
-                    text-align: center;
-                }
-
-                .header-cell,
-                .cell {
-                    font-size: large;
-                }
-
-            }
-
-            h2 {
-                font-weight: normal;
-                margin: 0;
-            }
-
-        }
+      }
     }
 
+    table, th, td {
+      padding: 10px;
+    }
 }

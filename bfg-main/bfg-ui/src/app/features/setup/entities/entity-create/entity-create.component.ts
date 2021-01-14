@@ -551,7 +551,7 @@ export class EntityCreateComponent implements OnInit {
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Save ${entityName} entity`,
       text: `Are you sure to save ${entityName} entity?`,
-      yesCaption: 'Save',
+      yesCaption: 'Submit',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;

@@ -1,5 +1,4 @@
 import { Component, Inject } from '@angular/core';
-import { ErrorMessage, getErrorsMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { get } from 'lodash';
@@ -15,11 +14,9 @@ import { Entity } from '../../models/entity/entity.model';
 })
 export class TransmitDialogComponent {
 
-  getErrorsMessage = getErrorsMessage;
   FILE_TYPE = ENTITY_TRANSMIT_FILE_TYPE;
 
   isLoading = false;
-  errorMessage: ErrorMessage;
 
   entity: Entity;
   fileType: string = ENTITY_TRANSMIT_FILE_TYPE.ICF;
@@ -40,7 +37,6 @@ export class TransmitDialogComponent {
 
   transmit() {
     this.isLoading = true;
-    this.errorMessage = null;
     this.transmitAction(this.entity.entityId, this.fileType)
       .subscribe(() => {
         this.isLoading = false;
@@ -54,10 +50,8 @@ export class TransmitDialogComponent {
         });
         this.dialog.close();
       },
-        (error) => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
 }

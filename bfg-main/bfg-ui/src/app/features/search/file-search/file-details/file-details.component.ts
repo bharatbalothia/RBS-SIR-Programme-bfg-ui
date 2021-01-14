@@ -1,7 +1,6 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
@@ -26,9 +25,6 @@ import { TransactionsDialogComponent } from '../transactions-dialog/transactions
 export class FileDetailsComponent implements OnInit {
 
   displayName = getFileSearchDisplayName;
-
-  errorMesageEmitters: { [id: number]: EventEmitter<ErrorMessage> } = {};
-  errorMessage: ErrorMessage;
   isLoading = false;
 
   tabs: Tab[];
@@ -65,12 +61,10 @@ export class FileDetailsComponent implements OnInit {
     },
       error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
       });
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -88,8 +82,6 @@ export class FileDetailsComponent implements OnInit {
     },
       error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMesageEvent(file.id);
       })
 
   openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
@@ -101,13 +93,10 @@ export class FileDetailsComponent implements OnInit {
         tabs: getEntityDetailsTabs(entity),
         displayName: getEntityDisplayName,
         isDragable: true,
-
       }));
     },
       error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-        this.emitErrorMesageEvent(file.id);
       })
 
   openBusinessProcessDialog = (file: File) =>
@@ -139,7 +128,6 @@ export class FileDetailsComponent implements OnInit {
     }))
 
   openFileDetailsDialog = (file: File) => {
-    this.createErrorMesageEmitter(file.id);
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `File - ${file.id}`,
       tabs: getFileDetailsTabs(file),
@@ -147,9 +135,8 @@ export class FileDetailsComponent implements OnInit {
       isDragable: true,
       actionData: {
         actions: this.actions
-      },
-      parentError: this.errorMesageEmitters[file.id]
-    })).afterClosed().subscribe(() => this.deleteErrorMesageEmitter(file.id));
+      }
+    }));
   }
 
   openErrorDetailsDialog = (file: File) => this.fileService.getErrorDetailsByCode(file.errorCode)
@@ -165,23 +152,6 @@ export class FileDetailsComponent implements OnInit {
     },
       error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
       })
-
-  createErrorMesageEmitter(id: number) {
-    this.errorMesageEmitters[id] = new EventEmitter<ErrorMessage>();
-  }
-
-  deleteErrorMesageEmitter(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id] = null;
-    }
-  }
-
-  emitErrorMesageEvent(id: number) {
-    if (this.errorMesageEmitters[id]) {
-      this.errorMesageEmitters[id].emit(this.errorMessage);
-    }
-  }
 
 }

@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
-import { ErrorMessage } from 'src/app/core/utils/error-template';
 import { FileDialogService } from '../../models/file/file-dialog.service';
 import { File } from '../../models/file/file.model';
 import { FilesWithPagination } from '../../models/file/files-with-pagination.model';
@@ -17,7 +16,6 @@ export class FileTableComponent implements OnInit, OnDestroy {
   getFileStatusIcon = getStatusIcon;
 
   @Input() getFileList: (pageIndex: number, pageSize: number) => any;
-  @Input() errorMessage: ErrorMessage;
   @Input() dataSource: MatTableDataSource<File>;
   @Input() files: FilesWithPagination;
   @Input() isLoading = false;
@@ -27,7 +25,6 @@ export class FileTableComponent implements OnInit, OnDestroy {
   @Input() shouldHideTableHeader = false;
   @Input() shouldAutoRefresh = true;
 
-  @Output() errorMessageChange: EventEmitter<ErrorMessage> = new EventEmitter<ErrorMessage>();
   @Output() isLoadingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   autoRefreshing: Subscription;
@@ -53,7 +50,6 @@ export class FileTableComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.autoRefreshChange(this.shouldAutoRefresh);
-    this.fileDialogService.errorMessageChange.subscribe(data => this.errorMessageChange.emit(data));
     this.fileDialogService.isLoadingChange.subscribe(data => this.isLoadingChange.emit(data));
   }
 

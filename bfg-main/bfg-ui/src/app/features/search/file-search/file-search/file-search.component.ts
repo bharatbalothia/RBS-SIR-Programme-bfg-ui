@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
@@ -30,8 +29,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   fileTableComponent: FileTableComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
-
-  errorMessage: ErrorMessage;
 
   minDate: moment.Moment = null;
   maxDate: moment.Moment = null;
@@ -66,7 +63,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     private toolTip: TooltipService,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
@@ -131,10 +128,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
         this.fileCriteriaData = data;
         this.persistSelectedFileStatus();
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
   persistSelectedFileStatus() {
     const contol = this.searchingParametersFormGroup.controls.fileStatus;
@@ -148,15 +143,12 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
 
 
   getFileList(pageIndex: number, pageSize: number) {
-    this.errorMessage = null;
-
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
@@ -178,10 +170,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       this.files = data;
       this.updateTable();
     },
-      (error) => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+      error => this.isLoading = false
+    );
   }
 
   convertDateToFormat = (date: moment.Moment | null) => date && date.format('YYYY-MM-DDTHH:mm:ss');
@@ -198,7 +188,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     else {
       this.fileTableComponent.autoRefreshChange(false);
     }
-
   }
 
   resetSearchParameters = () => {

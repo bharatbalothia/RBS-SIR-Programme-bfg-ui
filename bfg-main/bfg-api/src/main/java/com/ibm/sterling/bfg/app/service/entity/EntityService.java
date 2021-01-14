@@ -1,10 +1,10 @@
 package com.ibm.sterling.bfg.app.service.entity;
 
-import com.ibm.sterling.bfg.app.model.entity.EntityType;
-import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
+import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.entity.EntityType;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +42,8 @@ public interface EntityService extends FieldValueExists {
                                                               Integer entityId);
 
     void updatePendingEntity(ChangeControl changeControl, Entity entity);
+
+    void cancelPendingEntity(ChangeControl changeControl);
 
     boolean existsByMailboxPathOut(String mailboxPathOut);
 

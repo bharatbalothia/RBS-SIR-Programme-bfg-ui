@@ -1,7 +1,6 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 
@@ -13,18 +12,12 @@ public class File {
     private String reference;
     private String type;
     private String service;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
     private Integer workflowID;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Integer entityID;
-    private Entity entity;
-    private Integer messageID;
     private String docID;
     private Integer transactionTotal;
     private Boolean outbound;
-    private Boolean override;
-    private String statusLabel;
 
     public Integer getId() {
         return id;
@@ -82,6 +75,7 @@ public class File {
         this.service = service;
     }
 
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -96,22 +90,6 @@ public class File {
 
     public void setWorkflowID(Integer workflowID) {
         this.workflowID = workflowID;
-    }
-
-    public Integer getEntityID() {
-        return entityID;
-    }
-
-    public void setEntityID(Integer entityID) {
-        this.entityID = entityID;
-    }
-
-    public Integer getMessageID() {
-        return messageID;
-    }
-
-    public void setMessageID(Integer messageID) {
-        this.messageID = messageID;
     }
 
     public String getDocID() {
@@ -136,30 +114,6 @@ public class File {
 
     public void setOutbound(Boolean outbound) {
         this.outbound = outbound;
-    }
-
-    public Boolean getOverride() {
-        return override;
-    }
-
-    public void setOverride(Boolean override) {
-        this.override = override;
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public String getStatusLabel() {
-        return statusLabel;
-    }
-
-    public void setStatusLabel(String statusLabel) {
-        this.statusLabel = statusLabel;
     }
 
 }

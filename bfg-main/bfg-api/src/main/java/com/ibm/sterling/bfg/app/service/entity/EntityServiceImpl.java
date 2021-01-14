@@ -3,9 +3,9 @@ package com.ibm.sterling.bfg.app.service.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.audit.EventType;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
@@ -294,4 +294,10 @@ public class EntityServiceImpl implements EntityService {
                 new AdminAuditEventRequest(changeControl, EventType.REQUEST_EDITED, actionValue));
     }
 
+    @Override
+    public void cancelPendingEntity(ChangeControl changeControl) {
+        changeControlService.deleteChangeControl(changeControl);
+        adminAuditService.fireAdminAuditEvent(
+                new AdminAuditEventRequest(changeControl, EventType.REQUEST_CANCELLED, changeControl.getResultMeta1()));
+    }
 }

@@ -35,6 +35,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
@@ -110,7 +111,7 @@ public class CertificateController {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(String.valueOf(approve.get("changeID")));
         return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
                 changeControlCert,
-                Optional.ofNullable(approve.get("approverComments")).map(String::valueOf).orElse(null),
+                Objects.toString(approve.get("approverComments"), null),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
         ).map(ResponseEntity::ok)
                 .orElseThrow(CertificateNotFoundException::new);
@@ -138,12 +139,12 @@ public class CertificateController {
 
     @PutMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
-    public ResponseEntity<TrustedCertificate> updatePendingCertificates(@PathVariable(name = "id") String id,
-                                                                        @RequestBody Map<String, Object> edit) {
+    public ResponseEntity<TrustedCertificate> updatePendingCertificate(@PathVariable(name = "id") String id,
+                                                                       @RequestBody Map<String, Object> edit) {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
         String name = String.valueOf(edit.get("name"));
-        return ok(certificateService.updatePendingCertificate(changeControlCert, name, Optional.ofNullable(edit.get("comments")).map(String::valueOf).orElse(null)));
+        return ok(certificateService.updatePendingCertificate(changeControlCert, name, Objects.toString(edit.get("comments"), null)));
     }
 
     @DeleteMapping("pending/{id}")
@@ -151,7 +152,7 @@ public class CertificateController {
     public ResponseEntity<ChangeControlCert> deletePendingCertificates(@PathVariable(name = "id") String id) {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(id);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControlCert.getChanger());
-        certificateService.deleteChangeControl(changeControlCert);
+        certificateService.cancelPendingCertificate(changeControlCert);
         return ok(changeControlCert);
     }
 

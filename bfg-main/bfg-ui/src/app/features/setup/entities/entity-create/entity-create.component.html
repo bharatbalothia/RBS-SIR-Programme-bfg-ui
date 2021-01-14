@@ -919,9 +919,7 @@
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button class="action-button" color='primary'
-                            (click)="sendEntity(!isCloneAction && isEditing())">{{!isCloneAction && isEditing() ? 'Edit'
-                            :
-                            'Create'}}</button>
+                            (click)="sendEntity(!isCloneAction && isEditing())">Save</button>
                         <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>

@@ -4,12 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
-import com.ibm.sterling.bfg.app.model.entity.*;
-import com.ibm.sterling.bfg.app.model.entity.EntityType;
-import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
-import com.ibm.sterling.bfg.app.service.*;
+import com.ibm.sterling.bfg.app.model.entity.*;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.service.entity.TransmittalService;
@@ -23,10 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -75,7 +71,7 @@ public class EntityController {
                 .orElseThrow(EntityNotFoundException::new);
         return Optional.ofNullable(entityService.getEntityAfterApprove(
                 changeControl,
-                Optional.ofNullable(approve.get("approverComments")).map(String::valueOf).orElse(null),
+                Objects.toString(approve.get("approverComments"), null),
                 ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
         ).map(ResponseEntity::ok)
                 .orElseThrow(EntityNotFoundException::new);
@@ -148,7 +144,7 @@ public class EntityController {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
-        changeControlService.deleteChangeControl(changeControl);
+        entityService.cancelPendingEntity(changeControl);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 

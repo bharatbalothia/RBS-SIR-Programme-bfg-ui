@@ -47,7 +47,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
         { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound), icon: file.outbound ? 'call_made' : 'call_received' },
-        { fieldName: 'timestamp', fieldValue: formatDate(file.timestamp, 'dd/MM/yyyy HH:mm:ss', 'en-GB') },
+        { fieldName: 'timestamp', fieldValue: file.timestamp },
         { fieldName: 'workflowID', fieldValue: file.workflowID, isActionButton: true },
         { fieldName: 'messageID', fieldValue: file.messageID },
         { fieldName: 'status', fieldValue: file.statusLabel || file.status + ' [no description available]' },

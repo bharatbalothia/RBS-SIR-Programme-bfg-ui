@@ -2,8 +2,13 @@ package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.model.validation.CertificateValidationComponent;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.service.GenericSpecification;
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +18,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
 public class ChangeControlCertService {
@@ -22,6 +30,9 @@ public class ChangeControlCertService {
 
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
+
+    @Autowired
+    private CertificateValidationComponent certificateValidation;
 
     public List<ChangeControlCert> listAll() {
         return changeControlCertRepository.findAll();
@@ -81,4 +92,37 @@ public class ChangeControlCertService {
                 .stream());
     }
 
+    public TrustedCertificate updateChangeControlCert(ChangeControlCert changeControlCert, String certName, String changerComments) {
+        LOGGER.info("Updating pending {}", changeControlCert);
+        checkStatusOfChangeControl(changeControlCert);
+        if (!changeControlCert.getOperation().equals(Operation.DELETE)) {
+            TrustedCertificateLog trustedCertificateLog = changeControlCert.getTrustedCertificateLog();
+            Optional.ofNullable(certName).ifPresent(name -> {
+                trustedCertificateLog.setCertificateName(name);
+                changeControlCert.setResultMeta1(name);
+            });
+            TrustedCertificate trustedCertificate = changeControlCert.convertTrustedCertificateLogToTrustedCertificate();
+            certificateValidation.validateCertificate(trustedCertificate);
+
+            Optional.ofNullable(changerComments).ifPresent(comments -> {
+                changeControlCert.setChangerComments(comments);
+                trustedCertificate.setChangerComments(changerComments);
+            });
+            save(changeControlCert);
+            return trustedCertificate;
+        }
+        return null;
+    }
+
+    public void deleteChangeControl(ChangeControlCert changeControlCert) {
+        LOGGER.info("Deleting pending {}", changeControlCert);
+        checkStatusOfChangeControl(changeControlCert);
+        changeControlCertRepository.delete(changeControlCert);
+    }
+
+    private void checkStatusOfChangeControl(ChangeControlCert changeControlCert) {
+        if (!PENDING.equals(changeControlCert.getStatus())) {
+            throw new StatusNotPendingException();
+        }
+    }
 }

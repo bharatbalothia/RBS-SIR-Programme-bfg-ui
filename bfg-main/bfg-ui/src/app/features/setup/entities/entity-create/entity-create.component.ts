@@ -27,6 +27,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { NotificationService } from 'src/app/shared/services/NotificationService';
 
 @Component({
   selector: 'app-entity-create',
@@ -93,6 +94,7 @@ export class EntityCreateComponent implements OnInit {
     private router: Router,
     private toolTip: TooltipService,
     private auth: AuthService,
+    public notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -547,9 +549,9 @@ export class EntityCreateComponent implements OnInit {
   sendEntity(isEditing: boolean) {
     const entityName = this.entityPageFormGroup.get('entity').value || 'new';
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `${isEditing ? 'Edit' : 'Create'} ${entityName} entity`,
-      text: `Are you sure to ${isEditing ? 'edit' : 'create'} ${entityName} entity?`,
-      yesCaption: isEditing ? 'Edit' : 'Create',
+      title: `Save ${entityName} entity`,
+      text: `Are you sure to save ${entityName} entity?`,
+      yesCaption: 'Submit',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
       this.errorMessage = null;
@@ -587,25 +589,23 @@ export class EntityCreateComponent implements OnInit {
         entityAction.pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
-            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Entity ${isEditing ? 'edited' : 'created'}`,
-              text: `Entity ${entityName} has been ${isEditing ? 'edited' : 'created'}`,
-              shouldHideYesCaption: true,
-              noCaption: 'Back'
-            })).afterClosed().subscribe(() => {
-              if (isEditing || this.isCloneAction) {
-                const previousURL = get(window.history.state, 'previousURL');
-                if (previousURL) {
-                  this.router.navigate([previousURL], { state: window.history.state });
-                } else {
-                  this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
-                }
+            this.notificationService.show(
+              'Entity saved',
+              `Entity ${entityName} has been saved`,
+              'success'
+            );
+            if (isEditing || this.isCloneAction) {
+              const previousURL = get(window.history.state, 'previousURL');
+              if (previousURL) {
+                this.router.navigate([previousURL], { state: window.history.state });
+              } else {
+                this.router.navigate(['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.SEARCH], { state: window.history.state });
               }
-              else {
-                this.stepper.reset();
-                this.resetAllForms();
-              }
-            });
+            }
+            else {
+              this.stepper.reset();
+              this.resetAllForms();
+            }
           },
           (error) => {
             this.isLoading = false;

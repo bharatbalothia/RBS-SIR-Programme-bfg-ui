@@ -5,90 +5,95 @@
     {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize, transactions.pageable.pageNumber + 1)}}
 </h3>
 <ng-template matStepLabel>Search results</ng-template>
-<div class="mat-elevation-z8">
-    <div class="table-container">
-        <mat-table [dataSource]="dataSource">
+<div class="table-container">
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-            <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
-                        {{element.id}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
+                    {{element.id}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-icon [svgIcon]="getTransactionStatusIcon(element.status)"></mat-icon>
-                    &nbsp;{{element.status}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-icon [svgIcon]="getTransactionStatusIcon(element.status)"></mat-icon>
+                &nbsp;{{element.status}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="transactionID">
-                <mat-header-cell *matHeaderCellDef> Transaction ID </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.transactionID}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="transactionID">
+            <mat-header-cell *matHeaderCellDef> Transaction ID </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.transactionID}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.type}}
-                    <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.type}}
+                <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="timestamp">
-                <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.timestamp | date:'dd/MM/yyyy, HH:mm:ss'}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="timestamp">
+            <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.timestamp | date:'dd/MM/yyyy, HH:mm:ss'}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="WFID">
-                <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openBusinessProcessDialog(element)">
-                        {{element.workflowID}}
-                    </button>
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="WFID">
+            <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-button (click)="openBusinessProcessDialog(element)">
+                    {{element.workflowID}}
+                </button>
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="settleDate">
-                <mat-header-cell *matHeaderCellDef> Settle Date </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.settleDate | date:'dd/MM/yyyy'}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="settleDate">
+            <mat-header-cell *matHeaderCellDef> Settle Date </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.settleDate | date:'dd/MM/yyyy'}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="settleAmount">
-                <mat-header-cell *matHeaderCellDef> Settle Amount </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.settleAmount | number: '1.2-2'}}
-                </mat-cell>
-            </ng-container>
+        <ng-container matColumnDef="settleAmount">
+            <mat-header-cell *matHeaderCellDef> Settle Amount </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.settleAmount | number: '1.2-2'}}
+            </mat-cell>
+        </ng-container>
 
-            <ng-container matColumnDef="noData">
-                <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-                    No records found.
-                </mat-footer-cell>
-            </ng-container>
+        <ng-container matColumnDef="noData">
+            <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                No records found.
+            </mat-footer-cell>
+        </ng-container>
 
-            <mat-footer-row *matFooterRowDef="['noData']"
-                [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
-            </mat-footer-row>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-    </div>
+        <ng-container matColumnDef="paginator">
+            <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
+                    [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+                    [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+                    [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+                    showFirstLastButtons>
+                </app-table-paginator>
+            </mat-footer-cell>
+        </ng-container>
 
-    <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1" [getRows]="getTransactionList.bind(this)"
-        [min]="1" [max]="transactions && transactions.totalPages" [length]="transactions.totalElements"
-        [pageIndex]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
-        [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
-    </app-table-paginator>
+        <mat-footer-row *matFooterRowDef="['noData']"
+            [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+        </mat-footer-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="['paginator']" [hidden]="dataSource && dataSource.data.length === 0">
+        </mat-footer-row>
+    </mat-table>
 
 </div>

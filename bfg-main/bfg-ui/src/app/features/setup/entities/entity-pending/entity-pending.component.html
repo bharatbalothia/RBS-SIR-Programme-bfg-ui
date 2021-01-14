@@ -3,77 +3,83 @@
     <mat-card-title>Entity pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
-    <div class="mat-elevation-z8">
-      <div class="table-container">
-        <mat-table [dataSource]="dataSource" *ngIf="changeControls">
+    <div class="table-container">
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="changeControls">
 
-          <ng-container matColumnDef="action">
-            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <button class="action-button" mat-button (click)="openApprovingDialog(element)">
-                <div class="action-icon">
-                  <mat-icon inline>format_list_numbered</mat-icon> Version manager
-                </div>
-              </button>
-              <a mat-icon-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
-                class="action-button"
-                [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
-                [state]="{ pageIndex: pageIndex, pageSize: pageSize, previousURL: getCurrentRoute()}" alt="Edit"
-                title="Edit">
-                <div class="action-icon">
-                  <mat-icon inline>edit</mat-icon>edit
-                </div>
-              </a>
-              <button mat-icon-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete"
-                title="Delete" (click)="deletePendingChange(element)">
-                <div class="action-icon">
-                  <mat-icon>clear</mat-icon>delete
-                </div>
-              </button>
-            </mat-cell>
-          </ng-container>
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button class="action-button" mat-button (click)="openApprovingDialog(element)">
+              <div class="action-icon">
+                <mat-icon inline>format_list_numbered</mat-icon> Version manager
+              </div>
+            </button>
+            <a mat-icon-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+              class="action-button"
+              [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
+              [state]="{ pageIndex: pageIndex, pageSize: pageSize, previousURL: getCurrentRoute()}" alt="Edit"
+              title="Edit">
+              <div class="action-icon">
+                <mat-icon inline>edit</mat-icon>edit
+              </div>
+            </a>
+            <button mat-icon-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete"
+              title="Delete" (click)="deletePendingChange(element)">
+              <div class="action-icon">
+                <mat-icon>clear</mat-icon>delete
+              </div>
+            </button>
+          </mat-cell>
+        </ng-container>
 
-          <ng-container matColumnDef="changes">
-            <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <button mat-button (click)="openInfoDialog(element)">
-                <mat-icon inline>info</mat-icon> Changes
-              </button>
-            </mat-cell>
-          </ng-container>
+        <ng-container matColumnDef="changes">
+          <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-button (click)="openInfoDialog(element)">
+              <mat-icon inline>info</mat-icon> Changes
+            </button>
+          </mat-cell>
+        </ng-container>
 
-          <ng-container matColumnDef="entity">openEntityDetailsDialog
-            <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <button mat-button (click)="openDetailsDialog(element)">
-                {{element.resultMeta1}}
-              </button>
-            </mat-cell>
-          </ng-container>
+        <ng-container matColumnDef="entity">openEntityDetailsDialog
+          <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-button (click)="openDetailsDialog(element)">
+              {{element.resultMeta1}}
+            </button>
+          </mat-cell>
+        </ng-container>
 
-          <ng-container matColumnDef="service">
-            <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.resultMeta2}} </mat-cell>
-          </ng-container>
+        <ng-container matColumnDef="service">
+          <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.resultMeta2}} </mat-cell>
+        </ng-container>
 
-          <ng-container matColumnDef="noData">
-            <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-              No records found.
-            </mat-footer-cell>
-          </ng-container>
+        <ng-container matColumnDef="noData">
+          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+            No records found.
+          </mat-footer-cell>
+        </ng-container>
 
-          <mat-footer-row *matFooterRowDef="['noData']"
-            [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
-          </mat-footer-row>
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-      </div>
+        <ng-container matColumnDef="paginator">
+          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+            <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
+              [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
+              [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
+              [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+            </app-table-paginator>
+          </mat-footer-cell>
+        </ng-container>
 
-      <app-table-paginator *ngIf="changeControls" [value]="pageIndex + 1" [getRows]="getPendingChanges.bind(this)"
-        [min]="1" [max]="changeControls && changeControls.totalPages" [length]="changeControls.totalElements"
-        [pageIndex]="changeControls.pageable.pageNumber" [pageSize]="changeControls.pageable.pageSize"
-        [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
+        <mat-footer-row *matFooterRowDef="['noData']"
+          [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+        </mat-footer-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="['paginator']" [hidden]="dataSource && dataSource.data.length === 0">
+        </mat-footer-row>
+      </mat-table>
+
     </div>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
   </mat-card-content>

@@ -1,11 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ErrorMessage, getErrorsMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { CHANGE_STATUS } from '../../models/changeControl/change-status';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get } from 'lodash';
-import { AuthService } from 'src/app/core/auth/auth.service';
+import { NotificationService } from '../../services/NotificationService';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -14,13 +13,11 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 })
 export class ApprovingDialogComponent implements OnInit {
 
-  getErrorsMessage = getErrorsMessage;
-
   dialogTabs = DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
 
   isLoading = false;
-  errorMessage: ErrorMessage;
+  hasErrors = false;
 
   displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
   tabs: Tab[];
@@ -36,7 +33,7 @@ export class ApprovingDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<ApprovingDialogComponent>,
-    private authService: AuthService
+    private notificationService: NotificationService
   ) {
     this.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
@@ -46,7 +43,12 @@ export class ApprovingDialogComponent implements OnInit {
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
 
-    this.errorMessage = get(this.data, 'actionData.errorMessage', {});
+    const errorMessage = get(this.data, 'actionData.errorMessage');
+
+    if (errorMessage) {
+      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
+      this.notificationService.showErrorWithWarningMessage(errorMessage);
+    }
 
     this.displayName = this.data.displayName;
   }
@@ -56,15 +58,15 @@ export class ApprovingDialogComponent implements OnInit {
 
   approvingAction(status) {
     this.isLoading = true;
-    this.errorMessage = null;
+    this.hasErrors = false;
     this.approveAction({ changeID: this.changeId, status, approverComments: this.approverComments })
       .subscribe(() => {
         this.isLoading = false;
         this.dialog.close({ refreshList: true, status });
       },
-        (error) => {
+        error => {
           this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
+          this.hasErrors = true;
         });
   }
 

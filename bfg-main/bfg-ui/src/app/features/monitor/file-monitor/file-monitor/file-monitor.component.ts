@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { take } from 'rxjs/operators';
-import { ErrorMessage, getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { File } from 'src/app/shared/models/file/file.model';
 import { FileService } from 'src/app/shared/models/file/file.service';
 
@@ -11,8 +10,6 @@ import { FileService } from 'src/app/shared/models/file/file.service';
   styleUrls: ['./file-monitor.component.scss']
 })
 export class FileMonitorComponent implements OnInit {
-
-  errorMessage: ErrorMessage;
   isLoading = false;
 
   files: File[];
@@ -27,7 +24,6 @@ export class FileMonitorComponent implements OnInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -39,10 +35,8 @@ export class FileMonitorComponent implements OnInit {
       this.files = data;
       this.updateTable();
     },
-      (error) => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+      error => this.isLoading = false
+    );
   }
 
   updateTable() {

@@ -4,7 +4,7 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <app-file-table [(errorMessage)]="errorMessage" [(isLoading)]="isLoading" [pageIndex]="pageIndex"
+        <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex"
             [pageSize]="pageSize" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
         </app-file-table>
     </mat-card-content>

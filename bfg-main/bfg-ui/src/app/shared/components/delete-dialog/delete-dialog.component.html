@@ -1,5 +1,4 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
-<app-error-template [errorMessage]="errorMessage"></app-error-template>
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
@@ -18,7 +17,7 @@
         </div>
         <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
         <button mat-raised-button color='primary'
-            [disabled]="errorMessage && (errorMessage.message || errorMessage.errors)"
+            [disabled]="hasErrors"
             (click)="deletingAction()">Delete</button>
     </div>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

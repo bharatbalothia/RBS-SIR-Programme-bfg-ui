@@ -16,7 +16,6 @@ import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { getApiErrorMessage, ErrorMessage } from 'src/app/core/utils/error-template';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
@@ -41,7 +40,6 @@ export class EntitySearchComponent implements OnInit {
   DNSearchingValue = '';
 
   isLoading = true;
-  errorMessage: ErrorMessage;
 
   entities: EntitiesWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
@@ -72,7 +70,6 @@ export class EntitySearchComponent implements OnInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -91,10 +88,8 @@ export class EntitySearchComponent implements OnInit {
       this.entities = data;
       this.updateTable();
     },
-      error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
+      error => this.isLoading = false
+    );
   }
 
   updateTable() {
@@ -108,10 +103,7 @@ export class EntitySearchComponent implements OnInit {
         .then(data => {
           this.isLoading = false;
           return ({ ...changeControl, entityBefore: data });
-        }).catch(error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        }).catch(error => this.isLoading = false);
     }
     else {
       return new Promise((res) => res(changeControl));
@@ -125,7 +117,6 @@ export class EntitySearchComponent implements OnInit {
         return data;
       }).catch(error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
         return null;
       })
 
@@ -136,7 +127,6 @@ export class EntitySearchComponent implements OnInit {
         return ({ ...changeControl, entityLog: data });
       }).catch(error => {
         this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
         return null;
       })
 

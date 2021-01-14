@@ -3,7 +3,6 @@ import { get, isEmpty } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
-import { getApiErrorMessage, ErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import * as moment from 'moment';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TransactionCriteriaData } from 'src/app/shared/models/transaction/transaction-criteria.model';
@@ -29,8 +28,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   transactionTableComponent: TransactionTableComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
-
-  errorMessage: ErrorMessage;
 
   minDate: moment.Moment = null;
   maxDate: moment.Moment = null;
@@ -103,8 +100,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
 
-  getErrorByField = (key) => getErrorByField(key, this.errorMessage);
-
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
       entity: [''],
@@ -136,10 +131,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         this.transactionCriteriaData = data;
         this.persistSelectedTransactionStatus();
       },
-        error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        })
+        error => this.isLoading = false
+      )
 
   persistSelectedTransactionStatus() {
     const control = this.searchingParametersFormGroup.controls.trxStatus;
@@ -153,7 +146,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   }
 
   setLoading(data) {
-    this.errorMessage = null;
     this.isLoading = true;
     return data;
   }
@@ -180,10 +172,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         this.transactions = data;
         this.updateTable();
       },
-        (error) => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        error => this.isLoading = false
+      );
   }
 
   convertDateToFormat = (date: moment.Moment | null) => date && date.format('YYYY-MM-DDTHH:mm:ss');

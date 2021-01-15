@@ -9,8 +9,6 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs, getEntityDisplayName } from '../entity-display-names';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
@@ -19,6 +17,7 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
+import { NotificationService } from 'src/app/shared/services/NotificationService';
 
 @Component({
   selector: 'app-entity-pending',
@@ -46,6 +45,7 @@ export class EntityPendingComponent implements OnInit {
     private dialog: MatDialog,
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -144,14 +144,12 @@ export class EntityPendingComponent implements OnInit {
             }
           })).afterClosed().subscribe(data => {
             if (get(data, 'refreshList')) {
-              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Entity ${get(data, 'status').toLowerCase()}`,
-                text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-                shouldHideYesCaption: true,
-                noCaption: 'Back'
-              })).afterClosed().subscribe(() => {
-                this.getPendingChanges(this.pageIndex, this.pageSize);
-              });
+              this.notificationService.show(
+                `Entity ${get(data, 'status').toLowerCase()}`,
+                `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+                'success'
+              );
+              this.getPendingChanges(this.pageIndex, this.pageSize);
             }
           })));
   }
@@ -172,14 +170,12 @@ export class EntityPendingComponent implements OnInit {
             }
           })).afterClosed().subscribe(data => {
             if (get(data, 'refreshList')) {
-              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Pending Change deleted`,
-                text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
-                shouldHideYesCaption: true,
-                noCaption: 'Back'
-              })).afterClosed().subscribe(() => {
-                this.getPendingChanges(this.pageIndex, this.pageSize);
-              });
+              this.notificationService.show(
+                `Pending Change deleted`,
+                `The Pending change ${changeCtrl.changeID} has been deleted.`,
+                'success'
+              );
+              this.getPendingChanges(this.pageIndex, this.pageSize);
             }
           })));
   }

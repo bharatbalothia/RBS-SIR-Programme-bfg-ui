@@ -10,8 +10,6 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
@@ -22,6 +20,7 @@ import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constan
 import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dialog/transmit-dialog.component';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { NotificationService } from 'src/app/shared/services/NotificationService';
 
 @Component({
   selector: 'app-entity-search',
@@ -54,6 +53,7 @@ export class EntitySearchComponent implements OnInit {
     private dialog: MatDialog,
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -179,14 +179,12 @@ export class EntitySearchComponent implements OnInit {
             }
           })).afterClosed().subscribe(data => {
             if (get(data, 'refreshList')) {
-              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Entity ${get(data, 'status').toLowerCase()}`,
-                text: `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-                shouldHideYesCaption: true,
-                noCaption: 'Back'
-              })).afterClosed().subscribe(() => {
-                this.getEntityList(this.pageIndex, this.pageSize);
-              });
+              this.notificationService.show(
+                `Entity ${get(data, 'status').toLowerCase()}`,
+                `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+                'success'
+              );
+              this.getEntityList(this.pageIndex, this.pageSize);
             }
           })));
   }
@@ -203,14 +201,12 @@ export class EntitySearchComponent implements OnInit {
       }
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
-        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-          title: `Entity deleted`,
-          text: `The update to the Entity will be committed after the change has been approved.`,
-          shouldHideYesCaption: true,
-          noCaption: 'Back'
-        })).afterClosed().subscribe(() => {
-          this.getEntityList(this.pageIndex, this.pageSize);
-        });
+        this.notificationService.show(
+          `Entity deleted`,
+          `The update to the Entity will be committed after the change has been approved.`,
+          'success'
+        );
+        this.getEntityList(this.pageIndex, this.pageSize);
       }
     }));
   }
@@ -231,14 +227,12 @@ export class EntitySearchComponent implements OnInit {
             }
           })).afterClosed().subscribe(data => {
             if (get(data, 'refreshList')) {
-              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Pending Change deleted`,
-                text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
-                shouldHideYesCaption: true,
-                noCaption: 'Back'
-              })).afterClosed().subscribe(() => {
-                this.getEntityList(this.pageIndex, this.pageSize);
-              });
+              this.notificationService.show(
+                `Pending Change deleted`,
+                `The Pending change ${changeCtrl.changeID} has been deleted.`,
+                'success'
+              );
+              this.getEntityList(this.pageIndex, this.pageSize);
             }
           })));
   }

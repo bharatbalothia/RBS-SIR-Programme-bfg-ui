@@ -13,14 +13,13 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { get } from 'lodash';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { NotificationService } from 'src/app/shared/services/NotificationService';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -53,6 +52,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
     private dialog: MatDialog,
     private toolTip: TooltipService,
     private router: Router,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -233,15 +233,12 @@ export class TrustedCertificateSearchComponent implements OnInit {
             }
           })).afterClosed().subscribe(data => {
             if (get(data, 'refreshList')) {
-              this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
-                text:
-                  `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
-                shouldHideYesCaption: true,
-                noCaption: 'Back'
-              })).afterClosed().subscribe(() => {
-                this.getTrustedCertificateList(this.pageIndex, this.pageSize);
-              });
+              this.notificationService.show(
+                `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
+                `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
+                'success'
+              );
+              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
             }
           })));
   }
@@ -259,14 +256,12 @@ export class TrustedCertificateSearchComponent implements OnInit {
       tooltip: this.getTooltip('delete-tc', 'changerComments', 'delete')
     })).afterClosed().subscribe(data => {
       if (get(data, 'refreshList')) {
-        this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-          title: `Trusted Certificate deleted`,
-          text: `The update to the Trusted Certificate will be committed after the change has been approved.`,
-          shouldHideYesCaption: true,
-          noCaption: 'Back'
-        })).afterClosed().subscribe(() => {
-          this.getTrustedCertificateList(this.pageIndex, this.pageSize);
-        });
+        this.notificationService.show(
+          `Trusted Certificate deleted`,
+          `The update to the Trusted Certificate will be committed after the change has been approved.`,
+          'success'
+        );
+        this.getTrustedCertificateList(this.pageIndex, this.pageSize);
       }
     });
   }
@@ -291,14 +286,12 @@ export class TrustedCertificateSearchComponent implements OnInit {
           },
         })).afterClosed().subscribe(data => {
           if (get(data, 'refreshList')) {
-            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Pending Change deleted`,
-              text: `The Pending change ${changeCtrl.changeID} has been deleted.`,
-              shouldHideYesCaption: true,
-              noCaption: 'Back'
-            })).afterClosed().subscribe(() => {
-              this.getTrustedCertificateList(this.pageIndex, this.pageSize);
-            });
+            this.notificationService.show(
+              `Pending Change deleted`,
+              `The Pending change ${changeCtrl.changeID} has been deleted.`,
+              'success'
+            );
+            this.getTrustedCertificateList(this.pageIndex, this.pageSize);
           }
         })));
   }

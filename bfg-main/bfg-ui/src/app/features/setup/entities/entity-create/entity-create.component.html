@@ -381,7 +381,7 @@
             <mat-step *ngIf="schedulesFormGroup" [stepControl]="schedulesFormGroup">
                 <form [formGroup]="schedulesFormGroup">
                     <ng-template matStepLabel>Complete Schedule details</ng-template>
-                    <mat-table [dataSource]="schedulesDataSource">
+                    <mat-table [dataSource]="schedulesDataSource" class="schedule-table">
                         <ng-container matColumnDef="action">
                             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                             <mat-cell *matCellDef="let element; let i = index">

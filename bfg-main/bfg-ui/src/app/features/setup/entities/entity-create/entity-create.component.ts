@@ -793,5 +793,6 @@ export class EntityCreateComponent implements OnInit {
 
   isChangeControlNotCreateStatus = () => get(this.pendingChange, 'operation') !== CHANGE_OPERATION.CREATE;
 
+  shouldShowRoutingAttributesOverlay = () => this.isCloneAction && this.editableEntity && get(this.entityPageFormGroup, 'controls.routeInbound.value');
 
 }

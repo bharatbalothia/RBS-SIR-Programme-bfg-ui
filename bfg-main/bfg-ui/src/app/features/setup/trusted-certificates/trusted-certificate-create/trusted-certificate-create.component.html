@@ -137,7 +137,7 @@
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Confirmation of Trusted Certificate</ng-template>
-            <mat-table [dataSource]="confirmationPageDataSource">
+            <mat-table [dataSource]="confirmationPageDataSource" class="summary-table">
                 <ng-container matColumnDef="field">
                     <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{getTrustedCertificateDisplayName(element.field)}}

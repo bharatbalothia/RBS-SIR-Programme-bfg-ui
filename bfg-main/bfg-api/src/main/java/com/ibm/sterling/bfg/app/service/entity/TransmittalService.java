@@ -22,12 +22,6 @@ public class TransmittalService {
     @Value("${transmittal.url}")
     private String transmittalUrl;
 
-    @Value("${api.userName}")
-    private String userName;
-
-    @Value("${api.password}")
-    private String password;
-
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
@@ -40,7 +34,10 @@ public class TransmittalService {
         try {
             transmittalResponse = new RestTemplate().postForObject(
                     transmittalUrl,
-                    new HttpEntity<>(transmittal, apiDetailsHandler.getHttpHeaders(userName, password)),
+                    new HttpEntity<>(
+                            transmittal,
+                            apiDetailsHandler.getHttpHeaders(transmittal.getUsername(), transmittal.getPassword())
+                    ),
                     String.class
             );
         } catch (HttpStatusCodeException e) {

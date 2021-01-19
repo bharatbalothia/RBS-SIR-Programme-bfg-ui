@@ -166,7 +166,7 @@ public class EntityServiceImpl implements EntityService {
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if (entity.getInboundRoutingRule() && changeControl.getEntityLog().getService().equals("GPL")) {
+        if (changeControl.getEntityLog().getService().equals("GPL") && entity.getRouteInbound()) {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 

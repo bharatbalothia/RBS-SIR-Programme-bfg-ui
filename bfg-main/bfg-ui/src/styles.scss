@@ -182,6 +182,7 @@ mat-form-field {
 // Override default toast css rules
 .toast-container .ngx-toastr {
   width: 350px; // set width of toast
+  word-wrap: break-word;
 
   .toast-title {
     letter-spacing: 0.3px; // set space between letters in the title

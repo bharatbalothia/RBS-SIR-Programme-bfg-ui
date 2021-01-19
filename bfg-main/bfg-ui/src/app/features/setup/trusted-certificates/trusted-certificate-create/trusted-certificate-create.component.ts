@@ -272,7 +272,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
     this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
       title: `Save ${trustedCertificateName} trusted certificate`,
       text: `Are you sure to save ${trustedCertificateName} trusted certificate ? `,
-      yesCaption: 'Save',
+      yesCaption: 'Submit',
       noCaption: 'Cancel'
     })).afterClosed().subscribe(result => {
       if (result) {
@@ -293,19 +293,17 @@ export class TrustedCertificateCreateComponent implements OnInit {
         sendTrustedCertificate.pipe(data => this.setLoading(data)).subscribe(
           () => {
             this.isLoading = false;
-            this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-              title: `Trusted Certificate ${this.changeId ? 'edited' : 'created'}`,
-              text: `Trusted Certificate ${trustedCertificateName} has been ${this.changeId ? 'edited' : 'created'}`,
-              shouldHideYesCaption: true,
-              noCaption: 'Back'
-            })).afterClosed().subscribe(() => {
-              if (this.changeId) {
-                this.goToPreviousPage();
-              } else {
-                this.stepper.reset();
-                this.resetAllForms();
-              }
-            });
+            this.notificationService.show(
+              'Trusted Certificate  saved',
+              `Trusted Certificate ${trustedCertificateName} has been saved`,
+              'success'
+            );
+            if (this.changeId) {
+              this.goToPreviousPage();
+            } else {
+              this.stepper.reset();
+              this.resetAllForms();
+            }
           },
           (error) => {
             this.isLoading = false;

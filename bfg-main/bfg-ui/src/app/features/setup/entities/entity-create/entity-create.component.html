@@ -86,7 +86,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundRequestorDN"></app-overlay-info>
 
                         <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
@@ -105,7 +105,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundResponderDN"></app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
@@ -125,7 +125,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundService"></app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
@@ -161,8 +161,10 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundRequestType"></app-overlay-info>
+                        <app-overlay-info
+                            *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestType">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
                             [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
@@ -381,7 +383,7 @@
             <mat-step *ngIf="schedulesFormGroup" [stepControl]="schedulesFormGroup">
                 <form [formGroup]="schedulesFormGroup">
                     <ng-template matStepLabel>Complete Schedule details</ng-template>
-                    <mat-table [dataSource]="schedulesDataSource">
+                    <mat-table [dataSource]="schedulesDataSource" class="schedule-table">
                         <ng-container matColumnDef="action">
                             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                             <mat-cell *matCellDef="let element; let i = index">

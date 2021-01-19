@@ -2,7 +2,7 @@
     <mat-icon class="no-data-icon">{{getNoDataIcon()}}</mat-icon>
     {{getNoDataLabel(tab.tabTitle)}}
 </div>
-<mat-table *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
+<mat-table class="values-table" *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
     [dataSource]="dataSource.sectionItems">
     <ng-container matColumnDef="tableTitle">
         <mat-header-cell *matHeaderCellDef colspan="2">
@@ -43,7 +43,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" [attr.xml]="row.isXML"></mat-row>
 </mat-table>
 
-<mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource">
+<mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource" class="object-table">
     <ng-container matColumnDef="tableTitle">
         <mat-header-cell class="section-title" *matHeaderCellDef [attr.colspan]="tab.tableObject.tableColumns.length">
             {{tab.tableObject.tableTitle}}

@@ -10,7 +10,7 @@
     }
 }
 
-.mat-table {
+.values-table {
 
     .mat-cell {
         word-wrap: break-word !important;
@@ -27,6 +27,9 @@
     .mat-column-fieldName {
         flex: 0 0 22% !important;
         width: 22% !important;
+        word-break: normal !important;
+        hyphens: none !important;
+        padding-right: 10px;
     }
 
     .section-title {
@@ -39,5 +42,12 @@
 
     .mat-row[xml] {
         align-items: start;
+    }
+}
+
+.object-table {
+    .mat-cell {
+        word-break: normal !important;
+        hyphens: none !important;
     }
 }

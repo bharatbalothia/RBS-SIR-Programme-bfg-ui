@@ -57,8 +57,6 @@ export interface Entity {
     mqSessionTimeout?: number;
     routeInbound: boolean;
     routeOutbound?: boolean;
-    inboundDir: boolean;
-    inboundRoutingRule: boolean;
     inboundRequestorDN: string;
     inboundResponderDN: string;
     inboundService: string;

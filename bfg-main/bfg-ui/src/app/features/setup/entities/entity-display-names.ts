@@ -19,8 +19,6 @@ export const ENTITY_DISPLAY_NAMES = {
   inboundResponderDN: 'Inbound Responder DN',
   inboundService: 'Inbound Service',
   inboundRequestType: 'Inbound Request Type',
-  inboundDir: 'Inbound Directory',
-  inboundRoutingRule: 'Inbound Routing Rule',
   requestorDN: 'Requestor DN',
   responderDN: 'Responder DN',
   requestType: 'Request Type',

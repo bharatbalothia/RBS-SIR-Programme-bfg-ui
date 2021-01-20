@@ -45,7 +45,13 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(TransmittalException.class)
     public ResponseEntity handleTransmittalException(TransmittalException ex) {
-        ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
+        ErrorMessage errorMessage;
+        if (HttpStatus.UNAUTHORIZED.equals(ex.getHttpStatus()))
+            errorMessage = errorMessageHandler.getErrorMessage(
+                    EntityErrorCode.TransmittalException,
+                    Collections.singletonList(Collections.singletonMap("error", "Bad credentials"))
+            );
+        else errorMessage = errorMessageHandler.getErrorMessage(
                 EntityErrorCode.TransmittalException, Collections.singletonList(ex.getInnerExceptions()));
         return new ResponseEntity<>(errorMessage, ex.getHttpStatus());
     }

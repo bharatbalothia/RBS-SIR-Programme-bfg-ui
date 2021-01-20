@@ -1,12 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { ENTITY_TRANSMIT_FILE_TYPE } from '../../models/entity/entity-constants';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from '../confirm-dialog/confirm-dialog-config.model';
 import { Entity } from '../../models/entity/entity.model';
 import { PasswordConfirmationDialogComponent } from '../password-confirmation-dialog/password-confirmation-dialog.component';
+import { NotificationService } from '../../services/NotificationService';
 
 @Component({
   selector: 'app-transmit-dialog',
@@ -27,9 +26,8 @@ export class TransmitDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
-    private dialog: MatDialogRef<TransmitDialogComponent>,
     private passwordConfirmationDialog: MatDialog,
-    private confirmationDialog: MatDialog,
+    private notificationService: NotificationService
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.entity = get(this.data, 'actionData.entity');
@@ -46,20 +44,15 @@ export class TransmitDialogComponent {
         this.transmitAction(this.entity.entityId, this.fileType, password)
           .subscribe(() => {
             this.isLoading = false;
-            this.dialog.afterClosed().subscribe(() => {
-              this.confirmationDialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-                title: `Entity Transmit Now`,
-                text: `The Transmit Now function was successfully started for the  ${this.entity.entity} entity`,
-                shouldHideYesCaption: true,
-                noCaption: 'Return'
-              }));
-            });
-            this.dialog.close();
+            this.notificationService.show(
+              'Entity Transmit Now',
+              `The Transmit Now function was successfully started for the  ${this.entity.entity} entity`,
+              'success'
+            );
           },
             error => this.isLoading = false
           );
       }
     });
   }
-
 }

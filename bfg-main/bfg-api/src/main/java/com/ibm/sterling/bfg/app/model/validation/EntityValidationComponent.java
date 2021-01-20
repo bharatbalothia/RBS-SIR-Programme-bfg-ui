@@ -90,8 +90,6 @@ public class EntityValidationComponent {
             entity.setInboundResponderDN("");
             entity.setInboundService("");
             entity.setInboundRequestType(new ArrayList<>());
-            entity.setInboundDir(Boolean.FALSE);
-            entity.setInboundRoutingRule(Boolean.FALSE);
             entity.setNonRepudiation(Boolean.FALSE);
             entity.setE2eSigning(null);
         }

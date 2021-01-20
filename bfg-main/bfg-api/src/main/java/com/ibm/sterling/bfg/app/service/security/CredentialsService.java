@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -34,28 +33,36 @@ public class CredentialsService {
     private ObjectMapper objectMapper;
 
     public UserCredentials getSBIAuthResponse(Login loginRequest) throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> loginMap = loginRequest.retrieveFields();
-        String userCredentials = restTemplate.postForObject(
-                authenticationUrl + loginRequest.urlPostfix(),
-                new HttpEntity<>(loginMap, headers),
-                String.class
-        );
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
-        JsonNode user = root.get("user");
-        Optional.ofNullable(user.get("authenticated"))
-                .filter(JsonNode::asBoolean)
+        JsonNode verifiedUser = Optional.ofNullable(getVerifiedUser(loginRequest))
                 .orElseThrow(() -> new AuthenticationFailedException("Authentication failed. Invalid Username or Password."));
         List<String> permissionList = permissionsService.getPermissionList(loginRequest);
         return new UserCredentials(
-                user.get("name").asText(),
+                Optional.ofNullable(verifiedUser.get("name")).map(JsonNode::asText).orElse("No Name"),
                 null,
                 permissionList.stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList())
         );
+    }
+
+    public boolean verifyIdentity(Login loginRequest) throws JsonProcessingException {
+        return Optional.ofNullable(getVerifiedUser(loginRequest)).isPresent();
+    }
+
+    private JsonNode getVerifiedUser(Login loginRequest) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String userCredentials = new RestTemplate().postForObject(
+                authenticationUrl + loginRequest.urlPostfix(),
+                new HttpEntity<>(loginRequest.retrieveFields(), headers),
+                String.class
+        );
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(userCredentials));
+        return Optional.ofNullable(root.get("user"))
+                .filter(userNode -> Optional.ofNullable(userNode.get("authenticated"))
+                        .map(JsonNode::asBoolean)
+                        .orElse(false))
+                .orElse(null);
     }
 
 }

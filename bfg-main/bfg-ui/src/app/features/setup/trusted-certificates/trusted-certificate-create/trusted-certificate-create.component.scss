@@ -76,6 +76,24 @@
 
     .summary-table {
         width: 100%;
+
+        .mat-row,
+        .mat-header-row {
+            border-width: 0;
+            border-bottom-width: 1px;
+            border-style: solid;
+            border-bottom-color: rgba(0, 0, 0, .12);
+            padding-right: 10px;
+        }
+
+        .mat-header-cell,
+        .mat-cell {
+            border-width: none;
+            border-bottom-width: none;
+            border-style: none;
+            display: inline-flex;
+        }
+
     }
 
     .stepper-actions {

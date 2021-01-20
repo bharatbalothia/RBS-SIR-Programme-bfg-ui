@@ -64,6 +64,10 @@ mat-form-field {
         left: 0px;
         right: 0px;
 
+        .mat-horizontal-content-container {
+            overflow: visible !important;
+        }
+
         .mat-table {
 
             display: inline-block;
@@ -184,11 +188,11 @@ mat-form-field {
   width: 350px; // set width of toast
   word-wrap: break-word;
 
-  .toast-title {
-    letter-spacing: 0.3px; // set space between letters in the title
-  }
+    .toast-title {
+        letter-spacing: 0.3px; // set space between letters in the title
+    }
 
-  ul li {
-    margin-left: -10px; // set negative indent for list
-  }
+    ul li {
+        margin-left: -10px; // set negative indent for list
+    }
 }

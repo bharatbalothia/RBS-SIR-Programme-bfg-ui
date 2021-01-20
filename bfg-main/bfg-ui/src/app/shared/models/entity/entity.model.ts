@@ -74,4 +74,5 @@ export interface Entity {
     e2eSigning: string;
     snF?: boolean;
     schedules?: Schedule[];
+    operation?: string;
 }

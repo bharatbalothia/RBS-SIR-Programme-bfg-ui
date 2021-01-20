@@ -1,7 +1,7 @@
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { isEqual } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { difference } from 'src/app/shared/utils/utils';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
@@ -138,6 +138,11 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
     { fieldName: 'inboundResponderDN', fieldValue: entity.inboundResponderDN },
     { fieldName: 'inboundService', fieldValue: entity.inboundService },
     { fieldName: 'inboundRequestType', fieldValue: entity.inboundRequestType },
+    ...(get(entity, 'operation') === CHANGE_OPERATION.DELETE)
+    && [
+      { fieldName: 'inboundDir', fieldValue: entity.inboundDir },
+      { fieldName: 'inboundRoutingRule', fieldValue: entity.inboundRoutingRule }
+    ]
   ]
 });
 
@@ -157,10 +162,10 @@ export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
       tableTitle: 'Schedules',
       tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
       tableDataSource: entity.schedules.map((schedule: Schedule) =>
-        ({
-          ...schedule,
-          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
-        }))
+      ({
+        ...schedule,
+        isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+      }))
     }
   },
   {
@@ -204,10 +209,10 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
     tableObject: changeControl.entityBefore.service === ENTITY_SERVICE_TYPE.SCT && {
       tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
       tableDataSource: changeControl.entityBefore.schedules.map((schedule: Schedule) =>
-        ({
-          ...schedule,
-          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
-        })),
+      ({
+        ...schedule,
+        isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+      })),
       tableTitle: 'Schedules',
       formatRow: getScheduleRowFormat
     }
@@ -228,10 +233,10 @@ export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingA
     tableObject: changeControl.entityLog.service === ENTITY_SERVICE_TYPE.SCT && {
       tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
       tableDataSource: changeControl.entityLog.schedules.map((schedule: Schedule) =>
-        ({
-          ...schedule,
-          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
-        })),
+      ({
+        ...schedule,
+        isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+      })),
       tableTitle: 'Schedules'
     }
   },

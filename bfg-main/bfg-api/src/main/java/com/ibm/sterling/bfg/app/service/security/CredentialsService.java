@@ -45,7 +45,7 @@ public class CredentialsService {
         );
     }
 
-    public boolean verifyIdentity(Login loginRequest) throws JsonProcessingException {
+    public boolean isVerifiedUser(Login loginRequest) throws JsonProcessingException {
         return Optional.ofNullable(getVerifiedUser(loginRequest)).isPresent();
     }
 

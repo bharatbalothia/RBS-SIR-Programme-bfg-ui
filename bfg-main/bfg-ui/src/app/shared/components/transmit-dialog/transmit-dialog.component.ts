@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { ENTITY_TRANSMIT_FILE_TYPE } from '../../models/entity/entity-constants';
 import { Entity } from '../../models/entity/entity.model';
@@ -26,6 +26,7 @@ export class TransmitDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
+    private dialog: MatDialogRef<TransmitDialogComponent>,
     private passwordConfirmationDialog: MatDialog,
     private notificationService: NotificationService
   ) {
@@ -49,6 +50,7 @@ export class TransmitDialogComponent {
               `The Transmit Now function was successfully started for the  ${this.entity.entity} entity`,
               'success'
             );
+            this.dialog.close();
           },
             error => this.isLoading = false
           );

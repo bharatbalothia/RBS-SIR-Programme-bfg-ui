@@ -53,7 +53,7 @@ public class SearchCriteria {
     @JsonGetter
     public String getDirection() {
         return Optional.ofNullable(direction)
-                .map(dir -> dir.stream().collect(Collectors.joining("&direction=")))
+                .map(dir -> String.join("&direction=", dir))
                 .orElse(null);
     }
 

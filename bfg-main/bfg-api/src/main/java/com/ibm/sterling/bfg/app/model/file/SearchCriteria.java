@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.*;
 import com.ibm.sterling.bfg.app.model.validation.file.FromToDateValid;
 
 import javax.validation.constraints.Min;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @FromToDateValid
 public class SearchCriteria {
     private String type;
+    private List<String> direction;
     private String service;
     private String reference;
-    private Boolean outbound;
     private Integer wfid;
     private Integer status;
     @JsonSetter(nulls = Nulls.SKIP)
@@ -47,6 +49,15 @@ public class SearchCriteria {
         this.type = type;
     }
 
+    @JsonGetter
+    public String getDirection() {
+        return direction.stream().collect(Collectors.joining("&direction="));
+    }
+
+    public void setDirection(List<String> direction) {
+        this.direction = direction;
+    }
+
     public String getService() {
         return service;
     }
@@ -61,14 +72,6 @@ public class SearchCriteria {
 
     public void setReference(String reference) {
         this.reference = reference;
-    }
-
-    public Boolean getOutbound() {
-        return outbound;
-    }
-
-    public void setOutbound(Boolean outbound) {
-        this.outbound = outbound;
     }
 
     public Integer getWfid() {

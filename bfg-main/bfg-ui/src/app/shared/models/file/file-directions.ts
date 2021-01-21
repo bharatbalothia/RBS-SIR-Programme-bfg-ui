@@ -1,6 +1,6 @@
 export const FILE_DIRECTIONS = {
-    INBOUND: 'Inbound',
-    OUTBOUND: 'Outbound',
+    INBOUND: 'INBOUND',
+    OUTBOUND: 'OUTBOUND',
 };
 
 export const getDirectionBooleanValue = (direction: string) => direction ? direction.toUpperCase() === FILE_DIRECTIONS.OUTBOUND : null;

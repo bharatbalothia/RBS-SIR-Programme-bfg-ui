@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.model.validation.file.FromToDateValid;
 
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @FromToDateValid
@@ -51,7 +52,9 @@ public class SearchCriteria {
 
     @JsonGetter
     public String getDirection() {
-        return direction.stream().collect(Collectors.joining("&direction="));
+        return Optional.ofNullable(direction)
+                .map(dir -> dir.stream().collect(Collectors.joining("&direction=")))
+                .orElse(null);
     }
 
     public void setDirection(List<String> direction) {

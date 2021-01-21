@@ -42,7 +42,7 @@ public class TransmittalService {
 
     public Map<String, Object> transmit(Transmittal transmittal) throws JsonProcessingException {
         transmittal.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (!credentialsService.verifyIdentity(new LoginRequest(transmittal.getUsername(), transmittal.getPassword())))
+        if (!credentialsService.isVerifiedUser(new LoginRequest(transmittal.getUsername(), transmittal.getPassword())))
             throw new TransmittalException(
                     Collections.singletonMap("error", Collections.singletonList("The password you entered is not valid")),
                     HttpStatus.FORBIDDEN

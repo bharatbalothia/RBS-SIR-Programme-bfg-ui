@@ -52,6 +52,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+import { InputUppercaseDirective } from './directives/input-uppercase/input-uppercase.directive';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -85,6 +86,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
 
     // Directives
     InputLowercaseDirective,
+    InputUppercaseDirective,
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
@@ -177,6 +179,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
 
     // Directives
     InputLowercaseDirective,
+    InputUppercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
     DisableControlDirective

@@ -256,8 +256,6 @@ public class EntityLog {
         this.mqQueueOut = entity.getMqQueueOut();
         this.routeInbound = entity.getRouteInbound();
         this.routeOutbound = entity.getRouteOutbound();
-        this.inboundDir = entity.getInboundDir();
-        this.inboundRoutingRule = entity.getInboundRoutingRule();
         this.deleted = entity.getDeleted();
         this.inboundRequestType = entity.getInboundRequestType();
         this.irishStep2 = entity.getIrishStep2();

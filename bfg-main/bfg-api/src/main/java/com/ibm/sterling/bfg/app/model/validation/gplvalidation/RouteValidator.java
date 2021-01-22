@@ -18,8 +18,6 @@ public class RouteValidator {
 
     private static final Logger LOG = LogManager.getLogger(RouteCreationValidator.class);
     private static final String ROUTE_INBOUND = "routeInbound";
-    private static final String INBOUND_DIR = "inboundDir";
-    private static final String INBOUND_ROUTING_RULE = "inboundRoutingRule";
     private static final String DN_REGEXP = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$";
 
 
@@ -61,14 +59,6 @@ public class RouteValidator {
                         & isValidInboundRoute(RouteFieldName.ROUTE_REQUESTTYPE.fieldName(), entity.getInboundRequestType(),
                         emptyFieldMessage.apply(RouteFieldName.ROUTE_REQUESTTYPE.name(), entity.getRouteInbound()),
                         constraintValidatorContext, CollectionUtils::isEmpty)
-
-                        & isValidInboundRoute(INBOUND_DIR, entity.getInboundDir(),
-                        emptyFieldMessage.apply(INBOUND_DIR, entity.getRouteInbound()),
-                        constraintValidatorContext, (Boolean inboundDir) -> !Optional.ofNullable(inboundDir).isPresent())
-
-                        & isValidInboundRoute(INBOUND_ROUTING_RULE, entity.getInboundRoutingRule(),
-                        emptyFieldMessage.apply(INBOUND_ROUTING_RULE, entity.getRouteInbound()),
-                        constraintValidatorContext, (Boolean inboundRoutingRule) -> !Optional.ofNullable(inboundRoutingRule).isPresent())
 
                         & isValidInboundRoute("routingRules", entity,
                         "Entity properties should be unique for requester DN, responder DN, service, and request types.  These match the entity " +

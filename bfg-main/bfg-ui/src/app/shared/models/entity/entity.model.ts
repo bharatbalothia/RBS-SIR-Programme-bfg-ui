@@ -57,8 +57,6 @@ export interface Entity {
     mqSessionTimeout?: number;
     routeInbound: boolean;
     routeOutbound?: boolean;
-    inboundDir: boolean;
-    inboundRoutingRule: boolean;
     inboundRequestorDN: string;
     inboundResponderDN: string;
     inboundService: string;
@@ -74,4 +72,5 @@ export interface Entity {
     e2eSigning: string;
     snF?: boolean;
     schedules?: Schedule[];
+    operation?: string;
 }

@@ -22,7 +22,7 @@ export class NotificationService {
   }
 
   public show(title: string, message: string, type: NotificationType) {
-    return this.toastrService.show(title, message, this.toasterConfig, `toast-${type}`);
+    return this.toastrService.show(message, title, this.toasterConfig, `toast-${type}`);
   }
 
   public showErrorMessage(errorMessage: ErrorMessage) {

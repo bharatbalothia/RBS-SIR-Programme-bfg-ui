@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -252,8 +253,6 @@ public class ChangeControl implements ObjectTypeConstants, Comparable<ChangeCont
         entityFromLog.setE2eSigning(entityLog.getE2eSigning());
         entityFromLog.setRouteInbound(entityLog.getRouteInbound());
         entityFromLog.setRouteOutbound(entityLog.getRouteOutbound());
-        entityFromLog.setInboundDir(entityLog.getInboundDir());
-        entityFromLog.setInboundRoutingRule(entityLog.getInboundRoutingRule());
         entityFromLog.setInboundRequestType(entityLog.getInboundRequestType());
         entityFromLog.setChangeID(changeID);
         entityFromLog.setChangerComments(changerComments);

@@ -88,10 +88,6 @@ public class EntityController {
                     if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
                             StringUtils.isEmpty(record.getInboundResponderDN()))
                         record.setRouteInbound(Boolean.FALSE);
-                    else {
-                        record.setInboundDir(Boolean.TRUE);
-                        record.setInboundRoutingRule(Boolean.TRUE);
-                    }
                     return ok(record);
                 }).orElseThrow(EntityNotFoundException::new);
     }

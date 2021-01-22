@@ -46,8 +46,10 @@
                             </div>
                         </button>
                         <button class="action-button" mat-icon-button *ngIf="!element.trustedCertificateLog"
-                            (click)="deleteTrustedCertificate(element)">
-                            <mat-icon alt="Delete" title="Delete">clear</mat-icon>
+                            alt="Delete" title="Delete" (click)="deleteTrustedCertificate(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
                         </button>
                         <a mat-icon-button
                             *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"

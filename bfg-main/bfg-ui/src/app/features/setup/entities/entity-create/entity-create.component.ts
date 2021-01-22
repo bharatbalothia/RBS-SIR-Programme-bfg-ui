@@ -780,4 +780,6 @@ export class EntityCreateComponent implements OnInit {
 
   shouldShowRoutingAttributesOverlay = () => this.isCloneAction && this.editableEntity && get(this.entityPageFormGroup, 'controls.routeInbound.value');
 
+  getMaxLengthForEntityField = () => this.selectedService === ENTITY_SERVICE_TYPE.GPL ? 11 : 8;
+
 }

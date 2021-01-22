@@ -1,5 +1,6 @@
 package com.ibm.sterling.bfg.app.model.validation;
 
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.validation.gplvalidation.GplValidation;
@@ -10,10 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.UPDATE;
@@ -44,7 +42,9 @@ public class EntityValidationComponent {
                 );
             }
         };
-        return entityOperationMap.get(entity.getService()).get(operation);
+        return Optional.ofNullable(entityOperationMap.get(entity.getService()))
+                .map(service -> service.get(operation))
+                .orElseThrow(() -> new FieldsValidationException("service", "The " + entity.getService() + " service is not allowed"));
     }
 
     public void validateEntity(Entity entity, Operation operation) {
@@ -92,7 +92,7 @@ public class EntityValidationComponent {
             entity.setInboundRequestType(new ArrayList<>());
             entity.setNonRepudiation(Boolean.FALSE);
             entity.setE2eSigning(null);
-        }
+        } else return;
         entity.setCdNode(null);
         entity.setIdfWTOMsgId(null);
         entity.setDnfWTOMsgId(null);

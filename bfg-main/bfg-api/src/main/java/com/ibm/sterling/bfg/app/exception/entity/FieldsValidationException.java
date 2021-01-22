@@ -4,7 +4,7 @@ public class FieldsValidationException extends RuntimeException {
 
     private String errorCause;
 
-    public FieldsValidationException(String message, String errorCause) {
+    public FieldsValidationException(String errorCause, String message) {
         super(message);
         this.errorCause = errorCause;
     }

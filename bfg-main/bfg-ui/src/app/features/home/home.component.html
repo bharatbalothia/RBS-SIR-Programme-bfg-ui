@@ -65,13 +65,13 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: 'outbound'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_TX.HOUR}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: 'payaway'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_PAW.HOUR}}
           </a>
         </td>
@@ -86,13 +86,13 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: 'outbound'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_TX.DAY}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: 'payaway'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_PAW.DAY}}
           </a>
         </td>
@@ -107,13 +107,13 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: 'outbound'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_TX.WEEK}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: 'payaway'} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
             {{SCTTraffic.SCT_PAW.WEEK}}
           </a>
         </td>

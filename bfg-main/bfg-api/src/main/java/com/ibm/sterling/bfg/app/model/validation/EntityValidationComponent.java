@@ -85,13 +85,11 @@ public class EntityValidationComponent {
             entity.setMqHeader(null);
             entity.setMqSessionTimeout(null);
         } else if ("SCT".equals(service)) {
-            entity.setRouteInbound(Boolean.TRUE);
+            entity.setRouteInbound(Boolean.FALSE);
             entity.setInboundRequestorDN("");
             entity.setInboundResponderDN("");
             entity.setInboundService("");
             entity.setInboundRequestType(new ArrayList<>());
-            entity.setInboundDir(Boolean.FALSE);
-            entity.setInboundRoutingRule(Boolean.FALSE);
             entity.setNonRepudiation(Boolean.FALSE);
             entity.setE2eSigning(null);
         }

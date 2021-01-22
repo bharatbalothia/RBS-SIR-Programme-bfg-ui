@@ -53,6 +53,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { InputUppercaseDirective } from './directives/input-uppercase/input-uppercase.directive';
+import { PasswordConfirmationDialogComponent } from './components/password-confirmation-dialog/password-confirmation-dialog.component';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -70,6 +71,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
   declarations: [
     // Components
     ConfirmDialogComponent,
+    PasswordConfirmationDialogComponent,
     DetailsDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
@@ -165,6 +167,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
 
     // Components
     ConfirmDialogComponent,
+    PasswordConfirmationDialogComponent,
     DisplayTableCellComponent,
     TabContentComponent,
     ApprovingDialogComponent,

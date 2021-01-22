@@ -193,7 +193,7 @@ export class EntitySearchComponent implements OnInit {
     this.getEntityDetails(entity).then((detailedEntity: Entity) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${detailedEntity.entity}`,
       yesCaption: 'Cancel',
-      tabs: getEntityDetailsTabs(detailedEntity),
+      tabs: getEntityDetailsTabs({ ...detailedEntity, operation: CHANGE_OPERATION.DELETE }),
       displayName: getEntityDisplayName,
       actionData: {
         id: detailedEntity.entityId,
@@ -242,7 +242,7 @@ export class EntitySearchComponent implements OnInit {
       title: `Transmit File for the Entity ID ${entity.entity}`,
       actionData: {
         entity,
-        transmitAction: (id: string, fileType: string) => this.entityService.transmitEntity(id, fileType)
+        transmitAction: (id: string, fileType: string, password: string) => this.entityService.transmitEntity(id, fileType, password)
       }
     }));
   }

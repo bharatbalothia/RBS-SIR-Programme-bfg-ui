@@ -169,31 +169,6 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
                             [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundDir')">
-                        <label class='radio-group-label'>{{entityDisplayNames['inboundDir'] || 'inboundDir'}}:*</label>
-                        <mat-radio-group formControlName='inboundDir'>
-                            <mat-radio-button [value]="true">Yes</mat-radio-button>
-                            <mat-radio-button [value]="false">No</mat-radio-button>
-                        </mat-radio-group>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundDir')">
-                            {{getErrorByField('inboundDir')}}
-                        </mat-error>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundDir')"
-                            [tip]="getTooltip('inboundDir', 'entity')"></app-tooltip>
-                    </section>
-                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('inboundRoutingRule')">
-                        <label class='radio-group-label'>{{entityDisplayNames['inboundRoutingRule'] ||
-                            'inboundRoutingRule'}}:*</label>
-                        <mat-radio-group formControlName='inboundRoutingRule'>
-                            <mat-radio-button [value]="true">Yes</mat-radio-button>
-                            <mat-radio-button [value]="false">No</mat-radio-button>
-                        </mat-radio-group>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundRoutingRule')">
-                            {{getErrorByField('inboundRoutingRule')}}
-                        </mat-error>
-                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRoutingRule')"
-                            [tip]="getTooltip('inboundRoutingRule', 'entity')"></app-tooltip>
-                    </section>
                     <section class="form-field-section">
                         <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
                             <mat-label>{{entityDisplayNames['maxBulksPerFile'] || 'maxBulksPerFile'}}</mat-label>

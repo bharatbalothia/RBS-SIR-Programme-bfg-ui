@@ -199,8 +199,6 @@ export class EntityCreateComponent implements OnInit {
     inboundRequestorDN: '',
     inboundResponderDN: '',
     inboundService: 'swift.corp.fa',
-    inboundDir: true,
-    inboundRoutingRule: true,
     requestorDN: '',
     responderDN: '',
     serviceName: '',
@@ -350,9 +348,7 @@ export class EntityCreateComponent implements OnInit {
             ]
           }],
           inboundService: [entity.inboundService, Validators.required],
-          inboundRequestType: [entity.inboundRequestType],
-          inboundDir: [entity.inboundDir, Validators.required],
-          inboundRoutingRule: [entity.inboundRoutingRule, Validators.required]
+          inboundRequestType: [entity.inboundRequestType]
         });
         this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
           this.isLoading = false;
@@ -528,10 +524,6 @@ export class EntityCreateComponent implements OnInit {
         ...this.requiredFields,
         inboundRequestType: false,
       };
-      this.entityPageFormGroup.controls.inboundDir.disable();
-      this.entityPageFormGroup.controls.inboundDir.setValue(false);
-      this.entityPageFormGroup.controls.inboundRoutingRule.disable();
-      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(false);
     }
     else {
       this.entityPageFormGroup.controls.inboundRequestorDN.enable();
@@ -542,11 +534,6 @@ export class EntityCreateComponent implements OnInit {
         ...this.requiredFields,
         inboundRequestType: true,
       };
-      this.entityPageFormGroup.controls.inboundDir.enable();
-      this.entityPageFormGroup.controls.inboundDir.setValue(true);
-
-      this.entityPageFormGroup.controls.inboundRoutingRule.enable();
-      this.entityPageFormGroup.controls.inboundRoutingRule.setValue(true);
     }
   }
 
@@ -572,9 +559,7 @@ export class EntityCreateComponent implements OnInit {
           inboundResponderDN: get(this.entityPageFormGroup.controls.inboundResponderDN, 'value'),
           inboundService: get(this.entityPageFormGroup.controls.inboundService, 'value'),
           inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
-            .map(el => el.key),
-          inboundDir: get(this.entityPageFormGroup.controls.inboundDir, 'value'),
-          inboundRoutingRule: get(this.entityPageFormGroup.controls.inboundRoutingRule, 'value'),
+            .map(el => el.key)
         };
         let entityAction: Observable<Entity>;
         if (isEditing) {
@@ -667,8 +652,8 @@ export class EntityCreateComponent implements OnInit {
         inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
         inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
           .map(el => el.value).join(',\n'),
-        inboundDir: get(this.entityPageFormGroup.controls, 'inboundDir.value'),
-        inboundRoutingRule: get(this.entityPageFormGroup.controls, 'inboundRoutingRule.value'),
+        inboundDir: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
+        inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
       },
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,

@@ -36,8 +36,6 @@ public class FileSearchCriteria extends SearchCriteria {
         super.setDirection(Optional.ofNullable(direction).orElse(Arrays.asList("inbound", "outbound")));
     }
 
-
-
     public Integer getId() {
         return id;
     }

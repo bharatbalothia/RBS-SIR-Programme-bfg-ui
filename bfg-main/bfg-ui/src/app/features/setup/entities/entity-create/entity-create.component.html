@@ -43,7 +43,8 @@
                     <section class="form-field-section" *ngIf="entityPageFormGroup.get('entity')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
-                            <input matInput formControlName="entity" required>
+                            <input matInput formControlName="entity" required appInputUppercase
+                                [maxlength]="getMaxLengthForEntityField()">
                             <mat-error *ngFor="let validation of entityValidationMessages.entity">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)">

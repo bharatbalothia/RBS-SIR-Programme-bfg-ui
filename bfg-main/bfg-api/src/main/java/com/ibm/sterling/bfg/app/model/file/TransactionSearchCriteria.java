@@ -1,6 +1,9 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
 
@@ -9,7 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class TransactionSearchCriteria extends SearchCriteria {
     private String entity;
-    private String direction;
+
     @JsonAlias("paymentBIC")
     private String paymentbic;
     @JsonAlias("transactionID")
@@ -32,14 +35,6 @@ public class TransactionSearchCriteria extends SearchCriteria {
 
     public void setEntity(String entity) {
         this.entity = entity;
-    }
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
     }
 
     public String getPaymentbic() {

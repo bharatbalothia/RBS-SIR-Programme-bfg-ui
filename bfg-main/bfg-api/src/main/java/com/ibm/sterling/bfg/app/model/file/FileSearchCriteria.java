@@ -16,6 +16,7 @@ public class FileSearchCriteria extends SearchCriteria {
     @JsonAlias("entityId")
     private Integer entityid;
     private Boolean override;
+    private Boolean outbound;
     @JsonProperty("bp-state")
     @JsonAlias("bpstate")
     private String bpState;
@@ -59,6 +60,14 @@ public class FileSearchCriteria extends SearchCriteria {
 
     public void setOverride(Boolean override) {
         this.override = override;
+    }
+
+    public Boolean getOutbound() {
+        return outbound;
+    }
+
+    public void setOutbound(Boolean outbound) {
+        this.outbound = outbound;
     }
 
     public String getBpState() {

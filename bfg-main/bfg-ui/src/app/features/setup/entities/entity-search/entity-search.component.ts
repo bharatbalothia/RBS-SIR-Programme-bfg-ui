@@ -193,7 +193,7 @@ export class EntitySearchComponent implements OnInit {
     this.getEntityDetails(entity).then((detailedEntity: Entity) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       title: `Delete ${detailedEntity.entity}`,
       yesCaption: 'Cancel',
-      tabs: getEntityDetailsTabs(detailedEntity),
+      tabs: getEntityDetailsTabs({ ...detailedEntity, operation: CHANGE_OPERATION.DELETE }),
       displayName: getEntityDisplayName,
       actionData: {
         id: detailedEntity.entityId,

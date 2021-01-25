@@ -15,6 +15,8 @@ import java.util.*;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.UPDATE;
+import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
+import static com.ibm.sterling.bfg.app.model.entity.Service.SCT;
 
 @Component
 public class EntityValidationComponent {
@@ -25,7 +27,7 @@ public class EntityValidationComponent {
     private Class getEntityValidationGroup(Entity entity, Operation operation) {
         Map<String, Map<Operation, Class>> entityOperationMap = new HashMap<String, Map<Operation, Class>>() {
             {
-                put("GPL", new HashMap<Operation, Class>() {
+                put(GPL.name(), new HashMap<Operation, Class>() {
                             {
                                 put(CREATE, GplValidation.PostValidation.class);
                                 put(UPDATE, GplValidation.PutValidation.class);
@@ -33,7 +35,7 @@ public class EntityValidationComponent {
                             }
                         }
                 );
-                put("SCT", new HashMap<Operation, Class>() {
+                put(SCT.name(), new HashMap<Operation, Class>() {
                             {
                                 put(CREATE, SctValidation.PostValidation.class);
                                 put(UPDATE, SctValidation.PutValidation.class);
@@ -57,7 +59,7 @@ public class EntityValidationComponent {
 
     private void setNonServiceFieldsToDefaultValues(Entity entity) {
         String service = entity.getService();
-        if ("GPL".equals(service)) {
+        if (GPL.name().equals(service)) {
             entity.setMaxBulksPerFile(0);
             entity.setMaxTransfersPerBulk(0);
             entity.setStartOfDay("00:00");
@@ -84,7 +86,7 @@ public class EntityValidationComponent {
             entity.setMqSSLCaCert(null);
             entity.setMqHeader(null);
             entity.setMqSessionTimeout(null);
-        } else if ("SCT".equals(service)) {
+        } else if (SCT.name().equals(service)) {
             entity.setRouteInbound(Boolean.FALSE);
             entity.setInboundRequestorDN("");
             entity.setInboundResponderDN("");

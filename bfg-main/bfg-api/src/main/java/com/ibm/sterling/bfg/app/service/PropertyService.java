@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.ibm.sterling.bfg.app.model.entity.Service.SCT;
 import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 
 @Service
@@ -207,7 +208,7 @@ public class PropertyService {
                         .thenComparing(getStatusLabelForComparing("status"),
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
-        transactionCriteriaData.put("entity", entityService.findEntitiesByService("SCT")
+        transactionCriteriaData.put("entity", entityService.findEntitiesByService(SCT.name())
                 .stream().map(Entity::getEntity).collect(Collectors.toList()));
         return transactionCriteriaData;
     }

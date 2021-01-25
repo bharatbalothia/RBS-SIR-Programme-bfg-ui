@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
 
 @Service
 @Transactional
@@ -165,7 +166,7 @@ public class EntityServiceImpl implements EntityService {
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if ("GPL".equals(changeControl.getEntityLog().getService()) && entity.getRouteInbound()) {
+        if (GPL.name().equals(changeControl.getEntityLog().getService()) && entity.getRouteInbound()) {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 

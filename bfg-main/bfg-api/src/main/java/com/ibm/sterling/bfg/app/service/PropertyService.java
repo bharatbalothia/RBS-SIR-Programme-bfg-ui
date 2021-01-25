@@ -243,10 +243,10 @@ public class PropertyService {
         return statusMap;
     }
 
-    public String getStatusLabel(String statusPrefixKey, String service, Boolean outbound, Integer status) {
+    public String getStatusLabel(String statusPrefixKey, String service, String direction, Integer status) {
         try {
             return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
-                    service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + Math.abs(status)
+                    service + statusPrefixKey + direction + "." + Math.abs(status)
             ).stream()
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
                     .collect(Collectors.joining(", "));

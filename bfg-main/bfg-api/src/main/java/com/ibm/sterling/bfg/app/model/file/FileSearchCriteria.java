@@ -1,11 +1,12 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -28,6 +29,14 @@ public class FileSearchCriteria extends SearchCriteria {
 
     public FileSearchCriteria() {
     }
+
+    @Override
+    @JsonSetter
+    public void setDirection(List<String> direction) {
+        super.setDirection(Optional.ofNullable(direction).orElse(Arrays.asList("inbound", "outbound")));
+    }
+
+
 
     public Integer getId() {
         return id;

@@ -17,7 +17,7 @@ public class File {
     private Integer workflowID;
     private String docID;
     private Integer transactionTotal;
-    private Boolean outbound;
+    private String direction;
 
     public Integer getId() {
         return id;
@@ -108,12 +108,11 @@ public class File {
         this.transactionTotal = transactionTotal;
     }
 
-    public Boolean getOutbound() {
-        return outbound;
+    public String getDirection() {
+        return direction;
     }
 
-    public void setOutbound(Boolean outbound) {
-        this.outbound = outbound;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
-
 }

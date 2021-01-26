@@ -2,11 +2,9 @@ package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.*;
 import com.ibm.sterling.bfg.app.model.validation.file.FromToDateValid;
-
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @FromToDateValid
 public class SearchCriteria {

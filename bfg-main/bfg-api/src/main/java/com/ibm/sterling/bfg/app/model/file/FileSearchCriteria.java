@@ -3,9 +3,6 @@ package com.ibm.sterling.bfg.app.model.file;
 import com.fasterxml.jackson.annotation.*;
 import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -31,9 +28,9 @@ public class FileSearchCriteria extends SearchCriteria {
     }
 
     @Override
-    @JsonSetter
-    public void setDirection(List<String> direction) {
-        super.setDirection(Optional.ofNullable(direction).orElse(Arrays.asList("inbound", "outbound")));
+    @JsonGetter
+    public String getDirection() {
+        return Optional.ofNullable(super.getDirection()).orElse("inbound&direction=outbound");
     }
 
     public Integer getId() {

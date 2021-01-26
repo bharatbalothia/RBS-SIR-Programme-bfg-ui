@@ -2,8 +2,13 @@
     {{xml ? (value | xml) : value}}
     <mat-icon *ngIf="icon">{{icon}}</mat-icon>
 </div>
-<ul class="list-group" *ngIf="_array.isArray(value)">
+<ul class="list-group" *ngIf="_array.isArray(value) && listStyleType === 'disc'">
     <li *ngFor="let item of removeEmptiesInArray(value)" class="list-group-item">
         {{ item }}
     </li>
+</ul>
+<ul class="list-group list-group-none" *ngIf="_array.isArray(value) && listStyleType === 'none'">
+  <li *ngFor="let item of value" title="{{ item || '&nbsp;' }}">
+    {{ item || '&nbsp;' }}
+  </li>
 </ul>

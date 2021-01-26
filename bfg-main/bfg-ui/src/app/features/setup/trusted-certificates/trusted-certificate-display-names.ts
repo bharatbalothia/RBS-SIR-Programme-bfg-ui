@@ -44,15 +44,15 @@ export const getTrustedCertificateDisplayName = (key: string) => TRUSTED_CERTIFI
 export const getTrustedCertificateItemInfoValues = (item) => item && Object.keys(item).map(key => `${getTrustedCertificateDisplayName(key)}: ${item[key]}`).sort();
 
 export const getTrustedCertificateItemInfoValuesOrdered = (item) => item && [
-    ...new Set([
-        `${getTrustedCertificateDisplayName('CN')}: ${item.CN || ''}`,
-        `${getTrustedCertificateDisplayName('OU')}: ${item.OU || ''}`,
-        `${getTrustedCertificateDisplayName('O')}: ${item.O || ''}`,
-        `${getTrustedCertificateDisplayName('L')}: ${item.L || ''}`,
-        `${getTrustedCertificateDisplayName('ST')}: ${item.ST || ''}`,
-        `${getTrustedCertificateDisplayName('C')}: ${item.C || ''}`,
-        ...getTrustedCertificateItemInfoValues(item)
-    ])];
+  ...new Set([
+    `${getTrustedCertificateDisplayName('CN')}: ${item.CN || ''}`,
+    `${getTrustedCertificateDisplayName('OU')}: ${item.OU || ''}`,
+    `${getTrustedCertificateDisplayName('O')}: ${item.O || ''}`,
+    `${getTrustedCertificateDisplayName('L')}: ${item.L || ''}`,
+    `${getTrustedCertificateDisplayName('ST')}: ${item.ST || ''}`,
+    `${getTrustedCertificateDisplayName('C')}: ${item.C || ''}`,
+    ...getTrustedCertificateItemInfoValues(item)
+  ])];
 
 export const getValidityLabel = (value) => value === true ? 'Certificate is valid' : 'Certificate is not valid';
 
@@ -65,12 +65,18 @@ const getTrustedCertificateDetailsSectionItems = (trustedCertificate: TrustedCer
         { fieldName: 'startDate', fieldValue: trustedCertificate.startDate },
         { fieldName: 'endDate', fieldValue: trustedCertificate.endDate },
         {
-            fieldName: 'issuer',
-            fieldValue: getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.issuer)
+          fieldName: {
+            label: 'issuer',
+            nestedLabel: getTrustedCertificateItemInfo(getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.issuer))
+          },
+          fieldValue: getTrustedCertificateItemValue(getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.issuer))
         },
         {
-            fieldName: 'subject',
-            fieldValue: getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.subject)
+          fieldName: {
+            label: 'subject',
+            nestedLabel: getTrustedCertificateItemInfo(getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.subject))
+          },
+          fieldValue: getTrustedCertificateItemValue(getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.subject))
         },
         (get(trustedCertificate, 'valid', null)) !== null && { fieldName: 'valid', fieldValue: getValidityLabel(trustedCertificate.valid) },
         (get(trustedCertificate, 'authChainReport') || []).length !== 0 && {
@@ -113,3 +119,7 @@ export const getTrustedCertificatePendingChangesTabs = (changeControl: ChangeCon
         tabSections: [{ sectionItems: getTrustedCertificateDetailsSectionItems(changeControl.trustedCertificateLog)['Trusted Certificate Details'] }]
     }
 ].filter(el => el);
+
+export const getTrustedCertificateItemInfo = (item: any) => Array.isArray(item) && item.map(value => value.split(': ')[0] || '');
+
+export const getTrustedCertificateItemValue = (item: any) => Array.isArray(item) && item.map(value => value.split(': ')[1] || '');

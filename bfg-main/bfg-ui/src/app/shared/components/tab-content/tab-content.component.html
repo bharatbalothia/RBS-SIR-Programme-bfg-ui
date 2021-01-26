@@ -12,7 +12,18 @@
     <ng-container matColumnDef="fieldName">
         <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span *ngIf="!isObject(element.fieldName)">
             {{displayName(element.fieldName)}}
+          </span>
+          <div class="section-label" *ngIf="isObject(element.fieldName)">
+            <div class="section-label-nested">
+              <div class="label-nested">{{displayName(element.fieldName.label)}}:</div>
+              <div class="sub-label">
+                <app-display-table-cell [listStyleType]="'none'" [value]="element.fieldName.nestedLabel">
+                </app-display-table-cell>
+              </div>
+            </div>
+          </div>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="fieldValueBefore">
@@ -31,7 +42,8 @@
             <button mat-button class="button-value" *ngIf="element.isActionButton"
                 (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
             <app-display-table-cell *ngIf="!element.isActionButton" [xml]="element.isXML" [icon]="element.icon"
-                [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
+                [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue"
+                [listStyleType]="'none'">
             </app-display-table-cell>
         </mat-cell>
     </ng-container>

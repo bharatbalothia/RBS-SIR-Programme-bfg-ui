@@ -4,13 +4,15 @@ import { TrustedCertificateService } from 'src/app/shared/models/trustedCertific
 import { FormBuilder, FormGroup, Validators, FormGroupDirective, FormControl } from '@angular/forms';
 import {
   getTrustedCertificateDisplayName,
+  getTrustedCertificateItemInfo,
   getTrustedCertificateItemInfoValues,
   getTrustedCertificateItemInfoValuesOrdered,
+  getTrustedCertificateItemValue,
   getValidityLabel
 } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { get } from 'lodash';
+import { entries, get, isArray } from 'lodash';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -45,6 +47,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   errorMessage: ErrorMessage;
   isLoading = false;
+  isArray = isArray;
 
   trustedCertificateFile;
 
@@ -259,11 +262,14 @@ export class TrustedCertificateCreateComponent implements OnInit {
       subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
       valid: this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
     });
-    this.confirmationPageDataSource = Object.keys(trustedCertificate)
-      .map((key) => ({
-        field: key,
-        value: trustedCertificate[key],
-        error: getErrorByField(key, this.errorMessage)
+    this.confirmationPageDataSource = entries(trustedCertificate)
+      .map(([field, value]) => ({
+        field: {
+          label: field,
+          nestedLabel: isArray(value) ? getTrustedCertificateItemInfo(value) : undefined
+        },
+        value: isArray(value) ? getTrustedCertificateItemValue(value) : value,
+        error: getErrorByField(field, this.errorMessage)
       }));
   }
 

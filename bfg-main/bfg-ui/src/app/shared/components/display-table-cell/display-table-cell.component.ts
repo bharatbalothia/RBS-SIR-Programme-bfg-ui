@@ -10,6 +10,8 @@ export class DisplayTableCellComponent implements OnInit {
   _array = Array;
   @Input() value;
 
+  @Input() listStyleType = 'disc';
+
   @Input() xml;
 
   @Input() icon;

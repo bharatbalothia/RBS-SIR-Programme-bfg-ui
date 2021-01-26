@@ -196,3 +196,24 @@ mat-form-field {
         margin-left: -10px; // set negative indent for list
     }
 }
+
+.section-label {
+  display: flex;
+  width: 100%;
+
+  .section-label-nested {
+    width: inherit;
+    display: flex;
+    justify-content: space-between;
+
+    .label-nested {
+      font-size: 14px;
+      width: 30%;
+      line-height: 24px;
+    }
+
+    .sub-label {
+      width: 70%;
+    }
+  }
+}

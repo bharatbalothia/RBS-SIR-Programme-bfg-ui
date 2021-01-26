@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Tab } from '../details-dialog/details-dialog-data.model';
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
-import { get, isUndefined } from 'lodash';
+import { get, isObject, isUndefined } from 'lodash';
 
 @Component({
   selector: 'app-tab-content',
@@ -18,6 +18,7 @@ export class TabContentComponent implements OnInit {
 
   @Input() beforeTab;
 
+  isObject = isObject;
   displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
 
   constructor() { }

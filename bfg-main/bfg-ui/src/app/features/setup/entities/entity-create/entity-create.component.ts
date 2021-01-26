@@ -651,7 +651,7 @@ export class EntityCreateComponent implements OnInit {
         inboundResponderDN: get(this.entityPageFormGroup.controls, 'inboundResponderDN.value'),
         inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
         inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
-          .map(el => el.value).join(',\n'),
+          .map(el => el.value),
         inboundDir: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
         inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
       },

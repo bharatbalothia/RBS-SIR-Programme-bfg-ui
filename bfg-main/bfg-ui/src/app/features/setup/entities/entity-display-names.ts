@@ -140,8 +140,8 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
     { fieldName: 'inboundRequestType', fieldValue: entity.inboundRequestType },
     ...(get(entity, 'operation') === CHANGE_OPERATION.DELETE)
     && [
-      { fieldName: 'inboundDir', fieldValue: entity.routeInbound },
-      { fieldName: 'inboundRoutingRule', fieldValue: entity.routeInbound }
+      { fieldName: 'inboundDir', fieldValue: entity.routeInbound ? 'Yes' : 'No' },
+      { fieldName: 'inboundRoutingRule', fieldValue: entity.routeInbound ? 'Yes' : 'No' }
     ]
   ]
 });

@@ -1,7 +1,8 @@
 package com.ibm.sterling.bfg.app.model.validation.sctvalidation;
 
-public enum DetailsFieldName {
+import com.ibm.sterling.bfg.app.model.validation.Field;
 
+public enum DetailsField implements Field {
     ENTITY_PARTICIPANT_TYPE("entityParticipantType"),
     DIRECT_PARTICIPANT("directParticipant"),
     MQ_PORT("mqPort"),
@@ -23,7 +24,7 @@ public enum DetailsFieldName {
     SERVICENAME("serviceName"),
     REQUESTTYPE("requestType");
 
-    DetailsFieldName(String fieldName) {
+    DetailsField(String fieldName) {
         this.fieldName = fieldName;
     }
 

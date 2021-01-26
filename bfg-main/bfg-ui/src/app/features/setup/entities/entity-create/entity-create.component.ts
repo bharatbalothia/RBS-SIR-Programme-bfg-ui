@@ -651,9 +651,10 @@ export class EntityCreateComponent implements OnInit {
         inboundResponderDN: get(this.entityPageFormGroup.controls, 'inboundResponderDN.value'),
         inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
         inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
-          .map(el => el.value),
-        inboundDir: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
-        inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
+          .map(el => el.value).join(',\n'),
+        routeInbound: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No',
+        inboundDir: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No', // display the same value as routeInbound
+        inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No', // display the same value as routeInbound
       },
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,

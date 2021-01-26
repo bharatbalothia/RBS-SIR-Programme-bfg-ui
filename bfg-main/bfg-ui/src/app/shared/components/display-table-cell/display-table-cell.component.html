@@ -1,4 +1,4 @@
-<div class="cell-value" *ngIf="!_array.isArray(value)" [attr.xml]="xml">
+<div [class]="'cell-value'" [ngClass]="{'icon-value': !!icon}" *ngIf="!_array.isArray(value)" [attr.xml]="xml">
     {{xml ? (value | xml) : value}}
     <mat-icon *ngIf="icon">{{icon}}</mat-icon>
 </div>

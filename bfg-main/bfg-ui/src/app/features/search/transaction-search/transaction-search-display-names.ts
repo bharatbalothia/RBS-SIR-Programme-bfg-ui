@@ -1,8 +1,8 @@
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-import { formatDate, formatNumber, TitleCasePipe } from '@angular/common';
-import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
+import { formatDate, formatNumber } from '@angular/common';
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
+import { titleCase } from 'src/app/shared/utils/utils';
 
 export const TRANSACTION_SEARCH_DISPLAY_NAMES = {
     id: 'ID',
@@ -66,8 +66,6 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
         noContentLabel: { label: 'Document contains no data' }
     }
 ].filter(el => el);
-
-const titleCase = (str: string): string => str ? str[0].toUpperCase() + str.slice(1) : '';
 
 export const getDirectionIcon = (direction: string) =>
     direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';

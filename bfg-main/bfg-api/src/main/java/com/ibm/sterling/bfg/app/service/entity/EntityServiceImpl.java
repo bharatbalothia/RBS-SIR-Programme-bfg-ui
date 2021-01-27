@@ -162,11 +162,10 @@ public class EntityServiceImpl implements EntityService {
             entity.setService("DEL_" + entity.getEntityId() + "_" + entity.getService());
             entity.setMailboxPathOut("DEL_" + entity.getEntityId() + "_" + entity.getMailboxPathOut());
             entity.setMqQueueOut("DEL_" + entity.getEntityId() + "_" + entity.getMqQueueOut());
-            entity.setInboundRoutingRule(true);
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if (entity.getInboundRoutingRule() && changeControl.getEntityLog().getService().equals("GPL")) {
+        if ("GPL".equals(changeControl.getEntityLog().getService()) && entity.getRouteInbound()) {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 

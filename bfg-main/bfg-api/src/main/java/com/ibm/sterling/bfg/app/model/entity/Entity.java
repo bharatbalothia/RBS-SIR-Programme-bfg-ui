@@ -248,10 +248,6 @@ public class Entity implements EntityType {
     private Boolean routeOutbound = Boolean.TRUE;
 
     @Transient
-    private Boolean inboundDir = Boolean.FALSE;
-    @Transient
-    private Boolean inboundRoutingRule = Boolean.FALSE;
-    @Transient
     private SWIFTNetRoutingRuleServiceResponse routingRules;
 
     @Transient
@@ -763,22 +759,6 @@ public class Entity implements EntityType {
 
     public void setRouteOutbound(Boolean routeOutbound) {
         this.routeOutbound = routeOutbound;
-    }
-
-    public Boolean getInboundDir() {
-        return inboundDir;
-    }
-
-    public void setInboundDir(Boolean inboundDir) {
-        this.inboundDir = inboundDir;
-    }
-
-    public Boolean getInboundRoutingRule() {
-        return inboundRoutingRule;
-    }
-
-    public void setInboundRoutingRule(Boolean inboundRoutingRule) {
-        this.inboundRoutingRule = inboundRoutingRule;
     }
 
     public SWIFTNetRoutingRuleServiceResponse getRoutingRules() {

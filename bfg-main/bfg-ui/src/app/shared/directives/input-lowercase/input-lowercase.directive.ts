@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 @Directive({
   selector: '[appInputLowercase]'
 })

@@ -99,6 +99,7 @@
                 <active.profile>local</active.profile>
                 <server.host>localhost</server.host>
                 <server.port>9080</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>
         <profile>

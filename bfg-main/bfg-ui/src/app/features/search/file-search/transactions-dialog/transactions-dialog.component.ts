@@ -11,7 +11,7 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-import { getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
+import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
@@ -25,6 +25,7 @@ import { FileDialogService } from 'src/app/shared/models/file/file-dialog.servic
 export class TransactionsDialogComponent implements OnInit {
 
   getFileSearchDisplayName = getFileSearchDisplayName;
+  getDirectionIcon = getDirectionIcon;
 
   displayName: (fieldName: string) => string;
 

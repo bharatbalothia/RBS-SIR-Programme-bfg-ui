@@ -1,9 +1,9 @@
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { File } from 'src/app/shared/models/file/file.model';
-import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
-import { formatDate } from '@angular/common';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
+import { getDirectionIcon } from '../transaction-search/transaction-search-display-names';
+import { titleCase } from 'src/app/shared/utils/utils';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -46,7 +46,7 @@ const getFileDetailsSectionItems = (file: File) => ({
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
-        { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound), icon: file.outbound ? 'call_made' : 'call_received' },
+        { fieldName: 'direction', fieldValue: titleCase(file.direction), icon: getDirectionIcon(file.direction) },
         { fieldName: 'timestamp', fieldValue: file.timestamp },
         { fieldName: 'workflowID', fieldValue: file.workflowID, isActionButton: true },
         { fieldName: 'messageID', fieldValue: file.messageID },

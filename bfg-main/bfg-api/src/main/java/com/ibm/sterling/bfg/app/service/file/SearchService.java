@@ -95,7 +95,7 @@ public class SearchService {
         return Optional.ofNullable(objectMapper.convertValue(jsonNode, FileDetails.class)).map(file -> {
             setEntityOfFile(file);
             file.setStatusLabel(propertyService.getStatusLabel(
-                    fileStatusPrefixKey, file.getService(), file.getOutbound(), file.getStatus()));
+                    fileStatusPrefixKey, file.getService(), file.getDirection(), file.getStatus()));
             return file;
         });
     }
@@ -141,7 +141,7 @@ public class SearchService {
                             propertyService.getStatusLabel(
                                     transactionStatusPrefixKey,
                                     transactionDetails.getService(),
-                                    "outbound".equals(transactionDetails.getDirection()),
+                                    transactionDetails.getDirection(),
                                     transactionDetails.getStatus()
                             )
                     );

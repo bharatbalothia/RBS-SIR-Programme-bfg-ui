@@ -160,6 +160,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
+
+    formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'trxStatus.status');
     formData.trxStatus = null;
 

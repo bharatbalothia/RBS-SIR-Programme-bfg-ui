@@ -76,6 +76,13 @@ public class PropertyService {
         return null;
     }
 
+    public String getInboundService() throws JsonProcessingException {
+        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), settings.getInboundServiceKey())).stream()
+                .map(property -> property.get(PROPERTY_VALUE))
+                .findFirst()
+                .orElse("");
+    }
+
     public List<String> getFileType() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getFileTypeKey());
     }

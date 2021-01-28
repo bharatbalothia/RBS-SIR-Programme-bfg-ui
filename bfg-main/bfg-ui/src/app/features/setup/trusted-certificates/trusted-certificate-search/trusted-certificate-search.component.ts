@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { getTrustedCertificateDisplayName, getTrustedCertificateDetailsTabs, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
+import { getTrustedCertificateDetailsTabs, getTrustedCertificatePendingChangesTabs, getTrustedCertificateDisplayHeader, getTrustedCertificateDisplayName } from '../trusted-certificate-display-names';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { TrustedCertificatesWithPagination } from 'src/app/shared/models/trustedCertificate/trusted-certificates-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -28,7 +28,6 @@ import { NotificationService } from 'src/app/shared/services/NotificationService
 })
 export class TrustedCertificateSearchComponent implements OnInit {
 
-  getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
   CHANGE_OPERATION = CHANGE_OPERATION;
 
@@ -182,7 +181,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
         .then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
           title: `Change Record: Pending`,
           tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayName,
+          displayName: getTrustedCertificateDisplayHeader,
           actionData: {
             errorMessage: {
               message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
@@ -198,7 +197,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
         tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
-        displayName: getTrustedCertificateDisplayName,
+        displayName: getTrustedCertificateDisplayHeader,
         actionData: {
           errorMessage: {
             message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
@@ -217,7 +216,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
             title: 'Approve Change',
             tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl, true),
             yesCaption: 'Cancel',
-            displayName: getTrustedCertificateDisplayName,
+            displayName: getTrustedCertificateDisplayHeader,
             actionData: {
               changeID: validatedChangeControl.changeID,
               changer: validatedChangeControl.changer,
@@ -248,7 +247,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       title: `Delete ${trustedCertificate.certificateName}`,
       yesCaption: 'Cancel',
       tabs: getTrustedCertificateDetailsTabs(trustedCertificate),
-      displayName: getTrustedCertificateDisplayName,
+      displayName: getTrustedCertificateDisplayHeader,
       actionData: {
         id: trustedCertificate.certificateId,
         deleteAction: (id: string, changerComments: string) => this.trustedCertificateService.deleteTrustedCertificate(id, changerComments)
@@ -273,7 +272,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
           title: `Delete ${validatedChangeControl.changeID}`,
           yesCaption: 'Cancel',
           tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayName,
+          displayName: getTrustedCertificateDisplayHeader,
           actionData: {
             errorMessage: {
               message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
@@ -303,7 +302,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       mode: mode ? mode : 'search',
       fieldName: field
     });
-    return toolTip.length > 0 ? toolTip : this.getTrustedCertificateDisplayName(field);
+    return toolTip.length > 0 ? toolTip : getTrustedCertificateDisplayName(field);
   }
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);

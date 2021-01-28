@@ -1,14 +1,19 @@
 .list-group {
-    padding-left: 15px;
-    margin: 0;
+  padding-left: 15px;
+  margin: 0;
 
-    .list-group-item {
-        white-space: pre-line;
-        word-break: normal !important;
-        hyphens: none !important;
-    }
+  .list-group-item {
+    white-space: pre-line;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+}
+
+.icon-value {
+    display: flex;
+    align-items: center;
 }
 
 .ng-star-inserted[xml] {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }

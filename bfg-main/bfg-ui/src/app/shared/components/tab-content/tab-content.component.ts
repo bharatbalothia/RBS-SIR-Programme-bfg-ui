@@ -12,7 +12,7 @@ export class TabContentComponent implements OnInit {
 
   @Input() tab: Tab;
 
-  @Input() displayName: (fieldName: string) => string;
+  @Input() displayName;
 
   @Input() actions;
 

@@ -1,11 +1,9 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.ibm.sterling.bfg.app.model.validation.file.DateValid;
 import com.ibm.sterling.bfg.app.utils.TimeUtil;
+import java.util.Optional;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -16,7 +14,6 @@ public class FileSearchCriteria extends SearchCriteria {
     @JsonAlias("entityId")
     private Integer entityid;
     private Boolean override;
-    private Boolean outbound;
     @JsonProperty("bp-state")
     @JsonAlias("bpstate")
     private String bpState;
@@ -28,6 +25,12 @@ public class FileSearchCriteria extends SearchCriteria {
     private String to;
 
     public FileSearchCriteria() {
+    }
+
+    @Override
+    @JsonGetter
+    public String getDirection() {
+        return Optional.ofNullable(super.getDirection()).orElse("inbound&direction=outbound");
     }
 
     public Integer getId() {
@@ -60,14 +63,6 @@ public class FileSearchCriteria extends SearchCriteria {
 
     public void setOverride(Boolean override) {
         this.override = override;
-    }
-
-    public Boolean getOutbound() {
-        return outbound;
-    }
-
-    public void setOutbound(Boolean outbound) {
-        this.outbound = outbound;
     }
 
     public String getBpState() {

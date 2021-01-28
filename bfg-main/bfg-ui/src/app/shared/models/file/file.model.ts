@@ -7,7 +7,7 @@ export interface File {
     filename: string;
     id: number;
     messageID: number;
-    outbound: boolean;
+    direction: string;
     override: boolean;
     reference: string;
     service: string;

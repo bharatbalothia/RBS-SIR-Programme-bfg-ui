@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
+import { getDirectionIcon } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { FileDialogService } from '../../models/file/file-dialog.service';
 import { File } from '../../models/file/file.model';
 import { FilesWithPagination } from '../../models/file/files-with-pagination.model';
@@ -14,6 +15,7 @@ import { FilesWithPagination } from '../../models/file/files-with-pagination.mod
 export class FileTableComponent implements OnInit, OnDestroy {
 
   getFileStatusIcon = getStatusIcon;
+  getDirectionIcon = getDirectionIcon;
 
   @Input() getFileList: (pageIndex: number, pageSize: number) => any;
   @Input() dataSource: MatTableDataSource<File>;

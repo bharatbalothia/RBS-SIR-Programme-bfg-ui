@@ -30,7 +30,10 @@ export class NotificationService {
       const title = `${errorMessage.message || ''} ${errorMessage.code ? `(${errorMessage.code})` : ''}`;
       const message = this.composeHtmlBody(errorMessage.errors);
 
-      this.toastrService.error(message, title, this.toasterConfig);
+      this.toastrService.error(message, title, {
+        ...this.toasterConfig,
+        disableTimeOut: true
+      });
     }
   }
 
@@ -39,7 +42,10 @@ export class NotificationService {
       const title = `Warnings: `;
       const message = this.composeHtmlBody(errorMessage.warnings);
 
-      this.toastrService.warning(message, title, this.toasterConfig);
+      this.toastrService.warning(message, title, {
+        ...this.toasterConfig,
+        disableTimeOut: true
+      });
     }
   }
 

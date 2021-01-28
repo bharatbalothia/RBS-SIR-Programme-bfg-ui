@@ -196,3 +196,14 @@ mat-form-field {
         margin-left: -10px; // set negative indent for list
     }
 }
+
+.validity-flag {
+  display: flex;
+  align-items: center;
+  -ms-flex-direction: row;
+  flex-direction: row;
+
+  span {
+    margin-left: 5px;
+  }
+}

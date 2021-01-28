@@ -1,6 +1,6 @@
 .trusted-certificate-create-card {
     margin: 15px 15px 15px 15px;
-
+    
     .top-error-message {
         margin-left: 24px;
     }
@@ -43,7 +43,6 @@
                     display: flex;
                     -ms-flex-pack: center;
                     -ms-flex-align: end;
-                    justify-content: center;
                     -ms-flex-direction: column;
                     flex-direction: column;
                 }
@@ -58,40 +57,25 @@
                     justify-content: center;
                     -ms-flex-direction: column;
                     flex-direction: column;
-
-                    .validity-flag {
-                        display: flex;
-                        align-items: center;
-                        -ms-flex-direction: row;
-                        flex-direction: row;
-                    }
                 }
             }
         }
     }
 
-    .value-table-cell {
-        width: 100%;
-    }
-
     .summary-table {
         width: 100%;
 
-        .mat-row,
-        .mat-header-row {
-            border-width: 0;
-            border-bottom-width: 1px;
-            border-style: solid;
-            border-bottom-color: rgba(0, 0, 0, .12);
-            padding-right: 10px;
+        .mat-cell, .mat-header-cell {
+          padding-left: 10px;
         }
 
-        .mat-header-cell,
-        .mat-cell {
-            border-width: none;
-            border-bottom-width: none;
-            border-style: none;
-            display: inline-flex;
+        .mat-column-field,
+        .mat-column-sub-field {
+          flex: 0 0 10%;
+        }
+
+        .mat-column-value {
+          flex: 0 0 50%;
         }
 
     }

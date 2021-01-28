@@ -35,7 +35,19 @@ export interface TableActions {
 }
 
 export interface SectionItem {
-    fieldName: string;
-    fieldValue: any;
-    shouldDisplayValueUpperCase?: boolean;
+  fieldName: string | { label: string, nestedLabel: any};
+  fieldValue: any;
+  shouldDisplayValueUpperCase?: boolean;
 }
+
+export class IconValue {
+  icon: string;
+  value: string;
+
+  constructor(icon: string, value: string) {
+    this.icon = icon;
+    this.value = value;
+  }
+}
+
+

@@ -112,4 +112,8 @@ export class EntityService {
   transmitEntity(entityID: string, fileType: string, password: string) {
     return this.http.post(this.apiUrl + 'transmit', { entityID, fileType, password });
   }
+
+  getInboundService() {
+    return this.http.get(this.apiUrl + 'inbound-service', { responseType: 'text' });
+  }
 }

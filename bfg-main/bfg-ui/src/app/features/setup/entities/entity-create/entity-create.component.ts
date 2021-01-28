@@ -198,7 +198,7 @@ export class EntityCreateComponent implements OnInit {
     routeInbound: true,
     inboundRequestorDN: '',
     inboundResponderDN: '',
-    inboundService: 'swift.corp.fa',
+    inboundService: '',
     requestorDN: '',
     responderDN: '',
     serviceName: '',
@@ -350,17 +350,7 @@ export class EntityCreateComponent implements OnInit {
           inboundService: [entity.inboundService, Validators.required],
           inboundRequestType: [entity.inboundRequestType]
         });
-        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
-          this.isLoading = false;
-          this.inboundRequestTypeList = this.getInboundRequestTypes(data);
-          if (this.isEditing()) {
-            this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
-              .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[] || []).includes(el.value)));
-          }
-        }, error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
+        this.getGPLFormParams();
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
@@ -370,6 +360,27 @@ export class EntityCreateComponent implements OnInit {
           .subscribe((value: boolean) => this.onRouteInboundChanging(value));
         break;
     }
+  }
+
+  getGPLFormParams = () => {
+    this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
+      this.isLoading = false;
+      this.inboundRequestTypeList = this.getInboundRequestTypes(data);
+      if (this.isEditing()) {
+        this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
+          .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[] || []).includes(el.value)));
+      }
+    }, error => {
+      this.isLoading = false;
+      this.errorMessage = getApiErrorMessage(error);
+    });
+    this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
+      this.isLoading = false;
+      this.entityPageFormGroup.controls.inboundService.setValue(data);
+    }, error => {
+      this.isLoading = false;
+      this.errorMessage = getApiErrorMessage(error);
+    });
   }
 
   isNotEditOrPendingEditWithCreateStatus = () => !((!this.isCloneAction && this.isEditing() && !this.pendingChange)

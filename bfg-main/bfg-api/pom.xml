@@ -91,12 +91,12 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>local</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <active.profile>dev</active.profile>
+                <active.profile>local</active.profile>
                 <server.host>localhost</server.host>
                 <server.port>9080</server.port>
                 <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
@@ -108,6 +108,15 @@
                 <active.profile>test</active.profile>
                 <server.host>*</server.host>
                 <server.port>25001</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <active.profile>dev</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
                 <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>

@@ -45,7 +45,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   errorMessage: ErrorMessage;
   isLoading = false;
-  isArray = isArray;
 
   trustedCertificateFile;
 

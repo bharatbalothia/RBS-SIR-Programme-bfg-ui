@@ -30,9 +30,9 @@ public class JwtTokenValidator {
         try {
             return Jwts.parser().setSigningKey(settings.getTokenSigningKey()).parseClaimsJws(token);
         } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException ex) {
-            throw new BadCredentialsException("Invalid JWT token: ", ex);
+            throw new BadCredentialsException("Invalid JWT", ex);
         } catch (ExpiredJwtException expiredEx) {
-            throw new BadCredentialsException("JWT Token expired", expiredEx);
+            throw new BadCredentialsException("Your session has expired. Please log in again.", expiredEx);
         }
     }
 

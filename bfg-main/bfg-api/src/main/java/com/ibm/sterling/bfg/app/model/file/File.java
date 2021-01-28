@@ -1,8 +1,10 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ibm.sterling.bfg.app.model.DetailFormat;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class File {
     private Integer id;
@@ -17,7 +19,7 @@ public class File {
     private Integer workflowID;
     private String docID;
     private Integer transactionTotal;
-    private Boolean outbound;
+    private Direction direction;
 
     public Integer getId() {
         return id;
@@ -108,12 +110,11 @@ public class File {
         this.transactionTotal = transactionTotal;
     }
 
-    public Boolean getOutbound() {
-        return outbound;
+    public String getDirection() {
+        return Optional.ofNullable(direction).map(Direction::direction).orElse("");
     }
 
-    public void setOutbound(Boolean outbound) {
-        this.outbound = outbound;
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
-
 }

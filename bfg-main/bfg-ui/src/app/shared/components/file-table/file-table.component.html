@@ -43,7 +43,7 @@
       <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{element.type}}
-        <mat-icon>{{element.outbound ? 'call_made' : 'call_received'}}</mat-icon>
+        <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
       </mat-cell>
     </ng-container>
 

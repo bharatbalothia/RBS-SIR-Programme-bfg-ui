@@ -866,7 +866,7 @@
             <mat-step [stepControl]="summaryPageFormGroup">
                 <form [formGroup]="summaryPageFormGroup">
                     <ng-template matStepLabel>Summary page</ng-template>
-                    <mat-table [dataSource]="summaryPageDataSource">
+                    <mat-table [dataSource]="summaryPageDataSource" class="summary-table">
                         <ng-container matColumnDef="field">
                             <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{entityDisplayNames[element.field] || element.field}}
@@ -874,7 +874,9 @@
                         </ng-container>
                         <ng-container matColumnDef="value">
                             <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.value}}
+                            <mat-cell *matCellDef="let element">
+                                <app-display-table-cell class='value-table-cell' [value]="element.value">
+                                </app-display-table-cell>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="changerComment">

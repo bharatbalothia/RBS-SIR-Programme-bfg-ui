@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.model.file;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class Transaction {
     private Integer id;
@@ -13,8 +14,7 @@ public class Transaction {
     private LocalDateTime settleDate;
     private Double settleAmount;
     private Integer workflowID;
-    private Boolean isoutbound;
-    private String direction;
+    private Direction direction;
     private String fileID;
     private String docID;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -100,20 +100,11 @@ public class Transaction {
         this.timestamp = timestamp;
     }
 
-    public Boolean getIsoutbound() {
-        return isoutbound;
-    }
-
-    public void setIsoutbound(Boolean isoutbound) {
-        this.isoutbound = isoutbound;
-    }
-
     public String getDirection() {
-        return direction;
+        return Optional.ofNullable(direction).map(Direction::direction).orElse("");
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
-
 }

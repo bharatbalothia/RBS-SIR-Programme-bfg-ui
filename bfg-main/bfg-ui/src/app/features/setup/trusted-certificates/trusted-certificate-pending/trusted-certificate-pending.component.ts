@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayName, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
+import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayHeader, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
@@ -26,7 +26,6 @@ import { NotificationService } from 'src/app/shared/services/NotificationService
 })
 export class TrustedCertificatePendingComponent implements OnInit {
 
-  getTrustedCertificateDisplayName = getTrustedCertificateDisplayName;
   ROUTING_PATHS = ROUTING_PATHS;
   CHANGE_OPERATION = CHANGE_OPERATION;
 
@@ -165,7 +164,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
         .then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
           title: `Change Record: Pending`,
           tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayName,
+          displayName: getTrustedCertificateDisplayHeader,
           actionData: {
             errorMessage: {
               message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
@@ -181,7 +180,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
       .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
         tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
-        displayName: getTrustedCertificateDisplayName,
+        displayName: getTrustedCertificateDisplayHeader,
         actionData: {
           errorMessage: {
             message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
@@ -200,7 +199,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
             title: 'Approve Change',
             tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl, true),
             yesCaption: 'Cancel',
-            displayName: getTrustedCertificateDisplayName,
+            displayName: getTrustedCertificateDisplayHeader,
             actionData: {
               changeID: validatedChangeControl.changeID,
               changer: validatedChangeControl.changer,
@@ -233,7 +232,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
           title: `Delete ${validatedChangeControl.changeID}`,
           yesCaption: 'Cancel',
           tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayName,
+          displayName: getTrustedCertificateDisplayHeader,
           actionData: {
             errorMessage: {
               message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],

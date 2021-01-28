@@ -1,87 +1,76 @@
 <div class="no-data" *ngIf="this.isAllTabEmpty()">
-    <mat-icon class="no-data-icon">{{getNoDataIcon()}}</mat-icon>
-    {{getNoDataLabel(tab.tabTitle)}}
+  <mat-icon class="no-data-icon">{{getNoDataIcon()}}</mat-icon>
+  {{getNoDataLabel(tab.tabTitle)}}
 </div>
 <mat-table class="values-table" *ngFor="let dataSource of tab.tabSections; let tabSectionIndex = index"
-    [dataSource]="dataSource.sectionItems">
-    <ng-container matColumnDef="tableTitle">
-        <mat-header-cell *matHeaderCellDef colspan="2">
-            {{dataSource.sectionTitle}}
-        </mat-header-cell>
-    </ng-container>
-    <ng-container matColumnDef="fieldName">
-        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span *ngIf="!isObject(element.fieldName)">
-            {{displayName(element.fieldName)}}
-          </span>
-          <div class="section-label" *ngIf="isObject(element.fieldName)">
-            <div class="section-label-nested">
-              <div class="label-nested">{{displayName(element.fieldName.label)}}:</div>
-              <div class="sub-label">
-                <app-display-table-cell [listStyleType]="'none'" [value]="element.fieldName.nestedLabel">
-                </app-display-table-cell>
-              </div>
-            </div>
-          </div>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="fieldValueBefore">
-        <mat-header-cell *matHeaderCellDef [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
-            Value Before
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
-            <app-display-table-cell [value]="getBeforeValue(dataSource.sectionTitle, element.fieldName)"
-                [icon]="element.icon">
-            </app-display-table-cell>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="fieldValue">
-        <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <button mat-button class="button-value" *ngIf="element.isActionButton"
-                (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
-            <app-display-table-cell *ngIf="!element.isActionButton" [xml]="element.isXML" [icon]="element.icon"
-                [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue"
-                [listStyleType]="'none'">
-            </app-display-table-cell>
-        </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="this.isAllTabEmpty() || tabSectionIndex > 0">
-    </mat-header-row>
-    <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
-        [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
-    </mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [attr.xml]="row.isXML"></mat-row>
+  [dataSource]="dataSource.sectionItems">
+  <ng-container matColumnDef="tableTitle">
+    <mat-header-cell *matHeaderCellDef colspan="2">
+      {{dataSource.sectionTitle}}
+    </mat-header-cell>
+  </ng-container>
+  <ng-container matColumnDef="fieldName">
+    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{displayName(element.fieldName)}}
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="fieldValueBefore">
+    <mat-header-cell *matHeaderCellDef [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+      Value Before
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element" [style.display]="!isDifferencesTab(tab.tabTitle) && 'none'">
+      <app-display-table-cell [value]="getBeforeValue(dataSource.sectionTitle, element.fieldName)"
+        [icon]="element.icon">
+      </app-display-table-cell>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="fieldValue">
+    <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <button mat-button class="button-value" *ngIf="element.isActionButton"
+        (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
+      <app-display-table-cell *ngIf="!element.isActionButton" [xml]="element.isXML" [icon]="element.icon"
+        [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
+      </app-display-table-cell>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="this.isAllTabEmpty() || tabSectionIndex > 0">
+  </mat-header-row>
+  <mat-header-row *matHeaderRowDef="['tableTitle']; sticky: true"
+    [hidden]="!dataSource.sectionTitle || dataSource.sectionItems.length === 0">
+  </mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" [attr.xml]="row.isXML"></mat-row>
 </mat-table>
 
 <mat-table *ngIf="tab.tableObject" [dataSource]="tab.tableObject.tableDataSource" class="object-table">
-    <ng-container matColumnDef="tableTitle">
-        <mat-header-cell class="section-title" *matHeaderCellDef [attr.colspan]="tab.tableObject.tableColumns.length">
-            {{tab.tableObject.tableTitle}}
-        </mat-header-cell>
-    </ng-container>
-    <ng-container *ngFor="let item of tab.tableObject.tableColumns" [matColumnDef]="item">
-        <mat-header-cell *matHeaderCellDef>
-            {{displayName(item)}}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <app-display-table-cell [value]="element[item]">
-            </app-display-table-cell>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="noData">
-        <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-            {{getNoDataLabel(tab.tableObject.tableTitle)}}
-        </mat-footer-cell>
-    </ng-container>
+  <ng-container matColumnDef="tableTitle">
+    <mat-header-cell class="section-title" *matHeaderCellDef [attr.colspan]="tab.tableObject.tableColumns.length">
+      {{tab.tableObject.tableTitle}}
+    </mat-header-cell>
+  </ng-container>
+  <ng-container *ngFor="let item of tab.tableObject.tableColumns" [matColumnDef]="item">
+    <mat-header-cell *matHeaderCellDef>
+      {{displayName(item)}}
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <app-display-table-cell [value]="element[item]">
+      </app-display-table-cell>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="noData">
+    <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+      {{getNoDataLabel(tab.tableObject.tableTitle)}}
+    </mat-footer-cell>
+  </ng-container>
 
-    <mat-footer-row *matFooterRowDef="['noData']" [hidden]="tab.tableObject.tableDataSource.length > 0">
-    </mat-footer-row>
-    <mat-header-row *matHeaderRowDef="['tableTitle']" [hidden]="!tab.tableObject.tableTitle">
-    </mat-header-row>
-    <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns"
-        [hidden]="tab.tableObject.tableDataSource.length === 0">
-    </mat-header-row>
-    <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>
+  <mat-footer-row *matFooterRowDef="['noData']" [hidden]="tab.tableObject.tableDataSource.length > 0">
+  </mat-footer-row>
+  <div *ngIf="tab.tableObject.tableTitle">
+    <mat-header-row *matHeaderRowDef="['tableTitle']"></mat-header-row>
+  </div>
+  <mat-header-row  *matHeaderRowDef="tab.tableObject.tableColumns"
+    [hidden]="tab.tableObject.tableDataSource.length === 0">
+  </mat-header-row>
+  <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>
 </mat-table>

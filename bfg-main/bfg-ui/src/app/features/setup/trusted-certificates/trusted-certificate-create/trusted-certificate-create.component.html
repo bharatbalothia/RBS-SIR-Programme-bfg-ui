@@ -69,7 +69,7 @@
                 <app-display-table-cell
                   [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('issuer').value)">
                 </app-display-table-cell>
-              </div>            
+              </div>
             </section>
             <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('subject')">
               <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
@@ -138,27 +138,23 @@
       <ng-template matStepLabel>Confirmation of Trusted Certificate</ng-template>
       <mat-table [dataSource]="confirmationPageDataSource" class="summary-table">
         <ng-container matColumnDef="field">
-          <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
-          <mat-cell *matCellDef="let element"> 
-            <span *ngIf="!isArray(element.value)"> 
-              {{getTrustedCertificateDisplayName(element.field.label)}}
-            </span>
-            <div *ngIf="isArray(element.value)" class="section-label">
-              <div class="section-label-nested">
-                <div class="label-nested">{{getTrustedCertificateDisplayName(element.field.label)}}:</div>
-                <div class="sub-label">
-                  <app-display-table-cell [listStyleType]="'none'" [value]="element.field.nestedLabel">
-                  </app-display-table-cell>
-                </div>
-              </div>
-            </div>
-          </mat-cell>
+          <mat-header-cell *matHeaderCellDef>Field</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.field}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="sub-field">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.subField}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="value">
-          <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <app-display-table-cell class='value-table-cell' [listStyleType]="'none'" [value]="element.value">
-            </app-display-table-cell>
+            <div class="validity-flag" *ngIf="element.key === 'valid'; else elseBlock">
+              <mat-icon>
+                {{element.value ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
+              </mat-icon>
+              <span>{{element.value}}</span>
+            </div>
+            <ng-template #elseBlock>{{element.value}}</ng-template>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="error">

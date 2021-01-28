@@ -47,7 +47,12 @@
 
 .object-table {
     .mat-cell {
-        word-break: normal !important;
-        hyphens: none !important;
+        word-break: break-word;
+        hyphens: none;
+    }
+
+    .mat-column-fieldName,
+    .mat-column-subFieldName {
+      flex: 0 0 20%;
     }
 }

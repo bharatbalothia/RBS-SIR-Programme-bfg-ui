@@ -197,23 +197,13 @@ mat-form-field {
     }
 }
 
-.section-label {
+.validity-flag {
   display: flex;
-  width: 100%;
+  align-items: center;
+  -ms-flex-direction: row;
+  flex-direction: row;
 
-  .section-label-nested {
-    width: inherit;
-    display: flex;
-    justify-content: space-between;
-
-    .label-nested {
-      font-size: 14px;
-      width: 30%;
-      line-height: 24px;
-    }
-
-    .sub-label {
-      width: 70%;
-    }
+  span {
+    margin-left: 5px;
   }
 }

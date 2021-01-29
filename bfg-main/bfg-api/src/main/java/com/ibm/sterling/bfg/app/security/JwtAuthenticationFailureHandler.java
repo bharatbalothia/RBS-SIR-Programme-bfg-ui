@@ -28,9 +28,7 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
                                         AuthenticationException exception) throws IOException {
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 AuthErrorCode.BadCredentialsException,
-                Optional.ofNullable(exception.getCause())
-                        .map(Throwable::getMessage)
-                        .orElse(exception.getMessage()),
+                exception.getMessage(),
                 null
         );
         response.setStatus(errorMessage.getHttpStatus().value());

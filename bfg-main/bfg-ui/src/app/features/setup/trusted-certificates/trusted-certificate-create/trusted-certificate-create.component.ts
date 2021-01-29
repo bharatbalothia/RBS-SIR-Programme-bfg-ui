@@ -273,7 +273,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
         });
       } else if (isArray(value) && field === 'authChainReport') {
         value.forEach((current, outIndex) => {
-          Object.entries(current).forEach(([key, val], inIndex) => {
+          entries(current).forEach(([key, val], inIndex) => {
             data.push({
               field: outIndex === 0 && inIndex === 0 ? `${getTrustedCertificateDisplayName('authChainReport')}:` : undefined,
               subField: getTrustedCertificateDisplayName(key),

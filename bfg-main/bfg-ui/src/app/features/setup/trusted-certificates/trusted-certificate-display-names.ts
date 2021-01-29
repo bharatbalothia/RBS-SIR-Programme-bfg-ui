@@ -4,7 +4,7 @@ import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { formatDate } from '@angular/common';
-import { get } from 'lodash';
+import { entries, get } from 'lodash';
 
 export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
   name: 'Certificate Name',
@@ -92,7 +92,7 @@ const getTrustedCertificateDataSource = (trustedCertificate: TrustedCertificate)
   }] : [],
   ...get(trustedCertificate, 'authChainReport', null) !== null ?
     trustedCertificate.authChainReport.reduce((acc, current, outIndex, array) => {
-      Object.entries(current).forEach(([key, value], inIndex) => {
+      entries(current).forEach(([key, value], inIndex) => {
         acc.push({
           fieldName: outIndex === 0 && inIndex === 0 ? `${getTrustedCertificateDisplayName('authChainReport')}:` : undefined,
           subFieldName: getTrustedCertificateDisplayName(key),

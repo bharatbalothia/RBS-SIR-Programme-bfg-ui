@@ -5,6 +5,11 @@
   {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
 </h3>
 <div class="table-container">
+  <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
+    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
+    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons>
+  </app-table-paginator>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>

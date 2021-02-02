@@ -8,7 +8,7 @@
   <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
     [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
     [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-    showFirstLastButtons>
+    showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
   </app-table-paginator>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="status">
@@ -100,22 +100,14 @@
       </mat-footer-cell>
     </ng-container>
 
-    <ng-container matColumnDef="paginator">
-      <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-        <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
-          [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-          [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
-          [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
-        </app-table-paginator>
-      </mat-footer-cell>
-    </ng-container>
-
     <mat-footer-row *matFooterRowDef="['noData']" [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
     </mat-footer-row>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    <mat-footer-row *matFooterRowDef="['paginator']"
-      [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
-    </mat-footer-row>
   </mat-table>
+  <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
+    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
+    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
+  </app-table-paginator>
 </div>

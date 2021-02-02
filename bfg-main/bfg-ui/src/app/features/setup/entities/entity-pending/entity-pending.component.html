@@ -3,6 +3,28 @@
     <mat-card-title>Entity pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
+    <div class="search-by-content">
+      <h3 class="search-by-label">Search by</h3>
+      <mat-form-field class="search-by-field">
+        <mat-label>Search by service</mat-label>
+        <mat-select [(ngModel)]="serviceSearchingValue">
+          <mat-option value="">ALL</mat-option>
+          <mat-option value="GPL">GPL</mat-option>
+          <mat-option value="SCT">SCT</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="search-by-field">
+        <mat-label>Search by entity name</mat-label>
+        <input matInput [(ngModel)]="entityNameSearchingValue">
+      </mat-form-field>
+      <mat-form-field class="search-by-field">
+        <mat-label>Search by DN</mat-label>
+        <input matInput [(ngModel)]="DNSearchingValue">
+      </mat-form-field>
+      <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
+      <button color="primary" mat-raised-button (click)="getPendingChanges(pageIndex, pageSize)">Search</button>
+
+    </div>
     <div class="table-container">
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="changeControls">
 

@@ -31,7 +31,7 @@ export class EntityService {
     return this.http.delete(this.apiUrl + entityId, { params: changerComments && { changerComments } });
   }
 
-  getEntityList(params?: { entity?: string; service?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
+  getEntityList(params?: { entity?: string; service?: string; swiftDN?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<EntitiesWithPagination>(this.apiUrl, { params });
   }
 
@@ -55,7 +55,7 @@ export class EntityService {
     return this.http.put<Entity>(this.apiUrl + 'pending/' + changeId, entity);
   }
 
-  getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {
+  getPendingChanges(params?: { entity?: string; service?: string; swiftDN?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<ChangeControlsWithPagination>(this.apiUrl + 'pending', { params });
   }
 

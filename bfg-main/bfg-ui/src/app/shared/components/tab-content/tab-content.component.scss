@@ -11,19 +11,6 @@
 }
 
 .values-table {
-
-    .mat-cell {
-        word-wrap: break-word !important;
-        white-space: unset !important;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
-        -ms-hyphens: auto;
-        -moz-hyphens: auto;
-        -webkit-hyphens: auto;
-        hyphens: auto;
-    }
-
     .mat-column-fieldName {
         flex: 0 0 30% !important;
         width: 30% !important;
@@ -46,11 +33,6 @@
 }
 
 .object-table {
-    .mat-cell {
-        word-break: break-word;
-        hyphens: none;
-    }
-
     .mat-column-fieldName,
     .mat-column-subFieldName {
       flex: 0 0 20%;

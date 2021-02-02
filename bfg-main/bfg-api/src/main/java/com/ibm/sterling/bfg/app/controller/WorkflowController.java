@@ -22,8 +22,8 @@ public class WorkflowController {
     private SearchService searchService;
 
     @GetMapping("{id}/steps")
-    public Page<WorkflowStep> getWorkflowSteps(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                               @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+    public Page<WorkflowStep> getWorkflowSteps(@RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                                @PathVariable Integer id) throws JsonProcessingException {
         return searchService.getWorkflowSteps(id, page, size);
     }

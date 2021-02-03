@@ -87,7 +87,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
-      this.initMinMaxDate();
       this.getTransactionCriteriaData();
     });
   }
@@ -114,7 +113,9 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       from: [this.defaultSelectedData.from],
       to: [this.defaultSelectedData.to]
     });
+
     this.criteriaFilterObject = { direction: '', trxStatus: '' };
+    this.initMinMaxDate();
   }
 
   initMinMaxDate() {
@@ -150,7 +151,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     return data;
   }
-
 
   getTransactionList(pageIndex: number, pageSize: number) {
     const formData = {

@@ -3,6 +3,36 @@
     <mat-card-title>Trusted Certificate pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
+    <div class="search-by-content">
+      <h3 class="search-by-label">Search by</h3>
+
+      <div class="search-field">
+        <mat-form-field class="search-by-field">
+          <mat-label>Search by Certificate Name</mat-label>
+          <input matInput [(ngModel)]="certificateNameSearchingValue">
+        </mat-form-field>
+        <app-tooltip [tip]="getTooltip('search', 'by-cert-name')" position="below"></app-tooltip>
+      </div>
+
+      <div class="search-field">
+        <mat-form-field class="search-by-field">
+          <mat-label>Search by SHA-1 Thumbprint</mat-label>
+          <input matInput [(ngModel)]="thumbprintSearchingValue">
+        </mat-form-field>
+        <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
+      </div>
+
+      <div class="search-field">
+        <mat-form-field class="search-by-field">
+          <mat-label>Search by SHA-2 Thumbprint</mat-label>
+          <input matInput [(ngModel)]="thumbprint256SearchingValue">
+        </mat-form-field>
+        <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
+      </div>
+
+      <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
+      <button color="primary" mat-raised-button (click)="getPendingChanges(pageIndex, pageSize)">Search</button>
+    </div>
 
     <div class="table-container">
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">

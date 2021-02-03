@@ -69,7 +69,6 @@ mat-form-field {
         }
 
         .mat-table {
-
             display: inline-block;
             margin-right: 15px;
 
@@ -131,10 +130,14 @@ mat-form-field {
             }
         }
     }
+}
 
-    .paginator {
-        width: 100%;
-    }
+.paginator {
+  width: 100%;
+
+  .mat-paginator {
+    background-color: unset;
+  }
 }
 
 @media all and (-ms-high-contrast: none),

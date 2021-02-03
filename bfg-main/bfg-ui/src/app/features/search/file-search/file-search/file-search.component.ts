@@ -76,7 +76,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
-      this.initMinMaxDate();
       this.getFileCriteriaData();
     });
   }
@@ -105,6 +104,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     });
 
     this.criteriaFilterObject = { direction: '', service: '' };
+    this.initMinMaxDate();
   }
 
   initMinMaxDate() {
@@ -146,7 +146,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     return data;
   }
-
 
   getFileList(pageIndex: number, pageSize: number) {
     const formData = {

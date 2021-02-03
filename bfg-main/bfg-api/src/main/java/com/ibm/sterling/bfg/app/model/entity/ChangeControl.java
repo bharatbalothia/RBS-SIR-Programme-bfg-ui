@@ -17,6 +17,10 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.ChangeControl.entityLog",
+                attributeNodes = {@NamedAttributeNode("entityLog")})
+})
 @Table(name = "SFG_CHANGE_CONTROL")
 @Entity
 public class ChangeControl implements ObjectTypeConstants, Comparable<ChangeControl>, Serializable, EntityType {

@@ -52,6 +52,6 @@ class ChangeControlServiceTest {
 
     @Test
     void findAllPending() {
-        service.findAllPending().forEach(System.out::println);
+        service.findAllPendingChangeControls().forEach(System.out::println);
     }
 }

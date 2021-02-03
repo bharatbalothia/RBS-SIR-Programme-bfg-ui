@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.repository.entity;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -17,8 +18,10 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
 
     boolean existsByServiceAndEntityAllIgnoreCase(String service, String entity);
 
+    @EntityGraph(value = "graph.Entity.schedules")
     List<Entity> findAll(Specification<Entity> specification);
 
+    @EntityGraph(value = "graph.Entity.schedules")
     List<Entity> findByDeleted(boolean deleted);
 
     boolean existsByMqQueueOutAndDeletedAndEntityIdNot(String mqQueueOut, Boolean deleted, Integer entityId);

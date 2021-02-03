@@ -61,7 +61,7 @@ public class EntityController {
     public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
                                            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
         return ListToPageConverter.convertListToPage(
-                new ArrayList<>(changeControlService.findAllPending()), PageRequest.of(page, size));
+                new ArrayList<>(changeControlService.findAllPendingChangeControls()), PageRequest.of(page, size));
     }
 
     @PostMapping("pending")

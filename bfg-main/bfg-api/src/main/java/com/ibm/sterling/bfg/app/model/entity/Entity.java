@@ -25,6 +25,10 @@ import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.Entity.schedules",
+                attributeNodes = {@NamedAttributeNode("schedules")})
+})
 @EntityServiceUniquenessConstraint(groups = {GplValidation.PostValidation.class, SctValidation.PostValidation.class,})
 @EntityUpdateUniqueness(groups = {GplValidation.PutValidation.class, SctValidation.PutValidation.class})
 @DetailsValid(groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})

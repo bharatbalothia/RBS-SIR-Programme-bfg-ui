@@ -34,5 +34,6 @@ export class OverlayInfoComponent {
       key: this.key || '',
       value: this.overlayData
     });
+    this.backdropClick();
   }
 }

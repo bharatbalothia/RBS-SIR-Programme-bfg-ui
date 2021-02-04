@@ -84,20 +84,26 @@
         <ng-container matColumnDef="thumbprint">
           <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            {{element.resultMeta2}}
+            <div class="mat-cell-value">
+              {{element.resultMeta2}}
+            </div>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="thumbprint256">
           <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            {{element.resultMeta3}}
+            <div class="mat-cell-value">
+              {{element.resultMeta3}}
+            </div>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="noData">
           <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-            No records found.
+            <div class="mat-cell-value">
+              No records found.
+            </div>
           </mat-footer-cell>
         </ng-container>
 

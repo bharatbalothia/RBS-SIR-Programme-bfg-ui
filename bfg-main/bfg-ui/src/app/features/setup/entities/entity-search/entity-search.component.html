@@ -121,12 +121,18 @@
 
                 <ng-container matColumnDef="service">
                     <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.service || element.resultMeta2}} </mat-cell>
+                    <mat-cell *matCellDef="let element">
+                      <div class="mat-cell-value">
+                        {{element.service || element.resultMeta2}}
+                      </div>
+                    </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="noData">
                     <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                      <div class="mat-cell-value">
                         No records found.
+                      </div>
                     </mat-footer-cell>
                 </ng-container>
 

@@ -139,28 +139,34 @@
       <mat-table [dataSource]="confirmationPageDataSource" class="summary-table">
         <ng-container matColumnDef="field">
           <mat-header-cell *matHeaderCellDef>Field</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.field}}</mat-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">{{element.field}}</div>
+          </mat-cell>
         </ng-container>
         <ng-container matColumnDef="sub-field">
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.subField}}</mat-cell>
+          <mat-cell *matCellDef="let element"><div class="mat-cell-value">{{element.subField}}</div></mat-cell>
         </ng-container>
         <ng-container matColumnDef="value">
           <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <div class="validity-flag" *ngIf="element.key === 'valid'; else elseBlock">
-              <mat-icon>
-                {{element.value ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
-              </mat-icon>
-              <span>{{element.value}}</span>
+            <div class="mat-cell-value">
+              <div class="validity-flag" *ngIf="element.key === 'valid'; else elseBlock">
+                <mat-icon>
+                  {{element.value ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
+                </mat-icon>
+                <span>{{element.value}}</span>
+              </div>
+              <ng-template #elseBlock>{{element.value}}</ng-template>
             </div>
-            <ng-template #elseBlock>{{element.value}}</ng-template>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="error">
           <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <mat-error class='error-table-cell'>{{element.error}}</mat-error>
+            <div class="mat-cell-value">
+              <mat-error class='error-table-cell'>{{element.error}}</mat-error>
+            </div>
           </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="confirmationDisplayedColumns"></mat-header-row>

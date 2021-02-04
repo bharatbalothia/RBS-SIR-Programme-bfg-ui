@@ -55,8 +55,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.entity"></app-overlay-info>
+                        <app-overlay-info
+                          *ngIf="isCloneAction && editableEntity"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.entity"
+                          [key]="'entity'"
+                          (insert)="insert($event)"
+                        ></app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
                         </app-tooltip>
@@ -87,8 +92,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundRequestorDN"></app-overlay-info>
+                        <app-overlay-info
+                          *ngIf="shouldShowRoutingAttributesOverlay()"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.inboundRequestorDN"
+                          [key]="'inboundRequestorDN'"
+                          (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
                     </section>
@@ -106,8 +116,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundResponderDN"></app-overlay-info>
+                        <app-overlay-info
+                          *ngIf="shouldShowRoutingAttributesOverlay()"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.inboundResponderDN"
+                          [key]="'inboundResponderDN'"
+                          (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
                             [tip]="getTooltip('inboundResponderDN', 'entity')"></app-tooltip>
@@ -126,8 +141,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundService"></app-overlay-info>
+                        <app-overlay-info
+                          *ngIf="shouldShowRoutingAttributesOverlay()"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.inboundService"
+                          [key]="'inboundService'"
+                          (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
                             [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
@@ -161,10 +181,13 @@
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>
                         </mat-form-field>
-
+                        
                         <app-overlay-info
-                            *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
-                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestType">
+                          *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.inboundRequestType"
+                          [key]="'inboundRequestType'"
+                          (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
@@ -266,8 +289,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+                        <app-overlay-info
+                        *ngIf="isCloneAction && editableEntity"
+                        buttonName="Source Value"
+                        [overlayData]="editableEntity.mailboxPathOut"
+                        [key]="'mailboxPathOut'"
+                        (insert)="insert($event)">
+                      </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
                             [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
@@ -297,8 +325,13 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.mailboxPathOut"></app-overlay-info>
+                        <app-overlay-info
+                          *ngIf="isCloneAction && editableEntity"
+                          buttonName="Source Value"
+                          [overlayData]="editableEntity.mailboxPathOut"
+                          [key]="'mqQueueOut'"
+                          (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
                             [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>

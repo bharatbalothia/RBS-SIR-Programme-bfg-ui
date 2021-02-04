@@ -1,9 +1,14 @@
 .overlay-container {
-    border: solid 1px #ccc;
-    border-radius: 5px;
-    background: #fff;
-    padding: 10px;
-    margin: 0
+  display: flex;
+  align-items: center;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  background: #fff;
+  padding: 10px;
+  margin: 0
 }
 
-.overlay-button {}
+.insert-button {
+  transform: scale(0.8);
+  margin-left: 5px;
+}

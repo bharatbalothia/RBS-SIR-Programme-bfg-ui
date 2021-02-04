@@ -116,4 +116,8 @@ export class EntityService {
   getInboundService() {
     return this.http.get(this.apiUrl + 'inbound-service', { responseType: 'text' });
   }
+
+  getSWIFTService() {
+    return this.http.get(this.apiUrl + 'swift-service', { responseType: 'text' });
+  }
 }

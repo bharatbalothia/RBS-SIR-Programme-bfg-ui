@@ -257,6 +257,13 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    public List<String> findEntityNameForParticipants(Integer entityId) {
+        List<Entity> entities = findEntitiesByService("SCT");
+        entities.removeIf(entity -> entity.getEntityId().equals(entityId));
+        return entities.stream().map(Entity::getEntity).collect(Collectors.toList());
+    }
+
+    @Override
     public Entity getEntityWithAttributesOfRoutingRules(String inboundRequestorDN, String inboundResponderDN,
                                                         String inboundService, List<String> inboundRequestType) {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",

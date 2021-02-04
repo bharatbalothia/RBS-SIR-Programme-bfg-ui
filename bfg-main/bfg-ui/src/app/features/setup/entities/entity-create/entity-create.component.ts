@@ -375,7 +375,7 @@ export class EntityCreateComponent implements OnInit {
       this.isLoading = false;
       this.errorMessage = getApiErrorMessage(error);
     });
-    if (!this.isCloneAction && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.routeInboundEntityCache, 'inboundService'))) {
+    if (!this.editableEntity && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.routeInboundEntityCache, 'inboundService'))) {
       this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
         this.isLoading = false;
         this.entityPageFormGroup.controls.inboundService.setValue(data);

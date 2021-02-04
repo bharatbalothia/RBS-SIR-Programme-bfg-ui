@@ -794,4 +794,16 @@ export class EntityCreateComponent implements OnInit {
 
   getMaxLengthForEntityField = () => this.selectedService === ENTITY_SERVICE_TYPE.GPL ? 11 : 8;
 
+  insert({ key, value }: { key: string, value: string | [] }) {
+    switch (key) {
+      case 'inboundRequestType':
+        this.entityPageFormGroup.controls.inboundRequestType.setValue(
+          this.inboundRequestTypeList.filter(el => value.includes(el.value as never))
+        );
+        break;
+      default:
+        this.entityPageFormGroup.controls[key].patchValue(value);
+    }
+  }
+
 }

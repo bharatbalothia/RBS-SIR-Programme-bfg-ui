@@ -77,7 +77,15 @@ public class PropertyService {
     }
 
     public String getInboundService() throws JsonProcessingException {
-        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), settings.getInboundServiceKey())).stream()
+        return getDefaultService(settings.getInboundServiceKey());
+    }
+
+    public String getSwiftService() throws JsonProcessingException {
+        return getDefaultService(settings.getSwiftServiceKey());
+    }
+
+    private String getDefaultService(String serviceKey) throws JsonProcessingException {
+        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), serviceKey)).stream()
                 .map(property -> property.get(PROPERTY_VALUE))
                 .findFirst()
                 .orElse("");

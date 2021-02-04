@@ -203,6 +203,11 @@ public class EntityController {
         return ok(propertyService.getInboundService());
     }
 
+    @GetMapping("swift-service")
+    public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
+        return ok(propertyService.getSwiftService());
+    }
+
     @GetMapping("file-type")
     public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
         return ok(propertyService.getFileType());

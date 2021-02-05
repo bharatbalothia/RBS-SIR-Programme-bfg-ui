@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -20,11 +21,14 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
 
     boolean existsByServiceAndEntityAllIgnoreCase(String service, String entity);
 
-    @EntityGraph(value = "graph.Entity.schedules")
+    @EntityGraph(attributePaths = "schedules")
     List<Entity> findAll(Specification<Entity> specification);
 
-    @EntityGraph(value = "graph.Entity.schedules")
+    @EntityGraph(attributePaths = "schedules")
     List<Entity> findByDeleted(boolean deleted);
+
+    @EntityGraph(attributePaths = "schedules")
+    Optional<Entity> findById(Integer entityId);
 
     boolean existsByMqQueueOutAndDeletedAndEntityIdNot(String mqQueueOut, Boolean deleted, Integer entityId);
 

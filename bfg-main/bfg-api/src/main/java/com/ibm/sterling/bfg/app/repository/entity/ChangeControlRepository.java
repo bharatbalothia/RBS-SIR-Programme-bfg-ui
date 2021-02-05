@@ -16,12 +16,16 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ChangeControlRepository extends JpaRepository<ChangeControl, String>, JpaSpecificationExecutor<ChangeControl> {
 
-    @EntityGraph(value = "graph.ChangeControl.entityLog")
+    @EntityGraph(attributePaths = "entityLog")
     List<ChangeControl> findByStatusAndEntityLogIsNotNull(ChangeControlStatus status);
 
-    @EntityGraph(value = "graph.ChangeControl.entityLog")
+    @EntityGraph(attributePaths = "entityLog")
     List<ChangeControl> findAll(Specification<ChangeControl> specification);
 
+    @EntityGraph(attributePaths = "entityLog")
     Optional<ChangeControl> findByChangeIDAndStatus(String changeID, ChangeControlStatus status);
+
+    @EntityGraph(attributePaths = "entityLog")
+    Optional<ChangeControl> findById(String changeID);
 
 }

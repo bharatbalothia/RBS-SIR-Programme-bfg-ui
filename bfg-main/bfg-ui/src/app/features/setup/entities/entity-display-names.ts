@@ -146,16 +146,16 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
   ]
 });
 
-export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
+export const getEntityDetailsTabs = (serviceType: string, entity: Entity): Tab[] => [
   {
     tabTitle: 'Entity Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
   },
-  entity.service === ENTITY_SERVICE_TYPE.SCT && {
+  serviceType === ENTITY_SERVICE_TYPE.SCT && {
     tabTitle: 'MQ Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['MQ Details'] }]
   },
-  entity.service === ENTITY_SERVICE_TYPE.SCT && {
+  serviceType === ENTITY_SERVICE_TYPE.SCT && {
     tabTitle: 'Schedules',
     tabSections: [],
     tableObject: {

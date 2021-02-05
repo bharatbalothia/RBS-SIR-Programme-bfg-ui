@@ -68,7 +68,7 @@ export class ApprovingDialogComponent implements OnInit {
             code: null,
             message: null,
             warnings
-          })
+          });
         }
         this.dialog.close({ refreshList: true, status });
       },

@@ -146,7 +146,7 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
   ]
 });
 
-export const getEntityDetailsTabs = (serviceType: string, entity: Entity): Tab[] => [
+export const getEntityDetailsTabs = (entity: Entity, serviceType: string = null): Tab[] => [
   {
     tabTitle: 'Entity Details',
     tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]

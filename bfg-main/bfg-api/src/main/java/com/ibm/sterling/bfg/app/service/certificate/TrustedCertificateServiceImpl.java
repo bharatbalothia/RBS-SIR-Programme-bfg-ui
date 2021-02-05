@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.InvalidNameException;
 import javax.xml.bind.DatatypeConverter;
@@ -42,6 +43,7 @@ import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.P
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.DELETE;
 
 @Service
+@Transactional(readOnly = true)
 public class TrustedCertificateServiceImpl implements TrustedCertificateService {
 
     private static final Logger LOG = LogManager.getLogger(TrustedCertificateServiceImpl.class);
@@ -114,6 +116,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
+    @Transactional
     public TrustedCertificate updatePendingCertificate(ChangeControlCert changeControl, String certName, String changerComments) {
         String currentName = changeControl.getResultMeta1();
         String actionValue = currentName.equals(certName) ? currentName : currentName + " -> " + certName;
@@ -124,6 +127,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
+    @Transactional
     public void cancelPendingCertificate(ChangeControlCert changeControl) {
         changeControlCertService.deleteChangeControl(changeControl);
         adminAuditService.fireAdminAuditEvent(
@@ -146,6 +150,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
+    @Transactional
     public TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
             certificateValidation.validateCertificate(cert);
@@ -165,6 +170,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
+    @Transactional
     public TrustedCertificate getTrustedCertificateAfterApprove(ChangeControlCert changeControlCert,
                                                                 String approverComments, ChangeControlStatus status)
             throws JsonProcessingException, CertificateEncodingException {

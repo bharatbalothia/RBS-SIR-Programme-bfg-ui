@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ChangeControlService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlService.class);
 
@@ -43,24 +43,27 @@ public class ChangeControlService {
         return changeControlRepository.findByChangeIDAndStatus(id, ChangeControlStatus.PENDING);
     }
 
+    @Transactional
     public ChangeControl save(ChangeControl changeControl) {
         return changeControlRepository.save(changeControl);
     }
 
+    @Transactional
     public ChangeControl updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
         ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
                 .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
         controlFromBD.setStatus(status);
-        changeControlRepository.save(controlFromBD);
+        save(controlFromBD);
         return controlFromBD;
     }
 
+    @Transactional
     public void setApproveInfo(ChangeControl changeControl, String user,
                                String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
-        changeControlRepository.save(changeControl);
+        save(changeControl);
     }
 
     public List<ChangeControl> findAllPendingChangeControls() {
@@ -81,6 +84,7 @@ public class ChangeControlService {
         return changeControlRepository.findAll(specification);
     }
 
+    @Transactional
     public void updateChangeControl(ChangeControl changeControl, Entity entity) {
         Operation operation = changeControl.getOperation();
         if (!operation.equals(Operation.DELETE)) {
@@ -101,6 +105,7 @@ public class ChangeControlService {
         }
     }
 
+    @Transactional
     public void deleteChangeControl(ChangeControl changeControl) {
         if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)) {
             changeControlRepository.delete(changeControl);

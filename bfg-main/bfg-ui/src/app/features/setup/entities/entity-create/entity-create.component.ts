@@ -85,6 +85,8 @@ export class EntityCreateComponent implements OnInit {
 
   isCloneAction = false;
 
+  directParticipantList: Entity[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -311,6 +313,7 @@ export class EntityCreateComponent implements OnInit {
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
         });
+        this.getDirectParticipantList(!this.isCloneAction ? entity.entityId : null);
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;
           this.mqDetails = data;
@@ -806,4 +809,14 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
+  getDirectParticipantList = (id) => {
+    this.entityService.getDirectParticipantList(id)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: Entity[]) => {
+        this.isLoading = false;
+        this.directParticipantList = data;
+      },
+        error => this.isLoading = false
+      );
+  }
 }

@@ -1,7 +1,5 @@
 package com.ibm.sterling.bfg.app.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.model.statistics.StatisticalData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;

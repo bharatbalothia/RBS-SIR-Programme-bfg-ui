@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.ibm.sterling</groupId>
         <artifactId>bfg</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>bfg-api</artifactId>
     <packaging>war</packaging>
@@ -144,6 +144,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

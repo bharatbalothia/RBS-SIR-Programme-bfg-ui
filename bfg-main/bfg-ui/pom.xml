@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.ibm.sterling</groupId>
 		<artifactId>bfg</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>bfg-ui</artifactId>
 	<build>

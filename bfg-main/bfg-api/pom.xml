@@ -7,6 +7,7 @@
     </parent>
     <artifactId>bfg-api</artifactId>
     <packaging>war</packaging>
+    <version>${revision}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

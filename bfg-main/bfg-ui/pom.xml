@@ -6,7 +6,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>bfg-ui</artifactId>
-	<build>
+  <version>${revision}</version>
+
+  <build>
 		<plugins>
 			<plugin>
 				<groupId>com.github.eirslett</groupId>

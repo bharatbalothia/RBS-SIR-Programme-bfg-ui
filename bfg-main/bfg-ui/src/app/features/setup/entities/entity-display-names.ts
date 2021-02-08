@@ -146,37 +146,41 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
   ]
 });
 
-export const getEntityDetailsTabs = (entity: Entity): Tab[] => [
-  {
-    tabTitle: 'Entity Details',
-    tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
-  },
-  entity.service === ENTITY_SERVICE_TYPE.SCT && {
-    tabTitle: 'MQ Details',
-    tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['MQ Details'] }]
-  },
-  entity.service === ENTITY_SERVICE_TYPE.SCT && {
-    tabTitle: 'Schedules',
-    tabSections: [],
-    tableObject: {
-      tableTitle: 'Schedules',
-      tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
-      tableDataSource: entity.schedules.map((schedule: Schedule) =>
-      ({
-        ...schedule,
-        isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
-      }))
+export const getEntityDetailsTabs = (entity: Entity, service: string = null): Tab[] => {
+  const serviceType = service || entity.service;
+
+  return [
+    {
+      tabTitle: 'Entity Details',
+      tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Entity Details'] }]
+    },
+    serviceType === ENTITY_SERVICE_TYPE.SCT && {
+      tabTitle: 'MQ Details',
+      tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['MQ Details'] }]
+    },
+    serviceType === ENTITY_SERVICE_TYPE.SCT && {
+      tabTitle: 'Schedules',
+      tabSections: [],
+      tableObject: {
+        tableTitle: 'Schedules',
+        tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
+        tableDataSource: entity.schedules.map((schedule: Schedule) =>
+        ({
+          ...schedule,
+          isWindow: schedule.isWindow ? SCHEDULE_TYPE.WINDOW : SCHEDULE_TYPE.DAILY
+        }))
+      }
+    },
+    {
+      tabTitle: 'SWIFT Details',
+      tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['SWIFT Details'] }]
+    },
+    serviceType === ENTITY_SERVICE_TYPE.GPL && {
+      tabTitle: `${serviceType} Routing Details`,
+      tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Routing Details'] }]
     }
-  },
-  {
-    tabTitle: 'SWIFT Details',
-    tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['SWIFT Details'] }]
-  },
-  entity.service === ENTITY_SERVICE_TYPE.GPL && {
-    tabTitle: `${entity.service} Routing Details`,
-    tabSections: [{ sectionItems: getEntityDetailsSectionItems(entity)['Routing Details'] }]
-  }
-].filter(el => el);
+  ].filter(el => el);
+};
 
 export const getPendingChangesTabs = (changeControl: ChangeControl, isApprovingAction?: boolean): Tab[] => [
   {

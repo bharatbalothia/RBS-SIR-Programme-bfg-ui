@@ -85,6 +85,8 @@ export class EntityCreateComponent implements OnInit {
 
   isCloneAction = false;
 
+  routeInboundEntityCache: any = {};
+
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -350,14 +352,13 @@ export class EntityCreateComponent implements OnInit {
           inboundService: [entity.inboundService, Validators.required],
           inboundRequestType: [entity.inboundRequestType]
         });
-        this.getGPLFormParams();
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
-
         this.onRouteInboundChanging(this.entityPageFormGroup.controls.routeInbound.value);
         this.entityPageFormGroup.controls.routeInbound.valueChanges
           .subscribe((value: boolean) => this.onRouteInboundChanging(value));
+        this.getGPLFormParams();
         break;
     }
   }
@@ -374,13 +375,15 @@ export class EntityCreateComponent implements OnInit {
       this.isLoading = false;
       this.errorMessage = getApiErrorMessage(error);
     });
-    this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
-      this.isLoading = false;
-      this.entityPageFormGroup.controls.inboundService.setValue(data);
-    }, error => {
-      this.isLoading = false;
-      this.errorMessage = getApiErrorMessage(error);
-    });
+    if (!this.editableEntity && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.routeInboundEntityCache, 'inboundService'))) {
+      this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.entityPageFormGroup.controls.inboundService.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
   }
 
   isNotEditOrPendingEditWithCreateStatus = () => !((!this.isCloneAction && this.isEditing() && !this.pendingChange)
@@ -525,11 +528,18 @@ export class EntityCreateComponent implements OnInit {
 
   onRouteInboundChanging = (value: boolean) => {
     if (value === false) {
+      this.routeInboundEntityCache['inboundRequestorDN'] = this.entityPageFormGroup.controls.inboundRequestorDN.value;
+      this.routeInboundEntityCache['inboundResponderDN'] = this.entityPageFormGroup.controls.inboundResponderDN.value;
+      this.routeInboundEntityCache['inboundService'] = this.entityPageFormGroup.controls.inboundService.value;
+      this.routeInboundEntityCache['inboundRequestType'] = this.entityPageFormGroup.controls.inboundRequestType.value;
       this.entityPageFormGroup.controls.inboundRequestorDN.disable();
-      this.entityPageFormGroup.controls.inboundRequestorDN.setValue('');
+      this.entityPageFormGroup.controls.inboundRequestorDN.setValue(null);
       this.entityPageFormGroup.controls.inboundResponderDN.disable();
-      this.entityPageFormGroup.controls.inboundResponderDN.setValue('');
+      this.entityPageFormGroup.controls.inboundResponderDN.setValue(null);
       this.entityPageFormGroup.controls.inboundService.disable();
+      this.entityPageFormGroup.controls.inboundService.setValue(null);
+      this.entityPageFormGroup.controls.inboundRequestType.disable();
+      this.entityPageFormGroup.controls.inboundRequestType.setValue(null);
       this.entityPageFormGroup.controls.inboundRequestType.clearValidators();
       this.requiredFields = {
         ...this.requiredFields,
@@ -538,8 +548,17 @@ export class EntityCreateComponent implements OnInit {
     }
     else {
       this.entityPageFormGroup.controls.inboundRequestorDN.enable();
+      this.routeInboundEntityCache.inboundRequestorDN
+        && this.entityPageFormGroup.controls.inboundRequestorDN.setValue(this.routeInboundEntityCache.inboundRequestorDN);
       this.entityPageFormGroup.controls.inboundResponderDN.enable();
+      this.routeInboundEntityCache.inboundResponderDN
+        && this.entityPageFormGroup.controls.inboundResponderDN.setValue(this.routeInboundEntityCache.inboundResponderDN);
       this.entityPageFormGroup.controls.inboundService.enable();
+      this.routeInboundEntityCache.inboundService
+        && this.entityPageFormGroup.controls.inboundService.setValue(this.routeInboundEntityCache.inboundService);
+      this.entityPageFormGroup.controls.inboundRequestType.enable();
+      this.routeInboundEntityCache.inboundRequestType
+        && this.entityPageFormGroup.controls.inboundRequestType.setValue(this.routeInboundEntityCache.inboundRequestType);
       this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
       this.requiredFields = {
         ...this.requiredFields,

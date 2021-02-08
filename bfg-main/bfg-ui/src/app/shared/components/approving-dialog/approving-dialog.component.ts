@@ -60,8 +60,16 @@ export class ApprovingDialogComponent implements OnInit {
     this.isLoading = true;
     this.hasErrors = false;
     this.approveAction({ changeID: this.changeId, status, approverComments: this.approverComments })
-      .subscribe(() => {
+      .subscribe((data) => {
         this.isLoading = false;
+        const warnings = get(data, 'routingRules.warnings');
+        if (warnings) {
+          this.notificationService.showWarningMessage({
+            code: null,
+            message: null,
+            warnings
+          });
+        }
         this.dialog.close({ refreshList: true, status });
       },
         error => {

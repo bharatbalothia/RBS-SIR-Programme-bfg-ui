@@ -7,8 +7,6 @@ public class SWIFTNetRoutingRuleRequest {
     private String entityType;
     private String requestorDN;
     private String responderDN;
-    private String inboundRequestorDN;
-    private String inboundResponderDN;
     private List<String> requestType;
     private String service;
     private String username;
@@ -17,10 +15,8 @@ public class SWIFTNetRoutingRuleRequest {
         EntityLog entityLog = changeControl.getEntityLog();
         entityName = entityLog.getEntity();
         entityType = entityLog.getService();
-        requestorDN = entityLog.getRequestorDN();
-        responderDN = entityLog.getResponderDN();
-        inboundRequestorDN = entityLog.getInboundRequestorDN();
-        inboundResponderDN = entityLog.getInboundResponderDN();
+        requestorDN = entityLog.getInboundRequestorDN();
+        responderDN = entityLog.getInboundResponderDN();
         requestType = entityLog.getInboundRequestType();
         service = entityLog.getInboundService();
         username = changeControl.getChanger();
@@ -29,10 +25,8 @@ public class SWIFTNetRoutingRuleRequest {
     public SWIFTNetRoutingRuleRequest(Entity entity, String changer) {
         entityName = entity.getEntity();
         entityType = entity.getService();
-        requestorDN = entity.getRequestorDN();
-        responderDN = entity.getResponderDN();
-        inboundRequestorDN = entity.getInboundRequestorDN();
-        inboundResponderDN = entity.getInboundResponderDN();
+        requestorDN = entity.getInboundRequestorDN();
+        responderDN = entity.getInboundResponderDN();
         requestType = entity.getInboundRequestType();
         service = entity.getInboundService();
         username = changer;
@@ -71,22 +65,6 @@ public class SWIFTNetRoutingRuleRequest {
 
     public void setResponderDN(String responderDN) {
         this.responderDN = responderDN;
-    }
-
-    public String getInboundRequestorDN() {
-        return inboundRequestorDN;
-    }
-
-    public void setInboundRequestorDN(String inboundRequestorDN) {
-        this.inboundRequestorDN = inboundRequestorDN;
-    }
-
-    public String getInboundResponderDN() {
-        return inboundResponderDN;
-    }
-
-    public void setInboundResponderDN(String inboundResponderDN) {
-        this.inboundResponderDN = inboundResponderDN;
     }
 
     public List<String> getRequestType() {

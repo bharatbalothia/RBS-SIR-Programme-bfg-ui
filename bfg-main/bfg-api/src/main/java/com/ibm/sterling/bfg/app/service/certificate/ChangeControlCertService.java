@@ -18,10 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
@@ -69,19 +68,13 @@ public class ChangeControlCertService {
         changeControlCertRepository.save(changeControl);
     }
 
-    public List<ChangeControlCert> findAllPending() {
-        return convertStreamToList(changeControlCertRepository
-                .findByStatus(ChangeControlStatus.PENDING)
-                .stream());
+    public List<ChangeControlCert> findPendingChangeControlsAsc(String certName, String thumbprint, String thumbprint256) {
+        List<ChangeControlCert> pendingCertChangeControlList = findPendingChangeControls(certName, thumbprint, thumbprint256);
+        Collections.sort(pendingCertChangeControlList);
+        return pendingCertChangeControlList;
     }
 
-    private List<ChangeControlCert> convertStreamToList(Stream<ChangeControlCert> stream) {
-        return stream
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    public List<ChangeControlCert> findAllPending(String certName, String thumbprint, String thumbprint256) {
+    public List<ChangeControlCert> findPendingChangeControls(String certName, String thumbprint, String thumbprint256) {
         Specification<ChangeControlCert> specification = Specification
                 .where(
                         GenericSpecification.<ChangeControlCert>filter(certName, "resultMeta1"))
@@ -92,9 +85,7 @@ public class ChangeControlCertService {
                 .and(
                         GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
                 );
-        return convertStreamToList(changeControlCertRepository
-                .findAll(specification)
-                .stream());
+        return changeControlCertRepository.findAll(specification);
     }
 
     @Transactional

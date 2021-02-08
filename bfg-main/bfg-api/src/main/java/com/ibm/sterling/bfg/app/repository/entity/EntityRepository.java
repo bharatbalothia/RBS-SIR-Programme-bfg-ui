@@ -25,9 +25,6 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
     List<Entity> findAll(Specification<Entity> specification);
 
     @EntityGraph(attributePaths = "schedules")
-    List<Entity> findByDeleted(boolean deleted);
-
-    @EntityGraph(attributePaths = "schedules")
     Optional<Entity> findById(Integer entityId);
 
     boolean existsByMqQueueOutAndDeletedAndEntityIdNot(String mqQueueOut, Boolean deleted, Integer entityId);

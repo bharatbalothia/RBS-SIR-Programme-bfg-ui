@@ -229,7 +229,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                         GenericSpecification.filter(thumbprint256, "thumbprint256")
                 );
         List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
-        List<ChangeControlCert> ccList = changeControlCertService.findAllPending(certName, thumbprint, thumbprint256);
+        List<ChangeControlCert> ccList = changeControlCertService.findPendingChangeControls(certName, thumbprint, thumbprint256);
         certificateList.removeIf(cert ->
                 ccList.stream().anyMatch(control -> control.getResultMeta3().equals(cert.getThumbprint256())));
         certificates.addAll(certificateList);

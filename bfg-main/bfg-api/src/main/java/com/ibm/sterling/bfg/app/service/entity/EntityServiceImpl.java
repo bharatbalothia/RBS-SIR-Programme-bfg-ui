@@ -172,7 +172,7 @@ public class EntityServiceImpl implements EntityService {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 
-        Entity savedEntity = save(entity);
+        Entity savedEntity = entityRepository.save(entity);
         LOG.info("Saved entity to DB {}", savedEntity);
         EntityLog entityLog = changeControl.getEntityLog();
         entityLog.setEntityId(savedEntity.getEntityId());
@@ -201,25 +201,18 @@ public class EntityServiceImpl implements EntityService {
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service, String swiftDN) {
         LOG.info("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entityResults = new ArrayList<>();
-        List<Entity> entities;
-        List<ChangeControl> controls;
-        if (entity.isEmpty() && service.isEmpty() && swiftDN.isEmpty()) {
-            entities = entityRepository.findByDeleted(false);
-            controls = changeControlService.findAllPendingChangeControls();
-        } else {
-            Specification<Entity> specification = Specification
-                    .where(
-                            GenericSpecification.<Entity>filter(entity, "entity"))
-                    .and(
-                            GenericSpecification.filter(service, "service"))
-                    .and(
-                            GenericSpecification.filter("false", "deleted"))
-                    .and(
-                            GenericSpecification.filter(swiftDN, "swiftDN")
-                    );
-            entities = entityRepository.findAll(specification);
-            controls = changeControlService.findPendingChangeControls(entity, service, swiftDN);
-        }
+        Specification<Entity> specification = Specification
+                .where(
+                        GenericSpecification.<Entity>filter(entity, "entity"))
+                .and(
+                        GenericSpecification.filter(service, "service"))
+                .and(
+                        GenericSpecification.filter("false", "deleted"))
+                .and(
+                        GenericSpecification.filter(swiftDN, "swiftDN")
+                );
+        List<Entity> entities = entityRepository.findAll(specification);
+        List<ChangeControl> controls = changeControlService.findPendingChangeControls(entity, service, swiftDN);
         entities.removeIf(dbEntity ->
                 controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
         );

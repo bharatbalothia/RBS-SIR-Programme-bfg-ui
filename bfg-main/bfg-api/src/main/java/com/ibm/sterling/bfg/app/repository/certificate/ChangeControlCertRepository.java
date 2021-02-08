@@ -15,9 +15,6 @@ import java.util.List;
 public interface ChangeControlCertRepository extends JpaRepository<ChangeControlCert, String> {
 
     @EntityGraph(attributePaths = "trustedCertificateLog")
-    List<ChangeControlCert> findByStatus(ChangeControlStatus status);
-
-    @EntityGraph(attributePaths = "trustedCertificateLog")
     List<ChangeControlCert> findAll(Specification<ChangeControlCert> specification);
 
     boolean existsByResultMeta2AndStatus(String resultMeta2, ChangeControlStatus changeControlStatus);

@@ -17,9 +17,6 @@ import java.util.Optional;
 public interface ChangeControlRepository extends JpaRepository<ChangeControl, String>, JpaSpecificationExecutor<ChangeControl> {
 
     @EntityGraph(attributePaths = "entityLog")
-    List<ChangeControl> findByStatusAndEntityLogIsNotNull(ChangeControlStatus status);
-
-    @EntityGraph(attributePaths = "entityLog")
     List<ChangeControl> findAll(Specification<ChangeControl> specification);
 
     @EntityGraph(attributePaths = "entityLog")

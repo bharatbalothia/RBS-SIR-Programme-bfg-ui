@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class ChangeControlService {
         ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
                 .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
         controlFromBD.setStatus(status);
-        save(controlFromBD);
+        changeControlRepository.save(controlFromBD);
         return controlFromBD;
     }
 
@@ -63,11 +64,13 @@ public class ChangeControlService {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
-        save(changeControl);
+        changeControlRepository.save(changeControl);
     }
 
-    public List<ChangeControl> findAllPendingChangeControls() {
-        return changeControlRepository.findByStatusAndEntityLogIsNotNull(ChangeControlStatus.PENDING);
+    public List<ChangeControl> findPendingChangeControlsAsc(String entity, String service, String swiftDN) {
+        List<ChangeControl> pendingChangeControlList = findPendingChangeControls(entity, service, swiftDN);
+        Collections.sort(pendingChangeControlList);
+        return pendingChangeControlList;
     }
 
     public List<ChangeControl> findPendingChangeControls(String entity, String service, String swiftDN) {

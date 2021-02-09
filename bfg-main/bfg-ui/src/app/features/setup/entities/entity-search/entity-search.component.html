@@ -21,8 +21,7 @@
                 <mat-label>Search by DN</mat-label>
                 <input matInput [(ngModel)]="DNSearchingValue">
             </mat-form-field>
-            <button color="warn" class="clear-button" mat-raised-button
-                (click)="clearParams()">Clear</button>
+            <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
             <button color="primary" mat-raised-button (click)="getEntityList(pageIndex, pageSize)">Search</button>
         </div>
         <div class="table-container">
@@ -122,17 +121,17 @@
                 <ng-container matColumnDef="service">
                     <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <div class="mat-cell-value">
-                        {{element.service || element.resultMeta2}}
-                      </div>
+                        <div class="mat-cell-value">
+                            {{element.service || element.resultMeta2}}
+                        </div>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="noData">
                     <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-                      <div class="mat-cell-value">
-                        No records found.
-                      </div>
+                        <div class="mat-cell-value">
+                            No records found.
+                        </div>
                     </mat-footer-cell>
                 </ng-container>
 

@@ -8,7 +8,7 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs, getEntityDisplayName } from '../entity-display-names';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
@@ -201,8 +201,11 @@ export class EntityPendingComponent implements OnInit {
   getCurrentRoute = () => this.router.url;
 
   clearParams = () => {
-    this.entityNameSearchingValue = '';
-    this.serviceSearchingValue = '';
-    this.DNSearchingValue = '';
+    if (this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== '') {
+      this.entityNameSearchingValue = '';
+      this.serviceSearchingValue = '';
+      this.DNSearchingValue = '';
+      this.getPendingChanges(this.pageIndex, this.pageSize);
+    }
   }
 }

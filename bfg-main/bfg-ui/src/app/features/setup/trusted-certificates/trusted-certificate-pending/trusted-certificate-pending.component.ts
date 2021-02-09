@@ -285,8 +285,11 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   clearParams = () => {
-    this.certificateNameSearchingValue = '';
-    this.thumbprintSearchingValue = '';
-    this.thumbprint256SearchingValue = '';
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+      this.certificateNameSearchingValue = '';
+      this.thumbprintSearchingValue = '';
+      this.thumbprint256SearchingValue = '';
+      this.getPendingChanges(this.pageIndex, this.pageSize);
+    }
   }
 }

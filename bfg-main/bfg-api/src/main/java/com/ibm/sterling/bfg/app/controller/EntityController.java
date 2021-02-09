@@ -206,6 +206,10 @@ public class EntityController {
     @GetMapping("swift-service")
     public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
         return ok(propertyService.getSwiftService());
+
+    @GetMapping("participants")
+    public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
+        return ok(entityService.findEntityNameForParticipants(id));
     }
 
     @GetMapping("file-type")

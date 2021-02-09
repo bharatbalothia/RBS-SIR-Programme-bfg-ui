@@ -8,6 +8,7 @@ import { EntitiesWithPagination } from './entities-with-pagination.model';
 import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
 import { ChangeResolution } from '../changeControl/change-resolution.model';
 import { MQDetails } from './mq-details.model';
+import { removeEmpties } from '../../utils/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -119,5 +120,9 @@ export class EntityService {
 
   getSWIFTService() {
     return this.http.get(this.apiUrl + 'swift-service', { responseType: 'text' });
+  }	
+
+  getDirectParticipantList(id?) {
+    return this.http.get<Entity[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });
   }
 }

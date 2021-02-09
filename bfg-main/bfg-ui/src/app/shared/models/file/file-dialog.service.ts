@@ -71,7 +71,7 @@ export class FileDialogService {
       this.emitLoadingEvent(file.id);
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `${entity.service}: ${entity.entity}`,
-        tabs: getEntityDetailsTabs(entity),
+        tabs: getEntityDetailsTabs(entity, file.service),
         displayName: getEntityDisplayName,
         isDragable: true,
       }));

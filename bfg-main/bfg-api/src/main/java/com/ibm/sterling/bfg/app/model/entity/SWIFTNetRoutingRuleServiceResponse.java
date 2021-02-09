@@ -10,11 +10,23 @@ public class SWIFTNetRoutingRuleServiceResponse {
     private List<SWIFTNetRoutingRuleBfgUiRestResponse> response;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String, String>> errors;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Map<String, String>> warnings;
 
     public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfgUiRestResponse> response,
-                                              List<Map<String, String>> errors) {
+                                              List<Map<String, String>> errors,
+                                              List<Map<String, String>> warnings) {
         this.response = response;
         this.errors = errors;
+        this.warnings = warnings;
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse(List<SWIFTNetRoutingRuleBfgUiRestResponse> response) {
+        this(response, null, null);
+    }
+
+    public SWIFTNetRoutingRuleServiceResponse(List<Map<String, String>> errors, List<Map<String, String>> warnings) {
+        this(null, errors, warnings);
     }
 
     public SWIFTNetRoutingRuleServiceResponse() {
@@ -34,6 +46,14 @@ public class SWIFTNetRoutingRuleServiceResponse {
 
     public void setErrors(List<Map<String, String>> errors) {
         this.errors = errors;
+    }
+
+    public List<Map<String, String>> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(List<Map<String, String>> warnings) {
+        this.warnings = warnings;
     }
 
 }

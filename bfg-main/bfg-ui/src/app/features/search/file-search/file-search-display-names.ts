@@ -4,6 +4,7 @@ import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { getDirectionIcon } from '../transaction-search/transaction-search-display-names';
 import { titleCase } from 'src/app/shared/utils/utils';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -41,7 +42,11 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'fileID', fieldValue: file.id },
-        { fieldName: 'entity', fieldValue: file.entity.entity || 'None', isActionButton: !!file.entity.entity },
+        {
+          fieldName: 'entity',
+          fieldValue: file.entity.entity || 'None',
+          isActionButton: (file.service === ENTITY_SERVICE_TYPE.SCT || file.service === ENTITY_SERVICE_TYPE.GPL) && !!file.entity.entity
+        },
         { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },

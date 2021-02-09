@@ -5,17 +5,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.entity.EntityApprovalException;
-import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.exception.entity.SWIFTNetRoutingRuleException;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
-import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfgUiRestResponse;
+import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleServiceResponse;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +33,8 @@ public class SWIFTNetRoutingRuleService {
 
     private static final String CREATION_APPROVAL_ERROR = "The Entity is not approved. Error creating routing rules";
     private static final String DELETING_APPROVAL_ERROR = "The Entity is not approved. Error deleting routing rules";
+    private static final String RULE_EXISTS_ERROR = "A route already exists with this name";
+    private static final String NO_RULES_FOUND_WARNING = "No previously created rules were found";
 
     @Value("${routingRule.url}")
     private String routingRuleViewUrl;
@@ -46,6 +52,9 @@ public class SWIFTNetRoutingRuleService {
     private String password;
 
     @Autowired
+    private EntityService entityService;
+
+    @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
     @Autowired
@@ -54,17 +63,36 @@ public class SWIFTNetRoutingRuleService {
     public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer)
             throws JsonProcessingException {
         List<String> routingRulesByEntityName = Optional.ofNullable(getRoutingRulesByEntityName(entity.getEntity())).orElseGet(ArrayList::new);
-        if (CREATE.equals(operation)) {
-            if (routingRulesByEntityName.isEmpty())
-                return createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
-            throw new EntityApprovalException(routingRulesByEntityName.stream()
-                    .map(ruleName -> Collections.singletonMap(ruleName, "A route already exists with this name."))
-                    .collect(Collectors.toList()), CREATION_APPROVAL_ERROR);
-        } else if (DELETE.equals(operation)) {
-            deleteRoutingRules(routingRulesByEntityName);
-        } else if (UPDATE.equals(operation)) {
-            deleteRoutingRules(routingRulesByEntityName);
-            createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+        if (entity.getRouteInbound()) {
+            if (CREATE.equals(operation)) {
+                if (routingRulesByEntityName.isEmpty())
+                    return createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+                throw new EntityApprovalException(routingRulesByEntityName.stream()
+                        .map(ruleName -> Collections.singletonMap(ruleName, RULE_EXISTS_ERROR))
+                        .collect(Collectors.toList()), CREATION_APPROVAL_ERROR);
+            } else if (DELETE.equals(operation)) {
+                if (routingRulesByEntityName.isEmpty())
+                    return new SWIFTNetRoutingRuleServiceResponse(
+                            null, Collections.singletonList(Collections.singletonMap(operation.name(), NO_RULES_FOUND_WARNING)));
+                deleteRoutingRules(routingRulesByEntityName);
+            }
+        }
+        if (UPDATE.equals(operation)) {
+            List<Map<String, String>> warnings = null;
+            if (routingRulesByEntityName.isEmpty()) {
+                Boolean routeInboundOfOldEntity = entityService.findById(entity.getEntityId())
+                        .map(record -> !StringUtils.isEmpty(record.getInboundRequestorDN()) &&
+                                !StringUtils.isEmpty(record.getInboundResponderDN()))
+                        .orElse(false);
+                if (routeInboundOfOldEntity) {
+                    warnings = Collections.singletonList(Collections.singletonMap(operation.name(), NO_RULES_FOUND_WARNING));
+                }
+            } else deleteRoutingRules(routingRulesByEntityName);
+            if (entity.getRouteInbound()) {
+                SWIFTNetRoutingRuleServiceResponse response = createRoutingRules(new SWIFTNetRoutingRuleRequest(entity, changer));
+                response.setWarnings(warnings);
+                return response;
+            }
         }
         return new SWIFTNetRoutingRuleServiceResponse();
     }
@@ -97,7 +125,7 @@ public class SWIFTNetRoutingRuleService {
             }
             throw new EntityApprovalException(errorList, CREATION_APPROVAL_ERROR);
         }
-        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfgUiRestResponse, null);
+        return new SWIFTNetRoutingRuleServiceResponse(swiftNetRoutingRuleBfgUiRestResponse);
     }
 
     private List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {

@@ -206,6 +206,7 @@ public class EntityController {
     @GetMapping("swift-service")
     public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
         return ok(propertyService.getSwiftService());
+    }
 
     @GetMapping("participants")
     public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
@@ -227,5 +228,4 @@ public class EntityController {
     public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
         return ok(transmittalService.transmit(transmittal));
     }
-
 }

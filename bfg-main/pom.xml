@@ -16,7 +16,7 @@
 	</parent>
 
 	<properties>
-		<revision>0.22.3</revision>
+		<revision>0.22.4</revision>
 	</properties>
 
 	<modules>

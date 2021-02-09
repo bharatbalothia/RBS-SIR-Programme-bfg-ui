@@ -81,7 +81,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile file)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
-        return ok(trustedCertificateDetailsService.getTrustedCertificateDetails(getX509Certificate(file), false));
+        return ok(trustedCertificateDetailsService.getTrustedCertificateDetails(getX509Certificate(file), true));
     }
 
     @PostMapping
@@ -161,6 +161,13 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
             NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
         return ok(certificateService.findCertificateDataById(id));
+    }
+
+    @GetMapping("/validate/pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<TrustedCertificateDetails> validatePendingCertificateById(@PathVariable(name = "id") String id)
+            throws JsonProcessingException, NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
+        return ok().body(certificateService.findPendingCertificateDataById(id));
     }
 
     @DeleteMapping("{id}")

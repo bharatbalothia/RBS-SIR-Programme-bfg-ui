@@ -90,20 +90,19 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     @Override
     public TrustedCertificateDetails findCertificateDataById(String id)
             throws JsonProcessingException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
-        X509Certificate x509Certificate;
-        Optional<TrustedCertificateLog> trustedCertificateLog = trustedCertificateLogRepository.findById(id);
-        if (trustedCertificateLog.isPresent()) {
-            x509Certificate = Optional.ofNullable(trustedCertificateLog.get().getCertificate())
-                    .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE_LOG"));
-        } else {
-            x509Certificate = trustedCertificateRepository.findById(id)
-                    .map(trustedCertificate -> Optional.ofNullable(trustedCertificate.getCertificate())
-                            .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE")))
-                    .orElseThrow(() -> new CertificateNotFoundException(
-                            NO_CERTIFICATE_DATA + " in SCT_TRUSTED_CERTIFICATE_LOG and SCT_TRUSTED_CERTIFICATE by " + id)
-                    );
-        }
-        return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
+        X509Certificate x509Certificate = trustedCertificateRepository.findById(id)
+                .map(TrustedCertificate::getCertificate)
+                .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE"));
+        return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
+    }
+
+    @Override
+    public TrustedCertificateDetails findPendingCertificateDataById(String id)
+            throws JsonProcessingException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
+        X509Certificate x509Certificate = trustedCertificateLogRepository.findById(id)
+                .map(TrustedCertificateLog::getCertificate)
+                .orElseThrow(() -> new CertificateNotFoundException(CERTIFICATE_FILE_MISSING + " in SCT_TRUSTED_CERTIFICATE_LOG"));
+        return trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
     }
 
     @Override
@@ -135,7 +134,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                                                                          String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
-                trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, false);
+                trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
         if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();

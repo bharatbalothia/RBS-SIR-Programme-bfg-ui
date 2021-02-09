@@ -32,7 +32,7 @@ public class TrustedCertificateDetailsService {
     @Autowired
     private ChangeControlCertRepository changeControlCertRepository;
 
-    public TrustedCertificateDetails getTrustedCertificateDetails(X509Certificate x509Certificate, boolean isCheckBeforeApproval)
+    public TrustedCertificateDetails getTrustedCertificateDetails(X509Certificate x509Certificate, boolean isCheckBeforeSaving)
             throws NoSuchAlgorithmException, CertificateEncodingException, InvalidNameException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails = new TrustedCertificateDetails();
         List<Map<String, List<String>>> errors = new ArrayList<>();
@@ -41,7 +41,7 @@ public class TrustedCertificateDetailsService {
         byte[] encodedCert = x509Certificate.getEncoded();
         trustedCertificateDetails.setThumbprint(DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-1").digest(encodedCert)));
         trustedCertificateDetails.setThumbprint256(DatatypeConverter.printHexBinary(MessageDigest.getInstance("SHA-256").digest(encodedCert)));
-        if (!isCheckBeforeApproval)
+        if (isCheckBeforeSaving)
             checkThumbprintUniquenessLocally(trustedCertificateDetails, errors);
         SimpleDateFormat certificateDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         trustedCertificateDetails.setStartDate(certificateDateFormat.format(x509Certificate.getNotBefore()));

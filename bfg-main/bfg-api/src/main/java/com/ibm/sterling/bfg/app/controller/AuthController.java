@@ -6,9 +6,11 @@ import com.ibm.sterling.bfg.app.model.security.LoginSsoRequest;
 import com.ibm.sterling.bfg.app.security.JwtTokenGenerator;
 import com.ibm.sterling.bfg.app.service.security.CredentialsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 
@@ -23,14 +25,6 @@ public class AuthController {
 
     @Autowired
     private JwtTokenGenerator jwtTokenFactory;
-
-    @Autowired
-    BuildProperties buildProperties;
-
-    @GetMapping("/version")
-    public ResponseEntity<String> getApplicationVersion() {
-        return ok(buildProperties.getVersion());
-    }
 
     @PostMapping("/signin")
     public ResponseEntity signIn(@RequestBody LoginRequest credentials) throws JsonProcessingException {

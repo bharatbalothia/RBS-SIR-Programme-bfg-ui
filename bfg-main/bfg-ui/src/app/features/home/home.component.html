@@ -59,19 +59,22 @@
         <td class="left-table-header">Last 60 minutes</td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_FILES.HOUR > 0 && {startDate: getMinusHoursDate(1), service:'SCT'}">
+            [queryParams]="SCTTraffic.SCT_FILES.HOUR > 0 && {startDate: getMinusHoursDate(1), service:'SCT'}"
+            (click)="checkCount(SCTTraffic.SCT_FILES.HOUR, ROUTING_PATHS.FILE_SEARCH)">
             {{SCTTraffic.SCT_FILES.HOUR}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_TX.HOUR, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX.HOUR}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.HOUR > 0 ? {startDate: getMinusHoursDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_PAW.HOUR, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW.HOUR}}
           </a>
         </td>
@@ -80,19 +83,22 @@
         <td class="left-table-header">Last 24 hours</td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_FILES.DAY > 0 && {startDate: getMinusDaysDate(1), service:'SCT'}">
+            [queryParams]="SCTTraffic.SCT_FILES.DAY > 0 && {startDate: getMinusDaysDate(1), service:'SCT'}"
+            (click)="checkCount(SCTTraffic.SCT_FILES.DAY, ROUTING_PATHS.FILE_SEARCH)">
             {{SCTTraffic.SCT_FILES.DAY}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_TX.DAY, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX.DAY}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.DAY > 0 ? {startDate: getMinusDaysDate(1), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_PAW.DAY, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW.DAY}}
           </a>
         </td>
@@ -101,19 +107,22 @@
         <td class="left-table-header">Last 7 days</td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_FILES.WEEK > 0 && {startDate: getMinusDaysDate(7), service:'SCT'}">
+            [queryParams]="SCTTraffic.SCT_FILES.WEEK > 0 && {startDate: getMinusDaysDate(7), service:'SCT'}"
+            (click)="checkCount(SCTTraffic.SCT_FILES.WEEK, ROUTING_PATHS.FILE_SEARCH)">
             {{SCTTraffic.SCT_FILES.WEEK}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_TX.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['outbound', 'inbound']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_TX.WEEK, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX.WEEK}}
           </a>
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-            [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}">
+            [queryParams]="SCTTraffic.SCT_PAW.WEEK > 0 ? {startDate: getMinusDaysDate(7), service:'SCT', direction: ['payaway']} : {startDate: getMinusMonthsDate(1)}"
+            (click)="checkCount(SCTTraffic.SCT_PAW.WEEK, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW.WEEK}}
           </a>
         </td>

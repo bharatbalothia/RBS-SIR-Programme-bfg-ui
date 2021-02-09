@@ -34,6 +34,8 @@ public interface EntityService extends FieldValueExists {
 
     List<Entity> findEntitiesByService(String service);
 
+    List<String> findEntityNameForParticipants(Integer entityId);
+
     Entity getEntityWithAttributesOfRoutingRules(String inboundRequestorDN, String inboundResponderDN,
                                                  String inboundService, List<String> inboundRequestType);
 

@@ -55,13 +55,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                          *ngIf="isCloneAction && editableEntity"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.entity"
-                          [key]="'entity'"
-                          (insert)="insert($event)"
-                        ></app-overlay-info>
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.entity" [key]="'entity'" (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
                         </app-tooltip>
@@ -92,12 +88,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                          *ngIf="shouldShowRoutingAttributesOverlay()"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.inboundRequestorDN"
-                          [key]="'inboundRequestorDN'"
-                          (insert)="insert($event)">
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundRequestorDN" [key]="'inboundRequestorDN'"
+                            (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
@@ -116,12 +109,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                          *ngIf="shouldShowRoutingAttributesOverlay()"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.inboundResponderDN"
-                          [key]="'inboundResponderDN'"
-                          (insert)="insert($event)">
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundResponderDN" [key]="'inboundResponderDN'"
+                            (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
@@ -141,12 +131,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                          *ngIf="shouldShowRoutingAttributesOverlay()"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.inboundService"
-                          [key]="'inboundService'"
-                          (insert)="insert($event)">
+                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                            [overlayData]="editableEntity.inboundService" [key]="'inboundService'"
+                            (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
@@ -181,13 +168,11 @@
                                 {{getErrorByField('inboundRequestType')}}
                             </mat-error>
                         </mat-form-field>
-                        
+
                         <app-overlay-info
-                          *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.inboundRequestType"
-                          [key]="'inboundRequestType'"
-                          (insert)="insert($event)">
+                            *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestType"
+                            [key]="'inboundRequestType'" (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
@@ -289,13 +274,10 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                        *ngIf="isCloneAction && editableEntity"
-                        buttonName="Source Value"
-                        [overlayData]="editableEntity.mailboxPathOut"
-                        [key]="'mailboxPathOut'"
-                        (insert)="insert($event)">
-                      </app-overlay-info>
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut" [key]="'mailboxPathOut'"
+                            (insert)="insert($event)">
+                        </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
                             [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
@@ -325,12 +307,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
-                          *ngIf="isCloneAction && editableEntity"
-                          buttonName="Source Value"
-                          [overlayData]="editableEntity.mailboxPathOut"
-                          [key]="'mqQueueOut'"
-                          (insert)="insert($event)">
+                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                            [overlayData]="editableEntity.mailboxPathOut" [key]="'mqQueueOut'"
+                            (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
@@ -352,7 +331,8 @@
                         <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
                             <mat-label>{{entityDisplayNames['entityParticipantType'] || 'entityParticipantType'}}
                             </mat-label>
-                            <mat-select formControlName="entityParticipantType">
+                            <mat-select formControlName="entityParticipantType"
+                                (selectionChange)="onParticipantTypeSelect($event.value)">
                                 <mat-option value='INDIRECT'>INDIRECT</mat-option>
                                 <mat-option value='DIRECT'>DIRECT</mat-option>
                             </mat-select>
@@ -363,11 +343,15 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('entityParticipantType')"
                             [tip]="getTooltip('entityParticipantType', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section">
-                        <mat-form-field *ngIf="entityPageFormGroup.get('directParticipant')">
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('entityParticipantType')">
+                        <mat-form-field>
                             <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
-                            <input matInput formControlName="directParticipant"
-                                [required]="entityPageFormGroup.get('entityParticipantType').value === 'INDIRECT'">
+                            <mat-select formControlName="directParticipant"
+                                [attr.disabled]="entityPageFormGroup.get('entityParticipantType').value !== 'INDIRECT'"
+                                required>
+                                <mat-option *ngFor="let entity of directParticipantList" [value]="entity">
+                                    {{entity}}</mat-option>
+                            </mat-select>
                             <mat-error *ngFor="let validation of entityValidationMessages.directParticipant">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('directParticipant').hasError(validation.type)">
@@ -377,6 +361,7 @@
                                 {{getErrorByField('directParticipant')}}
                             </mat-error>
                         </mat-form-field>
+
                         <app-tooltip *ngIf="entityPageFormGroup.get('directParticipant')"
                             [tip]="getTooltip('directParticipant', 'entity')"></app-tooltip>
                     </section>

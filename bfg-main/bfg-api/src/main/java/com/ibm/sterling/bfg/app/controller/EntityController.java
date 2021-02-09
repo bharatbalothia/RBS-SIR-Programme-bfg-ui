@@ -208,6 +208,11 @@ public class EntityController {
         return ok(propertyService.getInboundService());
     }
 
+    @GetMapping("participants")
+    public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
+        return ok(entityService.findEntityNameForParticipants(id));
+    }
+
     @GetMapping("file-type")
     public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
         return ok(propertyService.getFileType());

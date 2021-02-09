@@ -118,8 +118,10 @@ const getEntityDetailsSectionItems = (entity, targetService?) => ({
     { fieldName: 'snF', fieldValue: entity.snF },
     { fieldName: 'trace', fieldValue: entity.trace },
     { fieldName: 'deliveryNotification', fieldValue: entity.deliveryNotification },
-    { fieldName: 'nonRepudiation', fieldValue: entity.nonRepudiation },
-    { fieldName: 'e2eSigning', fieldValue: entity.e2eSigning },
+    ...(entity.service === ENTITY_SERVICE_TYPE.GPL) && [
+      { fieldName: 'nonRepudiation', fieldValue: entity.nonRepudiation },
+      { fieldName: 'e2eSigning', fieldValue: entity.e2eSigning },
+    ],
     { fieldName: 'deliveryNotifDN', fieldValue: entity.deliveryNotifDN },
     { fieldName: 'deliveryNotifRT', fieldValue: entity.deliveryNotifRT },
     { fieldName: 'requestRef', fieldValue: entity.requestRef },

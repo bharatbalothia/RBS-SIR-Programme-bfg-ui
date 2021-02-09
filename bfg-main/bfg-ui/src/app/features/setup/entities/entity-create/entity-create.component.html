@@ -331,7 +331,8 @@
                         <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
                             <mat-label>{{entityDisplayNames['entityParticipantType'] || 'entityParticipantType'}}
                             </mat-label>
-                            <mat-select formControlName="entityParticipantType">
+                            <mat-select formControlName="entityParticipantType"
+                                (selectionChange)="onParticipantTypeSelect($event.value)">
                                 <mat-option value='INDIRECT'>INDIRECT</mat-option>
                                 <mat-option value='DIRECT'>DIRECT</mat-option>
                             </mat-select>
@@ -346,7 +347,7 @@
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
                             <mat-select formControlName="directParticipant"
-                                [disabled]="entityPageFormGroup.get('entityParticipantType').value !== 'INDIRECT'"
+                                [attr.disabled]="entityPageFormGroup.get('entityParticipantType').value !== 'INDIRECT'"
                                 required>
                                 <mat-option *ngFor="let entity of directParticipantList" [value]="entity">
                                     {{entity}}</mat-option>

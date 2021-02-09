@@ -86,7 +86,8 @@ export class EntityCreateComponent implements OnInit {
   isCloneAction = false;
 
   directParticipantList: Entity[] = [];
-  routeInboundEntityCache: any = {};
+
+  entityActionsCache: any = {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -377,7 +378,7 @@ export class EntityCreateComponent implements OnInit {
       this.isLoading = false;
       this.errorMessage = getApiErrorMessage(error);
     });
-    if (!this.editableEntity && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.routeInboundEntityCache, 'inboundService'))) {
+    if (!this.editableEntity && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.entityActionsCache, 'inboundService'))) {
       this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
         this.isLoading = false;
         this.entityPageFormGroup.controls.inboundService.setValue(data);
@@ -530,10 +531,10 @@ export class EntityCreateComponent implements OnInit {
 
   onRouteInboundChanging = (value: boolean) => {
     if (value === false) {
-      this.routeInboundEntityCache['inboundRequestorDN'] = this.entityPageFormGroup.controls.inboundRequestorDN.value;
-      this.routeInboundEntityCache['inboundResponderDN'] = this.entityPageFormGroup.controls.inboundResponderDN.value;
-      this.routeInboundEntityCache['inboundService'] = this.entityPageFormGroup.controls.inboundService.value;
-      this.routeInboundEntityCache['inboundRequestType'] = this.entityPageFormGroup.controls.inboundRequestType.value;
+      this.entityActionsCache['inboundRequestorDN'] = this.entityPageFormGroup.controls.inboundRequestorDN.value;
+      this.entityActionsCache['inboundResponderDN'] = this.entityPageFormGroup.controls.inboundResponderDN.value;
+      this.entityActionsCache['inboundService'] = this.entityPageFormGroup.controls.inboundService.value;
+      this.entityActionsCache['inboundRequestType'] = this.entityPageFormGroup.controls.inboundRequestType.value;
       this.entityPageFormGroup.controls.inboundRequestorDN.disable();
       this.entityPageFormGroup.controls.inboundRequestorDN.setValue(null);
       this.entityPageFormGroup.controls.inboundResponderDN.disable();
@@ -550,17 +551,17 @@ export class EntityCreateComponent implements OnInit {
     }
     else {
       this.entityPageFormGroup.controls.inboundRequestorDN.enable();
-      this.routeInboundEntityCache.inboundRequestorDN
-        && this.entityPageFormGroup.controls.inboundRequestorDN.setValue(this.routeInboundEntityCache.inboundRequestorDN);
+      this.entityActionsCache.inboundRequestorDN
+        && this.entityPageFormGroup.controls.inboundRequestorDN.setValue(this.entityActionsCache.inboundRequestorDN);
       this.entityPageFormGroup.controls.inboundResponderDN.enable();
-      this.routeInboundEntityCache.inboundResponderDN
-        && this.entityPageFormGroup.controls.inboundResponderDN.setValue(this.routeInboundEntityCache.inboundResponderDN);
+      this.entityActionsCache.inboundResponderDN
+        && this.entityPageFormGroup.controls.inboundResponderDN.setValue(this.entityActionsCache.inboundResponderDN);
       this.entityPageFormGroup.controls.inboundService.enable();
-      this.routeInboundEntityCache.inboundService
-        && this.entityPageFormGroup.controls.inboundService.setValue(this.routeInboundEntityCache.inboundService);
+      this.entityActionsCache.inboundService
+        && this.entityPageFormGroup.controls.inboundService.setValue(this.entityActionsCache.inboundService);
       this.entityPageFormGroup.controls.inboundRequestType.enable();
-      this.routeInboundEntityCache.inboundRequestType
-        && this.entityPageFormGroup.controls.inboundRequestType.setValue(this.routeInboundEntityCache.inboundRequestType);
+      this.entityActionsCache.inboundRequestType
+        && this.entityPageFormGroup.controls.inboundRequestType.setValue(this.entityActionsCache.inboundRequestType);
       this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
       this.requiredFields = {
         ...this.requiredFields,
@@ -836,5 +837,15 @@ export class EntityCreateComponent implements OnInit {
       },
         error => this.isLoading = false
       );
+  }
+
+  onParticipantTypeSelect = (value) => {
+    if (value === 'DIRECT') {
+      this.entityActionsCache['directParticipant'] = this.entityPageFormGroup.controls.directParticipant.value;
+      this.entityPageFormGroup.controls.directParticipant.setValue('');
+    }
+    else {
+      this.entityPageFormGroup.controls.directParticipant.setValue(this.entityActionsCache['directParticipant']);
+    }
   }
 }

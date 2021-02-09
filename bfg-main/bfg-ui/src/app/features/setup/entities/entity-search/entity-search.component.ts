@@ -20,7 +20,7 @@ import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constan
 import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dialog/transmit-dialog.component';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-entity-search',

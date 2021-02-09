@@ -3,7 +3,7 @@ import { DetailsDialogData, Tab } from './details-dialog-data.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined, get } from 'lodash';
 import { Subscription } from 'rxjs';
-import { NotificationService } from '../../services/NotificationService';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-details-dialog',

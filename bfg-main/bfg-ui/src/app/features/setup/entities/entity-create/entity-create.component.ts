@@ -27,7 +27,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-entity-create',

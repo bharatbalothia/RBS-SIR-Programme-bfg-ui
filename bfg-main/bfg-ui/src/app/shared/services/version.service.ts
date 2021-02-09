@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -8,19 +8,14 @@ import { environment } from 'src/environments/environment';
 })
 export class VersionService {
 
-  private apiUrl: string = environment.apiUrl + 'auth/version/';
+  private apiUrl: string = environment.apiUrl + 'version/';
 
-  applicationVersion: Subject<string> = new Subject<string>();
+  applicationVersion: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor(private http: HttpClient) {
   }
 
   getApplicationVersion() {
-    this.http.get(this.apiUrl, {
-      responseType: 'text',
-      headers: {
-        accept: '*/*'
-      }
-    }).subscribe(data => this.applicationVersion.next(data));
+    this.http.get(this.apiUrl, { responseType: 'text' }).subscribe(data => this.applicationVersion.next(data));
   }
 }

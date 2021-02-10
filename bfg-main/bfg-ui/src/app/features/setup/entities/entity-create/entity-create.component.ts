@@ -843,8 +843,10 @@ export class EntityCreateComponent implements OnInit {
     if (value === 'DIRECT') {
       this.entityActionsCache['directParticipant'] = this.entityPageFormGroup.controls.directParticipant.value;
       this.entityPageFormGroup.controls.directParticipant.setValue('');
+      this.entityPageFormGroup.controls.directParticipant.disable();
     }
     else {
+      this.entityPageFormGroup.controls.directParticipant.enable();
       this.entityPageFormGroup.controls.directParticipant.setValue(this.entityActionsCache['directParticipant']);
     }
   }

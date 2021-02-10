@@ -6,6 +6,7 @@ import { NgForm } from '@angular/forms';
 import { LOGIN_FORM_VALIDATION_MESSAGES } from './login-form-validation-messages';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from '../../constants/routing-paths';
+import { VersionService } from 'src/app/shared/services/version.service';
 
 @Component({
   selector: 'app-login',
@@ -24,12 +25,16 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('form') loginForm: NgForm;
 
+  appVersion: string;
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private versionService: VersionService
   ) { }
 
   ngOnInit(): void {
+    this.versionService.applicationVersion.subscribe(data => this.appVersion = data);
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/' + ROUTING_PATHS.EMPTY]);
     }
@@ -54,11 +59,11 @@ export class LoginComponent implements OnInit {
     this.authService.logOut();
   }
 
-  getUserName(){
+  getUserName() {
     return this.authService.getUserName() || '';
   }
 
-  isAuthenticated(){
+  isAuthenticated() {
     return this.authService.isAuthenticated();
   }
 

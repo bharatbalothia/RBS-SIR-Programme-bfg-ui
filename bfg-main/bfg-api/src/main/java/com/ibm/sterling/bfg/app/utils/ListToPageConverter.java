@@ -12,7 +12,7 @@ public class ListToPageConverter {
     public static <T> Page<T> convertListToPage(List<T> list, Pageable pageable) {
         int total = list.size();
         int start = toIntExact(pageable.getOffset());
-        int end = Math.min((start + pageable.getPageSize()), total);
+        int end = Math.min(start + pageable.getPageSize(), total);
 
         List<T> output = new ArrayList<>();
 

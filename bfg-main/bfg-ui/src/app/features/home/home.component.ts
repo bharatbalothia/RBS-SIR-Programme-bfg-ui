@@ -5,7 +5,7 @@ import { SCTTraffic } from 'src/app/shared/models/statistics/sct-traffic.model';
 import { StatisticsService } from 'src/app/shared/models/statistics/statistics.service';
 import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.model';
 import * as moment from 'moment';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -54,14 +54,14 @@ export class HomeComponent implements OnInit {
     })
 
   getSCTTraffic = () => this.statisticsService.getSCTTraffic().pipe(data => this.setLoading(data))
-  .subscribe((data: SCTTraffic) => {
+    .subscribe((data: SCTTraffic) => {
       this.isLoading = false;
       this.SCTTraffic = data;
     },
-    error => {
-      this.isLoading = false;
-    }
-  )
+      error => {
+        this.isLoading = false;
+      }
+    )
 
   checkCount = (count: number, rote: string) => count === 0 &&
     this.notificationService.show(

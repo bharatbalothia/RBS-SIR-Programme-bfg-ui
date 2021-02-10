@@ -27,7 +27,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-entity-create',
@@ -194,6 +194,15 @@ export class EntityCreateComponent implements OnInit {
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
+    if (!this.editableEntity) {
+      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
   }
 
   getEntityDefaultValue = (): Entity => ({

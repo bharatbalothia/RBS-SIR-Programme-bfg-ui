@@ -30,3 +30,5 @@ export const difference = (object, base) => {
 };
 
 export const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+export const titleCase = (str: string): string => str ? str[0].toUpperCase() + str.slice(1) : '';

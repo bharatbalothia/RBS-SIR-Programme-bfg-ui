@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 public class PropertySettings {
 
     private String reqTypePrefixKey;
+    private String inboundServiceKey;
+    private String swiftServiceKey;
     private String fileTypeKey;
     private String mqPrefixKey;
     private String gplUrl;
@@ -29,6 +31,22 @@ public class PropertySettings {
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
+    }
+
+    public String getInboundServiceKey() {
+        return inboundServiceKey;
+    }
+
+    public void setInboundServiceKey(String inboundServiceKey) {
+        this.inboundServiceKey = inboundServiceKey;
+    }
+
+    public String getSwiftServiceKey() {
+        return swiftServiceKey;
+    }
+
+    public void setSwiftServiceKey(String swiftServiceKey) {
+        this.swiftServiceKey = swiftServiceKey;
     }
 
     public String getFileTypeKey() {

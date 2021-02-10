@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { getApiErrorMessage } from 'src/app/core/utils/error-template';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Injectable()
 export class NotificationHttpInterceptor implements HttpInterceptor {

@@ -77,6 +77,21 @@ public class PropertyService {
         return null;
     }
 
+    public String getInboundService() throws JsonProcessingException {
+        return getDefaultService(settings.getInboundServiceKey());
+    }
+
+    public String getSwiftService() throws JsonProcessingException {
+        return getDefaultService(settings.getSwiftServiceKey());
+    }
+
+    private String getDefaultService(String serviceKey) throws JsonProcessingException {
+        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), serviceKey)).stream()
+                .map(property -> property.get(PROPERTY_VALUE))
+                .findFirst()
+                .orElse("");
+    }
+
     public List<String> getFileType() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getFileTypeKey());
     }
@@ -244,10 +259,10 @@ public class PropertyService {
         return statusMap;
     }
 
-    public String getStatusLabel(String statusPrefixKey, String service, Boolean outbound, Integer status) {
+    public String getStatusLabel(String statusPrefixKey, String service, String direction, Integer status) {
         try {
             return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
-                    service + statusPrefixKey + (outbound ? "outbound" : "inbound") + "." + Math.abs(status)
+                    service + statusPrefixKey + ("outbound".equals(direction) ? "outbound" : "inbound") + "." + Math.abs(status)
             ).stream()
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
                     .collect(Collectors.joining(", "));

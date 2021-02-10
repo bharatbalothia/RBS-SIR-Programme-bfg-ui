@@ -10,7 +10,7 @@ import {
 } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { get } from 'lodash';
+import { entries, get, isArray } from 'lodash';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
@@ -24,7 +24,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-trusted-certificate-create',
@@ -48,8 +48,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   trustedCertificateFile;
 
-  confirmationDisplayedColumns = ['field', 'value', 'error'];
-  confirmationPageDataSource;
+  confirmationDisplayedColumns = ['field', 'sub-field', 'value', 'error'];
+  confirmationPageDataSource = [];
 
   @ViewChild('stepper') stepper;
   @ViewChildren(FormGroupDirective) formGroups: QueryList<FormGroupDirective>;
@@ -252,19 +252,47 @@ export class TrustedCertificateCreateComponent implements OnInit {
   getConfirmationFieldsSource() {
     const trustedCertificate = removeEmpties({
       ...this.detailsTrustedCertificateFormGroup.value,
-      authChainReport: (get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || []).length !== 0 ?
-        this.detailsTrustedCertificateFormGroup.get('authChainReport').value
-          .map(el => getTrustedCertificateItemInfoValues(el).join(',\n')) : '',
-      issuer: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
-      subject: getTrustedCertificateItemInfoValues(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
-      valid: this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value)
+      issuer: getTrustedCertificateItemInfoValuesOrdered(get(this.detailsTrustedCertificateFormGroup.get('issuer'), 'value', {})),
+      subject: getTrustedCertificateItemInfoValuesOrdered(get(this.detailsTrustedCertificateFormGroup.get('subject'), 'value', {})),
+      valid: this.getValidityMessage() || getValidityLabel(this.detailsTrustedCertificateFormGroup.get('valid').value),
+      authChainReport: get(this.detailsTrustedCertificateFormGroup.get('authChainReport'), 'value', []) || [],
     });
-    this.confirmationPageDataSource = Object.keys(trustedCertificate)
-      .map((key) => ({
-        field: key,
-        value: trustedCertificate[key],
-        error: getErrorByField(key, this.errorMessage)
-      }));
+
+    const data = [];
+
+    entries(trustedCertificate).forEach(([field, value]) => {
+      if (isArray(value) && field !== 'authChainReport') {
+        value.forEach((val, index) => {
+          data.push({
+            key: val,
+            field: index === 0 ? `${getTrustedCertificateDisplayName(field)}:` : '',
+            subField: val.split(': ')[0],
+            value: val.split(': ')[1],
+            error: index === 0 ? getErrorByField(field, this.errorMessage) : '',
+          });
+        });
+      } else if (isArray(value) && field === 'authChainReport') {
+        value.forEach((current, outIndex) => {
+          entries(current).forEach(([key, val], inIndex) => {
+            data.push({
+              field: outIndex === 0 && inIndex === 0 ? `${getTrustedCertificateDisplayName('authChainReport')}:` : undefined,
+              subField: getTrustedCertificateDisplayName(key),
+              value: val,
+              error: outIndex === 0 && inIndex === 0 ? getErrorByField(field, this.errorMessage) : '',
+            });
+          });
+        });
+      } else {
+        data.push({
+          key: field,
+          field: getTrustedCertificateDisplayName(field),
+          value,
+          error: getErrorByField(field, this.errorMessage),
+        });
+      }
+    });
+
+    this.confirmationPageDataSource = data;
   }
 
   sendTrustedCertificate() {

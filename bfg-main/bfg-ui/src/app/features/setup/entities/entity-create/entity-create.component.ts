@@ -27,7 +27,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-entity-create',
@@ -84,6 +84,10 @@ export class EntityCreateComponent implements OnInit {
   requiredFields: { [filedName: string]: boolean } = {};
 
   isCloneAction = false;
+
+  directParticipantList: Entity[] = [];
+
+  entityActionsCache: any = {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -190,6 +194,15 @@ export class EntityCreateComponent implements OnInit {
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
+    if (!this.editableEntity) {
+      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
   }
 
   getEntityDefaultValue = (): Entity => ({
@@ -198,7 +211,7 @@ export class EntityCreateComponent implements OnInit {
     routeInbound: true,
     inboundRequestorDN: '',
     inboundResponderDN: '',
-    inboundService: 'swift.corp.fa',
+    inboundService: '',
     requestorDN: '',
     responderDN: '',
     serviceName: '',
@@ -311,6 +324,7 @@ export class EntityCreateComponent implements OnInit {
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
         });
+        this.getDirectParticipantList(!this.isCloneAction ? entity.entityId : null);
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;
           this.mqDetails = data;
@@ -350,25 +364,37 @@ export class EntityCreateComponent implements OnInit {
           inboundService: [entity.inboundService, Validators.required],
           inboundRequestType: [entity.inboundRequestType]
         });
-        this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
-          this.isLoading = false;
-          this.inboundRequestTypeList = this.getInboundRequestTypes(data);
-          if (this.isEditing()) {
-            this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
-              .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[] || []).includes(el.value)));
-          }
-        }, error => {
-          this.isLoading = false;
-          this.errorMessage = getApiErrorMessage(error);
-        });
         this.schedulesFormGroup = null;
         this.mqDetailsFormGroup = null;
         this.resetSwiftValidators(value);
-
         this.onRouteInboundChanging(this.entityPageFormGroup.controls.routeInbound.value);
         this.entityPageFormGroup.controls.routeInbound.valueChanges
           .subscribe((value: boolean) => this.onRouteInboundChanging(value));
+        this.getGPLFormParams();
         break;
+    }
+  }
+
+  getGPLFormParams = () => {
+    this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
+      this.isLoading = false;
+      this.inboundRequestTypeList = this.getInboundRequestTypes(data);
+      if (this.isEditing()) {
+        this.entityPageFormGroup.controls.inboundRequestType.setValue(this.inboundRequestTypeList
+          .filter(el => (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as string[] || []).includes(el.value)));
+      }
+    }, error => {
+      this.isLoading = false;
+      this.errorMessage = getApiErrorMessage(error);
+    });
+    if (!this.editableEntity && isEmpty(this.entityPageFormGroup.controls.inboundService.value || get(this.entityActionsCache, 'inboundService'))) {
+      this.entityService.getInboundService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.entityPageFormGroup.controls.inboundService.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
     }
   }
 
@@ -514,11 +540,18 @@ export class EntityCreateComponent implements OnInit {
 
   onRouteInboundChanging = (value: boolean) => {
     if (value === false) {
+      this.entityActionsCache['inboundRequestorDN'] = this.entityPageFormGroup.controls.inboundRequestorDN.value;
+      this.entityActionsCache['inboundResponderDN'] = this.entityPageFormGroup.controls.inboundResponderDN.value;
+      this.entityActionsCache['inboundService'] = this.entityPageFormGroup.controls.inboundService.value;
+      this.entityActionsCache['inboundRequestType'] = this.entityPageFormGroup.controls.inboundRequestType.value;
       this.entityPageFormGroup.controls.inboundRequestorDN.disable();
-      this.entityPageFormGroup.controls.inboundRequestorDN.setValue('');
+      this.entityPageFormGroup.controls.inboundRequestorDN.setValue(null);
       this.entityPageFormGroup.controls.inboundResponderDN.disable();
-      this.entityPageFormGroup.controls.inboundResponderDN.setValue('');
+      this.entityPageFormGroup.controls.inboundResponderDN.setValue(null);
       this.entityPageFormGroup.controls.inboundService.disable();
+      this.entityPageFormGroup.controls.inboundService.setValue(null);
+      this.entityPageFormGroup.controls.inboundRequestType.disable();
+      this.entityPageFormGroup.controls.inboundRequestType.setValue(null);
       this.entityPageFormGroup.controls.inboundRequestType.clearValidators();
       this.requiredFields = {
         ...this.requiredFields,
@@ -527,8 +560,17 @@ export class EntityCreateComponent implements OnInit {
     }
     else {
       this.entityPageFormGroup.controls.inboundRequestorDN.enable();
+      this.entityActionsCache.inboundRequestorDN
+        && this.entityPageFormGroup.controls.inboundRequestorDN.setValue(this.entityActionsCache.inboundRequestorDN);
       this.entityPageFormGroup.controls.inboundResponderDN.enable();
+      this.entityActionsCache.inboundResponderDN
+        && this.entityPageFormGroup.controls.inboundResponderDN.setValue(this.entityActionsCache.inboundResponderDN);
       this.entityPageFormGroup.controls.inboundService.enable();
+      this.entityActionsCache.inboundService
+        && this.entityPageFormGroup.controls.inboundService.setValue(this.entityActionsCache.inboundService);
+      this.entityPageFormGroup.controls.inboundRequestType.enable();
+      this.entityActionsCache.inboundRequestType
+        && this.entityPageFormGroup.controls.inboundRequestType.setValue(this.entityActionsCache.inboundRequestType);
       this.entityPageFormGroup.controls.inboundRequestType.setValidators(Validators.required);
       this.requiredFields = {
         ...this.requiredFields,
@@ -652,8 +694,9 @@ export class EntityCreateComponent implements OnInit {
         inboundService: get(this.entityPageFormGroup.controls, 'inboundService.value'),
         inboundRequestType: (get(this.entityPageFormGroup.controls, 'inboundRequestType.value', []) as any[] || [])
           .map(el => el.value).join(',\n'),
-        inboundDir: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
-        inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound'), // display the same value as routeInbound
+        routeInbound: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No',
+        inboundDir: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No', // display the same value as routeInbound
+        inboundRoutingRule: get(this.entityPageFormGroup.value, 'routeInbound') ? 'Yes' : 'No', // display the same value as routeInbound
       },
       ...this.getSchedulesForSummaryPage(this.schedulesFormGroup && this.schedulesFormGroup.get('schedules').value),
       ...this.mqDetailsFormGroup && this.mqDetailsFormGroup.value,
@@ -782,4 +825,38 @@ export class EntityCreateComponent implements OnInit {
 
   getMaxLengthForEntityField = () => this.selectedService === ENTITY_SERVICE_TYPE.GPL ? 11 : 8;
 
+  insert({ key, value }: { key: string, value: string | [] }) {
+    switch (key) {
+      case 'inboundRequestType':
+        this.entityPageFormGroup.controls.inboundRequestType.setValue(
+          this.inboundRequestTypeList.filter(el => value.includes(el.value as never))
+        );
+        break;
+      default:
+        this.entityPageFormGroup.controls[key].patchValue(value);
+    }
+  }
+
+  getDirectParticipantList = (id) => {
+    this.entityService.getDirectParticipantList(id)
+      .pipe(data => this.setLoading(data))
+      .subscribe((data: Entity[]) => {
+        this.isLoading = false;
+        this.directParticipantList = data;
+      },
+        error => this.isLoading = false
+      );
+  }
+
+  onParticipantTypeSelect = (value) => {
+    if (value === 'DIRECT') {
+      this.entityActionsCache['directParticipant'] = this.entityPageFormGroup.controls.directParticipant.value;
+      this.entityPageFormGroup.controls.directParticipant.setValue('');
+      this.entityPageFormGroup.controls.directParticipant.disable();
+    }
+    else {
+      this.entityPageFormGroup.controls.directParticipant.enable();
+      this.entityPageFormGroup.controls.directParticipant.setValue(this.entityActionsCache['directParticipant']);
+    }
+  }
 }

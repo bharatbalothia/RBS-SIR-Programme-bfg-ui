@@ -48,20 +48,25 @@ public class EntityController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public Page<EntityType> getEntities(@RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
-                                        @RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
-                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+    public Page<EntityType> getEntities(@RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                        @RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                        @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN,
                                         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-                                        @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN) {
+                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName, swiftDN);
     }
 
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public Page<Object> getPendingEntities(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+    public Page<ChangeControl> getPendingEntities(@RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                                  @RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                                  @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN,
+                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                                  @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         return ListToPageConverter.convertListToPage(
-                new ArrayList<>(changeControlService.findAllPending()), PageRequest.of(page, size));
+                new ArrayList<>(changeControlService.findPendingChangeControlsAsc(entityName, serviceName, swiftDN)),
+                PageRequest.of(page, size)
+        );
     }
 
     @PostMapping("pending")
@@ -200,6 +205,21 @@ public class EntityController {
         return ok(propertyService.getInboundRequestType());
     }
 
+    @GetMapping("inbound-service")
+    public ResponseEntity<String> getInboundService() throws JsonProcessingException {
+        return ok(propertyService.getInboundService());
+    }
+
+    @GetMapping("swift-service")
+    public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
+        return ok(propertyService.getSwiftService());
+    }
+
+    @GetMapping("participants")
+    public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
+        return ok(entityService.findEntityNameForParticipants(id));
+    }
+
     @GetMapping("file-type")
     public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
         return ok(propertyService.getFileType());
@@ -215,5 +235,4 @@ public class EntityController {
     public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
         return ok(transmittalService.transmit(transmittal));
     }
-
 }

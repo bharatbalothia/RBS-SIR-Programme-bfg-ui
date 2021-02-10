@@ -4,7 +4,7 @@ import { CHANGE_STATUS } from '../../models/changeControl/change-status';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get } from 'lodash';
-import { NotificationService } from '../../services/NotificationService';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -60,8 +60,16 @@ export class ApprovingDialogComponent implements OnInit {
     this.isLoading = true;
     this.hasErrors = false;
     this.approveAction({ changeID: this.changeId, status, approverComments: this.approverComments })
-      .subscribe(() => {
+      .subscribe((data) => {
         this.isLoading = false;
+        const warnings = get(data, 'routingRules.warnings');
+        if (warnings) {
+          this.notificationService.showWarningMessage({
+            code: null,
+            message: null,
+            warnings
+          });
+        }
         this.dialog.close({ refreshList: true, status });
       },
         error => {

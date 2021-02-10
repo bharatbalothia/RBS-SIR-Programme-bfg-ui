@@ -16,6 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 
 @Component({
   selector: 'app-transaction-search',
@@ -86,7 +87,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
-      this.initMinMaxDate();
       this.getTransactionCriteriaData();
     });
   }
@@ -113,7 +113,9 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       from: [this.defaultSelectedData.from],
       to: [this.defaultSelectedData.to]
     });
+
     this.criteriaFilterObject = { direction: '', trxStatus: '' };
+    this.initMinMaxDate();
   }
 
   initMinMaxDate() {
@@ -150,7 +152,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     return data;
   }
 
-
   getTransactionList(pageIndex: number, pageSize: number) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
@@ -158,7 +159,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),
-      size: pageSize.toString()
+      size: pageSize.toString(),
+      service: ENTITY_SERVICE_TYPE.SCT
     };
 
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;

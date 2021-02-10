@@ -8,6 +8,7 @@ import { EntitiesWithPagination } from './entities-with-pagination.model';
 import { ChangeControlsWithPagination } from '../changeControl/change-controls-with-pagination.model';
 import { ChangeResolution } from '../changeControl/change-resolution.model';
 import { MQDetails } from './mq-details.model';
+import { removeEmpties } from '../../utils/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class EntityService {
     return this.http.delete(this.apiUrl + entityId, { params: changerComments && { changerComments } });
   }
 
-  getEntityList(params?: { entity?: string; service?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
+  getEntityList(params?: { entity?: string; service?: string; swiftDN?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<EntitiesWithPagination>(this.apiUrl, { params });
   }
 
@@ -55,7 +56,7 @@ export class EntityService {
     return this.http.put<Entity>(this.apiUrl + 'pending/' + changeId, entity);
   }
 
-  getPendingChanges(params?: { page?: string; size?: string }): Observable<EntitiesWithPagination> {
+  getPendingChanges(params?: { entity?: string; service?: string; swiftDN?: string; page?: string; size?: string }): Observable<EntitiesWithPagination> {
     return this.http.get<ChangeControlsWithPagination>(this.apiUrl + 'pending', { params });
   }
 
@@ -111,5 +112,17 @@ export class EntityService {
 
   transmitEntity(entityID: string, fileType: string, password: string) {
     return this.http.post(this.apiUrl + 'transmit', { entityID, fileType, password });
+  }
+
+  getInboundService() {
+    return this.http.get(this.apiUrl + 'inbound-service', { responseType: 'text' });
+  }
+
+  getSWIFTService() {
+    return this.http.get(this.apiUrl + 'swift-service', { responseType: 'text' });
+  }	
+
+  getDirectParticipantList(id?) {
+    return this.http.get<Entity[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });
   }
 }

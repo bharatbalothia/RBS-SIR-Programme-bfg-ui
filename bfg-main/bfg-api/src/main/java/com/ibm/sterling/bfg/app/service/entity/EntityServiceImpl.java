@@ -210,7 +210,7 @@ public class EntityServiceImpl implements EntityService {
                         GenericSpecification.filter(swiftDN, "swiftDN")
                 );
         List<Entity> entities = entityRepository.findAll(specification);
-        List<ChangeControl> controls = changeControlService.findAllPending(entity, service, swiftDN);
+        List<ChangeControl> controls = changeControlService.findPendingChangeControls(entity, service, swiftDN);
         entities.removeIf(dbEntity ->
                 controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
         );
@@ -255,6 +255,13 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = new ArrayList<>(entityRepository.findAll(specification));
         entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
         return entities;
+    }
+
+    @Override
+    public List<String> findEntityNameForParticipants(Integer entityId) {
+        List<Entity> entities = findEntitiesByService("SCT");
+        entities.removeIf(entity -> entity.getEntityId().equals(entityId));
+        return entities.stream().map(Entity::getEntity).collect(Collectors.toList());
     }
 
     @Override

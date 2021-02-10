@@ -1,175 +1,187 @@
 <mat-card class="trusted-certificate-create-card">
-    <mat-card-header>
-        <mat-card-title>{{ changeId ? 'Edit' : 'Create'}} Trusted Certificate
-        </mat-card-title>
-    </mat-card-header>
-    <mat-horizontal-stepper #stepper [linear]="isLinear"
-        (selectionChange)="getConfirmationFieldsSource()">
-        <mat-step [stepControl]="uploadTrustedCertificateFormGroup" *ngIf="!changeId">
-            <form [formGroup]="uploadTrustedCertificateFormGroup">
-                <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
-                <section class="form-field-section">
-                    <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
-                        (change)="handleFileInput($event.target.files)" hidden />
-                    <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()"
-                        [disabled]="isLoading">
-                        <mat-icon>file_upload</mat-icon>
-                        Upload Trusted Certificate
-                    </button>
-                    <app-tooltip [tip]="getTooltip('file', 'file-path')"></app-tooltip>
-                </section>
-                <div class='stepper-actions'>
-                    <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
-                </div>
-            </form>
-        </mat-step>
-        <mat-step *ngIf="detailsTrustedCertificateFormGroup" [stepControl]="detailsTrustedCertificateFormGroup">
-            <form [formGroup]="detailsTrustedCertificateFormGroup" *ngIf="!isLoading">
-                <ng-template matStepLabel>Details of Trusted Certificate</ng-template>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
-                        <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
-                        <input matInput formControlName="name" required>
-                        <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
-                            <mat-error class="error-message"
-                                *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('name')">
-                            {{getErrorByField('name')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>
-                </section>
+  <mat-card-header>
+    <mat-card-title>{{ changeId ? 'Edit' : 'Create'}} Trusted Certificate
+    </mat-card-title>
+  </mat-card-header>
+  <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getConfirmationFieldsSource()">
+    <mat-step [stepControl]="uploadTrustedCertificateFormGroup" *ngIf="!changeId">
+      <form [formGroup]="uploadTrustedCertificateFormGroup">
+        <ng-template matStepLabel>Upload Trusted Certificate</ng-template>
+        <section class="form-field-section">
+          <input formControlName="trustedCertificateFile" type="file" #fileInput id="fileUpload"
+            (change)="handleFileInput($event.target.files)" hidden />
+          <button mat-raised-button color='primary' for="fileUpload" (click)="fileInput.click()" [disabled]="isLoading">
+            <mat-icon>file_upload</mat-icon>
+            Upload Trusted Certificate
+          </button>
+          <app-tooltip [tip]="getTooltip('file', 'file-path')"></app-tooltip>
+        </section>
+        <div class='stepper-actions'>
+          <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step *ngIf="detailsTrustedCertificateFormGroup" [stepControl]="detailsTrustedCertificateFormGroup">
+      <form [formGroup]="detailsTrustedCertificateFormGroup" *ngIf="!isLoading">
+        <ng-template matStepLabel>Details of Trusted Certificate</ng-template>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
+            <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
+            <input matInput formControlName="name" required>
+            <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
+              <mat-error class="error-message"
+                *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
+                {{validation.message}}</mat-error>
+            </mat-error>
+            <mat-error class="error-message" *ngIf="getErrorByField('name')">
+              {{getErrorByField('name')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>
+        </section>
 
-                <div class="ts-item-section">
-                    <h3 class="ts-item-section-title">Summary:</h3>
-                    <div class="ts-item-section-value">
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('serialNumber')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('serialNumber')}}:</h4>
-                            <div class="section-value">{{detailsTrustedCertificateFormGroup.get('serialNumber').value}}
-                            </div>
-                        </section>
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('thumbprint')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('thumbprint')}}:</h4>
-                            <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint').value}}
-                            </div>
-                        </section>
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('thumbprint256')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('thumbprint256')}}:</h4>
-                            <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint256').value}}
-                            </div>
-                        </section>
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('validDates')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('validDates')}}:</h4>
-                            <div class="section-value">{{detailsTrustedCertificateFormGroup.get('validDates').value}}
-                            </div>
-                        </section>
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('issuer')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('issuer')}}:</h4>
-                            <div class="section-value">
-                                <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('issuer').value)">
-                                </app-display-table-cell>
-                            </div>
+        <div class="ts-item-section">
+          <h3 class="ts-item-section-title">Summary:</h3>
+          <div class="ts-item-section-value">
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('serialNumber')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('serialNumber')}}:</h4>
+              <div class="section-value">{{detailsTrustedCertificateFormGroup.get('serialNumber').value}}
+              </div>
+            </section>
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('thumbprint')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('thumbprint')}}:</h4>
+              <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint').value}}
+              </div>
+            </section>
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('thumbprint256')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('thumbprint256')}}:</h4>
+              <div class="section-value">{{detailsTrustedCertificateFormGroup.get('thumbprint256').value}}
+              </div>
+            </section>
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('validDates')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('validDates')}}:</h4>
+              <div class="section-value">{{detailsTrustedCertificateFormGroup.get('validDates').value}}
+              </div>
+            </section>
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('issuer')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('issuer')}}:</h4>
+              <div class="section-value">
+                <app-display-table-cell
+                  [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('issuer').value)">
+                </app-display-table-cell>
+              </div>
+            </section>
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('subject')">
+              <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
+              <div class="section-value">
+                <app-display-table-cell
+                  [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('subject').value)">
+                </app-display-table-cell>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="ts-item-section">
+          <h3 class="ts-item-section-title">Validity:</h3>
+          <div class="ts-item-section-value">
+            <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('serialNumber')">
+              <h4 class="section-label"></h4>
+              <div class="section-value">
+                <div class="validity-flag">
+                  <mat-icon>
+                    {{detailsTrustedCertificateFormGroup.get('valid').value === true ? (hasWarnings() ? 'warning'
+                    :'check_circle_outline') : 'warning'}}
+                  </mat-icon>
+                  <span>{{getValidityMessage() ||
+                    getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="ts-item-section"
+          *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport') && detailsTrustedCertificateFormGroup.get('authChainReport').value">
+          <h3 class="ts-item-section-title">{{getTrustedCertificateDisplayName('authChainReport')}}:</h3>
+          <div class="ts-item-section-value">
+            <section
+              *ngFor="let element of detailsTrustedCertificateFormGroup.get('authChainReport').value; let i=index"
+              class="section-info">
+              <h4 class="section-label">{{i+1}}:</h4>
+              <div class="section-value">
+                <app-display-table-cell [value]="getTrustedCertificateItemInfoValues(element)">
+                </app-display-table-cell>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
+            </mat-label>
+            <textarea matInput formControlName="changerComments"></textarea>
+            <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
+              {{getErrorByField('changerComments')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('edit-tc', 'changerComments')"></app-tooltip>
+        </div>
+        <div class='stepper-actions'>
+          <button mat-raised-button matStepperPrevious class="action-button" *ngIf="!changeId">Back</button>
+          <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
+          <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
+            Cancel</button>
+        </div>
+      </form>
 
-                        </section>
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('subject')">
-                            <h4 class="section-label">{{getTrustedCertificateDisplayName('subject')}}:</h4>
-                            <div class="section-value">
-                                <app-display-table-cell
-                                    [value]="getTrustedCertificateItemInfoValuesOrdered(detailsTrustedCertificateFormGroup.get('subject').value)">
-                                </app-display-table-cell>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-                <div class="ts-item-section">
-                    <h3 class="ts-item-section-title">Validity:</h3>
-                    <div class="ts-item-section-value">
-                        <section class="section-info" *ngIf="detailsTrustedCertificateFormGroup.get('serialNumber')">
-                            <h4 class="section-label"></h4>
-                            <div class="section-value">
-                                <div class="validity-flag">
-                                    <mat-icon>
-                                        {{detailsTrustedCertificateFormGroup.get('valid').value === true ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
-                                    </mat-icon>
-                                    <span>{{getValidityMessage() || getValidityLabel(detailsTrustedCertificateFormGroup.get('valid').value)}}</span>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-                <div class="ts-item-section"
-                    *ngIf="detailsTrustedCertificateFormGroup.get('authChainReport') && detailsTrustedCertificateFormGroup.get('authChainReport').value">
-                    <h3 class="ts-item-section-title">{{getTrustedCertificateDisplayName('authChainReport')}}:</h3>
-                    <div class="ts-item-section-value">
-                        <section
-                            *ngFor="let element of detailsTrustedCertificateFormGroup.get('authChainReport').value; let i=index"
-                            class="section-info">
-                            <h4 class="section-label">{{i+1}}:</h4>
-                            <div class="section-value">
-                                <app-display-table-cell [value]="getTrustedCertificateItemInfoValues(element)">
-                                </app-display-table-cell>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-                <div class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
-                        </mat-label>
-                        <textarea matInput formControlName="changerComments"></textarea>
-                        <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
-                            {{getErrorByField('changerComments')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('edit-tc', 'changerComments')"></app-tooltip>
-                </div>
-                <div class='stepper-actions'>
-                    <button mat-raised-button matStepperPrevious class="action-button" *ngIf="!changeId">Back</button>
-                    <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
-                    <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
-                        Cancel</button>
-                </div>
-            </form>
-
-        </mat-step>
-        <mat-step>
-            <ng-template matStepLabel>Confirmation of Trusted Certificate</ng-template>
-            <mat-table [dataSource]="confirmationPageDataSource" class="summary-table">
-                <ng-container matColumnDef="field">
-                    <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{getTrustedCertificateDisplayName(element.field)}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="value">
-                    <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <app-display-table-cell class='value-table-cell' [value]="element.value">
-                        </app-display-table-cell>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="error">
-                    <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-error class='error-table-cell'>{{element.error}}</mat-error>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="confirmationDisplayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: confirmationDisplayedColumns;"></mat-row>
-            </mat-table>
-            <div class='stepper-actions'>
-                <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-                <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
-                    Cancel</button>
-                <button mat-raised-button class="action-button" color='primary'
-                    (click)="sendTrustedCertificate()">Save</button>
-
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Confirmation of Trusted Certificate</ng-template>
+      <mat-table [dataSource]="confirmationPageDataSource" class="summary-table">
+        <ng-container matColumnDef="field">
+          <mat-header-cell *matHeaderCellDef>Field</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">{{element.field}}</div>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="sub-field">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let element"><div class="mat-cell-value">{{element.subField}}</div></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">
+              <div class="validity-flag" *ngIf="element.key === 'valid'; else elseBlock">
+                <mat-icon>
+                  {{element.value ? (hasWarnings() ? 'warning' :'check_circle_outline') : 'warning'}}
+                </mat-icon>
+                <span>{{element.value}}</span>
+              </div>
+              <ng-template #elseBlock>{{element.value}}</ng-template>
             </div>
-        </mat-step>
-    </mat-horizontal-stepper>
-    <mat-card-footer>
-        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-    </mat-card-footer>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="error">
+          <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">
+              <mat-error class='error-table-cell'>{{element.error}}</mat-error>
+            </div>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="confirmationDisplayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: confirmationDisplayedColumns;"></mat-row>
+      </mat-table>
+      <div class='stepper-actions'>
+        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+        <button mat-raised-button class="action-button" color='warn' (click)="cancelTrustedCertificate()">
+          Cancel</button>
+        <button mat-raised-button class="action-button" color='primary' (click)="sendTrustedCertificate()">Save</button>
+
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+  <mat-card-footer>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+  </mat-card-footer>
 </mat-card>

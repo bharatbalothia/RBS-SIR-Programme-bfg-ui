@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
-import { FILE_DIRECTIONS, getDirectionBooleanValue, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
+import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get, isEmpty } from 'lodash';
 import * as moment from 'moment';
@@ -76,7 +76,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
-      this.initMinMaxDate();
       this.getFileCriteriaData();
     });
   }
@@ -105,6 +104,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     });
 
     this.criteriaFilterObject = { direction: '', service: '' };
+    this.initMinMaxDate();
   }
 
   initMinMaxDate() {
@@ -147,20 +147,19 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     return data;
   }
 
-
   getFileList(pageIndex: number, pageSize: number) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
-      outbound: getDirectionBooleanValue(get(this.searchingParametersFormGroup.get('direction'), 'value')),
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
+
+    formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'fileStatus.status');
     formData.fileStatus = null;
-    formData.direction = null;
 
     this.isLoading = true;
     this.fileService.getFileList(removeEmpties(formData)).pipe(take(1)).subscribe((data: FilesWithPagination) => {

@@ -69,7 +69,6 @@ mat-form-field {
         }
 
         .mat-table {
-
             display: inline-block;
             margin-right: 15px;
 
@@ -101,16 +100,15 @@ mat-form-field {
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
-        word-break: break-all;
-        word-wrap: break-word;
-        white-space: normal;
-        hyphens: auto;
-        -ms-hyphens: auto;
-        -moz-hyphens: auto;
-        -webkit-hyphens: auto;
-        line-height: normal;
-        text-align: left;
-        min-width: 10px;
+      word-break: break-word;
+      white-space: normal;
+      line-height: normal;
+      text-align: left;
+      min-width: 10px;
+
+        .mat-cell-value {
+          width: 100%;
+        }
     }
 
     .mat-cell>.mat-button {
@@ -131,10 +129,14 @@ mat-form-field {
             }
         }
     }
+}
 
-    .paginator {
-        width: 100%;
-    }
+.paginator {
+  width: 100%;
+
+  .mat-paginator {
+    background-color: unset;
+  }
 }
 
 @media all and (-ms-high-contrast: none),
@@ -195,4 +197,16 @@ mat-form-field {
     ul li {
         margin-left: -10px; // set negative indent for list
     }
+}
+
+.validity-flag {
+  display: flex;
+  align-items: center;
+  -ms-flex-direction: row;
+  flex-direction: row;
+
+  span {
+    width: 100%;
+    margin-left: 5px;
+  }
 }

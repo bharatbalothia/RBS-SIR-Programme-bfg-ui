@@ -5,6 +5,11 @@
   {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
 </h3>
 <div class="table-container">
+  <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
+    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
+    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
+  </app-table-paginator>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
@@ -43,7 +48,7 @@
       <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{element.type}}
-        <mat-icon>{{element.outbound ? 'call_made' : 'call_received'}}</mat-icon>
+        <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
       </mat-cell>
     </ng-container>
 
@@ -95,22 +100,14 @@
       </mat-footer-cell>
     </ng-container>
 
-    <ng-container matColumnDef="paginator">
-      <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-        <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
-          [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-          [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize"
-          [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
-        </app-table-paginator>
-      </mat-footer-cell>
-    </ng-container>
-
     <mat-footer-row *matFooterRowDef="['noData']" [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
     </mat-footer-row>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    <mat-footer-row *matFooterRowDef="['paginator']"
-      [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
-    </mat-footer-row>
   </mat-table>
+  <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
+    [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
+    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
+  </app-table-paginator>
 </div>

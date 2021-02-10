@@ -63,13 +63,13 @@ public class ChangeControlService {
         changeControlRepository.save(changeControl);
     }
 
-    public List<ChangeControl> findAllPending() {
-        List<ChangeControl> pendingChangeControlList = changeControlRepository.findByStatus(ChangeControlStatus.PENDING);
+    public List<ChangeControl> findPendingChangeControlsAsc(String entity, String service, String swiftDN) {
+        List<ChangeControl> pendingChangeControlList = findPendingChangeControls(entity, service, swiftDN);
         Collections.sort(pendingChangeControlList);
         return pendingChangeControlList;
     }
 
-    public List<ChangeControl> findAllPending(String entity, String service, String swiftDN) {
+    public List<ChangeControl> findPendingChangeControls(String entity, String service, String swiftDN) {
         Specification<ChangeControl> specification = Specification
                 .where(
                         GenericSpecification.<ChangeControl>filter(entity, "resultMeta1"))

@@ -40,7 +40,7 @@ public class CacheConfig {
                 return new ConcurrentMapCache(
                         name,
                         CacheBuilder.newBuilder()
-                                .expireAfterWrite(timeOut, TimeUnit.SECONDS)
+                                .expireAfterWrite(timeOut, TimeUnit.MINUTES)
                                 .build().asMap(),
                         false);
             }

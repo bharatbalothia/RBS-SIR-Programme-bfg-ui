@@ -1,9 +1,10 @@
 import { Tab } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { File } from 'src/app/shared/models/file/file.model';
-import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { FileError } from 'src/app/shared/models/file/file-error.model';
-import { formatDate } from '@angular/common';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
+import { getDirectionIcon } from '../transaction-search/transaction-search-display-names';
+import { titleCase } from 'src/app/shared/utils/utils';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 
 export const FILE_SEARCH_DISPLAY_NAMES = {
     service: 'Service',
@@ -41,12 +42,16 @@ export const getFileSearchDisplayName = (key: string) => FILE_SEARCH_DISPLAY_NAM
 const getFileDetailsSectionItems = (file: File) => ({
     'File Details': [
         { fieldName: 'fileID', fieldValue: file.id },
-        { fieldName: 'entity', fieldValue: file.entity.entity || 'None', isActionButton: !!file.entity.entity },
+        {
+          fieldName: 'entity',
+          fieldValue: file.entity.entity || 'None',
+          isActionButton: (file.service === ENTITY_SERVICE_TYPE.SCT || file.service === ENTITY_SERVICE_TYPE.GPL) && !!file.entity.entity
+        },
         { fieldName: 'filename', fieldValue: file.filename, isActionButton: true },
         { fieldName: 'reference', fieldValue: file.reference },
         { fieldName: 'service', fieldValue: file.service },
         { fieldName: 'type', fieldValue: file.type },
-        { fieldName: 'direction', fieldValue: getDirectionStringValue(file.outbound), icon: file.outbound ? 'call_made' : 'call_received' },
+        { fieldName: 'direction', fieldValue: titleCase(file.direction), icon: getDirectionIcon(file.direction) },
         { fieldName: 'timestamp', fieldValue: file.timestamp },
         { fieldName: 'workflowID', fieldValue: file.workflowID, isActionButton: true },
         { fieldName: 'messageID', fieldValue: file.messageID },

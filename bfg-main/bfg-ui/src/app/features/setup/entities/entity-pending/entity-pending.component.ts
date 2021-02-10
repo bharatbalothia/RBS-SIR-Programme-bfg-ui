@@ -8,7 +8,7 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs, getEntityDisplayName } from '../entity-display-names';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
@@ -17,7 +17,8 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-entity-pending',
@@ -29,6 +30,11 @@ export class EntityPendingComponent implements OnInit {
   ROUTING_PATHS = ROUTING_PATHS;
   entityDisplayNames = ENTITY_DISPLAY_NAMES;
   CHANGE_OPERATION = CHANGE_OPERATION;
+
+
+  entityNameSearchingValue = '';
+  serviceSearchingValue = '';
+  DNSearchingValue = '';
 
   isLoading = true;
 
@@ -50,6 +56,10 @@ export class EntityPendingComponent implements OnInit {
 
   ngOnInit() {
     this.getPendingChanges(this.pageIndex, this.pageSize);
+
+    this.entityNameSearchingValue = window.history.state.entityNameSearchingValue || '';
+    this.serviceSearchingValue = window.history.state.serviceSearchingValue || '';
+    this.DNSearchingValue = window.history.state.DNSearchingValue || '';
   }
 
   setLoading(data) {
@@ -58,7 +68,13 @@ export class EntityPendingComponent implements OnInit {
   }
 
   getPendingChanges(pageIndex: number, pageSize: number) {
-    this.entityService.getPendingChanges({ page: pageIndex.toString(), size: pageSize.toString() })
+    this.entityService.getPendingChanges(removeEmpties({
+      entity: this.entityNameSearchingValue || null,
+      service: this.serviceSearchingValue || null,
+      swiftDN: this.DNSearchingValue || null,
+      page: pageIndex.toString(),
+      size: pageSize.toString()
+    }))
       .pipe(take(1)).pipe(data => this.setLoading(data)).subscribe((data: ChangeControlsWithPagination) => {
         this.isLoading = false;
         this.pageIndex = pageIndex;
@@ -184,4 +200,12 @@ export class EntityPendingComponent implements OnInit {
 
   getCurrentRoute = () => this.router.url;
 
+  clearParams = () => {
+    if (this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== '') {
+      this.entityNameSearchingValue = '';
+      this.serviceSearchingValue = '';
+      this.DNSearchingValue = '';
+      this.getPendingChanges(this.pageIndex, this.pageSize);
+    }
+  }
 }

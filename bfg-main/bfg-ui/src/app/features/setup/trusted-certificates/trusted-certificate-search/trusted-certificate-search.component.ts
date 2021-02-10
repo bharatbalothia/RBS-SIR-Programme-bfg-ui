@@ -19,7 +19,7 @@ import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/d
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-trusted-certificate-search',
@@ -308,4 +308,13 @@ export class TrustedCertificateSearchComponent implements OnInit {
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   getCurrentRoute = () => this.router.url;
+
+  clearParams = () => {
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+      this.certificateNameSearchingValue = '';
+      this.thumbprintSearchingValue = '';
+      this.thumbprint256SearchingValue = '';
+      this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+    }
+  }
 }

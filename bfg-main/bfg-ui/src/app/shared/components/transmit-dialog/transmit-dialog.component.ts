@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import { ENTITY_TRANSMIT_FILE_TYPE } from '../../models/entity/entity-constants';
 import { Entity } from '../../models/entity/entity.model';
 import { PasswordConfirmationDialogComponent } from '../password-confirmation-dialog/password-confirmation-dialog.component';
-import { NotificationService } from '../../services/NotificationService';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-transmit-dialog',

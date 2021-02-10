@@ -1,6 +1,18 @@
 .sidenav-container {
     height: 100%;
+
+    .app-title {
+        display: flex;
+        align-items: baseline;
+
+        .app-version {
+            font-size: 14px;
+            margin-left: 10px;
+        }
+    }
+
 }
+
 .mat-toolbar.mat-primary {
     position: absolute;
     top: 0;

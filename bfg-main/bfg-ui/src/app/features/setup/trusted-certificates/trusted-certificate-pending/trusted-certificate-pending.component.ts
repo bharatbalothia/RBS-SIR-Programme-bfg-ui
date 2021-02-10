@@ -17,7 +17,7 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { Router } from '@angular/router';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 

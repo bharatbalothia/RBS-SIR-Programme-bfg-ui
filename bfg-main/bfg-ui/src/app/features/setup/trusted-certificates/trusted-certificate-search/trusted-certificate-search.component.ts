@@ -19,7 +19,7 @@ import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/d
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { Router } from '@angular/router';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-trusted-certificate-search',

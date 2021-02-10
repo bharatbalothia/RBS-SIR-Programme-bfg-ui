@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
-import { NotificationService } from '../../services/NotificationService';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-delete-dialog',

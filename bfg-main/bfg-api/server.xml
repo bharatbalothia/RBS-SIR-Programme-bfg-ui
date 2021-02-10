@@ -24,5 +24,5 @@
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
     <ssl id="defaultSSLConfig" trustDefaultCerts="true"/>
 
-    <webApplication contextRoot="bfgui" location="bfg-api-0.0.1-SNAPSHOT.war"/>
+    <webApplication contextRoot="bfgui" location="${default.location}"/>
 </server>

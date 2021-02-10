@@ -5,6 +5,27 @@
   .card-content {
     min-height: 150px;
 
+    .search-by-content {
+
+      .search-by-label {
+        margin-top: 10px;
+        margin-bottom: 0px;
+      }
+
+      .search-by-field {
+        margin-right: 15px;
+      }
+
+      button {
+        vertical-align: text-bottom;
+      }
+
+      .clear-button {
+        margin-right: 10px;
+      }
+
+    }
+
     .table-container {
 
       .mat-table {

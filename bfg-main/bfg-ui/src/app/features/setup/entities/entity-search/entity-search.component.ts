@@ -250,4 +250,13 @@ export class EntitySearchComponent implements OnInit {
   getCurrentRoute = () => this.router.url;
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
+
+  clearParams = () => {
+    if (this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== '') {
+      this.entityNameSearchingValue = '';
+      this.serviceSearchingValue = '';
+      this.DNSearchingValue = '';
+      this.getEntityList(this.pageIndex, this.pageSize);
+    }
+  }
 }

@@ -14,12 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ChangeControlService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlService.class);
 
@@ -43,10 +44,12 @@ public class ChangeControlService {
         return changeControlRepository.findByChangeIDAndStatus(id, ChangeControlStatus.PENDING);
     }
 
+    @Transactional
     public ChangeControl save(ChangeControl changeControl) {
         return changeControlRepository.save(changeControl);
     }
 
+    @Transactional
     public ChangeControl updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
         ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
                 .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
@@ -55,6 +58,7 @@ public class ChangeControlService {
         return controlFromBD;
     }
 
+    @Transactional
     public void setApproveInfo(ChangeControl changeControl, String user,
                                String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
@@ -83,6 +87,7 @@ public class ChangeControlService {
         return changeControlRepository.findAll(specification);
     }
 
+    @Transactional
     public void updateChangeControl(ChangeControl changeControl, Entity entity) {
         Operation operation = changeControl.getOperation();
         if (!operation.equals(Operation.DELETE)) {
@@ -103,6 +108,7 @@ public class ChangeControlService {
         }
     }
 
+    @Transactional
     public void deleteChangeControl(ChangeControl changeControl) {
         if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)) {
             changeControlRepository.delete(changeControl);

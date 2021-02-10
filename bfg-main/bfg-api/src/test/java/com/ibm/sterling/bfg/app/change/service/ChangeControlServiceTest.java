@@ -52,6 +52,6 @@ class ChangeControlServiceTest {
 
     @Test
     void findAllPending() {
-        repository.findByStatus(ChangeControlStatus.PENDING).forEach(System.out::println);
+        service.findPendingChangeControls(null, null, null).forEach(System.out::println);
     }
 }

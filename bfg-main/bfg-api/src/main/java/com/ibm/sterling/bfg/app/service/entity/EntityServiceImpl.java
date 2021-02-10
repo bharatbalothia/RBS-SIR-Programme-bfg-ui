@@ -165,7 +165,7 @@ public class EntityServiceImpl implements EntityService {
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if ("GPL".equals(changeControl.getEntityLog().getService()) && entity.getRouteInbound()) {
+        if ("GPL".equals(changeControl.getEntityLog().getService())) {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 
@@ -254,6 +254,13 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = new ArrayList<>(entityRepository.findAll(specification));
         entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
         return entities;
+    }
+
+    @Override
+    public List<String> findEntityNameForParticipants(Integer entityId) {
+        List<Entity> entities = findEntitiesByService("SCT");
+        entities.removeIf(entity -> entity.getEntityId().equals(entityId));
+        return entities.stream().map(Entity::getEntity).collect(Collectors.toList());
     }
 
     @Override

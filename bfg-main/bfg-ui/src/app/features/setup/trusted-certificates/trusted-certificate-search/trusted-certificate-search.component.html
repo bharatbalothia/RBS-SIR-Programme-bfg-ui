@@ -88,8 +88,7 @@
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button
-              (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog || element)">
+            <button mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog || element)">
               {{element.certificateName || element.resultMeta1}}
             </button>
           </mat-cell>

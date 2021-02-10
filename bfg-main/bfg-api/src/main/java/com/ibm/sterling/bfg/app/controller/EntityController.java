@@ -208,6 +208,16 @@ public class EntityController {
         return ok(propertyService.getInboundService());
     }
 
+    @GetMapping("swift-service")
+    public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
+        return ok(propertyService.getSwiftService());
+    }
+
+    @GetMapping("participants")
+    public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
+        return ok(entityService.findEntityNameForParticipants(id));
+    }
+
     @GetMapping("file-type")
     public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
         return ok(propertyService.getFileType());
@@ -223,5 +233,4 @@ public class EntityController {
     public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
         return ok(transmittalService.transmit(transmittal));
     }
-
 }

@@ -56,6 +56,10 @@ export class TrustedCertificateService {
     return this.http.get<TrustedCertificate>(this.apiUrl + 'validate/' + certificateId);
   }
 
+  validateCertificateLogById(certificateLogId: string) {
+    return this.http.get<TrustedCertificate>(this.apiUrl + 'validate/pending/' + certificateLogId);
+  }
+
   resolveChange(resolution: ChangeResolution) {
     return this.http.post(this.apiUrl + 'pending', resolution);
   }

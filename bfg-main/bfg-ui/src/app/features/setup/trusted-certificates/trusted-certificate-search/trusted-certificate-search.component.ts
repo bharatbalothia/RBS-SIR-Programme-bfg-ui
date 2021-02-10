@@ -97,7 +97,14 @@ export class TrustedCertificateSearchComponent implements OnInit {
       const certificateLogId = get(trustedCertificate, 'certificateLogId');
       if (certificateId || certificateLogId) {
         this.isLoadingDetails = true;
-        this.trustedCertificateService.validateCertificateById(certificateId || certificateLogId).toPromise()
+        let validateCertificate;
+        if (certificateId) {
+          validateCertificate = this.trustedCertificateService.validateCertificateById(certificateId);
+        }
+        else {
+          validateCertificate = this.trustedCertificateService.validateCertificateLogById(certificateLogId);
+        }
+        validateCertificate.toPromise()
           .then(data => {
             this.isLoadingDetails = false;
             resolve({
@@ -124,7 +131,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
       if (certificateLogId) {
         this.isLoadingDetails = true;
-        this.trustedCertificateService.validateCertificateById(certificateLogId.toString()).toPromise()
+        this.trustedCertificateService.validateCertificateLogById(certificateLogId.toString()).toPromise()
           .then(data => {
             this.isLoadingDetails = false;
             resolve({

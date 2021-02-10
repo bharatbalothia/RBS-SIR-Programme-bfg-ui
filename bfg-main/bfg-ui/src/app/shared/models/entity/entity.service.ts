@@ -118,6 +118,10 @@ export class EntityService {
     return this.http.get(this.apiUrl + 'inbound-service', { responseType: 'text' });
   }
 
+  getSWIFTService() {
+    return this.http.get(this.apiUrl + 'swift-service', { responseType: 'text' });
+  }	
+
   getDirectParticipantList(id?) {
     return this.http.get<Entity[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });
   }

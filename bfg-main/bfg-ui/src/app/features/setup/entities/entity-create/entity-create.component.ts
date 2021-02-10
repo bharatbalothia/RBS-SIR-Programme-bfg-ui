@@ -194,6 +194,15 @@ export class EntityCreateComponent implements OnInit {
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
+    if (!this.editableEntity) {
+      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
   }
 
   getEntityDefaultValue = (): Entity => ({
@@ -843,8 +852,10 @@ export class EntityCreateComponent implements OnInit {
     if (value === 'DIRECT') {
       this.entityActionsCache['directParticipant'] = this.entityPageFormGroup.controls.directParticipant.value;
       this.entityPageFormGroup.controls.directParticipant.setValue('');
+      this.entityPageFormGroup.controls.directParticipant.disable();
     }
     else {
+      this.entityPageFormGroup.controls.directParticipant.enable();
       this.entityPageFormGroup.controls.directParticipant.setValue(this.entityActionsCache['directParticipant']);
     }
   }

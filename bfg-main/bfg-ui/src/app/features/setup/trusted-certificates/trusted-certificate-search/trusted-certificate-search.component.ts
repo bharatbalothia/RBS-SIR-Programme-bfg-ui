@@ -308,4 +308,13 @@ export class TrustedCertificateSearchComponent implements OnInit {
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   getCurrentRoute = () => this.router.url;
+
+  clearParams = () => {
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+      this.certificateNameSearchingValue = '';
+      this.thumbprintSearchingValue = '';
+      this.thumbprint256SearchingValue = '';
+      this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+    }
+  }
 }

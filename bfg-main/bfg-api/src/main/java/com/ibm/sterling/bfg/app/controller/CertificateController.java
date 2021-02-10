@@ -72,8 +72,8 @@ public class CertificateController {
     public Page<CertType> getCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
                                           @RequestParam(value = "thumbprint", defaultValue = "", required = false) String thumbprint,
                                           @RequestParam(value = "thumbprint256", defaultValue = "", required = false) String thumbprint256,
-                                          @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                          @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         return certificateService.findCertificates(PageRequest.of(page, size), certName, thumbprint, thumbprint256);
     }
 
@@ -119,16 +119,21 @@ public class CertificateController {
 
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<ChangeControlCert> getPendingCertificates(@PathVariable(name = "id") String id) {
+    public ResponseEntity<ChangeControlCert> getPendingCertificate(@PathVariable(name = "id") String id) {
         return ok(changeControlCertService.getChangeControlCertById(id));
     }
 
     @GetMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public Page<ChangeControlCert> getPendingCertificate(@RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-                                                         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page) {
+    public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
+                                                          @RequestParam(value = "thumbprint", defaultValue = "", required = false) String thumbprint,
+                                                          @RequestParam(value = "thumbprint256", defaultValue = "", required = false) String thumbprint256,
+                                                          @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                                          @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         return ListToPageConverter.convertListToPage(
-                new ArrayList<>(changeControlCertService.findAllPending()), PageRequest.of(page, size));
+                new ArrayList<>(changeControlCertService.findPendingChangeControlsAsc(certName, thumbprint, thumbprint256)),
+                PageRequest.of(page, size)
+        );
     }
 
     @GetMapping("/{id}")

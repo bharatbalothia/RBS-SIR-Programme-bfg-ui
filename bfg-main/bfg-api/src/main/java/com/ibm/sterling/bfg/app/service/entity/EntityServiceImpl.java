@@ -209,7 +209,7 @@ public class EntityServiceImpl implements EntityService {
                         GenericSpecification.filter(swiftDN, "swiftDN")
                 );
         List<Entity> entities = entityRepository.findAll(specification);
-        List<ChangeControl> controls = changeControlService.findAllPending(entity, service, swiftDN);
+        List<ChangeControl> controls = changeControlService.findPendingChangeControls(entity, service, swiftDN);
         entities.removeIf(dbEntity ->
                 controls.stream().anyMatch(changeControl -> changeControl.getResultMeta1().equals(dbEntity.getEntity()))
         );

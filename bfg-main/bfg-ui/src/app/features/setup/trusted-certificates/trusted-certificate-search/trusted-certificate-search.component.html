@@ -30,10 +30,12 @@
         <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
       </div>
 
-      <button color="primary" mat-raised-button (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
-    </div>
-    <div class="table-container">
-      <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
+            <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
+            <button color="primary" mat-raised-button
+                (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
+        </div>
+        <div class="table-container">
+            <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
 
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>

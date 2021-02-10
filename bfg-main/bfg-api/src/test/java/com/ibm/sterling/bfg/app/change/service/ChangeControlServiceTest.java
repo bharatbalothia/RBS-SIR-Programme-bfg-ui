@@ -52,6 +52,6 @@ class ChangeControlServiceTest {
 
     @Test
     void findAllPending() {
-        service.findAllPending().forEach(System.out::println);
+        repository.findByStatus(ChangeControlStatus.PENDING).forEach(System.out::println);
     }
 }

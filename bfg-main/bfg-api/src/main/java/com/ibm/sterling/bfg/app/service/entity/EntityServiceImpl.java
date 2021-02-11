@@ -35,7 +35,7 @@ import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.P
 import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class EntityServiceImpl implements EntityService {
 
     private static final Logger LOG = LogManager.getLogger(EntityServiceImpl.class);
@@ -95,6 +95,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    @Transactional
     public Entity save(Entity entity) {
         LOG.info("Trying to save entity {}", entity);
         ChangeControl changeControl = new ChangeControl();
@@ -104,6 +105,7 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
+    @Transactional
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
         if (!operation.equals(Operation.DELETE)) {
             entityValidation.validateEntity(entity, operation);
@@ -121,6 +123,7 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
+    @Transactional
     public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status)
             throws JsonProcessingException {
         if (!PENDING.equals(changeControl.getStatus())) {
@@ -294,6 +297,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    @Transactional
     public void updatePendingEntity(ChangeControl changeControl, Entity entity) {
         String currentName = changeControl.getResultMeta1();
         String newName = entity.getEntity();
@@ -304,6 +308,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    @Transactional
     public void cancelPendingEntity(ChangeControl changeControl) {
         changeControlService.deleteChangeControl(changeControl);
         adminAuditService.fireAdminAuditEvent(

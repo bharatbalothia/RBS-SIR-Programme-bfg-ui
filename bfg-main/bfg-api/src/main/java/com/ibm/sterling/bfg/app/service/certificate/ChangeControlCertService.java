@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
+@Transactional(readOnly = true)
 public class ChangeControlCertService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlCertService.class);
 
@@ -43,10 +45,12 @@ public class ChangeControlCertService {
                 .orElseThrow(ChangeControlCertNotFoundException::new);
     }
 
+    @Transactional
     public ChangeControlCert save(ChangeControlCert changeControl) {
         return changeControlCertRepository.save(changeControl);
     }
 
+    @Transactional
     public ChangeControlCert updateStatus(String changeControlId, ChangeControlStatus status) {
         ChangeControlCert controlFromBD = changeControlCertRepository.findById(changeControlId)
                 .orElseThrow(CertificateNotFoundException::new);
@@ -55,6 +59,7 @@ public class ChangeControlCertService {
         return controlFromBD;
     }
 
+    @Transactional
     public void setApproveInfo(ChangeControlCert changeControl, String user,
                                String comments, ChangeControlStatus status) {
         changeControl.setApprover(user);
@@ -83,6 +88,7 @@ public class ChangeControlCertService {
         return changeControlCertRepository.findAll(specification);
     }
 
+    @Transactional
     public TrustedCertificate updateChangeControlCert(ChangeControlCert changeControlCert, String certName, String changerComments) {
         LOGGER.info("Updating pending {}", changeControlCert);
         checkStatusOfChangeControl(changeControlCert);
@@ -105,6 +111,7 @@ public class ChangeControlCertService {
         return null;
     }
 
+    @Transactional
     public void deleteChangeControl(ChangeControlCert changeControlCert) {
         LOGGER.info("Deleting pending {}", changeControlCert);
         checkStatusOfChangeControl(changeControlCert);

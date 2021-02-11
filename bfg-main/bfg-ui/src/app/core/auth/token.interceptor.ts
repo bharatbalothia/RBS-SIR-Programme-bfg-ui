@@ -3,7 +3,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { ROUTING_PATHS } from '../constants/routing-paths';
+
+const EXCLUDED_URLS = [
+  environment.apiUrl + 'auth/reauth'
+];
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -18,7 +23,7 @@ export class TokenInterceptor implements HttpInterceptor {
             .pipe(
                 catchError((error: any) => {
                     if (error instanceof HttpErrorResponse) {
-                        if (error.status === 401) {
+                      if (error.status === 401 && !EXCLUDED_URLS.includes(error.url)) {
                             this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
                         }
                     }

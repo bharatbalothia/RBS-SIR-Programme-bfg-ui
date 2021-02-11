@@ -38,7 +38,10 @@ export class TransmitDialogComponent {
 
   transmit() {
     this.passwordConfirmationDialog.open(PasswordConfirmationDialogComponent, {
-      width: '250px'
+      width: '250px',
+      data: {
+        title: 'Confirm your identity'
+      }
     }).afterClosed().subscribe(password => {
       if (password) {
         this.isLoading = true;

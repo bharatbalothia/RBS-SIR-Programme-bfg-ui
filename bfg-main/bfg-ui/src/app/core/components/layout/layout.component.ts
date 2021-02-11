@@ -37,4 +37,8 @@ export class LayoutComponent implements OnInit {
   getUserName() {
     return this.authService.getUserName() || '';
   }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
+  }
 }

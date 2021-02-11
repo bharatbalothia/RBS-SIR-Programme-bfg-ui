@@ -2,17 +2,17 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './core/components/page-not-found/page-not-found.component';
 import { ROUTING_PATHS } from './core/constants/routing-paths';
-import { LayoutComponent } from './core/components/layout/layout.component';
 import { LoginComponent } from './core/components/login/login.component';
 import { AuthGuardService } from './core/auth/auth-guard.service';
 import { PermissionsGuardService } from './core/guards/permissions-guard.service';
+import { ChildLayoutComponent } from './core/components/child-layout/child-layout.component';
 
 
 const routes: Routes = [
   { path: ROUTING_PATHS.LOGIN, component: LoginComponent },
   {
     path: ROUTING_PATHS.EMPTY,
-    component: LayoutComponent,
+    component: ChildLayoutComponent,
     canActivate: [AuthGuardService],
     children: [
       {

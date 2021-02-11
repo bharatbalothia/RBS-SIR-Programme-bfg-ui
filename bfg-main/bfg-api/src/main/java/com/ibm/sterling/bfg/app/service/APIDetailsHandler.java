@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForUpdateChangeControlException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +18,8 @@ import java.util.regex.Pattern;
 
 @Component
 public class APIDetailsHandler {
+
+    private static final Logger LOGGER = LogManager.getLogger(APIDetailsHandler.class);
 
     public String extractErrorMessage(String message, String messageKey) {
         return Optional.ofNullable(message)
@@ -50,8 +54,8 @@ public class APIDetailsHandler {
             try {
                 errorList = new ObjectMapper().readValue(errorMessageList, new TypeReference<List<Map<String, Object>>>() {
                 });
-            } catch (JsonProcessingException ex) {
-                ex.printStackTrace();
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Cannot convert error message to list of Map<String, Object> : {}", e.getOriginalMessage());
             }
         }
         return errorList;

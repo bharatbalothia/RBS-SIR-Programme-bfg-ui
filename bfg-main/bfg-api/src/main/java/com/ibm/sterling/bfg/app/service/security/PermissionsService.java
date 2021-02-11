@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.security.Login;
 import com.ibm.sterling.bfg.app.service.PropertyService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +25,8 @@ import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.HEADER_PREFI
 
 @Service
 public class PermissionsService {
+
+    private static final Logger LOGGER = LogManager.getLogger(PermissionsService.class);
 
     @Value("${permissions.url}")
     private String permissionsUrl;
@@ -89,7 +93,7 @@ public class PermissionsService {
             try {
                 permissions.put(group, getPermissionsOfGroup(group, false, listOfBFGUIPermissions));
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                LOGGER.error("Error reading JSON: {}", e.getOriginalMessage());
             }
         });
         return permissions;
@@ -114,9 +118,8 @@ public class PermissionsService {
                                         permissionSet.addAll(
                                                 getPermissionsOfGroup(subgroup, true, listBFGUIPermissions));
                                     } catch (JsonProcessingException e) {
-                                        e.printStackTrace();
+                                        LOGGER.error("Error reading JSON: {}", e.getOriginalMessage());
                                     }
-
                                 });
                             }
                             permissionSet.removeIf(isNotNeededAuthorityPredicate(listBFGUIPermissions));

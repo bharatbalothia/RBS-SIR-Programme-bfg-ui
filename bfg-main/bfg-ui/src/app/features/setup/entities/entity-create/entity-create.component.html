@@ -346,10 +346,13 @@
                     <section class="form-field-section" *ngIf="entityPageFormGroup.get('entityParticipantType')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
-                            <mat-select formControlName="directParticipant" required>
-                                <mat-option *ngFor="let entity of directParticipantList" [value]="entity">
-                                    {{entity}}</mat-option>
-                            </mat-select>
+                            <input type="text" matInput formControlName="directParticipant" required
+                                [matAutocomplete]="directParticipantAutocomplete" appAutocompleteEnforceSelection>
+                            <mat-autocomplete #directParticipantAutocomplete="matAutocomplete" autoActiveFirstOption>
+                                <mat-option *ngFor="let option of filteredParticipantList | async" [value]="option">
+                                    {{option}}
+                                </mat-option>
+                            </mat-autocomplete>
                             <mat-error *ngFor="let validation of entityValidationMessages.directParticipant">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('directParticipant').hasError(validation.type)">

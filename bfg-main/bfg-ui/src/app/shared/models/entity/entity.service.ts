@@ -119,6 +119,6 @@ export class EntityService {
   }
 
   getDirectParticipantList(id?) {
-    return this.http.get<Entity[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });
+    return this.http.get<string[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });
   }
 }

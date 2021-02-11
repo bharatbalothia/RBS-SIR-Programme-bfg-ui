@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ScheduleService {
     private static final Logger LOG = LogManager.getLogger(ScheduleService.class);
     @Autowired
@@ -26,6 +26,7 @@ public class ScheduleService {
         return Optional.ofNullable(entity).map(entity1 -> entity.getSchedules()).orElse(null);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         LOG.info("Try to delete schedule with id {}", id);
         scheduleRepository.deleteScheduleById(id);

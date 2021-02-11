@@ -24,7 +24,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-trusted-certificate-create',

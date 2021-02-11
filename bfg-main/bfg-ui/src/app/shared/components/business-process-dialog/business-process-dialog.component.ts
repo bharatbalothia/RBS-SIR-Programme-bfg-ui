@@ -11,7 +11,7 @@ import { BusinessProcess } from '../../models/business-process/business-process.
 import { BusinessProcessService } from '../../models/business-process/business-process.service';
 import { WorkflowStepWithPagination } from '../../models/business-process/workflow-step-with-pagination.model';
 import { WorkflowStep } from '../../models/business-process/workflow-step.model';
-import { NotificationService } from '../../services/NotificationService';
+import { NotificationService } from '../../services/notification.service';
 import { DetailsDialogConfig } from '../details-dialog/details-dialog-config.model';
 import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';

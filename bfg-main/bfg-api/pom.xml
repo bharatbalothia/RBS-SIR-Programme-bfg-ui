@@ -3,10 +3,11 @@
     <parent>
         <groupId>com.ibm.sterling</groupId>
         <artifactId>bfg</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>bfg-api</artifactId>
     <packaging>war</packaging>
+    <version>${revision}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -121,6 +122,15 @@
             </properties>
         </profile>
         <profile>
+            <id>fte</id>
+            <properties>
+                <active.profile>fte</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
             <id>poc</id>
             <properties>
                 <active.profile>poc</active.profile>
@@ -144,6 +154,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

@@ -31,7 +31,7 @@ public class DynamicPropertiesListener implements ApplicationListener<Applicatio
             props.put("security.jwt.tokenSigningKey", passwordDecode(new String(tokenSecretAuthData.getPassword())));
             environment.getPropertySources().addLast(new PropertiesPropertySource("dynamicProperties", props));
         } catch (LoginException e) {
-            LOG.error("LoginException in onApplicationEvent of DynamicPropertiesListener: " + e.getMessage());
+            LOG.error("LoginException in onApplicationEvent of DynamicPropertiesListener: {}", e.getMessage());
         }
     }
 

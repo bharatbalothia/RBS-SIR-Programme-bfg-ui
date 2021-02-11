@@ -164,7 +164,6 @@ export const getEntityDetailsTabs = (entity: Entity, service: string = null): Ta
       tabTitle: 'Schedules',
       tabSections: [],
       tableObject: {
-        tableTitle: 'Schedules',
         tableColumns: ['isWindow', 'timeStart', 'windowEnd', 'windowInterval', 'fileType', 'lastRun', 'nextRun'],
         tableDataSource: entity.schedules.map((schedule: Schedule) =>
         ({

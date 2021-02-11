@@ -30,7 +30,7 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
                     }
                 },
                 constraintValidatorContext,
-                fieldValue -> Optional.ofNullable(fieldValue).map(value -> value < 0).orElse(true),
+                fieldValue -> Optional.ofNullable(fieldValue).map(value -> value < 0).orElse(false),
                 fieldName -> fieldName + " should be a positive number or 0"
         );
         String entityParticipantType = entity.getEntityParticipantType();

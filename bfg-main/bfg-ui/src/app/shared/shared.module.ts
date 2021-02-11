@@ -54,6 +54,7 @@ import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } f
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { InputUppercaseDirective } from './directives/input-uppercase/input-uppercase.directive';
 import { PasswordConfirmationDialogComponent } from './components/password-confirmation-dialog/password-confirmation-dialog.component';
+import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete-enforce-selection/autocomplete-enforce-selection.directive';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -92,6 +93,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
+    AutocompleteEnforceSelectionDirective,
   ],
   imports: [
     CommonModule,
@@ -185,7 +187,8 @@ const DATE_FORMAT: NgxMatDateFormats = {
     InputUppercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
-    DisableControlDirective
+    DisableControlDirective,
+    AutocompleteEnforceSelectionDirective
   ],
   providers: [
     {

@@ -55,8 +55,8 @@ mat-form-field {
 }
 
 .main {
-    .mat-card {
-        margin: 15px 15px 15px 15px;
+    .mat-card:not(.login-card) {
+        margin: 15px;
         position: absolute;
         bottom: 0;
         top: 64px;
@@ -96,7 +96,6 @@ mat-form-field {
 }
 
 .mat-table {
-
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {

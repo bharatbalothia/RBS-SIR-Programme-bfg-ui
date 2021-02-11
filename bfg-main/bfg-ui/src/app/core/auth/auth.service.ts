@@ -52,6 +52,16 @@ export class AuthService {
       );
   }
 
+  reLogIn(credentials: Credentials): Observable<User> {
+    return this.http.post<User>(this.apiUrl + 'reauth', credentials)
+      .pipe(
+        tap(user => {
+          this.user.next(user);
+          sessionStorage.setItem(this.USER_STORAGE_NAME, JSON.stringify(user));
+        })
+      );
+  }
+
   ssoLogIn(credentials: SSOCredentials): Observable<User> {
     return this.http.post<User>(this.apiUrl + 'sso', credentials)
       .pipe(

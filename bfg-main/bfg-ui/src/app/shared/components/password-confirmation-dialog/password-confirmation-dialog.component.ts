@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { PasswordConfirmationDialogData } from './password-confirmation-dialog-data.model';
 
 @Component({
   selector: 'app-password-confirmation-dialog',
@@ -11,6 +12,7 @@ export class PasswordConfirmationDialogComponent {
   password = '';
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: PasswordConfirmationDialogData,
     private authService: AuthService,
     private dialog: MatDialogRef<PasswordConfirmationDialogComponent>
   ) {}

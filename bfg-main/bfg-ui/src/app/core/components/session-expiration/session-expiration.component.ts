@@ -41,6 +41,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
 
       if (t === 0) {
         this.stopSessionTime();
+        this.passwordConfirmationDialog.closeAll();
         this.authService.logOut();
         this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
       }
@@ -67,6 +68,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
   openPasswordConfirmationDialog() {
     this.passwordConfirmationDialog.open(PasswordConfirmationDialogComponent, {
       width: '400px',
+      disableClose: true,
       data: {
         title: 'Your session will expire in 10 minutes',
         subTitle: 'Please enter your password to extend it'

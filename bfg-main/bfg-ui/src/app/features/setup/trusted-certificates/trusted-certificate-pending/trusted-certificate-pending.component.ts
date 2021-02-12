@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayHeader, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
+import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayHeader, getTrustedCertificateDisplayName, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
@@ -17,7 +17,9 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { Router } from '@angular/router';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-trusted-certificate-pending',
@@ -28,6 +30,10 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   ROUTING_PATHS = ROUTING_PATHS;
   CHANGE_OPERATION = CHANGE_OPERATION;
+
+  certificateNameSearchingValue = '';
+  thumbprintSearchingValue = '';
+  thumbprint256SearchingValue = '';
 
   isLoading = true;
   isLoadingDetails = false;
@@ -46,15 +52,26 @@ export class TrustedCertificatePendingComponent implements OnInit {
     private dialog: MatDialog,
     private router: Router,
     private notificationService: NotificationService,
+    private toolTip: TooltipService
   ) { }
 
   ngOnInit() {
     this.getPendingChanges(this.pageIndex, this.pageSize);
+
+    this.certificateNameSearchingValue = window.history.state.certificateNameSearchingValue || '';
+    this.thumbprintSearchingValue = window.history.state.thumbprintSearchingValue || '';
+    this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
   }
 
   getPendingChanges(pageIndex: number, pageSize: number) {
     this.isLoading = true;
-    this.trustedCertificateService.getPendingChanges({ page: pageIndex.toString(), size: pageSize.toString() })
+    this.trustedCertificateService.getPendingChanges(removeEmpties({
+      certName: this.certificateNameSearchingValue || null,
+      thumbprint: this.thumbprintSearchingValue || null,
+      thumbprint256: this.thumbprint256SearchingValue || null,
+      page: pageIndex.toString(),
+      size: pageSize.toString()
+    }))
       .pipe(take(1)).subscribe((data: ChangeControlsWithPagination) => {
         this.isLoading = false;
         this.pageIndex = pageIndex;
@@ -264,4 +281,22 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   getCurrentRoute = () => this.router.url;
 
+  getTooltip(step: string, field: string, mode?: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'trusted-cert',
+      qualifier: step,
+      mode: mode ? mode : 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : getTrustedCertificateDisplayName(field);
+  }
+
+  clearParams = () => {
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+      this.certificateNameSearchingValue = '';
+      this.thumbprintSearchingValue = '';
+      this.thumbprint256SearchingValue = '';
+      this.getPendingChanges(this.pageIndex, this.pageSize);
+    }
+  }
 }

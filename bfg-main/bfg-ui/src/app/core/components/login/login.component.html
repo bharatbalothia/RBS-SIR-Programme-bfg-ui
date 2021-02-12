@@ -1,51 +1,42 @@
-<mat-sidenav-container class="sidenav-container">
-<mat-sidenav-content>
-<mat-toolbar color="primary">
-    <span>BFG UI</span>
-    <span class="user-name">{{getUserName()}}</span>
-    <button *ngIf="isAuthenticated()" mat-raised-button class="logout-button" (click)="logout()">logout</button>
-</mat-toolbar>
 <div class="login-layout">
-    <mat-card class="login-card">
-        <mat-card-header>
-            <mat-card-title>
-                <h1>{{isAuthenticated() ? 'Switch Account' : 'Log in'}}</h1>
-            </mat-card-title>
-            <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
-                <section>
-                    <mat-form-field>
-                        <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.login" name="login"
-                            #username="ngModel" required>
-                        <mat-error *ngFor="let validation of validationMessages.login">
-                            <mat-error class="error-message" *ngIf="isFormFieldHasError('login', validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                    </mat-form-field>
-                </section>
-                <section>
-                    <mat-form-field>
-                        <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password"
-                            name="password" #password="ngModel" required>
-                        <mat-error *ngFor="let validation of validationMessages.password">
-                            <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                    </mat-form-field>
-                </section>
-                <section>
-                    <button type="submit" class="login-button" mat-raised-button color="primary" [disabled]="isLoading">
-                        Log in
-                    </button>
-                </section>
-            </form>
-        </mat-card-content>
-        <mat-card-footer>
-            <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-        </mat-card-footer>
-    </mat-card>
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{isAuthenticated() ? 'Switch Account' : 'Log in'}}</h1>
+      </mat-card-title>
+      <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
+        <section>
+          <mat-form-field>
+            <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.login" name="login"
+              #username="ngModel" required>
+            <mat-error *ngFor="let validation of validationMessages.login">
+              <mat-error class="error-message" *ngIf="isFormFieldHasError('login', validation.type)">
+                {{validation.message}}</mat-error>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field>
+            <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password" name="password"
+              #password="ngModel" required>
+            <mat-error *ngFor="let validation of validationMessages.password">
+              <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
+                {{validation.message}}</mat-error>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <button type="submit" class="login-button" mat-raised-button color="primary" [disabled]="isLoading">
+            Log in
+          </button>
+        </section>
+      </form>
+    </mat-card-content>
+    <mat-card-footer>
+      <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>
 </div>
-</mat-sidenav-content>
-</mat-sidenav-container>

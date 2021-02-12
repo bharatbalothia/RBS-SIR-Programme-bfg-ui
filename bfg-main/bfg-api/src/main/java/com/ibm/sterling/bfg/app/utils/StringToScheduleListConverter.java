@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.entity.Schedule;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +18,8 @@ import java.util.Optional;
 @Converter
 public class StringToScheduleListConverter implements AttributeConverter<List<Schedule>, String> {
 
+    private static final Logger LOGGER = LogManager.getLogger(StringToScheduleListConverter.class);
+
     @Override
     public String convertToDatabaseColumn(List<Schedule> list) {
         return Optional.ofNullable(list).map(schedules -> {
@@ -22,7 +27,7 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
             try {
                 new ObjectMapper().writeValue(out, schedules);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Cannot convert schedule list to string: {}", e.getMessage());
             }
             return new String(out.toByteArray());
         }).orElse("");
@@ -31,14 +36,14 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
     @Override
     public List<Schedule> convertToEntityAttribute(String schedules) {
         return Optional.ofNullable(schedules).map(schedulesStr -> {
-                     List<Schedule> schedulesList = new ArrayList<>();
+                    List<Schedule> schedulesList = new ArrayList<>();
                     try {
                         schedulesList = new ObjectMapper().readValue(
                                 schedulesStr, new TypeReference<List<Schedule>>() {
                                 }
                         );
                     } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                        LOGGER.error("Cannot convert string to schedule list: {}", e.getOriginalMessage());
                     }
                     return schedulesList;
                 }

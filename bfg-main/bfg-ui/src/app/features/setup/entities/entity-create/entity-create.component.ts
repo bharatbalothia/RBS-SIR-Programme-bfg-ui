@@ -13,7 +13,7 @@ import { EntityValidators } from '../../../../shared/models/entity/entity-valida
 import { SWIFT_DN, TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ENTITY_SERVICE_TYPE, ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
@@ -27,7 +27,8 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { NotificationService } from 'src/app/shared/services/NotificationService';
+import { map, startWith } from 'rxjs/operators';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-entity-create',
@@ -85,7 +86,8 @@ export class EntityCreateComponent implements OnInit {
 
   isCloneAction = false;
 
-  directParticipantList: Entity[] = [];
+  directParticipantList: string[] = [];
+  filteredParticipantList: Observable<string[]>;
 
   entityActionsCache: any = {};
 
@@ -194,6 +196,15 @@ export class EntityCreateComponent implements OnInit {
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
+    if (!this.editableEntity) {
+      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
   }
 
   getEntityDefaultValue = (): Entity => ({
@@ -831,21 +842,34 @@ export class EntityCreateComponent implements OnInit {
   getDirectParticipantList = (id) => {
     this.entityService.getDirectParticipantList(id)
       .pipe(data => this.setLoading(data))
-      .subscribe((data: Entity[]) => {
+      .subscribe((data: string[]) => {
         this.isLoading = false;
         this.directParticipantList = data;
+        this.filteredParticipantList = this.entityPageFormGroup.controls.directParticipant.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterDirectParticipantList(value))
+          );
       },
         error => this.isLoading = false
       );
+  }
+
+  private _filterDirectParticipantList(value: string): string[] {
+    return value ? this.directParticipantList.filter(option =>
+      option.toLowerCase().indexOf(value.toLowerCase()) === 0) : this.directParticipantList;
   }
 
   onParticipantTypeSelect = (value) => {
     if (value === 'DIRECT') {
       this.entityActionsCache['directParticipant'] = this.entityPageFormGroup.controls.directParticipant.value;
       this.entityPageFormGroup.controls.directParticipant.setValue('');
+      this.entityPageFormGroup.controls.directParticipant.disable();
     }
     else {
+      this.entityPageFormGroup.controls.directParticipant.enable();
       this.entityPageFormGroup.controls.directParticipant.setValue(this.entityActionsCache['directParticipant']);
     }
   }
+
 }

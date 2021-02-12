@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -23,6 +25,8 @@ import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 
 @Service
 public class PropertyService {
+
+    private static final Logger LOGGER = LogManager.getLogger(PropertyService.class);
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -71,13 +75,21 @@ public class PropertyService {
                             }
                     ).collect(Collectors.toList());
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOGGER.error("Error reading JSON: {}", e.getOriginalMessage());
         }
         return null;
     }
 
     public String getInboundService() throws JsonProcessingException {
-        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), settings.getInboundServiceKey())).stream()
+        return getDefaultService(settings.getInboundServiceKey());
+    }
+
+    public String getSwiftService() throws JsonProcessingException {
+        return getDefaultService(settings.getSwiftServiceKey());
+    }
+
+    private String getDefaultService(String serviceKey) throws JsonProcessingException {
+        return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), serviceKey)).stream()
                 .map(property -> property.get(PROPERTY_VALUE))
                 .findFirst()
                 .orElse("");
@@ -258,7 +270,7 @@ public class PropertyService {
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
                     .collect(Collectors.joining(", "));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOGGER.error("Error reading JSON: {}", e.getOriginalMessage());
         }
         return null;
     }

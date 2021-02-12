@@ -28,6 +28,7 @@
     "classlist.js": "^1.1.20150312",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
+    "ngx-take-until-destroy": "^5.4.0",
     "ngx-toastr": "^12.1.0",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",

@@ -46,14 +46,15 @@ import { FileTableComponent } from './components/file-table/file-table.component
 import { TransactionTableComponent } from './components/transaction-table/transaction-table.component';
 import { OverlayInfoComponent } from './components/overlay-info/overlay-info.component';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { NotificationHttpInterceptor } from './services/NotificationHttpInterceptor';
-import { NotificationService } from './services/NotificationService';
+import { NotificationHttpInterceptor } from './services/notification-http.interceptor';
+import { NotificationService } from './services/notification.service';
 import { ToastrModule } from 'ngx-toastr';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { InputUppercaseDirective } from './directives/input-uppercase/input-uppercase.directive';
 import { PasswordConfirmationDialogComponent } from './components/password-confirmation-dialog/password-confirmation-dialog.component';
+import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete-enforce-selection/autocomplete-enforce-selection.directive';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -92,6 +93,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NumberOnlyDirective,
     XmlPipe,
     DisableControlDirective,
+    AutocompleteEnforceSelectionDirective,
   ],
   imports: [
     CommonModule,
@@ -185,7 +187,8 @@ const DATE_FORMAT: NgxMatDateFormats = {
     InputUppercaseDirective,
     NumberOnlyDirective,
     TooltipComponent,
-    DisableControlDirective
+    DisableControlDirective,
+    AutocompleteEnforceSelectionDirective
   ],
   providers: [
     {

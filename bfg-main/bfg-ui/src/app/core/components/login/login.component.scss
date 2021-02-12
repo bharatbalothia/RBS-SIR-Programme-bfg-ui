@@ -1,22 +1,8 @@
-.sidenav-container {
-    height: 100%;
-}
-.mat-toolbar.mat-primary {
-    position: absolute;
-    top: 0;
-    z-index: 1;
-
-    .user-name {
-        margin-left: auto;
-        padding-right: 16px;
-    }
-}
-
 .login-layout {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: calc(100vh - 64px);
     background-color: #e0e0e0;
 
     .login-card {

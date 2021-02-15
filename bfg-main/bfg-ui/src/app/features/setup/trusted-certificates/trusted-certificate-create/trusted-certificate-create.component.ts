@@ -99,8 +99,15 @@ export class TrustedCertificateCreateComponent implements OnInit {
     });
   }
 
-  validateTrustedCertificateById = (certificate: TrustedCertificate) =>
-    this.trustedCertificateService.validateCertificateById(certificate.certificateId || certificate.certificateLogId)
+  validateTrustedCertificateById = (certificate: TrustedCertificate) => {
+    let validateCertificate;
+    if (certificate.certificateId) {
+      validateCertificate = this.trustedCertificateService.validateCertificateById(certificate.certificateId);
+    }
+    else {
+      validateCertificate = this.trustedCertificateService.validateCertificateLogById(certificate.certificateLogId);
+    }
+    validateCertificate
       .pipe(data => this.setLoading(data))
       .subscribe((data: TrustedCertificate) => {
         this.isLoading = false;
@@ -121,7 +128,8 @@ export class TrustedCertificateCreateComponent implements OnInit {
           this.isLoading = false;
           this.errorMessage = getApiErrorMessage(error);
           this.uploadTrustedCertificateFormGroup.get('trustedCertificateFile').setErrors({ invalid: true });
-        })
+        });
+  }
 
   initializeDetailsFormGroups(trustedCertificate: TrustedCertificate) {
     this.detailsTrustedCertificateFormGroup = this.formBuilder.group({

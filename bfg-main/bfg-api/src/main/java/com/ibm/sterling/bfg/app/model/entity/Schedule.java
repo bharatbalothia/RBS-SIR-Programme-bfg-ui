@@ -84,6 +84,7 @@ public class Schedule implements Serializable {
     private LocalDateTime lastRun;
 
     @Column(name = "FILETYPE")
+    @NotNull
     private String fileType;
 
     @PrePersist

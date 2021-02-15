@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class RouteValidator extends GenericValidator {
 
-    private static final Logger LOG = LogManager.getLogger(RouteCreationValidator.class);
+    private static final Logger LOG = LogManager.getLogger(RouteValidator.class);
     private static final String EMPTY_STRING_FIELD_FORMAT = "%s cannot be blank because the Route Inbound has the value %s";
     private static final String EMPTY_LIST_FIELD_FORMAT = "%s cannot be empty because the Route Inbound has the value %s";
     private static final String DN_REGEXP = "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$";

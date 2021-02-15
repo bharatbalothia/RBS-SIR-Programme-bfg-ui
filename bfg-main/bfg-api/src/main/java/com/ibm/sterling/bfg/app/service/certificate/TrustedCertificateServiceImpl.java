@@ -132,7 +132,6 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         changeControlCertService.deleteChangeControl(changeControl);
         adminAuditService.fireAdminAuditEvent(
                 new AdminAuditEventRequest(changeControl, EventType.REQUEST_CANCELLED, changeControl.getResultMeta1()));
-
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,

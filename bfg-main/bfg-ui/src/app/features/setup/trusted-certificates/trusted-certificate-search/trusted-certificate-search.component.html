@@ -38,7 +38,7 @@
       <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
         [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
         [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
-        [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
+        [(pageIndex)]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
@@ -133,7 +133,7 @@
       <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
         [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
         [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
-        [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
+        [(pageIndex)]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
     </div>

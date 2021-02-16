@@ -8,7 +8,7 @@
 <div class="table-container">
     <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
       [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
-      [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+      [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
       [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
     </app-table-paginator>
     <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -94,7 +94,7 @@
     </mat-table>
     <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
       [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
-      [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+      [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
       [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
     </app-table-paginator>
 </div>

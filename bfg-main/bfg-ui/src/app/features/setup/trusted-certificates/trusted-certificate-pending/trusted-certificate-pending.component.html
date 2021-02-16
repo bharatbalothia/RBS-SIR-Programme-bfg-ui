@@ -38,7 +38,7 @@
     <div class="table-container">
       <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
         [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
-        [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
+        [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"
         [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
@@ -119,7 +119,7 @@
       </mat-table>
       <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
         [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
-        [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
+        [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"
         [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
     </div>

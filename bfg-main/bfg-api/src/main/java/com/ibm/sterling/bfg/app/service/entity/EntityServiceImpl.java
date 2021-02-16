@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
 
 @Service
 @Transactional(readOnly = true)
@@ -168,7 +169,7 @@ public class EntityServiceImpl implements EntityService {
         }
 
         SWIFTNetRoutingRuleServiceResponse routingRules = new SWIFTNetRoutingRuleServiceResponse();
-        if ("GPL".equals(changeControl.getEntityLog().getService())) {
+        if (GPL.name().equals(changeControl.getEntityLog().getService()) && entity.getRouteInbound()) {
             routingRules = swiftNetRoutingRuleService.executeRoutingRuleOperation(operation, entity, changeControl.getChanger());
         }
 
@@ -274,7 +275,8 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
                 inboundRequestorDN, inboundResponderDN, inboundService);
         return entities.stream()
-                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
+                        Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))
                 .findFirst()
                 .orElse(null);
     }
@@ -288,7 +290,8 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCaseAndEntityIdNot(
                 inboundRequestorDN, inboundResponderDN, inboundService, entityId);
         return entities.stream()
-                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
+                        Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))
                 .findFirst()
                 .orElse(null);
     }

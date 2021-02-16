@@ -26,8 +26,12 @@
 
     </div>
     <div class="table-container">
+      <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
+        [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
+        [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
+        [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="changeControls">
-
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -88,26 +92,17 @@
             </div>
           </mat-footer-cell>
         </ng-container>
-
-        <ng-container matColumnDef="paginator">
-          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-            <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
-              [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
-              [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
-              [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
-            </app-table-paginator>
-          </mat-footer-cell>
-        </ng-container>
-
         <mat-footer-row *matFooterRowDef="['noData']"
           [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
         </mat-footer-row>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        <mat-footer-row *matFooterRowDef="['paginator']" [hidden]="dataSource && dataSource.data.length === 0">
-        </mat-footer-row>
       </mat-table>
-
+      <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
+        [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
+        [length]="changeControls.totalElements" [pageIndex]="changeControls.pageable.pageNumber"
+        [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
     </div>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
   </mat-card-content>

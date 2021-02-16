@@ -6,8 +6,12 @@
 </h3>
 <ng-template matStepLabel>Search results</ng-template>
 <div class="table-container">
+    <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
+      [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+      [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+      [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+    </app-table-paginator>
     <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
         <ng-container matColumnDef="id">
             <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -78,12 +82,7 @@
 
         <ng-container matColumnDef="paginator">
             <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-                <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
-                    [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
-                    [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
-                    [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-                    showFirstLastButtons>
-                </app-table-paginator>
+                
             </mat-footer-cell>
         </ng-container>
 
@@ -92,8 +91,10 @@
         </mat-footer-row>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        <mat-footer-row *matFooterRowDef="['paginator']" [hidden]="dataSource && dataSource.data.length === 0">
-        </mat-footer-row>
     </mat-table>
-
+    <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
+      [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+      [length]="transactions.totalElements" [pageIndex]="transactions.pageable.pageNumber"
+      [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+    </app-table-paginator>
 </div>

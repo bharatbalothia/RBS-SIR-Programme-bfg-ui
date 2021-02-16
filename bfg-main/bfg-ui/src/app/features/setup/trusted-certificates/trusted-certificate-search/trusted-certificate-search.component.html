@@ -35,8 +35,13 @@
       <button color="warn" mat-raised-button (click)="clearParams()">Clear</button>
     </div>
     <div class="table-container">
+      <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
+        [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
+        [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
+        [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
+        [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
-
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -119,26 +124,18 @@
             </div>
           </mat-footer-cell>
         </ng-container>
-
-        <ng-container matColumnDef="paginator">
-          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-            <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
-              [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
-              [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
-              [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
-              [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></app-table-paginator>
-          </mat-footer-cell>
-        </ng-container>
-
         <mat-footer-row *matFooterRowDef="['noData']"
           [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
         </mat-footer-row>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        <mat-footer-row *matFooterRowDef="['paginator']" [hidden]="dataSource && dataSource.data.length === 0">
-        </mat-footer-row>
       </mat-table>
-
+      <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
+        [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
+        [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
+        [pageIndex]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
+        [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
     </div>
     <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
   </mat-card-content>

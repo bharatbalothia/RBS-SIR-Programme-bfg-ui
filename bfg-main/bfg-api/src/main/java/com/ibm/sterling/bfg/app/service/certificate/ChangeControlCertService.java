@@ -77,13 +77,13 @@ public class ChangeControlCertService {
     public List<ChangeControlCert> findPendingChangeControls(String certName, String thumbprint, String thumbprint256) {
         Specification<ChangeControlCert> specification = Specification
                 .where(
-                        GenericSpecification.<ChangeControlCert>filter(certName, "resultMeta1"))
+                        GenericSpecification.<ChangeControlCert>filter("resultMeta1", certName))
                 .and(
-                        GenericSpecification.filter(thumbprint, "resultMeta2"))
+                        GenericSpecification.filter("resultMeta2", thumbprint))
                 .and(
-                        GenericSpecification.filter(thumbprint256, "resultMeta3"))
+                        GenericSpecification.filter("resultMeta3", thumbprint256))
                 .and(
-                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
+                        GenericSpecification.filter("status", ChangeControlStatus.PENDING.getStatusText())
                 );
         return changeControlCertRepository.findAll(specification);
     }

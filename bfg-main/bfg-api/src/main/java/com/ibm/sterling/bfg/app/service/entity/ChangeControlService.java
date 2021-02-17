@@ -76,13 +76,13 @@ public class ChangeControlService {
     public List<ChangeControl> findPendingChangeControls(String entity, String service, String swiftDN) {
         Specification<ChangeControl> specification = Specification
                 .where(
-                        GenericSpecification.<ChangeControl>filter(entity, "resultMeta1"))
+                        GenericSpecification.<ChangeControl>filter("resultMeta1", entity))
                 .and(
-                        GenericSpecification.filter(service, "resultMeta2"))
+                        GenericSpecification.filter("resultMeta2", service))
                 .and(
-                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status"))
+                        GenericSpecification.filter("status", ChangeControlStatus.PENDING.getStatusText()))
                 .and(
-                        GenericSpecification.filter(swiftDN, "swiftDN")
+                        GenericSpecification.filter("swiftDN", swiftDN)
                 );
         return changeControlRepository.findAll(specification);
     }

@@ -1,6 +1,6 @@
 package com.ibm.sterling.bfg.app.model.entity;
 
-public enum Service {
+public enum EntityService {
     GPL,
     SCT
 }

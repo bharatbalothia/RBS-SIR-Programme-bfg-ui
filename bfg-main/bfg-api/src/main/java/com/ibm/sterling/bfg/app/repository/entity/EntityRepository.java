@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.repository.entity;
 
 import com.ibm.sterling.bfg.app.model.entity.Entity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,9 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
 
     @EntityGraph(attributePaths = "schedules")
     List<Entity> findAll(Specification<Entity> specification);
+
+    @EntityGraph(attributePaths = "schedules")
+    List<Entity> findAll(Specification<Entity> specification, Sort sort);
 
     @EntityGraph(attributePaths = "schedules")
     Optional<Entity> findById(Integer entityId);

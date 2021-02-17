@@ -22,6 +22,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,8 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
-import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
+import static com.ibm.sterling.bfg.app.model.entity.EntityService.GPL;
+import static com.ibm.sterling.bfg.app.model.entity.EntityService.SCT;
 
 @Service
 @Transactional(readOnly = true)
@@ -202,15 +205,11 @@ public class EntityServiceImpl implements EntityService {
     public Page<EntityType> findEntities(Pageable pageable, String entity, String service, String swiftDN) {
         LOG.info("Search entities by entity name {} and service {}", entity, service);
         List<EntityType> entityResults = new ArrayList<>();
-        Specification<Entity> specification = Specification
-                .where(
-                        GenericSpecification.<Entity>filter(entity, "entity"))
+        Specification<Entity> specification = getExistingEntitySpecificationByService(service)
                 .and(
-                        GenericSpecification.filter(service, "service"))
+                        GenericSpecification.filter("entity", entity))
                 .and(
-                        GenericSpecification.filter("false", "deleted"))
-                .and(
-                        GenericSpecification.filter(swiftDN, "swiftDN")
+                        GenericSpecification.filter("swiftDN", swiftDN)
                 );
         List<Entity> entities = entityRepository.findAll(specification);
         List<ChangeControl> controls = changeControlService.findPendingChangeControls(entity, service, swiftDN);
@@ -250,21 +249,30 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public List<Entity> findEntitiesByService(String service) {
-        Specification<Entity> specification = Specification
+        return getEntitiesAsc(getExistingEntitySpecificationByService(service));
+    }
+
+    private Specification<Entity> getExistingEntitySpecificationByService(String service) {
+        return Specification
                 .where(
-                        GenericSpecification.<Entity>filter(Optional.ofNullable(service).orElse(""), "service"))
+                        GenericSpecification.<Entity>filter("service", Optional.ofNullable(service).orElse("")))
                 .and(
-                        GenericSpecification.filter("false", "deleted"));
-        List<Entity> entities = new ArrayList<>(entityRepository.findAll(specification));
-        entities.sort(Comparator.comparing(Entity::getEntity, String.CASE_INSENSITIVE_ORDER));
-        return entities;
+                        GenericSpecification.filter("deleted", "false"));
+    }
+
+    private List<Entity> getEntitiesAsc(Specification<Entity> specification) {
+        return entityRepository.findAll(specification, Sort.by(Sort.Order.asc("entity").ignoreCase()));
     }
 
     @Override
     public List<String> findEntityNameForParticipants(Integer entityId) {
-        List<Entity> entities = findEntitiesByService("SCT");
-        entities.removeIf(entity -> entity.getEntityId().equals(entityId));
-        return entities.stream().map(Entity::getEntity).collect(Collectors.toList());
+        return getEntitiesAsc(
+                getExistingEntitySpecificationByService(SCT.name())
+                        .and(GenericSpecification.equals("entityParticipantType", "DIRECT"))
+        ).stream()
+                .filter(entity -> !entity.getEntityId().equals(entityId))
+                .map(Entity::getEntity)
+                .collect(Collectors.toList());
     }
 
     @Override

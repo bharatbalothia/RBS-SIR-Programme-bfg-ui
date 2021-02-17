@@ -15,8 +15,8 @@ import java.util.*;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.CREATE;
 import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.UPDATE;
-import static com.ibm.sterling.bfg.app.model.entity.Service.GPL;
-import static com.ibm.sterling.bfg.app.model.entity.Service.SCT;
+import static com.ibm.sterling.bfg.app.model.entity.EntityService.GPL;
+import static com.ibm.sterling.bfg.app.model.entity.EntityService.SCT;
 
 @Component
 public class EntityValidationComponent {
@@ -31,7 +31,6 @@ public class EntityValidationComponent {
                             {
                                 put(CREATE, GplValidation.PostValidation.class);
                                 put(UPDATE, GplValidation.PutValidation.class);
-
                             }
                         }
                 );

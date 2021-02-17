@@ -220,11 +220,11 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         List<CertType> certificates = new ArrayList<>();
         Specification<TrustedCertificate> specification = Specification
                 .where(
-                        GenericSpecification.<TrustedCertificate>filter(certName, "certificateName"))
+                        GenericSpecification.<TrustedCertificate>filter("certificateName", certName))
                 .and(
-                        GenericSpecification.filter(thumbprint, "thumbprint"))
+                        GenericSpecification.filter("thumbprint", thumbprint))
                 .and(
-                        GenericSpecification.filter(thumbprint256, "thumbprint256")
+                        GenericSpecification.filter("thumbprint256", thumbprint256)
                 );
         List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
         List<ChangeControlCert> ccList = changeControlCertService.findPendingChangeControls(certName, thumbprint, thumbprint256);

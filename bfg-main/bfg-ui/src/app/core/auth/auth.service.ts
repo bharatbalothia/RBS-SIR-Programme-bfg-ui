@@ -109,10 +109,10 @@ export class AuthService {
     return enoughPermissions;
   }
 
-  showForbidden() {
+  showForbidden(message?: string) {
     this.notificationService.show(
       'Forbidden',
-      'You have logged in successfully, but don\'t have permission to access the application. Please contact application support for assistance.',
+      message ? message : 'You don\'t have enough permissions to proceed',
       'warning');
   }
 

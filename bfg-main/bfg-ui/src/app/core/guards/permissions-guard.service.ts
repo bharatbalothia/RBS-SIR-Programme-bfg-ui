@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { ERROR_MESSAGES } from '../constants/error-messages';
 import { GLOBAL_PERMISSIONS } from '../constants/global-permissions';
 import { ROUTING_PATHS } from '../constants/routing-paths';
 
@@ -20,7 +21,7 @@ export class PermissionsGuardService implements CanActivate {
             }
             return permit;
         } else {
-            this.auth.showForbidden();
+            this.auth.showForbidden(ERROR_MESSAGES['SFG_UI_HOME']);
         }
 
     }

@@ -21,7 +21,6 @@ export class PermissionsGuardService implements CanActivate {
             return permit;
         } else {
             this.auth.showForbidden();
-            return this.router.parseUrl('/' + ROUTING_PATHS.LOGIN);
         }
 
     }

@@ -7,7 +7,7 @@
 <div class="table-container">
   <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
     [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    [(pageIndex)]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
     showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
   </app-table-paginator>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -107,7 +107,7 @@
   </mat-table>
   <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && files" [value]="pageIndex + 1"
     [getRows]="getFileList.bind(this)" [min]="1" [max]="files && files.totalPages" [length]="files.totalElements"
-    [pageIndex]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
+    [(pageIndex)]="files.pageable.pageNumber" [pageSize]="files.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
     showFirstLastButtons [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
   </app-table-paginator>
 </div>

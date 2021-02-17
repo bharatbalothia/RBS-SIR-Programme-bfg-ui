@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, isFunction } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
@@ -93,9 +93,21 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.isURLParamsEmpty()) {
-      this.stepper.next();
+      this.onNext();
       this.cdr.detectChanges();
     }
+    setTimeout(() => {
+      this.stepper.steps.forEach((step, idx) => {
+        step.select = () => {
+          if (idx === 1 && this.searchingParametersFormGroup.valid) {
+            this.getTransactionList(0, this.pageSize, () => this.stepper.selectedIndex = idx);
+          }
+          else {
+            this.stepper.selectedIndex = idx;
+          }
+        };
+      });
+    });
   }
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
@@ -152,7 +164,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     return data;
   }
 
-  getTransactionList(pageIndex: number, pageSize: number) {
+  getTransactionList(pageIndex: number, pageSize: number, callback?) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
@@ -175,6 +187,9 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         this.pageSize = pageSize;
         this.transactions = data;
         this.updateTable();
+        if (isFunction(callback)) {
+          callback();
+        }
       },
         error => this.isLoading = false
       );
@@ -188,7 +203,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.getTransactionList(0, this.pageSize);
       this.transactionTableComponent.autoRefreshChange(true);
     }
     else {
@@ -249,5 +263,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       this[field] = date;
     }
   }
+
+  onNext = () => this.getTransactionList(0, this.pageSize, () => this.stepper.next());
 
 }

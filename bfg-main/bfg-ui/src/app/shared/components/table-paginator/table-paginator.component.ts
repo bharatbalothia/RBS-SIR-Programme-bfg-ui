@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-table-paginator',
   templateUrl: './table-paginator.component.html',
   styleUrls: ['./table-paginator.component.scss']
 })
-export class TablePaginatorComponent implements OnInit {
+export class TablePaginatorComponent {
 
   @Input() min: number;
   @Input() max: number;
@@ -14,16 +14,15 @@ export class TablePaginatorComponent implements OnInit {
   @Input() pageIndex: number;
   @Input() pageSize: number;
   @Input() pageSizeOptions: number;
-
   @Input() getRows: (pageIndex: number, pageSize: number) => any;
 
-  constructor() { }
+  @Output() pageIndexChange = new EventEmitter<number>();
 
-  ngOnInit(): void {
-  }
+  constructor() {}
 
   setPageIndex(index: number = 0){
     this.pageIndex = index;
+    this.pageIndexChange.emit(this.pageIndex);
   }
 
 }

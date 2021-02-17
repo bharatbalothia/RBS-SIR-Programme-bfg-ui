@@ -6,7 +6,7 @@
         <button mat-stroked-button class="go-to-button" (click)="getRows(pageIndex, pageSize)">Go to Page: </button>
         <mat-form-field class="page-select-field">
             <input matInput appNumberOnly [value]="pageIndex + 1"
-                (change)="setPageIndex($event.target.value > 0 ? $event.target.value -1 : 0)" [min]="min" [max]="max">
+                (input)="setPageIndex($event.target.value > 0 ? $event.target.value -1 : 0)" [min]="min" [max]="max">
         </mat-form-field>
         <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize"
             [pageSizeOptions]="pageSizeOptions" showFirstLastButtons

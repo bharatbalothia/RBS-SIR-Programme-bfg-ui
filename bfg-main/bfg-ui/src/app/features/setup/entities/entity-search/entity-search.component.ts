@@ -74,11 +74,11 @@ export class EntitySearchComponent implements OnInit {
     return data;
   }
 
-  getEntityList(pageIndex: number, pageSize: number) {
+  getEntityList(pageIndex: number, pageSize: number, shouldAddParams?: boolean) {
     this.entityService.getEntityList(removeEmpties({
-      entity: this.entityNameSearchingValue || null,
-      service: this.serviceSearchingValue || null,
-      swiftDN: this.DNSearchingValue || null,
+      entity: shouldAddParams && (this.entityNameSearchingValue || null),
+      service: shouldAddParams && (this.serviceSearchingValue || null),
+      swiftDN: shouldAddParams && (this.DNSearchingValue || null),
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).pipe(data => this.setLoading(data)).subscribe((data: EntitiesWithPagination) => {

@@ -67,12 +67,12 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.getTrustedCertificateList(this.pageIndex, this.pageSize);
   }
 
-  getTrustedCertificateList(pageIndex: number, pageSize: number) {
+  getTrustedCertificateList(pageIndex: number, pageSize: number, shouldAddParams?: boolean) {
     this.isLoading = true;
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
-      certName: this.certificateNameSearchingValue || null,
-      thumbprint: this.thumbprintSearchingValue || null,
-      thumbprint256: this.thumbprint256SearchingValue || null,
+      certName: shouldAddParams && (this.certificateNameSearchingValue || null),
+      thumbprint: shouldAddParams && (this.thumbprintSearchingValue || null),
+      thumbprint256: shouldAddParams && (this.thumbprint256SearchingValue || null),
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: TrustedCertificatesWithPagination) => {

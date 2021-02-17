@@ -63,12 +63,12 @@ export class TrustedCertificatePendingComponent implements OnInit {
     this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
   }
 
-  getPendingChanges(pageIndex: number, pageSize: number) {
+  getPendingChanges(pageIndex: number, pageSize: number, shouldAddParams?: boolean) {
     this.isLoading = true;
     this.trustedCertificateService.getPendingChanges(removeEmpties({
-      certName: this.certificateNameSearchingValue || null,
-      thumbprint: this.thumbprintSearchingValue || null,
-      thumbprint256: this.thumbprint256SearchingValue || null,
+      certName: shouldAddParams && (this.certificateNameSearchingValue || null),
+      thumbprint: shouldAddParams && (this.thumbprintSearchingValue || null),
+      thumbprint256: shouldAddParams && (this.thumbprint256SearchingValue || null),
       page: pageIndex.toString(),
       size: pageSize.toString()
     }))

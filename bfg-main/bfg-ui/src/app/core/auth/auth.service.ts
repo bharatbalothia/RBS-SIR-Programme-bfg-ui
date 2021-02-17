@@ -110,10 +110,10 @@ export class AuthService {
   }
 
   showForbidden(message?: string) {
-    this.notificationService.show(
-      'Forbidden',
-      message ? message : 'You don\'t have enough permissions to proceed',
-      'warning');
+    this.notificationService.showErrorMessage({
+      code: null,
+      message: message ? message : 'You don\'t have enough permissions to proceed further'
+    });
   }
 
   checkPermissions(requiredPermissions: string[]) {

@@ -66,7 +66,7 @@
             <ng-container matColumnDef="advStatus">
                 <mat-header-cell *matHeaderCellDef> {{displayName('advStatus')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.advStatus}}
+                    {{element.advStatus || 'None'}}
                 </mat-cell>
             </ng-container>
 

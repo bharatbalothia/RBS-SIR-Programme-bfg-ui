@@ -55,8 +55,8 @@ mat-form-field {
 }
 
 .main {
-    .mat-card {
-        margin: 15px 15px 15px 15px;
+    .mat-card:not(.login-card) {
+        margin: 15px;
         position: absolute;
         bottom: 0;
         top: 64px;
@@ -96,18 +96,17 @@ mat-form-field {
 }
 
 .mat-table {
-
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
-      word-break: break-word;
-      white-space: normal;
-      line-height: normal;
-      text-align: left;
-      min-width: 10px;
+        word-break: break-word;
+        white-space: normal;
+        line-height: normal;
+        text-align: left;
+        min-width: 10px;
 
         .mat-cell-value {
-          width: 100%;
+            width: 100%;
         }
     }
 
@@ -132,11 +131,11 @@ mat-form-field {
 }
 
 .paginator {
-  width: 100%;
+    width: 100%;
 
-  .mat-paginator {
-    background-color: unset;
-  }
+    .mat-paginator {
+        background-color: unset;
+    }
 }
 
 @media all and (-ms-high-contrast: none),
@@ -177,18 +176,20 @@ mat-form-field {
 
 }
 
-.mat-select-panel {
+.mat-select-panel,
+.mat-autocomplete-panel {
     max-height: 400px !important;
 
     .mat-option {
+        font-size: inherit;
         height: 2em !important;
     }
 }
 
 // Override default toast css rules
 .toast-container .ngx-toastr {
-  width: 350px; // set width of toast
-  word-wrap: break-word;
+    width: 350px; // set width of toast
+    word-wrap: break-word;
 
     .toast-title {
         letter-spacing: 0.3px; // set space between letters in the title
@@ -200,13 +201,17 @@ mat-form-field {
 }
 
 .validity-flag {
-  display: flex;
-  align-items: center;
-  -ms-flex-direction: row;
-  flex-direction: row;
+    display: flex;
+    align-items: center;
+    -ms-flex-direction: row;
+    flex-direction: row;
 
-  span {
-    width: 100%;
-    margin-left: 5px;
-  }
+    span {
+        width: 100%;
+        margin-left: 5px;
+    }
+}
+
+.table-container {
+  display: table; // Used for correct displaying pagination and table scrolling
 }

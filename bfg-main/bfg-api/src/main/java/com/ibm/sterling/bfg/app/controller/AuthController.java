@@ -38,4 +38,9 @@ public class AuthController {
                 jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
     }
 
+    @PostMapping("/reauth")
+    public ResponseEntity continueSession(@RequestBody LoginRequest credentials) throws JsonProcessingException {
+        return ok(Collections.singletonMap("accessToken",
+                jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
+    }
 }

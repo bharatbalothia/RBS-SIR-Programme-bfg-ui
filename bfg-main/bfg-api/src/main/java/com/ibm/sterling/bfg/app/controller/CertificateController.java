@@ -3,10 +3,7 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
-import com.ibm.sterling.bfg.app.model.certificate.CertType;
-import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
-import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
+import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -81,7 +78,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_NEW')")
     public ResponseEntity<TrustedCertificateDetails> uploadFile(@RequestParam("file") MultipartFile file)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
-        return ok(trustedCertificateDetailsService.getTrustedCertificateDetails(getX509Certificate(file), false));
+        return ok(trustedCertificateDetailsService.getTrustedCertificateDetails(getX509Certificate(file), true));
     }
 
     @PostMapping
@@ -166,6 +163,13 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificateDetails> validateCertificateById(@PathVariable(name = "id") String id) throws JsonProcessingException,
             NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
         return ok(certificateService.findCertificateDataById(id));
+    }
+
+    @GetMapping("/validate/pending/{id}")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
+    public ResponseEntity<TrustedCertificateDetails> validatePendingCertificateById(@PathVariable(name = "id") String id)
+            throws JsonProcessingException, NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
+        return ok().body(certificateService.findPendingCertificateDataById(id));
     }
 
     @DeleteMapping("{id}")

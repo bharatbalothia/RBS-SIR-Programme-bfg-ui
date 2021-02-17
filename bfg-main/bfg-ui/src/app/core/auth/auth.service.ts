@@ -9,10 +9,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { get } from 'lodash';
 import { Params, Router } from '@angular/router';
 import { ROUTING_PATHS } from '../constants/routing-paths';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { SSOCredentials } from './sso-credentials.model';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 
 @Injectable({
@@ -28,7 +26,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private dialog: MatDialog
+    private notificationService: NotificationService,
   ) { }
 
   private apiUrl: string = environment.apiUrl + 'auth/';
@@ -112,12 +110,10 @@ export class AuthService {
   }
 
   showForbidden() {
-    this.dialog.open(ConfirmDialogComponent, new ConfirmDialogConfig({
-      title: `Forbidden`,
-      text: `You don't have enough permissions to proceed`,
-      shouldHideYesCaption: true,
-      noCaption: 'Back'
-    }));
+    this.notificationService.show(
+      'Forbidden',
+      'You have logged in successfully, but don\'t have permission to access the application. Please contact application support for assistance.',
+      'warning');
   }
 
   checkPermissions(requiredPermissions: string[]) {

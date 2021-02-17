@@ -10,7 +10,7 @@ import { removeEmpties } from 'src/app/shared/utils/utils';
 import { take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, isFunction } from 'lodash';
 import * as moment from 'moment';
 import { FileTableComponent } from 'src/app/shared/components/file-table/file-table.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
@@ -82,9 +82,21 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.isURLParamsEmpty()) {
-      this.stepper.next();
+      this.onNext();
       this.cdr.detectChanges();
     }
+    setTimeout(() => {
+      this.stepper.steps.forEach((step, idx) => {
+        step.select = () => {
+          if (idx === 1 && this.searchingParametersFormGroup.valid) {
+            this.getFileList(0, this.pageSize, () => this.stepper.selectedIndex = idx);
+          }
+          else {
+            this.stepper.selectedIndex = idx;
+          }
+        };
+      });
+    });
   }
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
@@ -147,7 +159,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     return data;
   }
 
-  getFileList(pageIndex: number, pageSize: number) {
+  getFileList(pageIndex: number, pageSize: number, callback?) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
@@ -168,6 +180,9 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       this.pageSize = pageSize;
       this.files = data;
       this.updateTable();
+      if (isFunction(callback)) {
+        callback();
+      }
     },
       error => this.isLoading = false
     );
@@ -181,7 +196,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.getFileList(0, this.pageSize);
       this.fileTableComponent.autoRefreshChange(true);
     }
     else {
@@ -254,9 +268,11 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   handleDate(event, field: string) {
     const date: moment.Moment = event.value;
-
     if (date) {
       this[field] = date;
     }
   }
+
+  onNext = () => this.getFileList(0, this.pageSize, () => this.stepper.next());
+
 }

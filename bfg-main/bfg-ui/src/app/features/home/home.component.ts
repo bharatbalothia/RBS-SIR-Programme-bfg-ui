@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
         this.SCTTraffic = data;
       },
       error => this.isLoading = false,
-      () => this.updateTime = moment().format('DD/MM/YYYY hh:mm:ss')
+      () => this.updateTime = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }).replace(/,/g, '')
     )
 
   checkCount = (count: number, rote: string) => count === 0 &&

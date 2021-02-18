@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   systemErrors: SystemErrors;
   alerts: Alerts;
   SCTTraffic: SCTTraffic;
+  updateTime: string;
 
   constructor(
     private statisticsService: StatisticsService,
@@ -41,26 +42,24 @@ export class HomeComponent implements OnInit {
       this.getAlerts();
       this.systemErrors = data;
     },
-      error => {
-        this.isLoading = false;
-      })
+      error => this.isLoading = false
+    )
 
   getAlerts = () => this.statisticsService.getAlerts().pipe(data => this.setLoading(data)).subscribe((data: Alerts) => {
     this.getSCTTraffic();
     this.alerts = data;
   },
-    error => {
-      this.isLoading = false;
-    })
+    error => this.isLoading = false
+  )
 
   getSCTTraffic = () => this.statisticsService.getSCTTraffic().pipe(data => this.setLoading(data))
-    .subscribe((data: SCTTraffic) => {
-      this.isLoading = false;
-      this.SCTTraffic = data;
-    },
-      error => {
+    .subscribe(
+      (data: SCTTraffic) => {
         this.isLoading = false;
-      }
+        this.SCTTraffic = data;
+      },
+      error => this.isLoading = false,
+      () => this.updateTime = moment().format('DD/MM/YYYY hh:mm:ss')
     )
 
   checkCount = (count: number, rote: string) => count === 0 &&

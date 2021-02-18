@@ -2,7 +2,16 @@
   <mat-card-content class="card-content">
     <table *ngIf="systemErrors && alerts && SCTTraffic">
       <tr>
-        <td class="table-header left-table-header">System Alerts</td>
+        <td class="table-header left-table-header">Update time</td>
+        <td colspan="3">{{updateTime}}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="table-header left-table-header">System Alerts </td>
         <td colspan="3">
           <div class="icon-value">
             <mat-icon>{{systemErrors.count === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>

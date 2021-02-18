@@ -3,8 +3,10 @@ package com.ibm.sterling.bfg.app.model.validation.sctvalidation;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.validation.Field;
 import com.ibm.sterling.bfg.app.model.validation.GenericValidator;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
@@ -18,6 +20,9 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
     private static final String INDIRECT_PARTICIPANT_TYPE = "INDIRECT";
     private static final String EMPTY_STRING_FIELD_FORMAT = "%s cannot be blank because the Entity Participant Type has the value %s";
     private static final String EMPTY_NUMERIC_FIELD_FORMAT = "%s cannot be null because the Entity Participant Type has the value %s";
+
+    @Autowired
+    private EntityService entityService;
 
     @Override
     public boolean isValid(Entity entity, ConstraintValidatorContext constraintValidatorContext) {
@@ -50,6 +55,14 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
                         constraintValidatorContext,
                         StringUtils::isEmpty,
                         emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, INDIRECT_PARTICIPANT_TYPE)
+                )
+                        & isValidField(
+                        DetailsField.DIRECT_PARTICIPANT,
+                        entity.getDirectParticipant(),
+                        constraintValidatorContext,
+                        fieldValue -> !entityService.findEntityNameForParticipants(entity.getEntityId())
+                                .contains(entity.getDirectParticipant()),
+                        fieldName -> "The entity doesn't have a valid " + fieldName
                 );
             } else if (entityParticipantType.equals(DIRECT_PARTICIPANT_TYPE)) {
                 isValidFields = isValidFieldGroup(

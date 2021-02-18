@@ -25,7 +25,7 @@
       <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
 
     </div>
-    <div class="table-container">
+    <div class="table-container" *ngIf="!isLoading">
       <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
         [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
         [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"

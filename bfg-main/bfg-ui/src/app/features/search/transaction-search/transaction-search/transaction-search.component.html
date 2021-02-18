@@ -11,7 +11,7 @@
                     <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
                         <mat-label>{{getTransactionSearchDisplayName('entity')}}
                         </mat-label>
-                        <mat-select formControlName="entity">
+                        <mat-select formControlName="entity" [typeaheadDebounceInterval]="1000">
                             <mat-option value="">ALL</mat-option>
                             <mat-option *ngFor="let entity of transactionCriteriaData.entity" [value]="entity">
                                 {{entity}}</mat-option>

@@ -1,157 +1,157 @@
 <mat-card class="file-search-card">
-    <mat-card-header>
-        <mat-card-title>File Search Monitor
-        </mat-card-title>
-    </mat-card-header>
-    <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
-        <mat-step [stepControl]="searchingParametersFormGroup">
-            <form [formGroup]="searchingParametersFormGroup">
-                <ng-template matStepLabel>Search parameters</ng-template>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
-                        <mat-label>{{getFileSearchDisplayName('entity')}}
-                        </mat-label>
-                        <mat-select formControlName="entityId">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity.entityId">
-                                {{entity.entityName}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">
-                        <mat-label>{{getFileSearchDisplayName('service')}}
-                        </mat-label>
-                        <mat-select formControlName="service" (selectionChange)="onServiceSelect($event)">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let service of fileCriteriaData.service" [value]="service">
-                                {{service}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'service')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.direction">
-                        <mat-label>{{getFileSearchDisplayName('direction')}}
-                        </mat-label>
-                        <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let direction of fileCriteriaData.direction" [value]="direction">
-                                {{direction}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
-                        <mat-label>{{getFileSearchDisplayName('fileStatus')}}
-                        </mat-label>
-                        <mat-select formControlName="fileStatus" (selectionChange)="onStatusSelect($event)">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
-                                {{fileStatus.label}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'file-status')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
-                        <mat-label>{{getFileSearchDisplayName('bpstate')}}
-                        </mat-label>
-                        <mat-select formControlName="bpstate">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
-                                <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
-                                {{bpstate}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'bp-state')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
-                        <input matInput formControlName="filename">
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'filename')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
-                        <input matInput formControlName="reference">
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.type">
-                        <mat-label>{{getFileSearchDisplayName('type')}}
-                        </mat-label>
-                        <mat-select formControlName="type">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let type of fileCriteriaData.type" [value]="type">
-                                {{type}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'type')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
-                        <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
-                            [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
-                            (dateChange)="handleDate($event, 'minDate')" />
-                        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #fromPicker></ngx-mat-datetime-picker>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
-                            {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
-                        </mat-error>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
-                            {{getSearchValidationMessage('incorrect')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'from')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
-                        <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
-                            [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
-                            (dateChange)="handleDate($event, 'maxDate')" />
-                        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #toPicker></ngx-mat-datetime-picker>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
-                            {{getSearchValidationMessage('maxDateLessThanMinDate')}}
-                        </mat-error>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
-                            {{getSearchValidationMessage('incorrect')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'to')"></app-tooltip>
-                </section>
-                <div class='stepper-actions'>
-                    <button mat-raised-button class="action-button" (click)="onNext()"
-                        [disabled]="!searchingParametersFormGroup.valid">Next</button>
-                    <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
-                        Reset</button>
-                </div>
-            </form>
-        </mat-step>
-        <mat-step>
-            <ng-template matStepLabel>Search results</ng-template>
-            <app-file-table [(isLoading)]="isLoading" [shouldAutoRefresh]="false" [pageIndex]="pageIndex"
-                [pageSize]="pageSize" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
-            </app-file-table>
-            <div class='stepper-actions'>
-                <button mat-raised-button matStepperPrevious class="action-button">Back</button>
-            </div>
-        </mat-step>
-    </mat-horizontal-stepper>
-    <mat-card-footer>
-        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-    </mat-card-footer>
+  <mat-card-header>
+    <mat-card-title>File Search Monitor
+    </mat-card-title>
+  </mat-card-header>
+  <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
+    <mat-step [stepControl]="searchingParametersFormGroup">
+      <form [formGroup]="searchingParametersFormGroup">
+        <ng-template matStepLabel>Search parameters</ng-template>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
+            <mat-label>{{getFileSearchDisplayName('entity')}}
+            </mat-label>
+            <mat-select formControlName="entityId" [typeaheadDebounceInterval]="1000">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity.entityId">
+                {{entity.entityName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">
+            <mat-label>{{getFileSearchDisplayName('service')}}
+            </mat-label>
+            <mat-select formControlName="service" (selectionChange)="onServiceSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let service of fileCriteriaData.service" [value]="service">
+                {{service}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'service')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.direction">
+            <mat-label>{{getFileSearchDisplayName('direction')}}
+            </mat-label>
+            <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let direction of fileCriteriaData.direction" [value]="direction">
+                {{direction}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
+            <mat-label>{{getFileSearchDisplayName('fileStatus')}}
+            </mat-label>
+            <mat-select formControlName="fileStatus" (selectionChange)="onStatusSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
+                {{fileStatus.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'file-status')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+            <mat-label>{{getFileSearchDisplayName('bpstate')}}
+            </mat-label>
+            <mat-select formControlName="bpstate">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
+                <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
+                {{bpstate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'bp-state')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
+            <input matInput formControlName="filename">
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'filename')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
+            <input matInput formControlName="reference">
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.type">
+            <mat-label>{{getFileSearchDisplayName('type')}}
+            </mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let type of fileCriteriaData.type" [value]="type">
+                {{type}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'type')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
+              [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
+              (dateChange)="handleDate($event, 'minDate')" />
+            <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #fromPicker></ngx-mat-datetime-picker>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+              {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+            </mat-error>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+              {{getSearchValidationMessage('incorrect')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'from')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
+              [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
+              (dateChange)="handleDate($event, 'maxDate')" />
+            <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #toPicker></ngx-mat-datetime-picker>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+              {{getSearchValidationMessage('maxDateLessThanMinDate')}}
+            </mat-error>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+              {{getSearchValidationMessage('incorrect')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'to')"></app-tooltip>
+        </section>
+        <div class='stepper-actions'>
+          <button mat-raised-button class="action-button" (click)="onNext()"
+            [disabled]="!searchingParametersFormGroup.valid">Next</button>
+          <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
+            Reset</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Search results</ng-template>
+      <app-file-table [(isLoading)]="isLoading" [shouldAutoRefresh]="false" [pageIndex]="pageIndex"
+        [pageSize]="pageSize" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
+      </app-file-table>
+      <div class='stepper-actions'>
+        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+  <mat-card-footer>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+  </mat-card-footer>
 </mat-card>

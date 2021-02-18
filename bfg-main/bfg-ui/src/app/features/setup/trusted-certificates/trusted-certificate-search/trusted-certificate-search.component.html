@@ -34,14 +34,14 @@
         (click)="getTrustedCertificateList(pageIndex, pageSize)">Search</button>
       <button color="warn" mat-raised-button (click)="clearParams()">Clear</button>
     </div>
-    <div class="table-container">
+    <div class="table-container" *ngIf="!isLoading">
       <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
         [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
         [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
         [(pageIndex)]="trustedCertificates.pageable.pageNumber" [pageSize]="trustedCertificates.pageable.pageSize"
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
-      <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!isLoading">
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
           <mat-cell *matCellDef="let element">

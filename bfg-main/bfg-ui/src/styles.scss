@@ -158,34 +158,6 @@ mat-form-field {
     overflow: initial !important;
 }
 
-.mat-form-field {
-
-    .md-drppicker {
-
-        display: flex;
-        flex-direction: column;
-
-        &.shown {
-            height: 374px;
-            left: 0px;
-            right: auto;
-            position: absolute;
-            top: -390px !important;
-        }
-    }
-
-}
-
-.mat-select-panel,
-.mat-autocomplete-panel {
-    max-height: 400px !important;
-
-    .mat-option {
-        font-size: inherit;
-        height: 2em !important;
-    }
-}
-
 // Override default toast css rules
 .toast-container .ngx-toastr {
     width: 350px; // set width of toast

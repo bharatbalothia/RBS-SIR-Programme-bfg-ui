@@ -24,11 +24,11 @@
             <button color="primary" mat-raised-button (click)="getEntityList(pageIndex, pageSize)">Search</button>
             <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
         </div>
-        <div class="table-container">
+        <div class="table-container" *ngIf="!isLoading">
             <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)"
               [min]="1" [max]="entities && entities.totalPages" [length]="entities.totalElements"
-              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-              showFirstLastButtons>
+              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize"
+              [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
             </app-table-paginator>
             <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="entities">
                 <ng-container matColumnDef="action">
@@ -146,8 +146,8 @@
             </mat-table>
             <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)"
               [min]="1" [max]="entities && entities.totalPages" [length]="entities.totalElements"
-              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-              showFirstLastButtons>
+              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize"
+              [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
             </app-table-paginator>
         </div>
         <mat-spinner *ngIf="isLoading"></mat-spinner>

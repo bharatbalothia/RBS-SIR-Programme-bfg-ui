@@ -134,7 +134,7 @@
           <app-tooltip [tip]="getTooltip('search', 'to')"></app-tooltip>
         </section>
         <div class='stepper-actions'>
-          <button mat-raised-button class="action-button" (click)="onNext()"
+          <button mat-raised-button matStepperNext class="action-button" (click)="onNext()"
             [disabled]="!searchingParametersFormGroup.valid">Next</button>
           <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
             Reset</button>

@@ -67,11 +67,11 @@ export class EntityPendingComponent implements OnInit {
     return data;
   }
 
-  getPendingChanges(pageIndex: number, pageSize: number, shouldAddParams?: boolean) {
+  getPendingChanges(pageIndex: number, pageSize: number) {
     this.entityService.getPendingChanges(removeEmpties({
-      entity: shouldAddParams && (this.entityNameSearchingValue || null),
-      service: shouldAddParams && (this.serviceSearchingValue || null),
-      swiftDN: shouldAddParams && (this.DNSearchingValue || null),
+      entity: this.entityNameSearchingValue || null,
+      service: this.serviceSearchingValue || null,
+      swiftDN: this.DNSearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     }))

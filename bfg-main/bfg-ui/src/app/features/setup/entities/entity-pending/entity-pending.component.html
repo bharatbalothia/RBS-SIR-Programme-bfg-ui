@@ -104,6 +104,6 @@
         [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
     </div>
-    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
   </mat-card-content>
 </mat-card>

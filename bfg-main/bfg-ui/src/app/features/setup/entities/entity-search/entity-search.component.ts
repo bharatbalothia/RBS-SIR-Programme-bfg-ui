@@ -39,6 +39,7 @@ export class EntitySearchComponent implements OnInit {
   DNSearchingValue = '';
 
   isLoading = true;
+  isLoadingDetails = false;
 
   entities: EntitiesWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
@@ -99,36 +100,41 @@ export class EntitySearchComponent implements OnInit {
   addEntityBeforeToChangeControl(changeControl: ChangeControl) {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
+      this.isLoadingDetails = true;
       return this.entityService.getEntityById(entityId.toString()).pipe(data => this.setLoading(data)).toPromise()
         .then(data => {
-          this.isLoading = false;
+          this.isLoadingDetails = false;
           return ({ ...changeControl, entityBefore: data });
-        }).catch(error => this.isLoading = false);
+        }).catch(error => this.isLoadingDetails = false);
     }
     else {
       return new Promise((res) => res(changeControl));
     }
   }
 
-  getEntityDetails = (entity: Entity) =>
-    this.entityService.getEntityById(entity.entityId).pipe(data => this.setLoading(data)).toPromise()
+  getEntityDetails = (entity: Entity) => {
+    this.isLoadingDetails = true;
+    return this.entityService.getEntityById(entity.entityId).toPromise()
       .then((data: Entity) => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return data;
       }).catch(error => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return null;
-      })
+      });
+  }
 
-  getPendingEntityDetails = (changeControl: ChangeControl) =>
-    this.entityService.getPendingEntityById(changeControl.changeID).pipe(data => this.setLoading(data)).toPromise()
+  getPendingEntityDetails = (changeControl: ChangeControl) => {
+    this.isLoadingDetails = true;
+    return this.entityService.getPendingEntityById(changeControl.changeID).toPromise()
       .then((data: Entity) => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return ({ ...changeControl, entityLog: data });
       }).catch(error => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return null;
-      })
+      });
+  }
 
   openInfoDialog(changeControl: ChangeControl) {
     this.getPendingEntityDetails(changeControl)

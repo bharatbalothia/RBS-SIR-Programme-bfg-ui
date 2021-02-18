@@ -101,7 +101,7 @@ export class EntitySearchComponent implements OnInit {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
       this.isLoadingDetails = true;
-      return this.entityService.getEntityById(entityId.toString()).pipe(data => this.setLoading(data)).toPromise()
+      return this.entityService.getEntityById(entityId.toString()).toPromise()
         .then(data => {
           this.isLoadingDetails = false;
           return ({ ...changeControl, entityBefore: data });

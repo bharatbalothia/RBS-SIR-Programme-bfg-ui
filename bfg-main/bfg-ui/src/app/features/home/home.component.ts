@@ -6,6 +6,7 @@ import { StatisticsService } from 'src/app/shared/models/statistics/statistics.s
 import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.model';
 import * as moment from 'moment';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import 'moment-timezone';
 
 @Component({
   selector: 'app-home',
@@ -59,7 +60,7 @@ export class HomeComponent implements OnInit {
         this.SCTTraffic = data;
       },
       error => this.isLoading = false,
-      () => this.updateTime = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }).replace(/,/g, '')
+      ()  => this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss')
     )
 
   checkCount = (count: number, rote: string) => count === 0 &&

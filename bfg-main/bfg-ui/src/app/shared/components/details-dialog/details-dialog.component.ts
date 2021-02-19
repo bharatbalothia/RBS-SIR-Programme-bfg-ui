@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
 import { DetailsDialogData, Tab } from './details-dialog-data.model';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogContainer, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined, get } from 'lodash';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
+import { AngularResizableDirective } from 'angular2-draggable';
 
 @Component({
   selector: 'app-details-dialog',
@@ -24,7 +25,10 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private elRef: ElementRef,
+    private renderer: Renderer2,
+    private dialogContainer: MatDialogContainer,
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
@@ -43,6 +47,8 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.updateSections();
+    const dialogContainerDirective = new AngularResizableDirective(this.dialogContainer['_elementRef'], this.renderer);
+    dialogContainerDirective.ngOnInit();
   }
 
   ngOnDestroy() {

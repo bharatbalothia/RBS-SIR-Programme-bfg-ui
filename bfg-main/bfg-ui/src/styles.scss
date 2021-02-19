@@ -9,10 +9,6 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.mat-tab-body-wrapper {
-    max-height: 50vh;
-}
-
 .mat-footer-row[hidden] {
     display: none !important;
 }
@@ -219,4 +215,14 @@ mat-form-field {
 
 .mat-dialog-container {
     resize: both;
+}
+
+.mat-row,
+.mat-header-row,
+.mat-cell {
+    min-height: 40px !important;
+}
+
+.mat-dialog-content {
+    max-height: 75vh !important;
 }

@@ -47,13 +47,19 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.updateSections();
-    const dialogContainerDirective = new AngularResizableDirective(this.dialogContainer['_elementRef'], this.renderer);
-    dialogContainerDirective.ngOnInit();
+    this.setDialogResizable();
   }
 
   ngOnDestroy() {
     if (this.isLoadingSubscription) {
       this.isLoadingSubscription.unsubscribe();
+    }
+  }
+
+  setDialogResizable = () => {
+    if (/msie\s|trident\//i.test(window.navigator.userAgent)) {
+      const dialogContainerDirective = new AngularResizableDirective(this.dialogContainer['_elementRef'], this.renderer);
+      dialogContainerDirective.ngOnInit();
     }
   }
 

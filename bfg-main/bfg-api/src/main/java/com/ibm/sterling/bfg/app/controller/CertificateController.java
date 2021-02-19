@@ -169,7 +169,7 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<TrustedCertificateDetails> validatePendingCertificateById(@PathVariable(name = "id") String id)
             throws JsonProcessingException, NoSuchAlgorithmException, InvalidNameException, java.security.cert.CertificateEncodingException {
-        return ok().body(certificateService.findPendingCertificateDataById(id));
+        return ok(certificateService.findPendingCertificateDataById(id));
     }
 
     @DeleteMapping("{id}")

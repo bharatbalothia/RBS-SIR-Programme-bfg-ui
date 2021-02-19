@@ -321,7 +321,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
       this.certificateNameSearchingValue = '';
       this.thumbprintSearchingValue = '';
       this.thumbprint256SearchingValue = '';
-      this.getTrustedCertificateList(this.pageIndex, this.pageSize);
+      this.getTrustedCertificateList(0, this.pageSize);
     }
   }
 }

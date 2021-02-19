@@ -96,6 +96,7 @@ mat-form-field {
 }
 
 .mat-table {
+
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
@@ -213,5 +214,9 @@ mat-form-field {
 }
 
 .table-container {
-  display: table; // Used for correct displaying pagination and table scrolling
+    display: table; // Used for correct displaying pagination and table scrolling
+}
+
+.mat-dialog-container {
+    resize: both;
 }

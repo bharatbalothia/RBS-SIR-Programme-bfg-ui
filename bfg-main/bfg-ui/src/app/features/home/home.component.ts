@@ -6,6 +6,7 @@ import { StatisticsService } from 'src/app/shared/models/statistics/statistics.s
 import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.model';
 import * as moment from 'moment';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import 'moment-timezone';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit {
   systemErrors: SystemErrors;
   alerts: Alerts;
   SCTTraffic: SCTTraffic;
+  updateTime: string;
 
   constructor(
     private statisticsService: StatisticsService,
@@ -41,26 +43,24 @@ export class HomeComponent implements OnInit {
       this.getAlerts();
       this.systemErrors = data;
     },
-      error => {
-        this.isLoading = false;
-      })
+      error => this.isLoading = false
+    )
 
   getAlerts = () => this.statisticsService.getAlerts().pipe(data => this.setLoading(data)).subscribe((data: Alerts) => {
     this.getSCTTraffic();
     this.alerts = data;
   },
-    error => {
-      this.isLoading = false;
-    })
+    error => this.isLoading = false
+  )
 
   getSCTTraffic = () => this.statisticsService.getSCTTraffic().pipe(data => this.setLoading(data))
-    .subscribe((data: SCTTraffic) => {
-      this.isLoading = false;
-      this.SCTTraffic = data;
-    },
-      error => {
+    .subscribe(
+      (data: SCTTraffic) => {
         this.isLoading = false;
-      }
+        this.SCTTraffic = data;
+      },
+      error => this.isLoading = false,
+      ()  => this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss')
     )
 
   checkCount = (count: number, rote: string) => count === 0 &&

@@ -33,7 +33,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
-  thumbprint256SearchingValue = '';
 
   isLoading = true;
   isLoadingDetails = false;
@@ -62,7 +61,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
     this.certificateNameSearchingValue = window.history.state.certificateNameSearchingValue || '';
     this.thumbprintSearchingValue = window.history.state.thumbprintSearchingValue || '';
-    this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
 
     this.getTrustedCertificateList(this.pageIndex, this.pageSize);
   }
@@ -72,7 +70,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
     this.trustedCertificateService.getTrustedCertificateList(removeEmpties({
       certName: this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
-      thumbprint256: this.thumbprint256SearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     })).pipe(take(1)).subscribe((data: TrustedCertificatesWithPagination) => {
@@ -317,10 +314,9 @@ export class TrustedCertificateSearchComponent implements OnInit {
   getCurrentRoute = () => this.router.url;
 
   clearParams = () => {
-    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '') {
       this.certificateNameSearchingValue = '';
       this.thumbprintSearchingValue = '';
-      this.thumbprint256SearchingValue = '';
       this.getTrustedCertificateList(0, this.pageSize);
     }
   }

@@ -349,7 +349,7 @@
                             <input type="text" matInput formControlName="directParticipant" required
                                 [matAutocomplete]="directParticipantAutocomplete" appAutocompleteEnforceSelection>
                             <mat-autocomplete #directParticipantAutocomplete="matAutocomplete" autoActiveFirstOption>
-                                <mat-option *ngFor="let option of filteredParticipantList | async" [value]="option">
+                                <mat-option *ngFor="let option of filteredParticipantList" [value]="option">
                                     {{option}}
                                 </mat-option>
                             </mat-autocomplete>

@@ -11,16 +11,16 @@ import java.util.function.BiFunction;
 
 public class GenericSpecification {
 
-    public static <T> Specification<T> filter(String text, String field) {
-        final String finalText = Optional.ofNullable(text).map(String::toLowerCase).orElse("");
+    public static <T> Specification<T> filter(String field, String value) {
+        final String finalText = Optional.ofNullable(value).map(String::toLowerCase).orElse("");
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Boolean value = "true".equalsIgnoreCase(text) ? Boolean.TRUE :
+            Boolean boolValue = "true".equalsIgnoreCase(value) ? Boolean.TRUE :
                     "false".equalsIgnoreCase(finalText) ? Boolean.FALSE : null;
 
-            if (value != null) {
-                predicates.add(cb.equal(root.get(field), value));
+            if (boolValue != null) {
+                predicates.add(cb.equal(root.get(field), boolValue));
             } else {
                 BiFunction<From, String, Predicate> valueContains = (object, fieldValue) ->
                         cb.like(cb.lower(object.get(fieldValue)), "%" + finalText + "%");
@@ -41,6 +41,10 @@ public class GenericSpecification {
             }
             return cb.or(predicates.toArray(new Predicate[]{}));
         };
+    }
+
+    public static <T> Specification<T> equals(String field, String value) {
+        return (root, query, cb) -> cb.equal(root.get(field), value);
     }
 
 }

@@ -68,22 +68,25 @@ public class ChangeControlCertService {
         changeControlCertRepository.save(changeControl);
     }
 
-    public List<ChangeControlCert> findPendingChangeControlsAsc(String certName, String thumbprint, String thumbprint256) {
-        List<ChangeControlCert> pendingCertChangeControlList = findPendingChangeControls(certName, thumbprint, thumbprint256);
+    public List<ChangeControlCert> findPendingChangeControlsAsc(String certName, String thumbprint) {
+        List<ChangeControlCert> pendingCertChangeControlList = findPendingChangeControls(certName, thumbprint);
         Collections.sort(pendingCertChangeControlList);
         return pendingCertChangeControlList;
     }
 
-    public List<ChangeControlCert> findPendingChangeControls(String certName, String thumbprint, String thumbprint256) {
+    public List<ChangeControlCert> findPendingChangeControls(String certName, String thumbprint) {
         Specification<ChangeControlCert> specification = Specification
                 .where(
-                        GenericSpecification.<ChangeControlCert>filter(certName, "resultMeta1"))
+                        GenericSpecification.<ChangeControlCert>filter("resultMeta1", certName))
                 .and(
-                        GenericSpecification.filter(thumbprint, "resultMeta2"))
+                        Specification
+                                .where(
+                                        GenericSpecification.<ChangeControlCert>filter("resultMeta2", thumbprint))
+                                .or(
+                                        GenericSpecification.filter("resultMeta3", thumbprint))
+                )
                 .and(
-                        GenericSpecification.filter(thumbprint256, "resultMeta3"))
-                .and(
-                        GenericSpecification.filter(ChangeControlStatus.PENDING.getStatusText(), "status")
+                        GenericSpecification.filter("status", ChangeControlStatus.PENDING.getStatusText())
                 );
         return changeControlCertRepository.findAll(specification);
     }

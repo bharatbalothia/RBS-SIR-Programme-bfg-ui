@@ -294,5 +294,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
       this.thumbprintSearchingValue = '';
       this.getPendingChanges(0, this.pageSize);
     }
+    return false;
   }
 }

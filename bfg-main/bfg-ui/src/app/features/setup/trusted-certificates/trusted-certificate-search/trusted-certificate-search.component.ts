@@ -319,5 +319,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
       this.thumbprintSearchingValue = '';
       this.getTrustedCertificateList(0, this.pageSize);
     }
+    return false;
   }
 }

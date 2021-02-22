@@ -68,10 +68,9 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<CertType> getCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
                                           @RequestParam(value = "thumbprint", defaultValue = "", required = false) String thumbprint,
-                                          @RequestParam(value = "thumbprint256", defaultValue = "", required = false) String thumbprint256,
                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
                                           @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
-        return certificateService.findCertificates(PageRequest.of(page, size), certName, thumbprint, thumbprint256);
+        return certificateService.findCertificates(PageRequest.of(page, size), certName, thumbprint);
     }
 
     @PostMapping("/upload")
@@ -124,11 +123,10 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public Page<ChangeControlCert> getPendingCertificates(@RequestParam(value = "certName", defaultValue = "", required = false) String certName,
                                                           @RequestParam(value = "thumbprint", defaultValue = "", required = false) String thumbprint,
-                                                          @RequestParam(value = "thumbprint256", defaultValue = "", required = false) String thumbprint256,
                                                           @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
                                                           @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         return ListToPageConverter.convertListToPage(
-                new ArrayList<>(changeControlCertService.findPendingChangeControlsAsc(certName, thumbprint, thumbprint256)),
+                new ArrayList<>(changeControlCertService.findPendingChangeControlsAsc(certName, thumbprint)),
                 PageRequest.of(page, size)
         );
     }

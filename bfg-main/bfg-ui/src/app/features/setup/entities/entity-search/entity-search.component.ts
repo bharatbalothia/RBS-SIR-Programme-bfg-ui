@@ -258,5 +258,6 @@ export class EntitySearchComponent implements OnInit {
       this.DNSearchingValue = '';
       this.getEntityList(0, this.pageSize);
     }
+    return false;
   }
 }

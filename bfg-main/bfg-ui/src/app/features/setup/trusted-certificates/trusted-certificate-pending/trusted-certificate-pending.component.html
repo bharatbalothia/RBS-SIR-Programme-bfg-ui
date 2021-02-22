@@ -17,16 +17,8 @@
 
         <div class="search-field">
           <mat-form-field class="search-by-field">
-            <mat-label>Search by SHA-1 Thumbprint</mat-label>
+            <mat-label>Search by SHA Thumbprint</mat-label>
             <input matInput [(ngModel)]="thumbprintSearchingValue" name="thumbprintSearchingValue">
-          </mat-form-field>
-          <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
-        </div>
-
-        <div class="search-field">
-          <mat-form-field class="search-by-field">
-            <mat-label>Search by SHA-2 Thumbprint</mat-label>
-            <input matInput [(ngModel)]="thumbprint256SearchingValue" name="thumbprint256SearchingValue">
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
         </div>

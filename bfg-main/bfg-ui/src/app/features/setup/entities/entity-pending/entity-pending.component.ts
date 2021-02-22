@@ -205,7 +205,8 @@ export class EntityPendingComponent implements OnInit {
       this.entityNameSearchingValue = '';
       this.serviceSearchingValue = '';
       this.DNSearchingValue = '';
-      this.getPendingChanges(this.pageIndex, this.pageSize);
+      this.getPendingChanges(0, this.pageSize);
     }
+    return false;
   }
 }

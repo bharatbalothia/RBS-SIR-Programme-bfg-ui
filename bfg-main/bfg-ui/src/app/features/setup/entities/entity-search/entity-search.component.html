@@ -4,31 +4,33 @@
     </mat-card-header>
     <mat-card-content class="card-content">
         <div class="search-by-content">
-            <h3 class="search-by-label">Search by</h3>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by service</mat-label>
-                <mat-select [(ngModel)]="serviceSearchingValue">
-                    <mat-option value="">ALL</mat-option>
-                    <mat-option value="GPL">GPL</mat-option>
-                    <mat-option value="SCT">SCT</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by entity name</mat-label>
-                <input matInput [(ngModel)]="entityNameSearchingValue">
-            </mat-form-field>
-            <mat-form-field class="search-by-field">
-                <mat-label>Search by DN</mat-label>
-                <input matInput [(ngModel)]="DNSearchingValue">
-            </mat-form-field>
-            <button color="primary" mat-raised-button (click)="getEntityList(pageIndex, pageSize)">Search</button>
-            <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
+            <form (ngSubmit)="getEntityList(0, pageSize)">
+                <h3 class="search-by-label">Search by</h3>
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by service</mat-label>
+                    <mat-select [(ngModel)]="serviceSearchingValue" name="serviceSearchingValue">
+                        <mat-option value="">ALL</mat-option>
+                        <mat-option value="GPL">GPL</mat-option>
+                        <mat-option value="SCT">SCT</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by entity name</mat-label>
+                    <input matInput [(ngModel)]="entityNameSearchingValue" name="entityNameSearchingValue">
+                </mat-form-field>
+                <mat-form-field class="search-by-field">
+                    <mat-label>Search by DN</mat-label>
+                    <input matInput [(ngModel)]="DNSearchingValue" name="DNSearchingValue">
+                </mat-form-field>
+                <button color="primary" type="submit" mat-raised-button>Search</button>
+                <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
+            </form>
         </div>
         <div class="table-container">
-            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)"
-              [min]="1" [max]="entities && entities.totalPages" [length]="entities.totalElements"
-              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-              showFirstLastButtons>
+            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1"
+                [getRows]="getEntityList.bind(this)" [min]="1" [max]="entities && entities.totalPages"
+                [length]="entities.totalElements" [(pageIndex)]="entities.pageable.pageNumber"
+                [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
             </app-table-paginator>
             <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="entities">
                 <ng-container matColumnDef="action">
@@ -144,10 +146,10 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1" [getRows]="getEntityList.bind(this)"
-              [min]="1" [max]="entities && entities.totalPages" [length]="entities.totalElements"
-              [(pageIndex)]="entities.pageable.pageNumber" [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions"
-              showFirstLastButtons>
+            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1"
+                [getRows]="getEntityList.bind(this)" [min]="1" [max]="entities && entities.totalPages"
+                [length]="entities.totalElements" [(pageIndex)]="entities.pageable.pageNumber"
+                [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
             </app-table-paginator>
         </div>
         <mat-spinner *ngIf="isLoading"></mat-spinner>

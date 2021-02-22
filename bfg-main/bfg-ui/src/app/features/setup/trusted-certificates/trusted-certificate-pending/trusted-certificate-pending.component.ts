@@ -33,7 +33,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   certificateNameSearchingValue = '';
   thumbprintSearchingValue = '';
-  thumbprint256SearchingValue = '';
 
   isLoading = true;
   isLoadingDetails = false;
@@ -60,7 +59,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
     this.certificateNameSearchingValue = window.history.state.certificateNameSearchingValue || '';
     this.thumbprintSearchingValue = window.history.state.thumbprintSearchingValue || '';
-    this.thumbprint256SearchingValue = window.history.state.thumbprint256SearchingValue || '';
   }
 
   getPendingChanges(pageIndex: number, pageSize: number) {
@@ -68,7 +66,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
     this.trustedCertificateService.getPendingChanges(removeEmpties({
       certName: this.certificateNameSearchingValue || null,
       thumbprint: this.thumbprintSearchingValue || null,
-      thumbprint256: this.thumbprint256SearchingValue || null,
       page: pageIndex.toString(),
       size: pageSize.toString()
     }))
@@ -292,11 +289,11 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   clearParams = () => {
-    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '' || this.thumbprint256SearchingValue !== '') {
+    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '') {
       this.certificateNameSearchingValue = '';
       this.thumbprintSearchingValue = '';
-      this.thumbprint256SearchingValue = '';
-      this.getPendingChanges(this.pageIndex, this.pageSize);
+      this.getPendingChanges(0, this.pageSize);
     }
+    return false;
   }
 }

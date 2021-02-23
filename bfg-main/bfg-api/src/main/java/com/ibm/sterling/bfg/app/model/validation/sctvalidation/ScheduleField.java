@@ -1,13 +1,14 @@
 package com.ibm.sterling.bfg.app.model.validation.sctvalidation;
 
-public enum ScheduleFieldName {
+import com.ibm.sterling.bfg.app.model.validation.Field;
 
+public enum ScheduleField implements Field {
     ISWINDOW("isWindow"),
     TIMESTART("timeStart"),
     WINDOWEND("windowEnd"),
     WINDOWINTERVAL("windowInterval");
 
-    ScheduleFieldName(String fieldName) {
+    ScheduleField(String fieldName) {
         this.fieldName = fieldName;
     }
 

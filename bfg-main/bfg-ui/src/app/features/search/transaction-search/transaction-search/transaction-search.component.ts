@@ -279,7 +279,22 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onNext = () => this.getTransactionList(0, this.pageSize, () => this.stepper.next());
+  isValidEntity(): boolean {
+    const entity = this.searchingParametersFormGroup.controls.entity.value;
+    console.log(entity);
+
+    if (entity === '') {
+      return true;
+    }
+
+    return !!this.transactionCriteriaData.entity.find(value => value === entity);
+  }
+
+  onNext = () => {
+    if (this.isValidEntity()) {
+      this.getTransactionList(0, this.pageSize, () => this.stepper.next());
+    }
+  }
 
   displayEntity(value?: string) {
     return value ? this.transactionCriteriaData.entity.find(entity => entity === value) : 'ALL';

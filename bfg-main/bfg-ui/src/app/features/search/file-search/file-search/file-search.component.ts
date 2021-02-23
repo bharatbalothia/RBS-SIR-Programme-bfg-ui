@@ -293,7 +293,21 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onNext = () => this.getFileList(0, this.pageSize, () => this.stepper.next());
+  isValidEntity(): boolean {
+    const entityId = this.searchingParametersFormGroup.controls.entityId.value;
+
+    if (entityId === '') {
+      return true;
+    }
+
+    return !!this.fileCriteriaData.entity.find(entity => entity.entityId === entityId);
+  }
+
+  onNext = () => {
+    if (this.isValidEntity()) {
+      this.getFileList(0, this.pageSize, () => this.stepper.next());
+    }
+  }
 
   displayEntity(value?: number) {
     return value ? this.fileCriteriaData.entity.find(entity => entity.entityId === value).entityName : 'ALL';

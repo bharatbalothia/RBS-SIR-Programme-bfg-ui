@@ -8,16 +8,18 @@
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Search parameters</ng-template>
                 <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
-                        <mat-label>{{getTransactionSearchDisplayName('entity')}}
-                        </mat-label>
-                        <mat-select formControlName="entity" [typeaheadDebounceInterval]="1000">
-                            <mat-option value="">ALL</mat-option>
-                            <mat-option *ngFor="let entity of transactionCriteriaData.entity" [value]="entity">
-                                {{entity}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
+                  <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
+                    <mat-label>{{getTransactionSearchDisplayName('entity')}}
+                    </mat-label>
+                    <input type="text" aria-label="Entity" matInput formControlName="entity" [matAutocomplete]="autoCompleteEntity"
+                      appAutocompleteEnforceSelection>
+                    <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete" [displayWith]="displayEntity.bind(this)">
+                      <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity">
+                        {{entity}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
                 </section>
                 <section class="form-field-section">
                     <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.direction">

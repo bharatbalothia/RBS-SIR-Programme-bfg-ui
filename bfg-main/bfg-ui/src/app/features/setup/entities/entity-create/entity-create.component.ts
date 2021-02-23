@@ -341,6 +341,11 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqValidators(value);
         });
+        this.filteredParticipantList = this.entityPageFormGroup.controls.directParticipant.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterDirectParticipantList(value))
+          );
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({

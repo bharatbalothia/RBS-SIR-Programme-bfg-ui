@@ -11,11 +11,14 @@
           <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
             <mat-label>{{getFileSearchDisplayName('entity')}}
             </mat-label>
-            <mat-select formControlName="entityId" [typeaheadDebounceInterval]="1000">
-              <mat-option value="">ALL</mat-option>
-              <mat-option *ngFor="let entity of fileCriteriaData.entity" [value]="entity.entityId">
-                {{entity.entityName}}</mat-option>
-            </mat-select>
+            <input type="text" aria-label="Entity" matInput formControlName="entityId" [matAutocomplete]="autoCompleteEntity"
+              appAutocompleteEnforceSelection>
+            <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete"
+              [displayWith]="displayEntity.bind(this)">
+              <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity.entityId">
+                {{entity.entityName}}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
         </section>

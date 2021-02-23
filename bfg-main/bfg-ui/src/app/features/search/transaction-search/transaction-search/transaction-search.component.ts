@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { get, isEmpty, isFunction } from 'lodash';
 import { removeEmpties } from 'src/app/shared/utils/utils';
-import { take } from 'rxjs/operators';
+import { map, startWith, take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import * as moment from 'moment';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -17,6 +17,7 @@ import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.servic
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-search',
@@ -35,6 +36,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
+  filteredEntityList: Observable<string[]>;
 
   getSearchValidationMessage = getSearchValidationMessage;
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
@@ -142,11 +144,29 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       .pipe(data => this.setLoading(data))
       .subscribe((data: TransactionCriteriaData) => {
         this.isLoading = false;
-        this.transactionCriteriaData = data;
+        this.transactionCriteriaData = {
+          ...data,
+          entity: [ 'ALL', ...data.entity ]
+        };
+        this.filteredEntityList = this.searchingParametersFormGroup.controls.entity.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterEntityList(value))
+          );
         this.persistSelectedTransactionStatus();
       },
         error => this.isLoading = false
       )
+
+  displayEntity(value?: string) {
+    return value ? this.transactionCriteriaData.entity.find(entity => entity === value) : 'ALL';
+  }
+
+  private _filterEntityList(value: string) {
+    return value ?
+      this.transactionCriteriaData.entity.filter(option => option.toLowerCase().includes(value.toLowerCase())) :
+      this.transactionCriteriaData.entity;
+  }
 
   persistSelectedTransactionStatus() {
     const control = this.searchingParametersFormGroup.controls.trxStatus;
@@ -174,6 +194,11 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       size: pageSize.toString(),
       service: ENTITY_SERVICE_TYPE.SCT
     };
+
+    // Don't send 'All' to backend.
+    if (formData.entity === 'ALL') {
+      delete formData.entity;
+    }
 
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'trxStatus.status');

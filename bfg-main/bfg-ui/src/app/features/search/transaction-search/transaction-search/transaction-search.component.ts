@@ -158,16 +158,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         error => this.isLoading = false
       )
 
-  displayEntity(value?: string) {
-    return value ? this.transactionCriteriaData.entity.find(entity => entity === value) : 'ALL';
-  }
-
-  private _filterEntityList(value: string) {
-    return value ?
-      this.transactionCriteriaData.entity.filter(option => option.toLowerCase().includes(value.toLowerCase())) :
-      this.transactionCriteriaData.entity;
-  }
-
   persistSelectedTransactionStatus() {
     const control = this.searchingParametersFormGroup.controls.trxStatus;
     const initialStatus = control.value;
@@ -291,4 +281,13 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   onNext = () => this.getTransactionList(0, this.pageSize, () => this.stepper.next());
 
+  displayEntity(value?: string) {
+    return value ? this.transactionCriteriaData.entity.find(entity => entity === value) : 'ALL';
+  }
+
+  private _filterEntityList(value: string) {
+    return value ?
+      this.transactionCriteriaData.entity.filter(option => option.toLowerCase().includes(value.toLowerCase())) :
+      this.transactionCriteriaData.entity;
+  }
 }

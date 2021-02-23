@@ -104,21 +104,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
 
-  displayEntity(value?: number) {
-    return value ? this.fileCriteriaData.entity.find(entity => entity.entityId === value).entityName : 'ALL';
-  }
-
-  private _filterEntityList(value: string | number) {
-    if (typeof value === 'string') {
-      return value ?
-        this.fileCriteriaData.entity.filter(option => option.entityName.toLowerCase().includes(value.toLowerCase())) :
-        this.fileCriteriaData.entity;
-    } else {
-      return value ?
-        this.fileCriteriaData.entity.filter(option => option.entityId === value) : this.fileCriteriaData.entity;
-    }
-  }
-
   initializeSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
       entityId: [''],
@@ -310,4 +295,18 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onNext = () => this.getFileList(0, this.pageSize, () => this.stepper.next());
 
+  displayEntity(value?: number) {
+    return value ? this.fileCriteriaData.entity.find(entity => entity.entityId === value).entityName : 'ALL';
+  }
+
+  private _filterEntityList(value: string | number) {
+    if (typeof value === 'string') {
+      return value ?
+        this.fileCriteriaData.entity.filter(option => option.entityName.toLowerCase().includes(value.toLowerCase())) :
+        this.fileCriteriaData.entity;
+    } else {
+      return value ?
+        this.fileCriteriaData.entity.filter(option => option.entityId === value) : this.fileCriteriaData.entity;
+    }
+  }
 }

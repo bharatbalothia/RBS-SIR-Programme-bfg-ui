@@ -169,8 +169,15 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       size: pageSize.toString()
     };
 
+
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'fileStatus.status');
+
+    if (formData.status) {
+      formData.direction = [getDirectionStringValue(get(formData, 'fileStatus.outbound')).toLowerCase()];
+      formData.service = get(formData, 'fileStatus.service');
+    }
+
     formData.fileStatus = null;
 
     this.isLoading = true;
@@ -219,7 +226,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   }
 
   onStatusSelect = (event) => {
-    this.setServiceAndDirectionFromStatus(event.value);
+    // this.setServiceAndDirectionFromStatus(event.value);
   }
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;

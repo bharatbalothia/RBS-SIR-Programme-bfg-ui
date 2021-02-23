@@ -87,7 +87,7 @@ export class EntityCreateComponent implements OnInit {
   isCloneAction = false;
 
   directParticipantList: string[] = [];
-  filteredParticipantList: Observable<string[]>;
+  filteredParticipantList: string[] = [];
 
   entityActionsCache: any = {};
 
@@ -244,11 +244,12 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  prepareFieldsForEntityOfType(value, entity) {
+  async prepareFieldsForEntityOfType(value, entity) {
     this.formGroups.forEach(formGroup => !formGroup.control.get('service') && formGroup.resetForm());
     this.initializeFormGroups({ ...entity, service: value });
     switch (value) {
       case ENTITY_SERVICE_TYPE.SCT:
+        await this.getDirectParticipantList(!this.isCloneAction ? entity.entityId : null, entity.directParticipant);
         this.entityPageFormGroup = this.formBuilder.group({
           entity: [{ value: entity.entity, disabled: this.isEditing() && this.isChangeControlNotCreateStatus() && !this.isCloneAction }, {
             validators: [
@@ -297,8 +298,10 @@ export class EntityCreateComponent implements OnInit {
           }],
           compression: [entity.compression],
           entityParticipantType: [entity.entityParticipantType],
-          directParticipant: [entity.directParticipant]
-        }, { validators: this.entityValidators.directParticipantValidator() });
+          directParticipant: [entity.directParticipant, this.entityValidators.directParticipantValidatorRange(this.directParticipantList)]
+        }, {
+          validators: this.entityValidators.directParticipantValidator()
+        });
         this.schedulesFormGroup = this.formBuilder.group({
           schedules: [entity.schedules || []]
         });
@@ -326,7 +329,7 @@ export class EntityCreateComponent implements OnInit {
           mqHeader: [entity.mqHeader],
           mqSessionTimeout: [entity.mqSessionTimeout, Validators.pattern(NON_NEGATIVE_INT)]
         });
-        this.getDirectParticipantList(!this.isCloneAction ? entity.entityId : null);
+
         this.entityService.getMQDetails().pipe(data => this.setLoading(data)).subscribe((data: MQDetails) => {
           this.isLoading = false;
           this.mqDetails = data;
@@ -839,25 +842,16 @@ export class EntityCreateComponent implements OnInit {
     }
   }
 
-  getDirectParticipantList = (id) => {
-    this.entityService.getDirectParticipantList(id)
-      .pipe(data => this.setLoading(data))
-      .subscribe((data: string[]) => {
-        this.isLoading = false;
-        this.directParticipantList = data;
-        this.filteredParticipantList = this.entityPageFormGroup.controls.directParticipant.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterDirectParticipantList(value))
-          );
-      },
-        error => this.isLoading = false
-      );
-  }
-
-  private _filterDirectParticipantList(value: string): string[] {
-    return value ? this.directParticipantList.filter(option =>
-      option.toLowerCase().indexOf(value.toLowerCase()) === 0) : this.directParticipantList;
+  getDirectParticipantList = async (id, entityValue) => {
+    try {
+      const data: string[] = await this.entityService.getDirectParticipantList(id).toPromise();
+      this.setLoading(data);
+      this.isLoading = false;
+      this.directParticipantList = data;
+      this.filteredParticipantList = entityValue ? data.filter(value => value.toLowerCase().indexOf(entityValue.toLowerCase()) !== 0) : data;
+    } catch (err) {
+      this.isLoading = false;
+    }
   }
 
   onParticipantTypeSelect = (value) => {

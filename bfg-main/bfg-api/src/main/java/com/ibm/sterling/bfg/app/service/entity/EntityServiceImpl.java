@@ -283,7 +283,8 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
                 inboundRequestorDN, inboundResponderDN, inboundService);
         return entities.stream()
-                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
+                        Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))
                 .findFirst()
                 .orElse(null);
     }
@@ -297,7 +298,8 @@ public class EntityServiceImpl implements EntityService {
         List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCaseAndEntityIdNot(
                 inboundRequestorDN, inboundResponderDN, inboundService, entityId);
         return entities.stream()
-                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(), inboundRequestType))
+                .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
+                        Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))
                 .findFirst()
                 .orElse(null);
     }

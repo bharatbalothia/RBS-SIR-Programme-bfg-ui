@@ -7,7 +7,7 @@ import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagin
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
 import { removeEmpties } from 'src/app/shared/utils/utils';
-import { take } from 'rxjs/operators';
+import { map, startWith, take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get, isEmpty, isFunction } from 'lodash';
@@ -17,6 +17,8 @@ import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.servic
 import { ActivatedRoute } from '@angular/router';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-file-search',
@@ -35,6 +37,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   searchingParametersFormGroup: FormGroup;
   fileCriteriaData: FileCriteriaData;
+  filteredEntityList: Observable<{ entityName: string, entityId: number }[]>;
 
   getSearchValidationMessage = getSearchValidationMessage;
   getFileSearchDisplayName = getFileSearchDisplayName;
@@ -137,12 +140,24 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       .pipe(data => this.setLoading(data))
       .subscribe((data: FileCriteriaData) => {
         this.isLoading = false;
-        this.fileCriteriaData = data;
+        this.fileCriteriaData = {
+          ...data,
+          entity: [
+            { entityName: 'ALL', entityId: 0 },
+            ...data.entity
+          ]
+        };
+        this.filteredEntityList = this.searchingParametersFormGroup.controls.entityId.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterEntityList(value))
+          );
         this.persistSelectedFileStatus();
       },
         error => this.isLoading = false
       );
   }
+
   persistSelectedFileStatus() {
     const contol = this.searchingParametersFormGroup.controls.fileStatus;
     const initialStatus = contol.value;
@@ -168,6 +183,11 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
+
+    // Don't send 'All' to backend. Check if entityId is 0 ('ALL')
+    if (formData.entityId === 0) {
+      delete formData.entityId;
+    }
 
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'fileStatus.status');
@@ -279,6 +299,34 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onNext = () => this.getFileList(0, this.pageSize, () => this.stepper.next());
+  isValidEntity(): boolean {
+    const entityId = this.searchingParametersFormGroup.controls.entityId.value;
 
+    if (entityId === '') {
+      return true;
+    }
+
+    return !!this.fileCriteriaData.entity.find(entity => entity.entityId === entityId);
+  }
+
+  onNext = () => {
+    if (this.isValidEntity()) {
+      this.getFileList(0, this.pageSize, () => this.stepper.next());
+    }
+  }
+
+  displayEntity(value?: number) {
+    return value ? this.fileCriteriaData.entity.find(entity => entity.entityId === value).entityName : 'ALL';
+  }
+
+  private _filterEntityList(value: string | number) {
+    if (typeof value === 'string') {
+      return value ?
+        this.fileCriteriaData.entity.filter(option => option.entityName.toLowerCase().includes(value.toLowerCase())) :
+        this.fileCriteriaData.entity;
+    } else {
+      return value ?
+        this.fileCriteriaData.entity.filter(option => option.entityId === value) : this.fileCriteriaData.entity;
+    }
+  }
 }

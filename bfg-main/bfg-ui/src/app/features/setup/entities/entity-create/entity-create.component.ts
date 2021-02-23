@@ -87,7 +87,7 @@ export class EntityCreateComponent implements OnInit {
   isCloneAction = false;
 
   directParticipantList: string[] = [];
-  filteredParticipantList: string[] = [];
+  filteredParticipantList: Observable<string[]>;
 
   entityActionsCache: any = {};
 
@@ -344,6 +344,11 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.entityParticipantType.valueChanges.subscribe((value) => {
           this.resetMqValidators(value);
         });
+        this.filteredParticipantList = this.entityPageFormGroup.controls.directParticipant.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterDirectParticipantList(value))
+          );
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -848,10 +853,14 @@ export class EntityCreateComponent implements OnInit {
       this.setLoading(data);
       this.isLoading = false;
       this.directParticipantList = data;
-      this.filteredParticipantList = entityValue ? data.filter(value => value.toLowerCase().indexOf(entityValue.toLowerCase()) !== 0) : data;
     } catch (err) {
       this.isLoading = false;
     }
+  }
+
+  private _filterDirectParticipantList(value: string) {
+    return value ? this.directParticipantList.filter(option =>
+      option.toLowerCase().indexOf(value.toLowerCase()) === 0) : this.directParticipantList;
   }
 
   onParticipantTypeSelect = (value) => {

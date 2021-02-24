@@ -8,6 +8,7 @@ export interface DetailsDialogData {
   parentLoading?: EventEmitter<boolean>;
   displayName?: (fieldName: string) => string;
   tooltip?: string;
+  width?: string;
 }
 
 export interface Tab {

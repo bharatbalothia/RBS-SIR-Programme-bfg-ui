@@ -214,15 +214,31 @@ mat-form-field {
 }
 
 .mat-dialog-container {
-    resize: both;
+    overflow: hidden !important;
+    // resize: both;
+
+    .cdk-drag {
+        height: -webkit-fill-available;
+        height: stretch;
+        height: -moz-available;
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .mat-dialog-content {
+        max-height: 75vh !important;
+    }
+
+    .mat-dialog-actions {
+        margin-top: auto;
+    }
+
 }
 
 .mat-row,
 .mat-header-row,
 .mat-cell {
     min-height: 40px !important;
-}
-
-.mat-dialog-content {
-    max-height: 75vh !important;
 }

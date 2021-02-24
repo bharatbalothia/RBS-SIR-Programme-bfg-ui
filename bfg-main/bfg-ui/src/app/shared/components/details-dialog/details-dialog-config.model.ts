@@ -8,10 +8,8 @@ export class DetailsDialogConfig extends MatDialogConfig<DetailsDialogData> {
         this.maxHeight = '100vh';
         this.disableClose = false;
         this.data = data;
-        if (data.isDragable) {
-            this.disableClose = true;
-            this.hasBackdrop = false;
-            this.panelClass = 'dragable-dialog-wrapper-container';
-        }
+        this.disableClose = true;
+        this.hasBackdrop = false;
+        this.panelClass = 'dragable-dialog-wrapper-container';
     }
 }

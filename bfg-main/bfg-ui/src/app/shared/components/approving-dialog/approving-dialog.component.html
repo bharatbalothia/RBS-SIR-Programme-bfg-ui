@@ -1,25 +1,26 @@
-<h2 mat-dialog-title>{{data.title}}</h2>
-<mat-dialog-content>
-    <mat-tab-group>
-        <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
-            <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [beforeTab]="getBeforeTab(tab)">
-            </app-tab-content>
-        </mat-tab>
-    </mat-tab-group>
-</mat-dialog-content>
-<mat-dialog-actions>
-    <div class="approve-actions">
-        <mat-form-field *ngIf="approveAction">
-            <mat-label>Approver Comments</mat-label>
-            <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
-        </mat-form-field>
-        <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
-        <div *ngIf="approveAction">
-            <button *ngIf="approveAction" mat-raised-button color="warn"
-                (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
-            <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
-                [disabled]="hasErrors">Accept</button>
+<app-dragable-dialog-wrapper>
+    <mat-dialog-content>
+        <mat-tab-group>
+            <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
+                <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [beforeTab]="getBeforeTab(tab)">
+                </app-tab-content>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <div class="approve-actions">
+            <mat-form-field *ngIf="approveAction">
+                <mat-label>Approver Comments</mat-label>
+                <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
+            </mat-form-field>
+            <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+            <div *ngIf="approveAction">
+                <button *ngIf="approveAction" mat-raised-button color="warn"
+                    (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
+                <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
+                    [disabled]="hasErrors">Accept</button>
+            </div>
         </div>
-    </div>
-    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-</mat-dialog-actions>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-dialog-actions>
+</app-dragable-dialog-wrapper>

@@ -26,9 +26,6 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private notificationService: NotificationService,
-    private elRef: ElementRef,
-    private renderer: Renderer2,
-    private dialogContainer: MatDialogContainer,
   ) {
     this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
@@ -47,19 +44,11 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.updateSections();
-    this.setDialogResizable();
   }
 
   ngOnDestroy() {
     if (this.isLoadingSubscription) {
       this.isLoadingSubscription.unsubscribe();
-    }
-  }
-
-  setDialogResizable = () => {
-    if (/msie\s|trident\//i.test(window.navigator.userAgent)) {
-      const dialogContainerDirective = new AngularResizableDirective(this.dialogContainer['_elementRef'], this.renderer);
-      dialogContainerDirective.ngOnInit();
     }
   }
 

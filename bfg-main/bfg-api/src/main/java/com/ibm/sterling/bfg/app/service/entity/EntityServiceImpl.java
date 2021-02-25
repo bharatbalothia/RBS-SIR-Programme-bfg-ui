@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityApprovalException;
 import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.audit.EventType;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
+import static com.ibm.sterling.bfg.app.model.entity.EntityParticipantType.DIRECT;
+import static com.ibm.sterling.bfg.app.model.entity.EntityParticipantType.INDIRECT;
 import static com.ibm.sterling.bfg.app.model.entity.EntityService.GPL;
 import static com.ibm.sterling.bfg.app.model.entity.EntityService.SCT;
 
@@ -147,6 +150,8 @@ public class EntityServiceImpl implements EntityService {
     private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
         LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
         Entity entity = changeControl.convertEntityLogToEntity();
+        Operation operation = changeControl.getOperation();
+        checkParticipantOnApproval(entity, operation);
         Optional.ofNullable(entity.getEntityId()).ifPresent(entityId -> {
                     List<Long> deletedScheduleId = getAbsentSchedules(
                             scheduleService.findActualSchedulesByEntityId(entityId), entity.getSchedules());
@@ -161,7 +166,7 @@ public class EntityServiceImpl implements EntityService {
                                 schedule.setEntity(entity))
                         .collect(Collectors.toList())
         );
-        Operation operation = changeControl.getOperation();
+
         if (!operation.equals(Operation.DELETE)) {
             entityValidation.validateEntity(entity, operation);
         } else {
@@ -184,6 +189,35 @@ public class EntityServiceImpl implements EntityService {
         changeControlService.save(changeControl);
         savedEntity.setRoutingRules(routingRules);
         return savedEntity;
+    }
+
+    private void checkParticipantOnApproval(Entity entity, Operation operation) {
+        if (entity.getService().equals(SCT.name()) ) {
+            if (entity.getEntityParticipantType().equals(INDIRECT.name())) {
+                if (!findEntityNameForParticipants(entity.getEntityId())
+                        .contains(entity.getDirectParticipant()))
+                    throw new EntityApprovalException(null,
+                            "You cannot approve the change to this entity, because the entity does not have " +
+                            "a valid direct participant");
+            }
+            String indirectEntitiesReferredToParticularEntity =
+                    entityRepository.findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
+                            entity.getEntity(), INDIRECT.name(), false)
+                    .stream()
+                    .map(Entity::getEntity)
+                            .collect(Collectors.joining(", ", "{", "}"));
+            if (!indirectEntitiesReferredToParticularEntity.isEmpty()) {
+                if (operation.equals(Operation.DELETE) && entity.getEntityParticipantType().equals(DIRECT.name()))
+                    throw new EntityApprovalException(null,
+                            "You cannot approve deletion of this entity, because it is the direct participant " +
+                            "for the following entities: " + indirectEntitiesReferredToParticularEntity);
+                if (operation.equals(Operation.UPDATE) && entity.getEntityParticipantType().equals(INDIRECT.name()))
+                    throw new EntityApprovalException(null,
+                            "You cannot approve the participant type change to this entity, because it is " +
+                            "the direct participant for the following entities: "
+                            + indirectEntitiesReferredToParticularEntity);
+            }
+        }
     }
 
     private List<Long> getAbsentSchedules(List<Schedule> actualSchedules, List<Schedule> newSchedules) {

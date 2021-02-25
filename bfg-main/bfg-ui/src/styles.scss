@@ -23,6 +23,13 @@ body {
     }
 }
 
+.mat-button-base {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+}
+
 mat-form-field {
     &.ng-valid {
         .mat-form-field-wrapper {
@@ -96,6 +103,7 @@ mat-form-field {
 }
 
 .mat-table {
+
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
@@ -160,12 +168,12 @@ mat-form-field {
 
 .mat-select-panel,
 .mat-autocomplete-panel {
-  max-height: 400px !important;
+    max-height: 400px !important;
 
-  .mat-option {
-    font-size: inherit;
-    height: 2em !important;
-  }
+    .mat-option {
+        font-size: inherit;
+        height: 2em !important;
+    }
 }
 
 // Override default toast css rules
@@ -195,5 +203,5 @@ mat-form-field {
 }
 
 .table-container {
-  display: table; // Used for correct displaying pagination and table scrolling
+    display: table; // Used for correct displaying pagination and table scrolling
 }

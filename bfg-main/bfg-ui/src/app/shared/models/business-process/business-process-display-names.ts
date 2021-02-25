@@ -103,7 +103,7 @@ export const getBusinessProcessDocumentInfoTabs = (documentContent: BusinessProc
                 { fieldName: 'instanceId', fieldValue: documentContent.workflowId },
                 { fieldName: 'serviceName', fieldValue: documentContent.serviceName },
                 { fieldName: 'documentName', fieldValue: documentContent.documentName },
-                { fieldName: 'storageType', fieldValue: documentContent.storageType },
+                { fieldName: 'storageType', fieldValue: documentContent.storageType === 'DB' ? 'Database' : documentContent.storageType },
                 { fieldName: 'documentId', fieldValue: documentContent.documentId },
                 { fieldName: 'documentPayload', fieldValue: documentContent.documentPayload, isXML: true },
             ]

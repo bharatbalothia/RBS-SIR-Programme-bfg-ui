@@ -77,7 +77,6 @@ export class FileDetailsComponent implements OnInit {
         title: `File Document Information`,
         tabs: getFileDocumentInfoTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
       }));
     },
       error => {
@@ -92,7 +91,6 @@ export class FileDetailsComponent implements OnInit {
         title: `${entity.service}: ${entity.entity}`,
         tabs: getEntityDetailsTabs(entity, file.service),
         displayName: getEntityDisplayName,
-        isDragable: true,
       }));
     },
       error => {
@@ -104,7 +102,6 @@ export class FileDetailsComponent implements OnInit {
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,
-      isDragable: true,
       actionData: {
         id: file.workflowID,
         actions: {
@@ -117,7 +114,6 @@ export class FileDetailsComponent implements OnInit {
       title: `Transactions for ${file.filename} [${file.id}]`,
       tabs: [],
       displayName: getFileSearchDisplayName,
-      isDragable: true,
       actionData: {
         fileId: file.id,
         actions: {
@@ -132,7 +128,6 @@ export class FileDetailsComponent implements OnInit {
       title: `File - ${file.id}`,
       tabs: getFileDetailsTabs(file),
       displayName: getFileSearchDisplayName,
-      isDragable: true,
       actionData: {
         actions: this.actions
       }
@@ -147,7 +142,6 @@ export class FileDetailsComponent implements OnInit {
         title: `${data.code}`,
         tabs: getErrorDetailsTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
       }));
     },
       error => {

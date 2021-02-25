@@ -87,7 +87,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
           title: `SCT Transaction - ${data.id}`,
           tabs: getTransactionDetailsTabs(data, actions),
           displayName: getTransactionSearchDisplayName,
-          isDragable: true,
           actionData: {
             actions
           }
@@ -106,7 +105,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,
-      isDragable: true,
       actionData: {
         id: transaction.workflowID,
         actions: {

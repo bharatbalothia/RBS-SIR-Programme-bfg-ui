@@ -42,7 +42,6 @@ export class FileDialogService {
           title: `File - ${fileData.id}`,
           tabs: getFileDetailsTabs(fileData),
           displayName: getFileSearchDisplayName,
-          isDragable: true,
           actionData: {
             actions: {
               entity: () => this.openEntityDetailsDialog(fileData),
@@ -73,7 +72,6 @@ export class FileDialogService {
         title: `${entity.service}: ${entity.entity}`,
         tabs: getEntityDetailsTabs(entity, file.service),
         displayName: getEntityDisplayName,
-        isDragable: true,
       }));
     },
       error => {
@@ -94,7 +92,6 @@ export class FileDialogService {
         title: `${data.code}`,
         tabs: getErrorDetailsTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
       }));
     },
       error => {
@@ -110,7 +107,6 @@ export class FileDialogService {
       title: `Transactions for ${file.filename} [${file.id}]`,
       tabs: [],
       displayName: getFileSearchDisplayName,
-      isDragable: true,
       actionData: {
         fileId: file.id,
         actions: {
@@ -132,7 +128,6 @@ export class FileDialogService {
         title: file.filename,
         tabs: getFileDocumentInfoTabs(data),
         displayName: getFileSearchDisplayName,
-        isDragable: true
       }));
     },
       error => {
@@ -149,7 +144,6 @@ export class FileDialogService {
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,
-      isDragable: true,
       actionData: {
         id: file.workflowID,
         actions: {

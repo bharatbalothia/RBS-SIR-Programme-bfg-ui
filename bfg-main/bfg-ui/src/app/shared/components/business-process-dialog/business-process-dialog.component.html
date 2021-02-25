@@ -1,5 +1,4 @@
-<h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
-<app-dragable-dialog-wrapper *ngIf="data.isDragable">
+<app-dragable-dialog-wrapper>
     <mat-dialog-content *ngIf="workflowSteps && !isBPHeaderLoading">
         <div class="bp-details">
             <div class="pb-details-section">

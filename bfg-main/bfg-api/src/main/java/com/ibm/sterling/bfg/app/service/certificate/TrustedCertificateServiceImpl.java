@@ -131,7 +131,6 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         changeControlCertService.deleteChangeControl(changeControl);
         adminAuditService.fireAdminAuditEvent(
                 new AdminAuditEventRequest(changeControl, EventType.REQUEST_CANCELLED, changeControl.getResultMeta1()));
-
     }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
@@ -215,20 +214,22 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint, String thumbprint256) {
-        LOG.info("Search trusted certificates by trusted certificate name {}, thumbprint {} and thumbprint256 {}",
-                certName, thumbprint, thumbprint256);
+    public Page<CertType> findCertificates(Pageable pageable, String certName, String thumbprint) {
+        LOG.info("Search trusted certificates by trusted certificate name {} and thumbprint {}",
+                certName, thumbprint);
         List<CertType> certificates = new ArrayList<>();
         Specification<TrustedCertificate> specification = Specification
                 .where(
                         GenericSpecification.<TrustedCertificate>filter("certificateName", certName))
                 .and(
-                        GenericSpecification.filter("thumbprint", thumbprint))
-                .and(
-                        GenericSpecification.filter("thumbprint256", thumbprint256)
+                        Specification
+                                .where(
+                                        GenericSpecification.<TrustedCertificate>filter("thumbprint", thumbprint))
+                                .or(
+                                        GenericSpecification.filter("thumbprint256", thumbprint))
                 );
         List<TrustedCertificate> certificateList = trustedCertificateRepository.findAll(specification);
-        List<ChangeControlCert> ccList = changeControlCertService.findPendingChangeControls(certName, thumbprint, thumbprint256);
+        List<ChangeControlCert> ccList = changeControlCertService.findPendingChangeControls(certName, thumbprint);
         certificateList.removeIf(cert ->
                 ccList.stream().anyMatch(control -> control.getResultMeta3().equals(cert.getThumbprint256())));
         certificates.addAll(certificateList);

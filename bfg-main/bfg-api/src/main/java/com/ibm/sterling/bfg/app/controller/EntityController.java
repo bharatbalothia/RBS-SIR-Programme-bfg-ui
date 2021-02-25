@@ -191,9 +191,11 @@ public class EntityController {
         Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
                 .ifPresent(entity -> {
-                    throw new FieldsValidationException("Entity properties should be unique for requester DN, responder DN, service, and request types. " +
-                            "These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel",
-                            "routingRules");
+                    throw new FieldsValidationException(
+                            "routingRules",
+                            "Entity properties should be unique for requester DN, responder DN, service, and request types. " +
+                                    "These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel"
+                    );
                 });
         return ok(Boolean.FALSE);
     }

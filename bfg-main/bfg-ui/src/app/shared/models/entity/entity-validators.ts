@@ -71,4 +71,15 @@ export class EntityValidators {
     };
   }
 
+  directParticipantValidatorRange(directParticipantList: string[]): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value || directParticipantList.includes(control.value)) {
+        return null;
+      } else {
+        control.markAsTouched();
+        return { directParticipantRange: true };
+      }
+    };
+  }
+
 }

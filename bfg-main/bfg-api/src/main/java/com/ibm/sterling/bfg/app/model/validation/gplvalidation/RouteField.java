@@ -1,13 +1,15 @@
 package com.ibm.sterling.bfg.app.model.validation.gplvalidation;
 
-public enum RouteFieldName {
+import com.ibm.sterling.bfg.app.model.validation.Field;
 
+public enum RouteField implements Field {
+    ROUTE_INBOUND("routeInbound"),
     ROUTE_REQUESTORDN("inboundRequestorDN"),
     ROUTE_RESPONDERDN("inboundResponderDN"),
     ROUTE_SERVICE("inboundService"),
     ROUTE_REQUESTTYPE("inboundRequestType");
 
-    RouteFieldName(String fieldName) {
+    RouteField(String fieldName) {
         this.fieldName = fieldName;
     }
 

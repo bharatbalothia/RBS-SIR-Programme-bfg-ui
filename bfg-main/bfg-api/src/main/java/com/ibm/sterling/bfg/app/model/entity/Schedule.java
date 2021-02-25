@@ -60,6 +60,7 @@ public class Schedule implements Serializable {
 
     @Column(name = "WINDOWINTERVAL")
     @Pattern(regexp = "^\\d+$",
+            message = "WINDOWINTERVAL should be a positive number or 0",
             groups = {SctValidation.PostValidation.class, SctValidation.PutValidation.class})
     @Convert(converter = StringToIntegerConverter.class)
     private String windowInterval;

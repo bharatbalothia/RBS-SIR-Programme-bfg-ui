@@ -78,17 +78,23 @@
     .mat-column-advStatus {
         flex: 0 0 10% !important;
         width: 10% !important;
+        word-break: normal;
+        white-space: normal;
     }
 
     .mat-column-startTime,
     .mat-column-endTime {
         flex: 0 0 18% !important;
         width: 18% !important;
+        word-break: normal;
+        white-space: normal;
     }
 
     .mat-column-serviceName {
         flex: 0 0 24% !important;
         width: 24% !important;
+        word-break: normal;
+        white-space: normal;
     }
 
     .mat-column-docId {

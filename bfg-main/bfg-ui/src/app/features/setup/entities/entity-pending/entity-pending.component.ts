@@ -37,6 +37,7 @@ export class EntityPendingComponent implements OnInit {
   DNSearchingValue = '';
 
   isLoading = true;
+  isLoadingDetails = false;
 
   changeControls: ChangeControlsWithPagination;
   displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
@@ -93,26 +94,29 @@ export class EntityPendingComponent implements OnInit {
   addEntityBeforeToChangeControl(changeControl: ChangeControl) {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
-      return this.entityService.getEntityById(entityId.toString()).pipe(data => this.setLoading(data)).toPromise()
+      this.isLoadingDetails = true;
+      return this.entityService.getEntityById(entityId.toString()).toPromise()
         .then(data => {
-          this.isLoading = false;
+          this.isLoadingDetails = false;
           return ({ ...changeControl, entityBefore: data });
-        }).catch(error => this.isLoading = false);
+        }).catch(error => this.isLoadingDetails = false);
     }
     else {
       return new Promise((res) => res(changeControl));
     }
   }
 
-  getPendingEntityDetails = (changeControl: ChangeControl) =>
-    this.entityService.getPendingEntityById(changeControl.changeID).pipe(data => this.setLoading(data)).toPromise()
+  getPendingEntityDetails = (changeControl: ChangeControl) => {
+    this.isLoadingDetails = true;
+    return this.entityService.getPendingEntityById(changeControl.changeID).toPromise()
       .then((data: Entity) => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return ({ ...changeControl, entityLog: data });
       }).catch(error => {
-        this.isLoading = false;
+        this.isLoadingDetails = false;
         return null;
-      })
+      });
+  }
 
   openInfoDialog(changeControl: ChangeControl) {
     this.getPendingEntityDetails(changeControl)
@@ -207,5 +211,6 @@ export class EntityPendingComponent implements OnInit {
       this.DNSearchingValue = '';
       this.getPendingChanges(0, this.pageSize);
     }
+    return false;
   }
 }

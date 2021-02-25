@@ -67,6 +67,7 @@ export const ENTITY_VALIDATION_MESSAGES = {
     ],
     directParticipant: [
         { type: 'required', message: `${getEntityDisplayName('directParticipant')} is required if ${getEntityDisplayName('entityParticipantType')} is INDIRECT` },
+        { type: 'directParticipantRange', message: `${getEntityDisplayName('directParticipant')} value is out of range` },
     ],
     mqHost: [
         { type: 'required', message: `${getEntityDisplayName('mqHost')} is required if ${getEntityDisplayName('entityParticipantType')} is DIRECT` },

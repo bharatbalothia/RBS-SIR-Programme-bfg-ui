@@ -37,6 +37,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   searchingParametersFormGroup: FormGroup;
   transactionCriteriaData: TransactionCriteriaData;
   filteredEntityList: Observable<string[]>;
+  ALL = '';
 
   getSearchValidationMessage = getSearchValidationMessage;
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
@@ -144,10 +145,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       .pipe(data => this.setLoading(data))
       .subscribe((data: TransactionCriteriaData) => {
         this.isLoading = false;
-        this.transactionCriteriaData = {
-          ...data,
-          entity: [ 'ALL', ...data.entity ]
-        };
+        this.transactionCriteriaData = data;
         this.filteredEntityList = this.searchingParametersFormGroup.controls.entity.valueChanges
           .pipe(
             startWith(''),
@@ -184,11 +182,6 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       size: pageSize.toString(),
       service: ENTITY_SERVICE_TYPE.SCT
     };
-
-    // Don't send 'All' to backend.
-    if (formData.entity === 'ALL') {
-      delete formData.entity;
-    }
 
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'trxStatus.status');
@@ -281,9 +274,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   isValidEntity(): boolean {
     const entity = this.searchingParametersFormGroup.controls.entity.value;
-    console.log(entity);
 
-    if (entity === '') {
+    if (entity === this.ALL) {
       return true;
     }
 
@@ -297,6 +289,10 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   }
 
   displayEntity(value?: string) {
+    if (value === null) {
+      this.searchingParametersFormGroup.controls.entity.setValue(this.ALL);
+    }
+
     return value ? this.transactionCriteriaData.entity.find(entity => entity === value) : 'ALL';
   }
 

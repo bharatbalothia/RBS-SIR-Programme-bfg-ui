@@ -1,8 +1,22 @@
 export interface FileCriteriaData {
-    fileStatus: { service: string, outbound: boolean, label: string, title: string, status: number }[];
-    type: string[];
-    entity: { entityName: string, entityId: number }[];
-    service: string[];
-    direction: string[];
-    bpstate: string[];
+  fileStatus: FileStatus[];
+  type: string[];
+  entity: Entity[];
+  service: string[];
+  direction: string[];
+  bpstate: string[];
+}
+
+interface Entity {
+  entityName: string;
+  entityId: number;
+  service: string;
+}
+
+interface FileStatus {
+  service: string;
+  outbound: boolean;
+  label: string;
+  title: string;
+  status: number;
 }

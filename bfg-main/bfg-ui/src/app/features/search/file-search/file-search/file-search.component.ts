@@ -17,8 +17,8 @@ import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.servic
 import { ActivatedRoute } from '@angular/router';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-file-search',
@@ -26,7 +26,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['./file-search.component.scss']
 })
 export class FileSearchComponent implements OnInit, AfterViewInit {
-
   @ViewChild(FileTableComponent)
   fileTableComponent: FileTableComponent;
 
@@ -36,8 +35,10 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   maxDate: moment.Moment = null;
 
   searchingParametersFormGroup: FormGroup;
+  initialFileCriteriaData: FileCriteriaData;
   fileCriteriaData: FileCriteriaData;
   filteredEntityList: Observable<{ entityName: string, entityId: number }[]>;
+  ALL = '';
 
   getSearchValidationMessage = getSearchValidationMessage;
   getFileSearchDisplayName = getFileSearchDisplayName;
@@ -50,8 +51,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     from: moment().subtract(1, 'days').startOf('day'),
     to: moment().add(1, 'days').endOf('day')
   };
-
-  criteriaFilterObject = { direction: '', service: '' };
 
   files: FilesWithPagination;
   dataSource: MatTableDataSource<File>;
@@ -78,8 +77,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
         };
         delete this.URLParams.startDate;
       }
-      this.initializeSearchingParametersFormGroup();
-      this.getFileCriteriaData();
+      this.initSearchingParametersFormGroup();
+      this.initFileCriteriaData();
     });
   }
 
@@ -104,7 +103,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   isURLParamsEmpty = () => isEmpty(this.URLParams);
 
-  initializeSearchingParametersFormGroup() {
+  initSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
       entityId: [''],
       service: [''],
@@ -118,7 +117,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       to: [this.defaultSelectedData.to]
     });
 
-    this.criteriaFilterObject = { direction: '', service: '' };
     this.initMinMaxDate();
   }
 
@@ -129,44 +127,50 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
 
-  getFileCriteriaData = () => {
-    const filterObject = {
-      ...this.criteriaFilterObject,
-      outbound: this.criteriaFilterObject.direction === '' ? '' : this.getDirectionValue(this.criteriaFilterObject.direction.toUpperCase())
-    };
-    filterObject.direction = null;
-
-    this.fileService.getFileCriteriaData(removeEmpties(filterObject))
+  initFileCriteriaData() {
+    this.fileService.getFileCriteriaData()
       .pipe(data => this.setLoading(data))
       .subscribe((data: FileCriteriaData) => {
         this.isLoading = false;
-        this.fileCriteriaData = {
-          ...data,
-          entity: [
-            { entityName: 'ALL', entityId: 0 },
-            ...data.entity
-          ]
-        };
-        this.filteredEntityList = this.searchingParametersFormGroup.controls.entityId.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterEntityList(value))
-          );
-        this.persistSelectedFileStatus();
+        this.initialFileCriteriaData = this.fileCriteriaData = data;
+        this.initFilteredEntityList();
       },
         error => this.isLoading = false
       );
   }
 
+  initFilteredEntityList() {
+    this.filteredEntityList = this.searchingParametersFormGroup.controls.entityId.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filterEntityList(value))
+      );
+  }
+
+  filterFileCriteriaData(): void {
+    const service = this.searchingParametersFormGroup.controls.service.value;
+    const direction = this.searchingParametersFormGroup.controls.direction.value;
+    const outbound = direction === '' ? '' : this.getDirectionValue(direction.toUpperCase());
+
+    this.fileCriteriaData = {
+      ...this.initialFileCriteriaData,
+      entity: this.initialFileCriteriaData.entity.filter(entity => service === this.ALL || entity.service === service),
+      fileStatus: this.initialFileCriteriaData.fileStatus.filter(fileStatus =>
+        (service === this.ALL || fileStatus.service === service) &&
+        (outbound === this.ALL || fileStatus.outbound === outbound)
+      )
+    };
+
+    this.initFilteredEntityList();
+    this.persistSelectedFileStatus();
+  }
+
   persistSelectedFileStatus() {
-    const contol = this.searchingParametersFormGroup.controls.fileStatus;
-    const initialStatus = contol.value;
+    const fileStatusControl = this.searchingParametersFormGroup.controls.fileStatus;
+    const initialStatus = fileStatusControl.value;
     const valueInData = this.fileCriteriaData.fileStatus.find((val) => JSON.stringify(val) === JSON.stringify(initialStatus));
-    if (valueInData) {
-      contol.setValue(valueInData);
-    } else {
-      contol.setValue('');
-    }
+
+    fileStatusControl.setValue(valueInData ? valueInData : '');
   }
 
   setLoading(data) {
@@ -183,11 +187,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       page: pageIndex.toString(),
       size: pageSize.toString()
     };
-
-    // Don't send 'All' to backend. Check if entityId is 0 ('ALL')
-    if (formData.entityId === 0) {
-      delete formData.entityId;
-    }
 
     formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'fileStatus.status');
@@ -230,57 +229,11 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   }
 
   resetSearchParameters = () => {
-    this.initializeSearchingParametersFormGroup();
-    this.getFileCriteriaData();
-  }
-
-  onServiceSelect = (event) => {
-    this.criteriaFilterObject.service = event.value;
-    this.getFileCriteriaData();
-  }
-
-  onDirectionSelect = (event) => {
-    this.criteriaFilterObject.direction = event.value;
-    this.getFileCriteriaData();
-  }
-
-  onStatusSelect = (event) => {
-    // this.setServiceAndDirectionFromStatus(event.value);
+    this.initSearchingParametersFormGroup();
+    this.initFileCriteriaData();
   }
 
   getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
-
-  setServiceAndDirectionFromStatus(fromStatus) {
-    if (fromStatus !== '') {
-      let refreshRequired = false;
-      const serviceControl = this.searchingParametersFormGroup.controls.service;
-      const initialService = serviceControl.value;
-      const directionControl = this.searchingParametersFormGroup.controls.direction;
-      const initialDirection = directionControl.value;
-
-      const newService = this.fileCriteriaData.service.find((element) =>
-        element.toUpperCase() === fromStatus.service.toUpperCase()
-      );
-
-      const newDirection = this.fileCriteriaData.direction.find((element) =>
-        element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
-      );
-
-      if (newDirection && (initialDirection !== newDirection)) {
-        directionControl.setValue(newDirection);
-        refreshRequired = true;
-        this.criteriaFilterObject.direction = newDirection.toUpperCase();
-      }
-      if (newService && (initialService !== newService)) {
-        serviceControl.setValue(newService);
-        refreshRequired = true;
-        this.criteriaFilterObject.service = newService;
-      }
-      if (refreshRequired) {
-        this.getFileCriteriaData();
-      }
-    }
-  }
 
   getTooltip(step: string, field: string): string {
     const toolTip = this.toolTip.getTooltip({
@@ -299,27 +252,89 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isValidEntity(): boolean {
-    const entityId = this.searchingParametersFormGroup.controls.entityId.value;
-
-    if (entityId === '') {
-      return true;
-    }
-
-    return !!this.fileCriteriaData.entity.find(entity => entity.entityId === entityId);
-  }
-
   onNext = () => {
     if (this.isValidEntity()) {
       this.getFileList(0, this.pageSize, () => this.stepper.next());
     }
   }
 
+  onEntitySelect = (event?: MatAutocompleteSelectedEvent) => {
+    const entityId = this.searchingParametersFormGroup.controls.entityId.value;
+    const service = this.searchingParametersFormGroup.controls.service.value;
+    const entityService = entityId === this.ALL ?
+      this.ALL :
+      this.fileCriteriaData.entity.find(entity => entity.entityId === entityId).service;
+
+    // Filter file status when entity service is not equal to service
+    if (service !== entityService) {
+      this.searchingParametersFormGroup.controls.service.setValue(entityService);
+      this.filterFileCriteriaData();
+    }
+  }
+
+  onServiceSelect = (event) => {
+    this.searchingParametersFormGroup.controls.entityId.setValue(this.ALL);
+    this.filterFileCriteriaData();
+  }
+
+  onDirectionSelect = (event) => {
+    this.filterFileCriteriaData();
+  }
+
+  onStatusSelect = (event) => {
+    // const fromStatus = event.value;
+
+    // if (fromStatus !== this.ALL) {
+    //   let refreshRequired = false;
+    //   const serviceControl = this.searchingParametersFormGroup.controls.service;
+    //   const initialService = serviceControl.value;
+    //   const directionControl = this.searchingParametersFormGroup.controls.direction;
+    //   const initialDirection = directionControl.value;
+
+    //   const newService = this.fileCriteriaData.service.find((element) =>
+    //     element.toUpperCase() === fromStatus.service.toUpperCase()
+    //   );
+
+    //   const newDirection = this.fileCriteriaData.direction.find((element) =>
+    //     element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
+    //   );
+
+    //   if (newDirection && (initialDirection !== newDirection)) {
+    //     directionControl.setValue(newDirection);
+    //     refreshRequired = true;
+    //   }
+
+    //   if (newService && (initialService !== newService)) {
+    //     serviceControl.setValue(newService);
+    //     refreshRequired = true;
+    //   }
+
+    //   if (refreshRequired) {
+    //     this.filterFileCriteriaData();
+    //   }
+    // }
+  }
+
+  isValidEntity(): boolean {
+    const entityId = this.searchingParametersFormGroup.controls.entityId.value;
+
+    if (entityId === this.ALL) {
+      return true;
+    }
+
+    return !!this.fileCriteriaData.entity.find(entity => entity.entityId === entityId);
+  }
+
   displayEntity(value?: number) {
+    if (value === null) {
+      this.searchingParametersFormGroup.controls.entityId.setValue(this.ALL);
+      this.onEntitySelect();
+    }
+
     return value ? this.fileCriteriaData.entity.find(entity => entity.entityId === value).entityName : 'ALL';
   }
 
-  private _filterEntityList(value: string | number) {
+  private filterEntityList(value: string | number) {
     if (typeof value === 'string') {
       return value ?
         this.fileCriteriaData.entity.filter(option => option.entityName.toLowerCase().includes(value.toLowerCase())) :

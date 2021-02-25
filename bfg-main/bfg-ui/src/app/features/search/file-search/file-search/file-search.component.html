@@ -14,7 +14,8 @@
             <input type="text" aria-label="Entity" matInput formControlName="entityId" [matAutocomplete]="autoCompleteEntity"
               appAutocompleteEnforceSelection>
             <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete"
-              [displayWith]="displayEntity.bind(this)">
+              [displayWith]="displayEntity.bind(this)" (optionSelected)="onEntitySelect($event)">
+              <mat-option value="">ALL</mat-option>
               <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity.entityId">
                 {{entity.entityName}}
               </mat-option>

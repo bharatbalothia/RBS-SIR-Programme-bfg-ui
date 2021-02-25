@@ -55,6 +55,7 @@ import { NgxMatMomentModule } from '@angular-material-components/moment-adapter'
 import { InputUppercaseDirective } from './directives/input-uppercase/input-uppercase.directive';
 import { PasswordConfirmationDialogComponent } from './components/password-confirmation-dialog/password-confirmation-dialog.component';
 import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete-enforce-selection/autocomplete-enforce-selection.directive';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -129,7 +130,8 @@ const DATE_FORMAT: NgxMatDateFormats = {
     ToastrModule.forRoot(),
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    AngularDraggableModule
   ],
   exports: [
     // Modules
@@ -166,6 +168,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
     MatDatepickerModule,
+    AngularDraggableModule,
 
     // Components
     ConfirmDialogComponent,

@@ -1,5 +1,4 @@
-<h2 *ngIf="!data.isDragable" mat-dialog-title>{{data.title}}</h2>
-<app-dragable-dialog-wrapper *ngIf="data.isDragable">
+<app-dragable-dialog-wrapper>
     <mat-dialog-content *ngIf="workflowSteps && !isBPHeaderLoading">
         <div class="bp-details">
             <div class="pb-details-section">
@@ -115,8 +114,6 @@
 
         <div *ngIf="shouldShowBPContent()" class='bp-description'>
             *Inline Invocation
-            <br>
-            [-]=Load Balanced, [p]=Preferred Node, [m]=Mandatory Node, [r]=Execution Role
             <br>
             Last update on {{currentDate | date:'dd/MM/yyyy, HH:mm:ss'}}
         </div>

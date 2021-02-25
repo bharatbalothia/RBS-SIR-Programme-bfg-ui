@@ -124,7 +124,6 @@ export class BusinessProcessDialogComponent implements OnInit {
           title: `Business Process Details`,
           tabs: getBusinessProcessDetailsTabs(data),
           displayName: getBusinessProcessDisplayName,
-          isDragable: true,
           actionData: {
           },
         }));
@@ -141,7 +140,6 @@ export class BusinessProcessDialogComponent implements OnInit {
         title: `Primary Document`,
         tabs: getBusinessProcessDocumentInfoTabs({ ...data, processName: this.bpHeader.bpName, serviceName: step.serviceName }),
         displayName: getBusinessProcessDisplayName,
-        isDragable: true
       }));
     },
       error => this.isLoading = false

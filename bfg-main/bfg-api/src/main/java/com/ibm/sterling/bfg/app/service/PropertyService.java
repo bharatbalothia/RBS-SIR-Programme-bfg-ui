@@ -181,6 +181,7 @@ public class PropertyService {
                                     Map<String, Object> entityMap = new HashMap<>();
                                     entityMap.put("entityId", entity.getEntityId());
                                     entityMap.put("entityName", entity.getEntity() + "(" + entity.getService() + ")");
+                                    entityMap.put("service", entity.getService());
                                     return entityMap;
                                 }
                         )

@@ -92,7 +92,6 @@ export class TransactionsDialogComponent implements OnInit {
           title: `SCT Transaction -  ${data.id}`,
           tabs: getTransactionDetailsTabs(data, ...actions),
           displayName: getFileSearchDisplayName,
-          isDragable: true,
           actionData: {
             actions
           },
@@ -114,7 +113,6 @@ export class TransactionsDialogComponent implements OnInit {
         title: data.document ? transaction.docID : `Primary Document`,
         tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
         displayName: getFileSearchDisplayName,
-        isDragable: true,
         actionData: {
           actions: {
             processID: () => this.openBusinessProcessDialog(transaction)
@@ -130,7 +128,6 @@ export class TransactionsDialogComponent implements OnInit {
       title: `Business Process Detail`,
       tabs: [],
       displayName: getBusinessProcessDisplayName,
-      isDragable: true,
       actionData: {
         id: transaction.workflowID,
         actions: {

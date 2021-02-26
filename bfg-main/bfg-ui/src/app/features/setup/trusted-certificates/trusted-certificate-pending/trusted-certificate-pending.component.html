@@ -43,7 +43,7 @@
                 <mat-icon inline>format_list_numbered</mat-icon> Version manager
               </div>
             </button>
-            <a mat-icon-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+            <a mat-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
               class="action-button"
               [routerLink]="['/' + ROUTING_PATHS.TRUSTED_CERTIFICATES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
               [state]="{ pageIndex: pageIndex, pageSize: pageSize, previousURL: getCurrentRoute()}" alt="Edit"
@@ -52,8 +52,8 @@
                 <mat-icon inline>edit</mat-icon>edit
               </div>
             </a>
-            <button mat-icon-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete"
-              title="Delete" (click)="deletePendingChange(element)">
+            <button mat-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete" title="Delete"
+              (click)="deletePendingChange(element)">
               <div class="action-icon">
                 <mat-icon>clear</mat-icon>delete
               </div>
@@ -64,8 +64,10 @@
         <ng-container matColumnDef="changes">
           <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button (click)="openInfoDialog(element)">
-              <mat-icon inline>info</mat-icon> info
+            <button mat-button class="action-button" (click)="openInfoDialog(element)">
+              <div class="action-icon">
+                <mat-icon inline>info</mat-icon> info
+              </div>
             </button>
           </mat-cell>
         </ng-container>

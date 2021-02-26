@@ -38,6 +38,13 @@
                 </div>
             </div>
         </div>
+
+        <app-table-paginator [value]="pageIndex + 1" [getRows]="getWorkflowSteps.bind(this)" [min]="1"
+            [max]="workflowSteps.totalPages" [length]="workflowSteps.totalElements"
+            [(pageIndex)]="workflowSteps.pageable.pageNumber" [pageSize]="workflowSteps.pageable.pageSize"
+            [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        </app-table-paginator>
+
         <mat-table [dataSource]="dataSource">
 
             <ng-container matColumnDef="stepId">
@@ -108,7 +115,7 @@
 
         <app-table-paginator [value]="pageIndex + 1" [getRows]="getWorkflowSteps.bind(this)" [min]="1"
             [max]="workflowSteps.totalPages" [length]="workflowSteps.totalElements"
-            [pageIndex]="workflowSteps.pageable.pageNumber" [pageSize]="workflowSteps.pageable.pageSize"
+            [(pageIndex)]="workflowSteps.pageable.pageNumber" [pageSize]="workflowSteps.pageable.pageSize"
             [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
         </app-table-paginator>
 

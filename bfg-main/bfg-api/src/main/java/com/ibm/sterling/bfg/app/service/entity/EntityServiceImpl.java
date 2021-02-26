@@ -192,7 +192,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private void checkParticipantOnApproval(Entity entity, Operation operation) {
-        if (entity.getService().equals(SCT.name()) ) {
+        if (entity.getService().equals(SCT.name())) {
             if (entity.getEntityParticipantType().equals(INDIRECT.name())) {
                 if (!findEntityNameForParticipants(entity.getEntityId())
                         .contains(entity.getDirectParticipant()))
@@ -200,12 +200,11 @@ public class EntityServiceImpl implements EntityService {
                             "You cannot approve the change to this entity, because the entity does not have " +
                             "a valid direct participant");
             }
-            String indirectEntitiesReferredToParticularEntity =
-                    entityRepository.findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
-                            entity.getEntity(), INDIRECT.name(), false)
+            String indirectEntitiesReferredToParticularEntity = entityRepository.findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
+                    entity.getEntity(), INDIRECT.name(), false)
                     .stream()
                     .map(Entity::getEntity)
-                            .collect(Collectors.joining(", ", "{", "}"));
+                    .collect(Collectors.joining(", "));
             if (!indirectEntitiesReferredToParticularEntity.isEmpty()) {
                 if (operation.equals(Operation.DELETE) && entity.getEntityParticipantType().equals(DIRECT.name()))
                     throw new EntityApprovalException(null,

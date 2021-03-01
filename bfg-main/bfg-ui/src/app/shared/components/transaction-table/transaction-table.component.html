@@ -2,22 +2,23 @@
     Automatically refresh every minute
 </mat-slide-toggle>
 <h3 *ngIf="transactions && transactions.totalElements">
-    {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize, transactions.pageable.pageNumber + 1)}}
+    {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize,
+    transactions.pageable.pageNumber + 1)}}
 </h3>
 <ng-template matStepLabel>Search results</ng-template>
 <div class="table-container">
     <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
-      [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
-      [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
-      [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+        [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
+        [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
     </app-table-paginator>
     <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="id">
             <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
+                <a mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
                     {{element.id}}
-                </button>
+                </a>
             </mat-cell>
         </ng-container>
 
@@ -54,9 +55,9 @@
         <ng-container matColumnDef="WFID">
             <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button mat-button (click)="openBusinessProcessDialog(element)">
+                <a mat-button (click)="openBusinessProcessDialog(element)">
                     {{element.workflowID}}
-                </button>
+                </a>
             </mat-cell>
         </ng-container>
 
@@ -82,7 +83,7 @@
 
         <ng-container matColumnDef="paginator">
             <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
-                
+
             </mat-footer-cell>
         </ng-container>
 
@@ -93,8 +94,8 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <app-table-paginator class="paginator" *ngIf="transactions" [value]="pageIndex + 1"
-      [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
-      [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
-      [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        [getRows]="getTransactionList.bind(this)" [min]="1" [max]="transactions && transactions.totalPages"
+        [length]="transactions.totalElements" [(pageIndex)]="transactions.pageable.pageNumber"
+        [pageSize]="transactions.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
     </app-table-paginator>
 </div>

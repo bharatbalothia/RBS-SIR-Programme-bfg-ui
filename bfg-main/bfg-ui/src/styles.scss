@@ -109,7 +109,7 @@ mat-form-field {
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
-        word-break: break-word;
+        word-break: break-all;
         white-space: normal;
         line-height: normal;
         text-align: left;

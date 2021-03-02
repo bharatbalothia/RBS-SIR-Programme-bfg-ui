@@ -12,7 +12,7 @@
     }
 
     .mat-form-field {
-        width: 100%;
+        width: 50%;
 
         .error-message {
             white-space: pre-wrap;
@@ -53,12 +53,9 @@
         }
     }
 
+    .summary-table,
     .schedule-table {
-        width: 100%;
-    }
-
-    .summary-table {
-        width: 100%;
+        width: 50%;
 
         .mat-row,
         .mat-header-row {
@@ -79,11 +76,23 @@
 
     }
 
+    .changer-comments {
+        width: 100%;
+    }
+
     .stepper-actions {
         margin-top: 15px;
 
         .action-button {
             margin-right: 15px;
+        }
+    }
+
+    @media (max-width: 1280px) {
+
+        .summary-table,
+        .schedule-table {
+            width: 100%;
         }
     }
 }

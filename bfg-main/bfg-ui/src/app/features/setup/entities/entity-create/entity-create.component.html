@@ -393,7 +393,8 @@
                         <ng-container matColumnDef="schedule">
                             <mat-header-cell *matHeaderCellDef> Schedule </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                {{getFormattedSchedule(element)}}
+                                <app-display-table-cell [value]="getFormattedSchedule(element)">
+                                </app-display-table-cell>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="scheduleType">
@@ -900,7 +901,7 @@
                         </ng-container>
                         <ng-container matColumnDef="changerComment">
                             <mat-footer-cell *matFooterCellDef colspan="2">
-                                <mat-form-field>
+                                <mat-form-field class="changer-comments">
                                     <mat-label>{{entityDisplayNames['changerComments'] || 'changerComments'}}
                                     </mat-label>
                                     <textarea matInput formControlName="changerComments"></textarea>

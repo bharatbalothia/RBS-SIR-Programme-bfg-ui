@@ -7,12 +7,12 @@
     <mat-step [stepControl]="searchingParametersFormGroup">
       <form [formGroup]="searchingParametersFormGroup">
         <ng-template matStepLabel>Search parameters</ng-template>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.entity">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.entity">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('entity')}}
             </mat-label>
-            <input type="text" aria-label="Entity" matInput formControlName="entityId" [matAutocomplete]="autoCompleteEntity"
-              appAutocompleteEnforceSelection>
+            <input type="text" aria-label="Entity" matInput formControlName="entityId"
+              [matAutocomplete]="autoCompleteEntity" appAutocompleteEnforceSelection>
             <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete"
               [displayWith]="displayEntity.bind(this)" (optionSelected)="onEntitySelect($event)">
               <mat-option value="">ALL</mat-option>
@@ -23,8 +23,8 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
         </section>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.service">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.service">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('service')}}
             </mat-label>
             <mat-select formControlName="service" (selectionChange)="onServiceSelect($event)">
@@ -35,8 +35,8 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'service')"></app-tooltip>
         </section>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.direction">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.direction">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('direction')}}
             </mat-label>
             <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
@@ -47,8 +47,8 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
         </section>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('fileStatus')}}
             </mat-label>
             <mat-select formControlName="fileStatus" (selectionChange)="onStatusSelect($event)">
@@ -59,8 +59,8 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'file-status')"></app-tooltip>
         </section>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('bpstate')}}
             </mat-label>
             <mat-select formControlName="bpstate">
@@ -87,8 +87,8 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
         </section>
-        <section class="form-field-section">
-          <mat-form-field *ngIf="fileCriteriaData && fileCriteriaData.type">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.type">
+          <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('type')}}
             </mat-label>
             <mat-select formControlName="type">
@@ -138,7 +138,7 @@
           <app-tooltip [tip]="getTooltip('search', 'to')"></app-tooltip>
         </section>
         <div class='stepper-actions'>
-          <button mat-raised-button  class="action-button" (click)="onNext()"
+          <button mat-raised-button class="action-button" (click)="onNext()"
             [disabled]="!searchingParametersFormGroup.valid">Next</button>
           <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
             Reset</button>

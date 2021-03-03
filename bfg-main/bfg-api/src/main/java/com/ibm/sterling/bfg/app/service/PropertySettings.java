@@ -26,6 +26,7 @@ public class PropertySettings {
     private String[] fileErrorPostfixKey;
     private String transactionSearchPrefixKey;
     private String[] transactionSearchPostfixKey;
+    private String transactionDirectionPrefixKey;
     private String useraccountGroupsKey;
     private String useraccountPermissionsKey;
 
@@ -179,6 +180,14 @@ public class PropertySettings {
 
     public void setTransactionStatusPrefixKey(String transactionStatusPrefixKey) {
         this.transactionStatusPrefixKey = transactionStatusPrefixKey;
+    }
+
+    public String getTransactionDirectionPrefixKey() {
+        return transactionDirectionPrefixKey;
+    }
+
+    public void setTransactionDirectionPrefixKey(String transactionDirectionPrefixKey) {
+        this.transactionDirectionPrefixKey = transactionDirectionPrefixKey;
     }
 
     public String getUseraccountGroupsKey() {

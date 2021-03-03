@@ -29,6 +29,7 @@ public class TransactionSearchCriteria extends SearchCriteria {
     @JsonAlias("hasMessageId")
     private Boolean hasMessageId;
 
+
     public String getEntity() {
         return entity;
     }

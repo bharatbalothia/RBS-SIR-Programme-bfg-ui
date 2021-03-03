@@ -25,8 +25,8 @@ public class PropertySettings {
     private String fileErrorUrl;
     private String[] fileErrorPostfixKey;
     private String transactionSearchPrefixKey;
-    private String[] transactionSearchPostfixKey;
-    private String transactionDirectionPrefixKey;
+    private String transactionTypePostfixKey;
+    private String transactionDirectionPostfixKey;
     private String useraccountGroupsKey;
     private String useraccountPermissionsKey;
 
@@ -166,12 +166,12 @@ public class PropertySettings {
         this.transactionSearchPrefixKey = transactionSearchPrefixKey;
     }
 
-    public String[] getTransactionSearchPostfixKey() {
-        return transactionSearchPostfixKey;
+    public String getTransactionTypePostfixKey() {
+        return transactionTypePostfixKey;
     }
 
-    public void setTransactionSearchPostfixKey(String[] transactionSearchPostfixKey) {
-        this.transactionSearchPostfixKey = transactionSearchPostfixKey;
+    public void setTransactionTypePostfixKey(String transactionTypePostfixKey) {
+        this.transactionTypePostfixKey = transactionTypePostfixKey;
     }
 
     public String getTransactionStatusPrefixKey() {
@@ -182,12 +182,12 @@ public class PropertySettings {
         this.transactionStatusPrefixKey = transactionStatusPrefixKey;
     }
 
-    public String getTransactionDirectionPrefixKey() {
-        return transactionDirectionPrefixKey;
+    public String getTransactionDirectionPostfixKey() {
+        return transactionDirectionPostfixKey;
     }
 
-    public void setTransactionDirectionPrefixKey(String transactionDirectionPrefixKey) {
-        this.transactionDirectionPrefixKey = transactionDirectionPrefixKey;
+    public void setTransactionDirectionPostfixKey(String transactionDirectionPostfixKey) {
+        this.transactionDirectionPostfixKey = transactionDirectionPostfixKey;
     }
 
     public String getUseraccountGroupsKey() {

@@ -204,22 +204,24 @@ public class PropertyService {
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {
         Map<String, List<Object>> transactionCriteriaData = new HashMap<>();
-        String[] transactionSearchPostfixKey = settings.getTransactionSearchPostfixKey();
         String transactionSearchPrefixKey = settings.getTransactionSearchPrefixKey();
-        String directionPrefixKey = settings.getTransactionDirectionPrefixKey();
+        String typePropertyKey = transactionSearchPrefixKey + settings.getTransactionTypePostfixKey();
+        String directionPropertyKey =  transactionSearchPrefixKey + settings.getTransactionDirectionPostfixKey();
         String statusPropertyKey = "sct" + settings.getTransactionStatusPrefixKey() +
                 Optional.ofNullable(direction).map(String::toLowerCase).orElse("");
 
-        List<String> propertyKeys = Arrays.stream(transactionSearchPostfixKey)
-                .map(value -> transactionSearchPrefixKey + value).collect(Collectors.toList());
+        List<String> propertyKeys = new ArrayList<>();
+        propertyKeys.add(directionPropertyKey);
+        propertyKeys.add(typePropertyKey);
         propertyKeys.add(statusPropertyKey);
-        propertyKeys.add(directionPrefixKey);
         List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getFileUrl());
 
-        Arrays.stream(transactionSearchPostfixKey).forEach(value -> transactionCriteriaData.put(value, propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).equals(transactionSearchPrefixKey + value))
+        transactionCriteriaData.put("type", propertyList.stream()
+                .filter(property ->
+                    property.get(PROPERTY_KEY).equals(typePropertyKey)
+                )
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList()));
 
         transactionCriteriaData.put("trxStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
@@ -233,8 +235,8 @@ public class PropertyService {
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
 
-        transactionCriteriaData.put("trxDirection", propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).startsWith(directionPrefixKey))
+        transactionCriteriaData.put("direction", propertyList.stream()
+                .filter(property -> property.get(PROPERTY_KEY).startsWith(directionPropertyKey))
                 .map(this::getDirectionLabelData)
                 .filter(object -> !object.isEmpty())
                 .sorted(Comparator

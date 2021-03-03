@@ -11,8 +11,17 @@
         width: 100px;
     }
 
-    .mat-form-field {
+    .form-field-section {
         width: 50%;
+
+        .source-info {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    }
+
+    .mat-form-field {
+        width: 100%;
 
         .error-message {
             white-space: pre-wrap;
@@ -88,10 +97,11 @@
         }
     }
 
-    @media (max-width: 1280px) {
+    @media (max-width: 1024px) {
 
         .summary-table,
-        .schedule-table {
+        .schedule-table,
+        .form-field-section {
             width: 100%;
         }
     }

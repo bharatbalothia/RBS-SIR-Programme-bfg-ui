@@ -210,7 +210,7 @@ mat-form-field {
 }
 
 .mat-dialog-container {
-    overflow: hidden !important;
+    overflow: visible !important;
 
     .cdk-drag {
         height: -webkit-fill-available;

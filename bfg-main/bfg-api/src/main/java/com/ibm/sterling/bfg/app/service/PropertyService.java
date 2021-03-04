@@ -204,9 +204,8 @@ public class PropertyService {
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {
         Map<String, List<Object>> transactionCriteriaData = new HashMap<>();
-        String transactionSearchPrefixKey = settings.getTransactionSearchPrefixKey();
-        String typePropertyKey = transactionSearchPrefixKey + settings.getTransactionTypePostfixKey();
-        String directionPropertyKey =  transactionSearchPrefixKey + settings.getTransactionDirectionPostfixKey();
+        String typePropertyKey = settings.getTransactionTypeKey();
+        String directionPropertyKey =  settings.getTransactionDirectionPrefixKey();
         String statusPropertyKey = "sct" + settings.getTransactionStatusPrefixKey() +
                 Optional.ofNullable(direction).map(String::toLowerCase).orElse("");
 

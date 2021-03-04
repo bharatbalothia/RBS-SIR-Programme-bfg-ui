@@ -24,9 +24,8 @@ public class PropertySettings {
     private String[] fileSearchPostfixKey;
     private String fileErrorUrl;
     private String[] fileErrorPostfixKey;
-    private String transactionSearchPrefixKey;
-    private String transactionTypePostfixKey;
-    private String transactionDirectionPostfixKey;
+    private String transactionDirectionPrefixKey;
+    private String transactionTypeKey;
     private String useraccountGroupsKey;
     private String useraccountPermissionsKey;
 
@@ -158,22 +157,6 @@ public class PropertySettings {
         this.fileErrorPostfixKey = fileErrorPostfixKey;
     }
 
-    public String getTransactionSearchPrefixKey() {
-        return transactionSearchPrefixKey;
-    }
-
-    public void setTransactionSearchPrefixKey(String transactionSearchPrefixKey) {
-        this.transactionSearchPrefixKey = transactionSearchPrefixKey;
-    }
-
-    public String getTransactionTypePostfixKey() {
-        return transactionTypePostfixKey;
-    }
-
-    public void setTransactionTypePostfixKey(String transactionTypePostfixKey) {
-        this.transactionTypePostfixKey = transactionTypePostfixKey;
-    }
-
     public String getTransactionStatusPrefixKey() {
         return transactionStatusPrefixKey;
     }
@@ -182,12 +165,20 @@ public class PropertySettings {
         this.transactionStatusPrefixKey = transactionStatusPrefixKey;
     }
 
-    public String getTransactionDirectionPostfixKey() {
-        return transactionDirectionPostfixKey;
+    public String getTransactionDirectionPrefixKey() {
+        return transactionDirectionPrefixKey;
     }
 
-    public void setTransactionDirectionPostfixKey(String transactionDirectionPostfixKey) {
-        this.transactionDirectionPostfixKey = transactionDirectionPostfixKey;
+    public void setTransactionDirectionPrefixKey(String transactionDirectionPrefixKey) {
+        this.transactionDirectionPrefixKey = transactionDirectionPrefixKey;
+    }
+
+    public String getTransactionTypeKey() {
+        return transactionTypeKey;
+    }
+
+    public void setTransactionTypeKey(String transactionTypeKey) {
+        this.transactionTypeKey = transactionTypeKey;
     }
 
     public String getUseraccountGroupsKey() {

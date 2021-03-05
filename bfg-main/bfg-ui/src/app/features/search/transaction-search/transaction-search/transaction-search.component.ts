@@ -198,6 +198,12 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     formData.direction = formData.direction && !Array.isArray(formData.direction)
       ? [formData.direction.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'trxStatus.status');
+
+    if (formData.status && !formData.direction) {
+      formData.direction = [getDirectionStringValue(get(formData, 'trxStatus.outbound')).toLowerCase()];
+      formData.service = get(formData, 'trxStatus.service');
+    }
+
     formData.trxStatus = null;
 
     this.transactionService.getTransactionList(removeEmpties(formData))

@@ -1,6 +1,13 @@
-<div class="mat-cell-value" [ngClass]="{'icon-value': !!icon}" *ngIf="!isArray(value) && !isIconValue(value)" [attr.xml]="xml">
-    {{xml ? (value | xml) : value}}
-    <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+<div class="mat-cell-value" [ngClass]="{'icon-value': !!icon}" *ngIf="!isArray(value) && !isIconValue(value)"
+  [attr.xml]="xml">
+  {{xml ? (value | xml) : value}}
+  <div class="icon-value" *ngIf="icon">
+    <mat-icon *ngIf="!isArray(icon)">{{icon}}</mat-icon>
+    <div *ngIf="isArray(icon)">
+      <mat-icon *ngFor="let item of icon">{{item}}</mat-icon>
+    </div>
+  </div>
+
 </div>
 <div class="mat-cell-value" *ngIf="isIconValue(value)">
   <div class="validity-flag">
@@ -9,7 +16,7 @@
   </div>
 </div>
 <ul class="list-group" *ngIf="isArray(value)">
-    <li *ngFor="let item of removeEmptiesInArray(value)" class="list-group-item">
-        {{ item }}
-    </li>
+  <li *ngFor="let item of removeEmptiesInArray(value)" class="list-group-item">
+    {{ item }}
+  </li>
 </ul>

@@ -19,6 +19,7 @@ public class Transaction {
     private String docID;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timestamp;
+    private Boolean payaway;
 
     public Integer getId() {
         return id;
@@ -106,5 +107,13 @@ public class Transaction {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public Boolean getPayaway() {
+        return payaway;
+    }
+
+    public void setPayaway(Boolean payaway) {
+        this.payaway = payaway;
     }
 }

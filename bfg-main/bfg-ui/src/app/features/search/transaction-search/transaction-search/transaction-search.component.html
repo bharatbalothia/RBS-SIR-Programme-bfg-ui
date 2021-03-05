@@ -31,7 +31,7 @@
                         <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
                             <mat-option value="">ALL</mat-option>
                             <mat-option *ngFor="let direction of transactionCriteriaData.direction" [value]="direction">
-                                {{direction}}</mat-option>
+                                {{direction.directionLabel}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>

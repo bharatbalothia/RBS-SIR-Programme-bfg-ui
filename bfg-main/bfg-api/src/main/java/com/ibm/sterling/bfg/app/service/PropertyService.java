@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -165,13 +167,13 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
                 .map(map -> getStatusLabelData(map, true))
                 .sorted(Comparator
-                        .comparing(getStatusLabelForComparing("title"),
+                        .comparing(getValueForComparingByKey("title"),
                                 Comparator.naturalOrder())
-                        .thenComparing(getStatusLabelForComparing("service"),
+                        .thenComparing(getValueForComparingByKey("service"),
                                 Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
-                        .thenComparing(getStatusLabelForComparing("status"),
+                        .thenComparing(getValueForComparingByKey("status"),
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("entity",
@@ -202,32 +204,45 @@ public class PropertyService {
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {
         Map<String, List<Object>> transactionCriteriaData = new HashMap<>();
-        String[] transactionSearchPostfixKey = settings.getTransactionSearchPostfixKey();
-        String transactionSearchPrefixKey = settings.getTransactionSearchPrefixKey();
+        String typePropertyKey = settings.getTransactionTypeKey();
+        String directionPropertyKey =  settings.getTransactionDirectionPrefixKey();
         String statusPropertyKey = "sct" + settings.getTransactionStatusPrefixKey() +
                 Optional.ofNullable(direction).map(String::toLowerCase).orElse("");
 
-        List<String> propertyKeys = Arrays.stream(transactionSearchPostfixKey)
-                .map(value -> transactionSearchPrefixKey + value).collect(Collectors.toList());
+        List<String> propertyKeys = new ArrayList<>();
+        propertyKeys.add(directionPropertyKey);
+        propertyKeys.add(typePropertyKey);
         propertyKeys.add(statusPropertyKey);
         List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getFileUrl());
 
-        Arrays.stream(transactionSearchPostfixKey).forEach(value -> transactionCriteriaData.put(value, propertyList.stream()
-                .filter(property -> property.get(PROPERTY_KEY).equals(transactionSearchPrefixKey + value))
+        transactionCriteriaData.put("type", propertyList.stream()
+                .filter(property ->
+                    property.get(PROPERTY_KEY).equals(typePropertyKey)
+                )
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList()));
 
         transactionCriteriaData.put("trxStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
                 .map(map -> getStatusLabelData(map, false))
                 .sorted(Comparator
-                        .comparing(getStatusLabelForComparing("title"),
+                        .comparing(getValueForComparingByKey("title"),
                                 Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
-                        .thenComparing(getStatusLabelForComparing("status"),
+                        .thenComparing(getValueForComparingByKey("status"),
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
+
+        transactionCriteriaData.put("direction", propertyList.stream()
+                .filter(property -> property.get(PROPERTY_KEY).startsWith(directionPropertyKey))
+                .map(this::getDirectionLabelData)
+                .filter(object -> !object.isEmpty())
+                .sorted(Comparator
+                        .comparing(getValueForComparingByKey("index"),
+                                Comparator.comparingInt(Integer::parseInt)))
+                .collect(Collectors.toList()));
+
         transactionCriteriaData.put("entity", entityService.findEntitiesByService(SCT.name())
                 .stream().map(Entity::getEntity).collect(Collectors.toList()));
         return transactionCriteriaData;
@@ -240,8 +255,8 @@ public class PropertyService {
                         .orElse("");
     }
 
-    private Function<Map<String, Object>, String> getStatusLabelForComparing(String status) {
-        return map -> String.valueOf(map.get(status));
+    private Function<Map<String, Object>, String> getValueForComparingByKey(String key) {
+        return map -> String.valueOf(map.get(key));
     }
 
     private Map<String, Object> getStatusLabelData(Map<String, String> property, boolean isFile) {
@@ -262,6 +277,23 @@ public class PropertyService {
             statusMap.put("label", noStatusLabel + "[" + status + "] ");
         }
         return statusMap;
+    }
+
+    private Map<String, Object> getDirectionLabelData(Map<String, String> property) {
+        Map<String, Object> directionMap = new HashMap<>();
+        String propertyKey = property.get(PROPERTY_KEY);
+        final Pattern directionKey = Pattern.compile("^transaction\\.search\\.direction\\.(\\d)[.]([A-Z]\\w+)\\Z");
+        Matcher data = directionKey.matcher(propertyKey);
+        if(data.matches()) {
+            Integer index = Integer.parseInt(data.group(1));
+            String  directionLabel = data.group(2);
+            directionMap.put("index", index);
+            directionMap.put("directionLabel", directionLabel.replace("_", " "));
+            directionMap.putAll(Arrays.stream(property.get(PROPERTY_VALUE).split("&"))
+                    .map(value -> value.split("="))
+                    .collect(Collectors.toMap(a -> a[0], a -> a[1])));
+        }
+        return directionMap;
     }
 
     public String getStatusLabel(String statusPrefixKey, String service, String direction, Integer status) {

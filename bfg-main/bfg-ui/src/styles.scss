@@ -106,10 +106,14 @@ mat-form-field {
         min-height: 40px !important;
     }
 
+    .mat-cell:empty {
+        display: block;
+    }
+
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
-        word-break: break-word;
+        word-break: break-all;
         white-space: normal;
         line-height: normal;
         text-align: left;
@@ -209,28 +213,30 @@ mat-form-field {
     display: table; // Used for correct displaying pagination and table scrolling
 }
 
-.mat-dialog-container {
-    overflow: hidden !important;
+.cdk-overlay-container {
+    .mat-dialog-container {
+        overflow: visible;
 
-    .cdk-drag {
-        height: -webkit-fill-available;
-        height: stretch;
-        height: -moz-available;
-        height: 100%;
-        display: flex;
-        align-items: stretch;
-        flex-direction: column;
-    }
+        .cdk-drag {
+            height: -webkit-fill-available;
+            height: stretch;
+            height: -moz-available;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+        }
 
-    .mat-dialog-content {
-        max-height: 75vh !important;
-    }
+        .mat-dialog-content {
+            max-height: 75vh !important;
+        }
 
-    .mat-dialog-actions {
-        margin-top: auto;
-    }
+        .mat-dialog-actions {
+            margin-top: auto;
+        }
 
-    .ng-resizable-diagonal {
-        border-bottom: 12px solid #5a287d;
+        .ng-resizable-diagonal {
+            border-bottom: 12px solid #5a287d;
+        }
     }
 }

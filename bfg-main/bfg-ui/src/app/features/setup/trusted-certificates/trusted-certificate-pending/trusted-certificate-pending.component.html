@@ -38,11 +38,11 @@
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button class="action-button" (click)="openApprovingDialog(element)">
+            <a mat-button class="action-button" (click)="openApprovingDialog(element)">
               <div class="action-icon">
                 <mat-icon inline>format_list_numbered</mat-icon> Version manager
               </div>
-            </button>
+            </a>
             <a mat-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
               class="action-button"
               [routerLink]="['/' + ROUTING_PATHS.TRUSTED_CERTIFICATES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
@@ -52,32 +52,32 @@
                 <mat-icon inline>edit</mat-icon>edit
               </div>
             </a>
-            <button mat-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete" title="Delete"
+            <a mat-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete" title="Delete"
               (click)="deletePendingChange(element)">
               <div class="action-icon">
                 <mat-icon>clear</mat-icon>delete
               </div>
-            </button>
+            </a>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="changes">
           <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button class="action-button" (click)="openInfoDialog(element)">
+            <a mat-button class="action-button" (click)="openInfoDialog(element)">
               <div class="action-icon">
                 <mat-icon inline>info</mat-icon> info
               </div>
-            </button>
+            </a>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog)">
+            <a mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog)">
               {{element.resultMeta1}}
-            </button>
+            </a>
           </mat-cell>
         </ng-container>
 

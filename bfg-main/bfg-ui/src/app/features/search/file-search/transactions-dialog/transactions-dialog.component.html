@@ -1,5 +1,10 @@
 <app-dragable-dialog-wrapper>
     <mat-dialog-content>
+        <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1" [getRows]="getTransactions.bind(this)"
+            [min]="1" [max]="transactions.totalPages" [length]="transactions.totalElements"
+            [(pageIndex)]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
+            [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        </app-table-paginator>
         <mat-table [dataSource]="dataSource">
 
             <ng-container matColumnDef="id">
@@ -74,7 +79,7 @@
 
         <app-table-paginator *ngIf="transactions" [value]="pageIndex + 1" [getRows]="getTransactions.bind(this)"
             [min]="1" [max]="transactions.totalPages" [length]="transactions.totalElements"
-            [pageIndex]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
+            [(pageIndex)]="transactions.pageable.pageNumber" [pageSize]="transactions.pageable.pageSize"
             [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
         </app-table-paginator>
     </mat-dialog-content>

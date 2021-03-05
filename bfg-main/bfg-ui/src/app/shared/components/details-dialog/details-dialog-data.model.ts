@@ -15,7 +15,7 @@ export interface Tab {
   tabTitle: string;
   tabSections: Section[];
   tableObject?: Table;
-  noContentLabel?: { label: string, icon?: string };
+  noContentLabel?: { label: string, icon?: string | string[] };
 }
 
 export interface Section {

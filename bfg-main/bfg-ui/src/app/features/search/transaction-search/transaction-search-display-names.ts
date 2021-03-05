@@ -42,7 +42,11 @@ export const getTransactionDetailsTabs = (transaction: Transaction, actionMappin
                     { fieldName: 'reference', fieldValue: transaction.reference },
                     { fieldName: 'transactionID', fieldValue: transaction.transactionID, isActionButton: 'transactionID' in mapping },
                     { fieldName: 'type', fieldValue: transaction.type },
-                    { fieldName: 'direction', fieldValue: titleCase(transaction.direction), icon: getDirectionIcon(transaction.direction) },
+                    {
+                        fieldName: 'direction',
+                        fieldValue: titleCase(transaction.direction),
+                        icon: [getDirectionIcon(transaction.direction), transaction.payaway && getDirectionIcon('payaway')]
+                    },
                     { fieldName: 'timestamp', fieldValue: formatDate(transaction.timestamp, 'dd/MM/yyyy HH:mm:ss', 'en-GB') },
                     { fieldName: 'workflowID', fieldValue: transaction.workflowID, isActionButton: 'workflowID' in mapping },
                     { fieldName: 'settleDate', fieldValue: formatDate(transaction.settleDate, 'dd/MM/yyyy', 'en-GB') },
@@ -67,5 +71,10 @@ export const getTransactionDocumentInfoTabs = (documentContent: DocumentContent)
     }
 ].filter(el => el);
 
-export const getDirectionIcon = (direction: string) =>
-    direction === 'outbound' ? 'call_made' : direction === 'inbound' ? 'call_received' : 'local_parking';
+export const getDirectionIcon = (direction: string) => {
+    switch (direction) {
+        case 'outbound': return 'call_made';
+        case 'inbound': return 'call_received';
+        case 'payaway': return 'local_parking';
+    }
+};

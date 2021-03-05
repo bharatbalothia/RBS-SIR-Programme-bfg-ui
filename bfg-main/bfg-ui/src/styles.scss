@@ -106,6 +106,10 @@ mat-form-field {
         min-height: 40px !important;
     }
 
+    .mat-cell:empty {
+        display: block;
+    }
+
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {

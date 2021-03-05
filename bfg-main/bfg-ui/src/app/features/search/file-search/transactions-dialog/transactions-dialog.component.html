@@ -5,18 +5,18 @@
             <ng-container matColumnDef="id">
                 <mat-header-cell *matHeaderCellDef> {{displayName('id')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
+                    <a mat-button (click)="openTransactionDetailsDialog(element.fileID, element.id)">
                         {{element.id}}
-                    </button>
+                    </a>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="transactionID">
                 <mat-header-cell *matHeaderCellDef> {{displayName('transactionID')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openTransactionDocumentInfo(element)">
+                    <a mat-button (click)="openTransactionDocumentInfo(element)">
                         {{element.transactionID}}
-                    </button>
+                    </a>
                 </mat-cell>
             </ng-container>
 
@@ -53,9 +53,9 @@
             <ng-container matColumnDef="workflowID">
                 <mat-header-cell *matHeaderCellDef> {{displayName('workflowID')}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="openBusinessProcessDialog(element)">
+                    <a mat-button (click)="openBusinessProcessDialog(element)">
                         {{element.workflowID}}
-                    </button>
+                    </a>
                 </mat-cell>
             </ng-container>
 

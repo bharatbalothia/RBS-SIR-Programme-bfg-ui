@@ -39,6 +39,7 @@
                 <mat-cell *matCellDef="let element">
                     {{element.type}}
                     <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
+                    <mat-icon *ngIf="element.payaway">{{getDirectionIcon('payaway')}}</mat-icon>
                 </mat-cell>
             </ng-container>
 

@@ -1,10 +1,10 @@
 <div class="login-layout">
   <mat-card class="login-card">
     <mat-card-header>
-      <mat-card-title>
+      <!-- <mat-card-title>
         <h1>{{isAuthenticated() ? 'Switch Account' : 'Log in'}}</h1>
       </mat-card-title>
-      <mat-card-subtitle>Enter your login information below</mat-card-subtitle>
+      <mat-card-subtitle>Enter your login information below</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
       <form #form="ngForm" (submit)="form.valid && login()" novalidate fxFlex="grow" fxLayout="column">
@@ -36,6 +36,10 @@
       </form>
     </mat-card-content>
     <mat-card-footer>
+      <mat-card-subtitle class="copyright-info">
+        Licensed Materials - Property of IBM. &copy; Copyright IBM Corp. 2000, 2016. All Rights Reserved.
+        IBM and the IBM Logo are Trademarks of International Business Machines.
+      </mat-card-subtitle>
       <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
     </mat-card-footer>
   </mat-card>

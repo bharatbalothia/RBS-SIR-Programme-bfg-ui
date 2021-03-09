@@ -6,15 +6,39 @@
     background-color: #e0e0e0;
 
     .login-card {
-        width: fit-content;
+        width: 300px;
         height: fit-content;
+        padding: 0 0 16px 0;
+
+
+        .mat-card-header {
+            background-image: url('/assets/images/natwest-login-background.jpg');
+            height: 90px;
+            background-size: contain;
+            margin-bottom: 16px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .mat-card-content,
+        .mat-card-footer {
+            padding: 0 16px 0 16px;
+        }
 
         .mat-form-field {
             width: 100%;
         }
 
         .login-button {
-            margin-top: 10px;
+            width: 100%;
+        }
+
+        .copyright-info {
+            font-size: 11px;
+            line-height: normal;
+            padding: 0px 16px 10px 16px;
+            text-align: center;
+            margin: 0px;
         }
     }
 }

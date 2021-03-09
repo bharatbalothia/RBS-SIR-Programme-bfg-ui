@@ -3,7 +3,11 @@
 
   .app-title {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+
+    .title-logo {
+      height: 40px;
+    }
 
     .app-version {
       font-size: 14px;

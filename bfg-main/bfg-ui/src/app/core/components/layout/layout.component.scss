@@ -9,10 +9,17 @@
       height: 80px;
     }
 
-    .app-version {
-      font-size: 14px;
-      margin-left: 10px;
+    .version-label {
+      display: flex;
+      align-items: baseline;
+
+      .app-version {
+        font-size: 14px;
+        margin-left: 10px;
+      }
     }
+
+
   }
 }
 

@@ -12,8 +12,10 @@
       </button>
       <span class="app-title">
         <img class="title-logo" src="assets/logos/natwest-logo-colorful.png" alt="NatWest Logo image">
-        &nbsp;BFG UI
-        <div class='app-version' *ngIf="appVersion">v{{appVersion}}</div>
+        <div class="version-label">
+          &nbsp;BFG UI
+          <div class='app-version' *ngIf="appVersion">v{{appVersion}}</div>
+        </div>
       </span>
       <span class="user-name">{{getUserName()}}</span>
       <button *ngIf="isAuthenticated()" mat-raised-button class="logout-button" (click)="logout()">logout</button>

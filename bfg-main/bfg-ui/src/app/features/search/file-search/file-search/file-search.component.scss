@@ -4,6 +4,10 @@
         margin-left: 24px;
     }
 
+    .form-field-section {
+        width: 50%;
+    }
+
     .mat-form-field {
         width: 100%;
 
@@ -11,6 +15,7 @@
             white-space: pre-wrap;
         }
     }
+
 
     .form-field-section {
         display: flex;
@@ -67,6 +72,13 @@
 
         .action-button {
             margin-right: 15px;
+        }
+    }
+
+    @media (max-width: 1360px) {
+
+        .form-field-section {
+            width: 100%;
         }
     }
 }

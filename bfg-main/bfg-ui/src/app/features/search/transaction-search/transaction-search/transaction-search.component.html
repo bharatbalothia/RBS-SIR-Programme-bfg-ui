@@ -23,8 +23,9 @@
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.direction">
+                <section class="form-field-section"
+                    *ngIf="transactionCriteriaData && transactionCriteriaData.direction">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('direction')}}
                         </mat-label>
                         <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
@@ -35,8 +36,9 @@
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.trxStatus">
+                <section class="form-field-section"
+                    *ngIf="transactionCriteriaData && transactionCriteriaData.trxStatus">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('trxStatus')}}
                         </mat-label>
                         <mat-select formControlName="trxStatus" (selectionChange)="onStatusSelect($event)">
@@ -68,8 +70,8 @@
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'payment-bic')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.type">
+                <section class="form-field-section" *ngIf="transactionCriteriaData && transactionCriteriaData.type">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('type')}}
                         </mat-label>
                         <mat-select formControlName="type">

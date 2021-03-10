@@ -147,11 +147,13 @@ export class EntitySearchComponent implements OnInit {
           }))));
   }
 
-  openDetailsDialog(value: Entity | ChangeControl) {
+  openDetailsDialog(value: ChangeControl | Entity) {
     let detailsData = null;
     if (value.changeID) {
-      detailsData = this.getPendingEntityDetails(value as ChangeControl)
-        .then((changeControl: ChangeControl) => changeControl && changeControl.entityLog);
+      if (!(value as ChangeControl).entityLog.entityId) {
+        return;
+      }
+      detailsData = this.getEntityDetails((value as ChangeControl).entityLog);
     }
     else {
       detailsData = this.getEntityDetails(value as Entity);

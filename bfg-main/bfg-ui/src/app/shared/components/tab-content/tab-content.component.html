@@ -28,8 +28,8 @@
   <ng-container matColumnDef="fieldValue">
     <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <button mat-button class="button-value" *ngIf="element.isActionButton"
-        (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</button>
+      <a mat-button class="button-value" *ngIf="element.isActionButton"
+        (click)="this.getClickAction(element.fieldName)">{{element.fieldValue}}</a>
       <app-display-table-cell *ngIf="!element.isActionButton" [xml]="element.isXML" [icon]="element.icon"
         [value]="(element.shouldDisplayValueUpperCase && element.fieldValue | uppercase) || element.fieldValue">
       </app-display-table-cell>
@@ -69,7 +69,7 @@
   <div *ngIf="tab.tableObject.tableTitle">
     <mat-header-row *matHeaderRowDef="['tableTitle']"></mat-header-row>
   </div>
-  <mat-header-row  *matHeaderRowDef="tab.tableObject.tableColumns"
+  <mat-header-row *matHeaderRowDef="tab.tableObject.tableColumns"
     [hidden]="tab.tableObject.tableDataSource.length === 0">
   </mat-header-row>
   <mat-row *matRowDef="let row; columns: tab.tableObject.tableColumns;"></mat-row>

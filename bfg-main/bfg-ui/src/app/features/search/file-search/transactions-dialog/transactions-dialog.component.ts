@@ -35,7 +35,7 @@ export class TransactionsDialogComponent implements OnInit {
   dataSource: MatTableDataSource<Transaction>;
 
   pageIndex = 0;
-  pageSize = 100;
+  pageSize = 50;
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   fileId: number;

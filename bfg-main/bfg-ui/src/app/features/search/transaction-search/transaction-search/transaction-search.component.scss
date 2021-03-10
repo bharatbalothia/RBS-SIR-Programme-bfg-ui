@@ -4,6 +4,10 @@
         margin-left: 24px;
     }
 
+    .form-field-section {
+        width: 50%;
+    }
+
     .mat-form-field {
         width: 100%;
 
@@ -82,5 +86,12 @@
 
     .refresh-toggle {
         margin-bottom: 15px;
+    }
+
+    @media (max-width: 1360px) {
+
+        .form-field-section {
+            width: 100%;
+        }
     }
 }

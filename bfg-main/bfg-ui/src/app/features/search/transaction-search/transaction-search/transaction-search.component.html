@@ -8,34 +8,37 @@
             <form [formGroup]="searchingParametersFormGroup">
                 <ng-template matStepLabel>Search parameters</ng-template>
                 <section class="form-field-section">
-                  <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
-                    <mat-label>{{getTransactionSearchDisplayName('entity')}}
-                    </mat-label>
-                    <input type="text" aria-label="Entity" matInput formControlName="entity" [matAutocomplete]="autoCompleteEntity"
-                      appAutocompleteEnforceSelection>
-                    <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete" [displayWith]="displayEntity.bind(this)">
-                      <mat-option value="">ALL</mat-option>
-                      <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity">
-                        {{entity}}
-                      </mat-option>
-                    </mat-autocomplete>
-                  </mat-form-field>
-                  <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
+                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.entity">
+                        <mat-label>{{getTransactionSearchDisplayName('entity')}}
+                        </mat-label>
+                        <input type="text" aria-label="Entity" matInput formControlName="entity"
+                            [matAutocomplete]="autoCompleteEntity" appAutocompleteEnforceSelection>
+                        <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete"
+                            [displayWith]="displayEntity.bind(this)">
+                            <mat-option value="">ALL</mat-option>
+                            <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity">
+                                {{entity}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                    <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.direction">
+                <section class="form-field-section"
+                    *ngIf="transactionCriteriaData && transactionCriteriaData.direction">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('direction')}}
                         </mat-label>
                         <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
                             <mat-option value="">ALL</mat-option>
                             <mat-option *ngFor="let direction of transactionCriteriaData.direction" [value]="direction">
-                                {{direction}}</mat-option>
+                                {{direction.directionLabel}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.trxStatus">
+                <section class="form-field-section"
+                    *ngIf="transactionCriteriaData && transactionCriteriaData.trxStatus">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('trxStatus')}}
                         </mat-label>
                         <mat-select formControlName="trxStatus" (selectionChange)="onStatusSelect($event)">
@@ -67,8 +70,8 @@
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'payment-bic')"></app-tooltip>
                 </section>
-                <section class="form-field-section">
-                    <mat-form-field *ngIf="transactionCriteriaData && transactionCriteriaData.type">
+                <section class="form-field-section" *ngIf="transactionCriteriaData && transactionCriteriaData.type">
+                    <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('type')}}
                         </mat-label>
                         <mat-select formControlName="type">

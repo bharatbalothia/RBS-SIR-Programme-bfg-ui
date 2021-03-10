@@ -22,18 +22,18 @@
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-button (click)="openFileDetailsDialog(element)">
+        <a mat-button (click)="openFileDetailsDialog(element)">
           {{element.id}}
-        </button>
+        </a>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="filename">
       <mat-header-cell *matHeaderCellDef> Filename </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-button (click)="openFileDocumentInfo(element)">
+        <a mat-button (click)="openFileDocumentInfo(element)">
           {{element.filename}}
-        </button>
+        </a>
       </mat-cell>
     </ng-container>
 
@@ -69,28 +69,27 @@
     <ng-container matColumnDef="WFID">
       <mat-header-cell *matHeaderCellDef> WFID </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-button (click)="openBusinessProcessDialog(element)">
+        <a mat-button (click)="openBusinessProcessDialog(element)">
           {{element.workflowID}}
-        </button>
+        </a>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="error">
       <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-button (click)="openErrorDetailsDialog(element)">
+        <a mat-button (click)="openErrorDetailsDialog(element)">
           {{element.errorCode}}
-        </button>
+        </a>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="transactions">
       <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button [disabled]="element.transactionTotal <= 0" mat-button (click)="openTransactionsDialog(element)">
+        <a [disabled]="element.transactionTotal <= 0" mat-button (click)="openTransactionsDialog(element)">
           <mat-icon inline>info</mat-icon>&nbsp;info
-        </button>
-
+        </a>
       </mat-cell>
     </ng-container>
 

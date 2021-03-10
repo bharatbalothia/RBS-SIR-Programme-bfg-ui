@@ -8,11 +8,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public enum Direction {
     INBOUND("inbound"),
     OUTBOUND("outbound"),
-    PAYAWAY("payaway");
+    UNKNOWN("unknown");
 
     private String directionName;
 

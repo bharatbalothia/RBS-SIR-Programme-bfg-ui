@@ -145,7 +145,16 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       .pipe(data => this.setLoading(data))
       .subscribe((data: TransactionCriteriaData) => {
         this.isLoading = false;
-        this.transactionCriteriaData = data;
+        const direction = get(this.transactionCriteriaData, 'direction');
+        if (direction) {
+          this.transactionCriteriaData = {
+            ...data,
+            direction
+          };
+        }
+        else {
+          this.transactionCriteriaData = data;
+        }
         this.filteredEntityList = this.searchingParametersFormGroup.controls.entity.valueChanges
           .pipe(
             startWith(''),
@@ -183,8 +192,18 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       service: ENTITY_SERVICE_TYPE.SCT
     };
 
-    formData.direction = formData.direction && !Array.isArray(formData.direction) ? [formData.direction.toLowerCase()] : formData.direction;
+    if (get(formData, 'direction.payaway')) {
+      formData.payaway = formData.direction.payaway;
+    }
+    formData.direction = formData.direction && !Array.isArray(formData.direction)
+      ? [formData.direction.direction.toLowerCase()] : formData.direction;
     formData.status = get(formData, 'trxStatus.status');
+
+    if (formData.status && !formData.direction) {
+      formData.direction = [getDirectionStringValue(get(formData, 'trxStatus.outbound')).toLowerCase()];
+      formData.service = get(formData, 'trxStatus.service');
+    }
+
     formData.trxStatus = null;
 
     this.transactionService.getTransactionList(removeEmpties(formData))
@@ -224,7 +243,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   }
 
   onDirectionSelect = (event) => {
-    this.criteriaFilterObject.direction = event.value;
+    this.criteriaFilterObject.direction = event.value.direction;
     this.getTransactionCriteriaData();
   }
 
@@ -236,17 +255,15 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     if (fromStatus !== '') {
       let refreshRequired = false;
       const directionControl = this.searchingParametersFormGroup.controls.direction;
-      const initialDirection = directionControl.value;
+      const initialDirection = get(directionControl.value, 'direction');
 
-      const newDirection = this.transactionCriteriaData.direction.find((element) => {
-        return element.toUpperCase() === getDirectionStringValue(fromStatus.outbound);
-      }
-      );
+      const newDirection = this.transactionCriteriaData.direction
+        .find((element) => element.direction.toUpperCase() === getDirectionStringValue(fromStatus.outbound));
 
-      if (newDirection && (initialDirection !== newDirection)) {
+      if (newDirection && (initialDirection !== get(newDirection, 'direction'))) {
         directionControl.setValue(newDirection);
         refreshRequired = true;
-        this.criteriaFilterObject.direction = newDirection;
+        this.criteriaFilterObject.direction = get(newDirection, 'direction');
       }
       if (refreshRequired) {
         this.getTransactionCriteriaData();

@@ -18,4 +18,5 @@ export interface Transaction {
     docID: string;
     timestamp: string;
     direction: string;
+    payaway: boolean;
 }

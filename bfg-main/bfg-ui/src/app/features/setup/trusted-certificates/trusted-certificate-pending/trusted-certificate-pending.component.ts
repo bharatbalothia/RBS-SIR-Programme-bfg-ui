@@ -197,19 +197,22 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
-    this.addValidationToCertificate(trustedCertificate)
-      .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
-        tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
-        displayName: getTrustedCertificateDisplayHeader,
-        actionData: {
-          errorMessage: {
-            message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-            warnings: get(validatedCertificate, 'warnings'),
-            errors: get(validatedCertificate, 'errors')
-          },
-        }
-      })));
+    if (trustedCertificate.certificateId) {
+      this.addValidationToCertificate(trustedCertificate)
+        .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
+          tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
+          displayName: getTrustedCertificateDisplayHeader,
+          actionData: {
+            errorMessage: {
+              message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+              warnings: get(validatedCertificate, 'warnings'),
+              errors: get(validatedCertificate, 'errors')
+            },
+          }
+        })));
+    }
+
   }
 
   openApprovingDialog(changeControl: ChangeControl) {

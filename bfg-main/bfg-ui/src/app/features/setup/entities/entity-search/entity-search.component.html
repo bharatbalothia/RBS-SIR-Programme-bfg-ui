@@ -36,12 +36,12 @@
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button class="action-button" *ngIf="element.changeID"
+                        <a mat-button class="action-button" *ngIf="element.changeID"
                             (click)="openApprovingDialog(element)">
                             <div class="action-icon">
                                 <mat-icon>format_list_numbered</mat-icon> Version manager
                             </div>
-                        </button>
+                        </a>
                         <a mat-button
                             *ngIf="!element.entityLog && (element.service === SERVICE_TYPE.SCT || element.service === SERVICE_TYPE.GPL)"
                             class="action-button"
@@ -84,46 +84,46 @@
                                 <mat-icon>edit</mat-icon>edit
                             </div>
                         </a>
-                        <button mat-button *ngIf="!element.entityLog" class="action-button" alt="Delete" title="Delete"
+                        <a mat-button *ngIf="!element.entityLog" class="action-button" alt="Delete" title="Delete"
                             (click)="deleteEntity(element)">
                             <div class="action-icon">
                                 <mat-icon>clear</mat-icon>delete
                             </div>
-                        </button>
-                        <button mat-button *ngIf="element.changeID && isTheSameUser(element.changer)"
-                            class="action-button" alt="Delete" title="Delete" (click)="deletePendingChange(element)">
+                        </a>
+                        <a mat-button *ngIf="element.changeID && isTheSameUser(element.changer)" class="action-button"
+                            alt="Delete" title="Delete" (click)="deletePendingChange(element)">
                             <div class="action-icon">
                                 <mat-icon>clear</mat-icon>delete
                             </div>
-                        </button>
-                        <button mat-button class="action-button"
+                        </a>
+                        <a mat-button class="action-button"
                             *ngIf="!element.entityLog && element.service === SERVICE_TYPE.SCT"
                             (click)="transmitEntity(element)" alt="Transmit" title="Transmit">
                             <div class="action-icon">
                                 <mat-icon>explicit</mat-icon>transmit
                             </div>
-                        </button>
+                        </a>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="changes">
                     <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button class="action-button" *ngIf="element.entityLog"
-                            (click)="openInfoDialog(element)">
+                        <a mat-button class="action-button" *ngIf="element.entityLog" (click)="openInfoDialog(element)">
                             <div class="action-icon">
                                 <mat-icon inline>info</mat-icon> info
                             </div>
-                        </button>
+                        </a>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="entity">openEntityDetailsDialog
                     <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-button (click)="openDetailsDialog(element)">
+                        <a mat-button (click)="openDetailsDialog(element)"
+                            [disabled]="element.entityLog && !element.entityLog.entityId">
                             {{element.entity || element.resultMeta1}}
-                        </button>
+                        </a>
                     </mat-cell>
                 </ng-container>
 

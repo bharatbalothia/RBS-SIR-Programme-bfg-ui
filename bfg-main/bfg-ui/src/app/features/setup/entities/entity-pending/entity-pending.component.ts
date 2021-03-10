@@ -91,6 +91,18 @@ export class EntityPendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
+  getEntityDetails = (entity: Entity) => {
+    this.isLoadingDetails = true;
+    return this.entityService.getEntityById(entity.entityId).toPromise()
+      .then((data: Entity) => {
+        this.isLoadingDetails = false;
+        return data;
+      }).catch(error => {
+        this.isLoadingDetails = false;
+        return null;
+      });
+  }
+
   addEntityBeforeToChangeControl(changeControl: ChangeControl) {
     const entityId = get(changeControl.entityLog, 'entityId');
     if (entityId) {
@@ -130,15 +142,13 @@ export class EntityPendingComponent implements OnInit {
   }
 
   openDetailsDialog(value: Entity | ChangeControl) {
-    if (value.changeID) {
-      return this.getPendingEntityDetails(value as ChangeControl)
-        .then((changeControl: ChangeControl) => changeControl && changeControl.entityLog)
-        .then((data: Entity) =>
-          data && this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-            title: `${data.service}: ${data.entity}`,
-            tabs: getEntityDetailsTabs(data),
-            displayName: getEntityDisplayName
-          })));
+    if (value.changeID && (value as ChangeControl).entityLog.entityId) {
+      return this.getEntityDetails((value as ChangeControl).entityLog).then((data: Entity) =>
+        data && this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          title: `${data.service}: ${data.entity}`,
+          tabs: getEntityDetailsTabs(data),
+          displayName: getEntityDisplayName
+        })));
     }
   }
 

@@ -73,7 +73,7 @@
         <ng-container matColumnDef="entity">openEntityDetailsDialog
           <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <a mat-button (click)="openDetailsDialog(element)">
+            <a mat-button (click)="openDetailsDialog(element)" [disabled]="!element.entityLog.entityId">
               {{element.resultMeta1}}
             </a>
           </mat-cell>

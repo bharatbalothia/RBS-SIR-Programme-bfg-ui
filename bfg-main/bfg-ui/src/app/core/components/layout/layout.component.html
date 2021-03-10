@@ -12,13 +12,17 @@
       </button>
       <span class="app-title">
         <img class="title-logo" src="assets/logos/natwest-logo.png" alt="NatWest Logo image">
+        <img class="clipped-title-logo" hidden src="assets/logos/natwest-logo-clipped.png" alt="NatWest Logo image">
         <div class="version-label">
           BFG UI
           <div class='app-version' *ngIf="appVersion">v{{appVersion}}</div>
         </div>
+        <div class="user-logout">
+          <span class="user-name">{{getUserName()}}</span>
+          <button *ngIf="isAuthenticated()" mat-raised-button class="logout-button" (click)="logout()">logout</button>
+        </div>
+
       </span>
-      <span class="user-name">{{getUserName()}}</span>
-      <button *ngIf="isAuthenticated()" mat-raised-button class="logout-button" (click)="logout()">logout</button>
     </mat-toolbar>
     <main role="main" class="main">
       <router-outlet></router-outlet>

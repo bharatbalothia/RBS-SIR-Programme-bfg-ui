@@ -4,6 +4,7 @@ import { TrustedCertificate } from '../trustedCertificate/trusted-certificate.mo
 export interface ChangeControl {
     changeID: string;
     operation: string;
+    entityLog?: Entity;
     status: number;
     objectType: string;
     objectKey: string;
@@ -16,7 +17,6 @@ export interface ChangeControl {
     resultMeta1: string;
     resultMeta2: string;
     resultMeta3: null;
-    entityLog?: Entity;
     trustedCertificateLog?: TrustedCertificate;
     entityBefore?: Entity;
     certificateBefore?: TrustedCertificate;

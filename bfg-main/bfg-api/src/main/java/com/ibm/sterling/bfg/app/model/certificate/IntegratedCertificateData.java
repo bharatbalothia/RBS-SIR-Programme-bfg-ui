@@ -1,6 +1,15 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
+import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.DetailFormat;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 public class IntegratedCertificateData {
     private String _id;
@@ -94,4 +103,15 @@ public class IntegratedCertificateData {
         this.verifyAuthChain = verifyAuthChain;
     }
 
+    public X509Certificate convertToX509Certificate() throws CertificateException {
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        X509Certificate x509Certificate;
+        byte[] decodedBytes = Base64.getDecoder().decode(certData);
+        try (InputStream inputStream = new ByteArrayInputStream(decodedBytes)) {
+            x509Certificate = (X509Certificate) factory.generateCertificate(inputStream);
+        } catch (CertificateException | IOException e) {
+            throw new FileNotValidException();
+        }
+        return x509Certificate;
+    }
 }

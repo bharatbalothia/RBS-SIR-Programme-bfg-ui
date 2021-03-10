@@ -23,7 +23,7 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     TrustedCertificate getTrustedCertificateById(String id);
 
-    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment)
+    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment, boolean isImported)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
 
     TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) throws CertificateException;
@@ -45,4 +45,5 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     void cancelPendingCertificate(ChangeControlCert changeControl);
 
+    Object importCertificatesFromB2B() throws JsonProcessingException, CertificateException;
 }

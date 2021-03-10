@@ -71,6 +71,22 @@ public class CertificateIntegrationService {
         });
     }
 
+    public List<IntegratedCertificateData> getCertificates() throws JsonProcessingException {
+        ResponseEntity<String> response;
+        try {
+            response = new RestTemplate().exchange(
+                    trustedDigitalCertificatesUrl,
+                    HttpMethod.GET,
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                    String.class);
+        } catch (HttpStatusCodeException e) {
+            return Collections.emptyList();
+        }
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        return objectMapper.convertValue(root, new TypeReference<List<IntegratedCertificateData>>() {
+        });
+    }
+
     public void deleteCertificateByName(String certificateName) {
         try {
             new RestTemplate().exchange(

@@ -111,9 +111,25 @@ public class TrustedCertificateDetailsService {
                 .findFirst();
         if (changeControlCertRepository.existsByResultMeta2AndStatus(trustedCertificateDetails.getThumbprint(), ChangeControlStatus.PENDING))
             if (listThumbprint.isPresent())
-                listThumbprint.get().get("thumbprint").add("A Trusted certificate with this SHA-1 Thumbprint is pending approval for update/insert");
+                listThumbprint.get().get("thumbprint").add("A Trusted certificate with this SHA-1 Thumbprint is pending approval for create/delete");
             else errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(
-                    Collections.singletonList("A Trusted certificate with this SHA-1 Thumbprint is pending approval for update/insert"))));
+                    Collections.singletonList("A Trusted certificate with this SHA-1 Thumbprint is pending approval for create/delete"))));
     }
 
+    public void checkCertNameUniquenessLocally(TrustedCertificateDetails trustedCertificateDetails, String certName) {
+        List<Map<String, List<String>>> errors = trustedCertificateDetails.getCertificateErrors();
+        if (trustedCertificateRepository.existsByCertificateName(certName))
+            errors.add(Collections.singletonMap("certificateName", new ArrayList<>(Collections.singletonList("Certificate name is not unique"))));
+
+        Optional<Map<String, List<String>>> listCertName = errors.stream().filter(error -> error.containsKey("certificateName"))
+                .findFirst();
+        if (changeControlCertRepository.existsByResultMeta1AndStatus(certName, ChangeControlStatus.PENDING))
+            if (listCertName.isPresent())
+                listCertName.get().get("certificateName").add("A Trusted certificate with this certificate name is pending approval for create/delete");
+            else errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(
+                    Collections.singletonList("A Trusted certificate with this certificate name is pending approval for create/delete"))));
+        if (!errors.isEmpty() && trustedCertificateDetails.isValid()) {
+            trustedCertificateDetails.setValid(false);
+        }
+    }
 }

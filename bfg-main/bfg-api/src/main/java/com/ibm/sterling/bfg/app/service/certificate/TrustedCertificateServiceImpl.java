@@ -5,12 +5,15 @@ import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundExcepti
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotValidException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.InvalidUserForApprovalException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.model.audit.ActionType;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.audit.EventType;
+import com.ibm.sterling.bfg.app.model.audit.Type;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.validation.CertificateValidationComponent;
+import com.ibm.sterling.bfg.app.model.validation.Field;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateLogRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
@@ -35,6 +38,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
@@ -134,14 +139,8 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
 
     @Override
     public Object importCertificatesFromB2B() throws JsonProcessingException, CertificateException {
-        List<String> certsInDB = listAll()
+        Map<Boolean, Map<String, TrustedCertificateDetails>> booleanMap = certificateIntegrationService.getCertificates()
                 .stream()
-                .map(TrustedCertificate::getCertificateName)
-                .collect(Collectors.toList());
-
-        return certificateIntegrationService.getCertificates()
-                .stream()
-                .filter(cert -> !certsInDB.contains(cert.getCertName()))
                 .collect(Collectors.toMap(IntegratedCertificateData::getCertName,
                         integratedCertificateData -> {
                             try {
@@ -152,56 +151,72 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                         }))
                 .entrySet()
                 .stream()
-                .filter(entry -> {
-                    try {
-                        return trustedCertificateDetailsService
-                                .getTrustedCertificateDetails(entry.getValue(), true).isValid();
-                    } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
-                        return false;
-                    }
-                })
-                .map(entry -> {
-                    try {
-                        return convertX509CertificateToTrustedCertificate(entry.getValue(), entry.getKey(), "Imported from B2B", true);
-                    } catch (CertificateException | InvalidNameException | NoSuchAlgorithmException |
-                            JsonProcessingException e) {
-                       return null;
-                    }
-                })
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> {
+                            try {
+                                TrustedCertificateDetails trustedCertificateDetails =
+                                        trustedCertificateDetailsService.getTrustedCertificateDetails(entry.getValue(), true);
+                                trustedCertificateDetailsService.checkCertNameUniquenessLocally(
+                                        trustedCertificateDetails, entry.getKey());
+                                return trustedCertificateDetails;
+                            } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
+                                return null;
+                            }
+                        }))
+                .entrySet()
+                .stream()
+                .collect(Collectors.partitioningBy(
+                        entry -> entry.getValue().isValid(), // this splits the map into 2 parts
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue
+                        )
+                ));
+        booleanMap.get(false)
+                .entrySet()
+                .forEach(entry ->
+                        adminAuditService.fireAdminAuditEvent(
+                                new AdminAuditEventRequest(
+                                        "Certificate import proccess",
+                                        ActionType.valueOf(Operation.CREATE.name()),
+                                        EventType.valueOf(ChangeControlStatus.REJECTED.name()),
+                                        Type.TRUSTED_CERTIFICATE,
+                                        "n/a",
+                                        actionValue.apply(entry.getKey(), entry.getValue().getCertificateErrors())
+                                )));
 
-//        return certificateIntegrationService.getCertificates()
-//                .stream()
-//                .filter(cert -> !certsInDB.contains(cert.getCertName()))
-//                .map(integratedCertificateData -> {
-//                    try {
-//                        return integratedCertificateData.convertToX509Certificate();
-//                    } catch (CertificateException e) {
-//                        return null;
-//                    }
-//                })
-//                .filter(x509 -> x509 != null)
-//                .map(x509 -> {
-//                    try {
-//                        return trustedCertificateDetailsService
-//                                .getTrustedCertificateDetails(x509, true);
-//                    } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
-//                        return new TrustedCertificateDetails();
-//                    }
-//                })
-//                .filter(TrustedCertificateDetails::isValid)
-//                .map(TrustedCertificateDetails::convertToTrustedCertificate)
-//                .collect(Collectors.toList());
+        return null;
     }
 
+    private void persistImportedCertificate(TrustedCertificateDetails trustedCertificateDetails,
+                                            String certificateName, String comment) {
+        TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
+        trustedCertificate.setCertificateName(certificateName);
+        trustedCertificate.setChangerComments(comment);
+//        trustedCertificate.setCertificate(x509Certificate);
+    }
 
+    private BiFunction<String, List<Map<String, List<String>>>, String> actionValue = (certName, certificateErrors) ->
+            new Formatter().format("%s ignored (%s)",
+                    certName, convertCertificateErrorsListToString(certificateErrors)).toString();
+
+    private String convertCertificateErrorsListToString(List<Map<String, List<String>>> certificateErrors) {
+        return certificateErrors.stream()
+                .flatMap(error -> {
+                    List<String> errors = new ArrayList<>();
+                    error.values().forEach(errors::addAll);
+                    return errors.stream();
+                })
+                .collect(Collectors.joining(", ", "{", "}"));
+    }
 
     public TrustedCertificate convertX509CertificateToTrustedCertificate(
-            X509Certificate x509Certificate, String certificateName, String comment, boolean isImported)
+            X509Certificate x509Certificate, String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
                 trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
-        if (!trustedCertificateDetails.isValid() && !isImported)
+        if (!trustedCertificateDetails.isValid())
             throw new CertificateNotValidException();
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certificateName);

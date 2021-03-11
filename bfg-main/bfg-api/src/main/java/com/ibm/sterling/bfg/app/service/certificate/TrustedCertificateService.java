@@ -23,7 +23,7 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     TrustedCertificate getTrustedCertificateById(String id);
 
-    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment, boolean isImported)
+    TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
 
     TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) throws CertificateException;

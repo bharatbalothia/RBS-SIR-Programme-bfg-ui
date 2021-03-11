@@ -87,7 +87,7 @@ public class CertificateController {
                                                                        @RequestParam String comments)
             throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
         return ok(certificateService.saveCertificateToChangeControl(
-                certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(file), name, comments, false), CREATE));
+                certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(file), name, comments), CREATE));
     }
 
     private X509Certificate getX509Certificate(MultipartFile file) throws CertificateException, IOException {

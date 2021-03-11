@@ -16,9 +16,9 @@ public class TrustedCertificateDetails {
     private List<Map<String, String>> authChainReport = null;
     private boolean valid = true;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Map<String, List<String>>> certificateErrors;
+    private List<Map<String, List<String>>> certificateErrors = new ArrayList<>();
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Map<String, Object>> certificateWarnings;
+    private List<Map<String, Object>> certificateWarnings = new ArrayList<>();
 
     public String getSerialNumber() {
         return serialNumber;

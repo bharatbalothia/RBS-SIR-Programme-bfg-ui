@@ -90,7 +90,8 @@
                             [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
                             (dateChange)="handleDate($event, 'minDate')" />
                         <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)">
+                        <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)"
+                            (monthSelected)="setCalendarDblClick(fromPicker)">
                         </ngx-mat-datetime-picker>
                         <mat-error class="error-message"
                             *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
@@ -110,7 +111,8 @@
                             [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
                             (dateChange)="handleDate($event, 'maxDate')" />
                         <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)">
+                        <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
+                            (monthSelected)="setCalendarDblClick(toPicker)">
                         </ngx-mat-datetime-picker>
                         <mat-error class="error-message"
                             *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">

@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { get, isEmpty, isFunction } from 'lodash';
-import { removeEmpties } from 'src/app/shared/utils/utils';
+import { removeEmpties, setCalendarDblClick } from 'src/app/shared/utils/utils';
 import { map, startWith, take } from 'rxjs/operators';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import * as moment from 'moment';
@@ -41,7 +41,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   getSearchValidationMessage = getSearchValidationMessage;
   getTransactionSearchDisplayName = getTransactionSearchDisplayName;
-
+  setCalendarDblClick = setCalendarDblClick;
   isLinear = true;
   isLoading = false;
 

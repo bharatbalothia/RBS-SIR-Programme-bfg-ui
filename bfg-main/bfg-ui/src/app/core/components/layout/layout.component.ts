@@ -3,7 +3,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
-import { VersionService } from 'src/app/shared/services/version.service';
+import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 @Component({
   selector: 'app-layout',
@@ -23,11 +23,11 @@ export class LayoutComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private authService: AuthService,
-    private versionService: VersionService
+    private applicationDataService: ApplicationDataService
   ) { }
 
   ngOnInit(): void {
-    this.versionService.applicationVersion.subscribe(data => this.appVersion = data);
+    this.applicationDataService.applicationData.subscribe(data => this.appVersion = data.version);
   }
 
   logout() {

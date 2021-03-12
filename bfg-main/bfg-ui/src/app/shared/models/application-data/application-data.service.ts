@@ -2,20 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApplicationData } from './application-data.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class VersionService {
+export class ApplicationDataService {
 
   private apiUrl: string = environment.apiUrl + 'version/';
 
-  applicationVersion: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>({ version: '', loginText: '' });
 
   constructor(private http: HttpClient) {
   }
 
   getApplicationVersion() {
-    this.http.get(this.apiUrl, { responseType: 'text' }).subscribe(data => this.applicationVersion.next(data));
+    this.http.get<ApplicationData>(this.apiUrl).subscribe(data => this.applicationData.next(data));
   }
 }

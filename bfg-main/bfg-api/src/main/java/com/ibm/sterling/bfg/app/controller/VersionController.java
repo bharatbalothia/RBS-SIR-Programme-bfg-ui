@@ -1,11 +1,16 @@
 package com.ibm.sterling.bfg.app.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -14,11 +19,21 @@ import static org.springframework.http.ResponseEntity.ok;
 public class VersionController {
 
     @Autowired
-    BuildProperties buildProperties;
+    private BuildProperties buildProperties;
+
+    @Autowired
+    private PropertyService propertyService;
 
     @GetMapping
-    public ResponseEntity<String> getApplicationVersion() {
-        return ok(buildProperties.getVersion());
+    public ResponseEntity<?> getApplicationVersion() {
+        Map<String, String> loginMap = new HashMap<>();
+        loginMap.put("version", buildProperties.getVersion());
+        try {
+            loginMap.put("loginText", propertyService.getLoginText());
+        } catch (JsonProcessingException e) {
+            loginMap.put("loginText", "");
+        }
+        return ok(loginMap);
     }
 
 }

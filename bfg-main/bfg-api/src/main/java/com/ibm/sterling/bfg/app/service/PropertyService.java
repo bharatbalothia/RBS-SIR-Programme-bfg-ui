@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
+import com.ibm.sterling.bfg.app.utils.Decoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,14 @@ public class PropertyService {
 
     public List<String> getFileType() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getFileTypeKey());
+    }
+
+    public String getLoginText() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLoginText())
+                .stream()
+                .map(Decoder::decodeValue)
+                .findFirst()
+                .orElse("");
     }
 
     public List<String> getUserAccountGroups() throws JsonProcessingException {

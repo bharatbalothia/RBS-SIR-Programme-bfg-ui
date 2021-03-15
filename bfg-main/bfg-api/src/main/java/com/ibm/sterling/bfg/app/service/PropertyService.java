@@ -106,7 +106,6 @@ public class PropertyService {
     public String getLoginText() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLoginText())
                 .stream()
-                .map(Decoder::decodeValue)
                 .findFirst()
                 .orElse("");
     }

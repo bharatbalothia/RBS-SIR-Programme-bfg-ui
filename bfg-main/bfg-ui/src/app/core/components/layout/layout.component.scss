@@ -70,9 +70,20 @@
   }
 
   @media (max-width: 430px) {
+    .mat-toolbar {
+      padding: 0 !important;
+    }
 
-    .clipped-title-logo {
-      display: none;
+    .version-label,
+    .user-logout {
+      display: flex;
+      font-size: 19px !important;
+      flex-direction: column;
+
+      .logout-button {
+        width: 70px;
+        line-height: 28px;
+      }
     }
   }
 

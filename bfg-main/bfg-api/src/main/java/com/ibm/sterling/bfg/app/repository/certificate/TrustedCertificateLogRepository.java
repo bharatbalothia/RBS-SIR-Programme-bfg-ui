@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public interface TrustedCertificateLogRepository extends JpaRepository<TrustedCertificateLog, String> {
 }

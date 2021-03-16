@@ -117,7 +117,8 @@ public class TrustedCertificateDetailsService {
     }
 
     public void checkCertNameUniquenessLocally(TrustedCertificateDetails trustedCertificateDetails, String certName) {
-        List<Map<String, List<String>>> errors = trustedCertificateDetails.getCertificateErrors();
+        List<Map<String, List<String>>> errors = Optional.ofNullable(trustedCertificateDetails.getCertificateErrors())
+                .orElseGet(ArrayList::new);
         if (trustedCertificateRepository.existsByCertificateName(certName))
             errors.add(Collections.singletonMap("certificateName", new ArrayList<>(Collections.singletonList("Certificate name is not unique"))));
 
@@ -128,8 +129,9 @@ public class TrustedCertificateDetailsService {
                 listCertName.get().get("certificateName").add("A Trusted certificate with this certificate name is pending approval for create/delete");
             else errors.add(Collections.singletonMap("thumbprint", new ArrayList<>(
                     Collections.singletonList("A Trusted certificate with this certificate name is pending approval for create/delete"))));
-        if (!errors.isEmpty() && trustedCertificateDetails.isValid()) {
+        if (!errors.isEmpty()) {
             trustedCertificateDetails.setValid(false);
+            trustedCertificateDetails.setCertificateErrors(errors);
         }
     }
 }

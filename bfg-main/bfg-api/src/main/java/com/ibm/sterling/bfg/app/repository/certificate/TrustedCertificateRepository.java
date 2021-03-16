@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public interface TrustedCertificateRepository extends JpaRepository<TrustedCertificate, String> {
     List<TrustedCertificate> findAll(Specification<TrustedCertificate> specification);
 

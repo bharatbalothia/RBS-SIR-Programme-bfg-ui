@@ -6,7 +6,7 @@ import { getFileSearchDisplayName } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { File } from 'src/app/shared/models/file/file.model';
-import { removeEmpties } from 'src/app/shared/utils/utils';
+import { setCalendarDblClick, removeEmpties } from 'src/app/shared/utils/utils';
 import { map, startWith, take } from 'rxjs/operators';
 import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
@@ -40,6 +40,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   filteredEntityList: Observable<{ entityName: string, entityId: number }[]>;
   ALL = '';
 
+  setCalendarDblClick = setCalendarDblClick;
   getSearchValidationMessage = getSearchValidationMessage;
   getFileSearchDisplayName = getFileSearchDisplayName;
   FILE_STATUS_ICON = STATUS_ICON;
@@ -64,7 +65,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     private fileService: FileService,
     private toolTip: TooltipService,
     private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {

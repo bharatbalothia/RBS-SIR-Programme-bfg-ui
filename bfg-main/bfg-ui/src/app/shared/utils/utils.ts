@@ -1,3 +1,4 @@
+import { NgxMatDatetimePicker } from '@angular-material-components/datetime-picker';
 import { transform, isEqual, isObject, uniq } from 'lodash';
 
 export const removeEmpties = (obj) => {
@@ -32,3 +33,26 @@ export const difference = (object, base) => {
 export const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 export const titleCase = (str: string): string => str ? str[0].toUpperCase() + str.slice(1) : '';
+
+export const setCalendarDblClick = (calendarPicker: NgxMatDatetimePicker<any>) => {
+    setTimeout(() => {
+        const prevBtn = calendarPicker._popupRef['_pane'].getElementsByClassName('mat-calendar-previous-button')[0];
+        const nextBtn = calendarPicker._popupRef['_pane'].getElementsByClassName('mat-calendar-next-button')[0];
+
+        prevBtn.addEventListener('click', () => selectByDblClick(calendarPicker));
+        nextBtn.addEventListener('click', () => selectByDblClick(calendarPicker));
+
+        selectByDblClick(calendarPicker);
+    }, 0);
+};
+
+const selectByDblClick = (calendarPicker: NgxMatDatetimePicker<any>) => {
+    setTimeout(() => {
+        const elements = calendarPicker._popupRef['_pane'].getElementsByClassName('mat-calendar-body-cell-content');
+        Array.from(elements).forEach((element: any) => {
+            if (!element.parentElement.getAttribute('aria-disabled')) {
+                element.addEventListener('dblclick', () => calendarPicker.ok());
+            }
+        });
+    }, 0);
+};

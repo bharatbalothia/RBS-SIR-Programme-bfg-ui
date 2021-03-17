@@ -10,7 +10,7 @@ import { getTransactionSearchDisplayName } from '../transaction-search-display-n
 import { MatTableDataSource } from '@angular/material/table';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
-import { getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
+import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
 import { TransactionTableComponent } from 'src/app/shared/components/transaction-table/transaction-table.component';
 import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
@@ -35,6 +35,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   maxDate: moment.Moment = null;
 
   searchingParametersFormGroup: FormGroup;
+  initialTransactionCriteriaData: TransactionCriteriaData;
   transactionCriteriaData: TransactionCriteriaData;
   filteredEntityList: Observable<string[]>;
   ALL = '';
@@ -90,7 +91,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         delete this.URLParams.startDate;
       }
       this.initializeSearchingParametersFormGroup();
-      this.getTransactionCriteriaData();
+      this.initTransactionCriteriaData();
     });
   }
 
@@ -140,30 +141,52 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
 
-  getTransactionCriteriaData = () =>
+  initTransactionCriteriaData = () =>
     this.transactionService.getTransactionCriteriaData(removeEmpties(this.criteriaFilterObject))
       .pipe(data => this.setLoading(data))
       .subscribe((data: TransactionCriteriaData) => {
         this.isLoading = false;
         const direction = get(this.transactionCriteriaData, 'direction');
         if (direction) {
-          this.transactionCriteriaData = {
+          this.initialTransactionCriteriaData = this.transactionCriteriaData = {
             ...data,
             direction
           };
         }
         else {
-          this.transactionCriteriaData = data;
+          this.initialTransactionCriteriaData = this.transactionCriteriaData = data;
         }
-        this.filteredEntityList = this.searchingParametersFormGroup.controls.entity.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterEntityList(value))
-          );
-        this.persistSelectedTransactionStatus();
+        this.initFilteredEntityList();
       },
         error => this.isLoading = false
       )
+
+  initFilteredEntityList() {
+    this.filteredEntityList = this.searchingParametersFormGroup.controls.entity.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filterEntityList(value))
+      );
+  }
+
+  filterTransactionCriteriaData(): void {
+    const service = this.searchingParametersFormGroup.controls.service.value;
+    const direction = get(this.searchingParametersFormGroup.controls.direction.value, 'direction', '');
+    const outbound = direction === '' ? '' : this.getDirectionValue(direction.toUpperCase());
+
+    this.transactionCriteriaData = {
+      ...this.initialTransactionCriteriaData,
+      trxStatus: this.initialTransactionCriteriaData.trxStatus.filter(fileStatus =>
+        (service === this.ALL || fileStatus.service === service) &&
+        (outbound === this.ALL || fileStatus.outbound === outbound)
+      )
+    };
+
+    this.initFilteredEntityList();
+    this.persistSelectedTransactionStatus();
+  }
+
+  getDirectionValue = (direction) => direction === FILE_DIRECTIONS.OUTBOUND;
 
   persistSelectedTransactionStatus() {
     const control = this.searchingParametersFormGroup.controls.trxStatus;
@@ -239,12 +262,12 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   resetSearchParameters = () => {
     this.initializeSearchingParametersFormGroup();
-    this.getTransactionCriteriaData();
+    this.initTransactionCriteriaData();
   }
 
   onDirectionSelect = (event) => {
     this.criteriaFilterObject.direction = event.value.direction;
-    this.getTransactionCriteriaData();
+    this.filterTransactionCriteriaData();
   }
 
   onStatusSelect = (event) => {
@@ -266,7 +289,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
         this.criteriaFilterObject.direction = get(newDirection, 'direction');
       }
       if (refreshRequired) {
-        this.getTransactionCriteriaData();
+        this.filterTransactionCriteriaData();
       }
     }
   }
@@ -305,7 +328,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  displayEntity(value?: string) {
+  displayEntity(value?) {
     if (value === null) {
       this.searchingParametersFormGroup.controls.entity.setValue(this.ALL);
     }

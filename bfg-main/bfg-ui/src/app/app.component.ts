@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { VersionService } from './shared/services/version.service';
+import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +11,9 @@ export class AppComponent {
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private versionService: VersionService
+    private applicationDataService: ApplicationDataService
   ) {
-    this.versionService.getApplicationVersion();
+    this.applicationDataService.getApplicationVersion();
 
     this.matIconRegistry.addSvgIcon(
       'cancel-red-button',

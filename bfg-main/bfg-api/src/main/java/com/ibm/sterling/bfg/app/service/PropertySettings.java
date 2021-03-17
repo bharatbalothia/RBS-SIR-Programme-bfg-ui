@@ -28,6 +28,7 @@ public class PropertySettings {
     private String transactionTypeKey;
     private String useraccountGroupsKey;
     private String useraccountPermissionsKey;
+    private String loginText;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -195,5 +196,13 @@ public class PropertySettings {
 
     public void setUseraccountPermissionsKey(String useraccountPermissionsKey) {
         this.useraccountPermissionsKey = useraccountPermissionsKey;
+    }
+
+    public String getLoginText() {
+        return loginText;
+    }
+
+    public void setLoginText(String loginText) {
+        this.loginText = loginText;
     }
 }

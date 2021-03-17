@@ -6,7 +6,7 @@
     background-color: #e0e0e0;
 
     .login-card {
-        width: fit-content;
+        width: 300px;
         height: fit-content;
 
         .mat-form-field {
@@ -14,7 +14,14 @@
         }
 
         .login-button {
-            margin-top: 10px;
+            width: 100%;
+        }
+
+        .copyright-info {
+            font-size: 11px;
+            line-height: normal;
+            padding: 0px 16px 0px 16px;
+            text-align: center;
         }
     }
 }

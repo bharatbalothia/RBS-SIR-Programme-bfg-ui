@@ -55,7 +55,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
                             [overlayData]="editableEntity.entity" [key]="'entity'" (insert)="insert($event)">
                         </app-overlay-info>
 
@@ -88,7 +88,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundRequestorDN" [key]="'inboundRequestorDN'"
                             (insert)="insert($event)">
                         </app-overlay-info>
@@ -109,7 +109,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundResponderDN" [key]="'inboundResponderDN'"
                             (insert)="insert($event)">
                         </app-overlay-info>
@@ -131,7 +131,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
                             [overlayData]="editableEntity.inboundService" [key]="'inboundService'"
                             (insert)="insert($event)">
                         </app-overlay-info>
@@ -274,7 +274,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
                             [overlayData]="editableEntity.mailboxPathOut" [key]="'mailboxPathOut'"
                             (insert)="insert($event)">
                         </app-overlay-info>
@@ -307,7 +307,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
                             [overlayData]="editableEntity.mailboxPathOut" [key]="'mqQueueOut'"
                             (insert)="insert($event)">
                         </app-overlay-info>
@@ -393,7 +393,8 @@
                         <ng-container matColumnDef="schedule">
                             <mat-header-cell *matHeaderCellDef> Schedule </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                {{getFormattedSchedule(element)}}
+                                <app-display-table-cell [value]="getFormattedSchedule(element)">
+                                </app-display-table-cell>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="scheduleType">
@@ -900,7 +901,7 @@
                         </ng-container>
                         <ng-container matColumnDef="changerComment">
                             <mat-footer-cell *matFooterCellDef colspan="2">
-                                <mat-form-field>
+                                <mat-form-field class="changer-comments">
                                     <mat-label>{{entityDisplayNames['changerComments'] || 'changerComments'}}
                                     </mat-label>
                                     <textarea matInput formControlName="changerComments"></textarea>

@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-//@Transactional(readOnly = true)
 public interface ChangeControlCertRepository extends JpaRepository<ChangeControlCert, String> {
 
     @EntityGraph(attributePaths = "trustedCertificateLog")
+    @Transactional(readOnly = true)
     List<ChangeControlCert> findAll(Specification<ChangeControlCert> specification);
 
     boolean existsByResultMeta1AndStatus(String resultMeta1, ChangeControlStatus changeControlStatus);

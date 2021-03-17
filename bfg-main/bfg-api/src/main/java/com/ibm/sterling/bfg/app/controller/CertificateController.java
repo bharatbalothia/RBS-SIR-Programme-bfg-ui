@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.naming.InvalidNameException;
 import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
@@ -182,10 +181,5 @@ public class CertificateController {
     @GetMapping("/existence")
     public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
         return ok(certificateService.existsByNameInDbAndBI(name));
-    }
-
-    @PostMapping("import")
-    public ResponseEntity<?> importCertificatesFromB2B() throws JsonProcessingException, CertificateException {
-        return ok(certificateService.importCertificatesFromB2B());
     }
 }

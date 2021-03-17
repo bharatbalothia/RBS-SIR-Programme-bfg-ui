@@ -45,7 +45,5 @@ public interface TrustedCertificateService extends FieldValueExists {
 
     void cancelPendingCertificate(ChangeControlCert changeControl);
 
-    Object importCertificatesFromB2B() throws JsonProcessingException, CertificateException;
-
     TrustedCertificate save(TrustedCertificate trustedCertificate);
 }

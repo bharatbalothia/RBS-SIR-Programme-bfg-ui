@@ -6,7 +6,7 @@ import { NgForm } from '@angular/forms';
 import { LOGIN_FORM_VALIDATION_MESSAGES } from './login-form-validation-messages';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from '../../constants/routing-paths';
-import { VersionService } from 'src/app/shared/services/version.service';
+import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 @Component({
   selector: 'app-login',
@@ -25,16 +25,18 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('form') loginForm: NgForm;
 
-  appVersion: string;
+  appCopyrights: string;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private versionService: VersionService
+    private applicationDataService: ApplicationDataService
   ) { }
 
   ngOnInit(): void {
-    this.versionService.applicationVersion.subscribe(data => this.appVersion = data);
+    this.applicationDataService.applicationData.subscribe(data => {
+      this.appCopyrights = data.loginText;
+    });
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/' + ROUTING_PATHS.EMPTY]);
     }

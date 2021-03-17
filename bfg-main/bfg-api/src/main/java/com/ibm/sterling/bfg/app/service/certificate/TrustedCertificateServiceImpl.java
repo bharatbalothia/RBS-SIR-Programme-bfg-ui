@@ -137,9 +137,11 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
 
     @Override
     public Object importCertificatesFromB2B() throws JsonProcessingException, CertificateException {
-        Map<Boolean, Map<Map.Entry<String, X509Certificate>, TrustedCertificateDetails>> booleanMap = certificateIntegrationService.getCertificates()
+
+        List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails = certificateIntegrationService.getCertificates()
                 .stream()
-                .collect(Collectors.toMap(IntegratedCertificateData::getCertName,
+                .collect(Collectors.toMap(
+                        IntegratedCertificateData::getCertNameAndDate,
                         integratedCertificateData -> {
                             try {
                                 return integratedCertificateData.convertToX509Certificate();
@@ -150,30 +152,58 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
-                        entry -> entry,
+                        entry -> entry.getKey().getCertName(),
                         entry -> {
                             try {
-                                TrustedCertificateDetails trustedCertificateDetails =
-                                        trustedCertificateDetailsService.getTrustedCertificateDetails(entry.getValue(), true);
+                                ImportedTrustedCertificateDetails trustedCertificateDetails =
+                                        new ImportedTrustedCertificateDetails(trustedCertificateDetailsService
+                                                .getTrustedCertificateDetails(entry.getValue(), true));
+                                trustedCertificateDetails.setCertNameAndDate(entry.getKey());
+                                trustedCertificateDetails.setCertificate(entry.getValue());
                                 trustedCertificateDetailsService.checkCertNameUniquenessLocally(
-                                        trustedCertificateDetails, entry.getKey());
+                                        trustedCertificateDetails, entry.getKey().getCertName());
                                 return trustedCertificateDetails;
                             } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
                                 return null;
                             }
                         }
                 ))
-                .entrySet()
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        importedTrustedCertificateDetails
+                .stream()
+                .collect(Collectors.groupingBy(
+                        TrustedCertificateDetails::getThumbprint,
+                        Collectors.toList()
+                ))
+                .values()
+        .forEach(value ->
+            checkValidation(value, "thumbprint", "SHA-1 Thumbprint is not unique"));
+
+        importedTrustedCertificateDetails
+                .stream()
+                .collect(Collectors.groupingBy(
+                        TrustedCertificateDetails::getThumbprint256,
+                        Collectors.toList()
+                ))
+                .values()
+                .forEach(value ->
+                        checkValidation(value, "thumbprint256", "SHA-2 Thumbprint is not unique"));
+
+        Map<Boolean, List<ImportedTrustedCertificateDetails>> booleanMap = importedTrustedCertificateDetails
                 .stream()
                 .collect(Collectors.partitioningBy(
-                        entry -> entry.getValue().isValid(), // this splits the map into 2 parts
-                        Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+                        TrustedCertificateDetails::isValid,
+                        Collectors.toList()
                 ));
+
         booleanMap.get(true)
                 .forEach(this::persistImportedCertificate);
         booleanMap.get(false)
-                .forEach((key, value) -> {
-                            LOG.info("Ignore imported trusted certificate {}", key.getKey());
+                .forEach(value -> {
+                            LOG.info("Ignore imported trusted certificate {}", value.getCertNameAndDate().getCertName());
                             adminAuditService.fireAdminAuditEvent(
                                     new AdminAuditEventRequest(
                                             ACTION_BY,
@@ -181,19 +211,30 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                                             EventType.valueOf(ChangeControlStatus.REJECTED.name()),
                                             Type.TRUSTED_CERTIFICATE,
                                             "n/a",
-                                            actionValueIgnored.apply(key.getKey(), value.getCertificateErrors())
+                                            actionValueIgnored.apply(value.getCertNameAndDate().getCertName(),
+                                                    value.getCertificateErrors())
                                     ));
                         }
                         );
         return null;
     }
 
-//    @Transactional(rollbackFor=Exception.class)
-    public void persistImportedCertificate(
-            Map.Entry<String, X509Certificate> X509CertificateEntry, TrustedCertificateDetails trustedCertificateDetails) {
-            TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
-            trustedCertificate.setCertificateName(X509CertificateEntry.getKey());
-            trustedCertificate.setCertificate(X509CertificateEntry.getValue());
+    private void checkValidation(List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails,
+                                 String errorKey, String errorValue) {
+        Collections.sort(importedTrustedCertificateDetails);
+        importedTrustedCertificateDetails.get(0).setLatest(true);
+        importedTrustedCertificateDetails
+                .stream()
+                .filter(cert -> !cert.isLatest())
+                .forEach(detail -> {
+                    trustedCertificateDetailsService.addError(detail, errorKey, errorValue);
+                });
+    }
+
+    private void persistImportedCertificate(ImportedTrustedCertificateDetails trustedCertificateDetails) {
+        TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
+        trustedCertificate.setCertificateName(trustedCertificateDetails.getCertNameAndDate().getCertName());
+        trustedCertificate.setCertificate(trustedCertificateDetails.getCertificate());
         try {
             LOG.info("Trying to save imported trusted certificate {} to change control", trustedCertificate);
             ChangeControlCert changeControlCert = new ChangeControlCert();
@@ -220,7 +261,8 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                             EventType.valueOf(ChangeControlStatus.REJECTED.name()),
                             Type.TRUSTED_CERTIFICATE,
                             "n/a",
-                            actionValueFailed.apply(X509CertificateEntry.getKey(), e.getLocalizedMessage())));
+                            actionValueFailed.apply(trustedCertificateDetails.getCertNameAndDate().getCertName(),
+                                    e.getLocalizedMessage())));
         }
     }
 

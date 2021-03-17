@@ -20,6 +20,23 @@ public class TrustedCertificateDetails {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String, Object>> certificateWarnings;
 
+    public TrustedCertificateDetails() {
+    }
+
+    public TrustedCertificateDetails(TrustedCertificateDetails trustedCertificateDetails) {
+        this.serialNumber = trustedCertificateDetails.getSerialNumber();
+        this.thumbprint = trustedCertificateDetails.getThumbprint();
+        this.thumbprint256 = trustedCertificateDetails.getThumbprint256();
+        this.startDate = trustedCertificateDetails.getStartDate();
+        this.endDate = trustedCertificateDetails.getEndDate();
+        this.issuer = trustedCertificateDetails.getIssuer();
+        this.subject = trustedCertificateDetails.getSubject();
+        this.authChainReport = trustedCertificateDetails.getAuthChainReport();
+        this.valid = trustedCertificateDetails.isValid();
+        this.certificateErrors = trustedCertificateDetails.getCertificateErrors();
+        this.certificateWarnings = trustedCertificateDetails.getCertificateWarnings();
+    }
+
     public String getSerialNumber() {
         return serialNumber;
     }

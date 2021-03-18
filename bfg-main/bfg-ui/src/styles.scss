@@ -1,7 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-$roboto-font-path: "~roboto-fontface/fonts" !default;
-@import "~roboto-fontface/css/roboto/sass/roboto-fontface";
-@import '~material-design-icons/iconfont/material-icons.css';
 @import '~@angular/material/theming';
 @include mat-core();
 
@@ -54,6 +51,12 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+mat-icon {
+    font-family: 'Material Icons' !important;
+    /* Support for IE */
+    font-feature-settings: 'liga';
 }
 
 .mat-footer-row[hidden] {

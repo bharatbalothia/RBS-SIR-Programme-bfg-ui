@@ -1,6 +1,6 @@
 .trusted-certificate-create-card {
     margin: 15px 15px 15px 15px;
-    
+
     .top-error-message {
         margin-left: 24px;
     }
@@ -61,21 +61,22 @@
     }
 
     .summary-table {
-        width: 100%;
 
-        .mat-cell, .mat-header-cell {
-          padding-left: 10px;
+        .mat-cell,
+        .mat-header-cell {
+            padding-left: 10px;
+            white-space: nowrap;
         }
 
         .mat-column-field,
         .mat-column-sub-field {
-          flex: 0 0 10%;
+            flex: 0 0 10%;
+            min-width: 120px;
         }
 
         .mat-column-value {
-          flex: 0 0 50%;
+            min-width: 150px;
         }
-
     }
 
     .stepper-actions {

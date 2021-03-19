@@ -48,7 +48,7 @@ export class TrustedCertificateCreateComponent implements OnInit {
 
   trustedCertificateFile;
 
-  confirmationDisplayedColumns = ['field', 'sub-field', 'value', 'error'];
+  confirmationDisplayedColumns = ['field', 'sub-field', 'value'];
   confirmationPageDataSource = [];
 
   @ViewChild('stepper') stepper;
@@ -276,7 +276,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
             field: index === 0 ? `${getTrustedCertificateDisplayName(field)}:` : '',
             subField: val.split(': ')[0],
             value: val.split(': ')[1],
-            error: index === 0 ? getErrorByField(field, this.errorMessage) : '',
           });
         });
       } else if (isArray(value) && field === 'authChainReport') {
@@ -286,7 +285,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
               field: outIndex === 0 && inIndex === 0 ? `${getTrustedCertificateDisplayName('authChainReport')}:` : undefined,
               subField: getTrustedCertificateDisplayName(key),
               value: val,
-              error: outIndex === 0 && inIndex === 0 ? getErrorByField(field, this.errorMessage) : '',
             });
           });
         });
@@ -295,7 +293,6 @@ export class TrustedCertificateCreateComponent implements OnInit {
           key: field,
           field: getTrustedCertificateDisplayName(field),
           value,
-          error: getErrorByField(field, this.errorMessage),
         });
       }
     });

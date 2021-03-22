@@ -10,7 +10,6 @@ import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import javax.naming.InvalidNameException;
 import javax.security.cert.CertificateEncodingException;
 import java.security.NoSuchAlgorithmException;

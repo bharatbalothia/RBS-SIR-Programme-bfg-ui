@@ -25,7 +25,7 @@ import java.util.Optional;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class ChangeControlCertService {
     private static final Logger LOGGER = LogManager.getLogger(ChangeControlCertService.class);
 

@@ -24,9 +24,9 @@ public class ChangeControlCert implements ObjectTypeConstants, Comparable<Change
 
     @Id
     @Column(name = "CHANGE_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFG_CHANGE_CONTROL_IDSEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FB_CHANGE_CONTROL_IDSEQ")
     @GenericGenerator(
-            name = "SFG_CHANGE_CONTROL_IDSEQ",
+            name = "FB_CHANGE_CONTROL_IDSEQ",
             strategy = "com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlIdSequenceGenerator",
             parameters = {
                     @Parameter(name = ChangeControlIdSequenceGenerator.INCREMENT_PARAM, value = "1"),

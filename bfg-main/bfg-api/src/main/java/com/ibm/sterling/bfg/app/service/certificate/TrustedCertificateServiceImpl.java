@@ -26,7 +26,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.naming.InvalidNameException;
 import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
@@ -133,8 +132,14 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                 new AdminAuditEventRequest(changeControl, EventType.REQUEST_CANCELLED, changeControl.getResultMeta1()));
     }
 
-    public TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate,
-                                                                         String certificateName, String comment)
+    @Transactional
+    public TrustedCertificate save(TrustedCertificate trustedCertificate) {
+        LOG.info("Persisting {} to SCT_TRUSTED_CERTIFICATE", trustedCertificate);
+        return trustedCertificateRepository.save(trustedCertificate);
+    }
+
+    public TrustedCertificate convertX509CertificateToTrustedCertificate(
+            X509Certificate x509Certificate, String certificateName, String comment)
             throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException {
         TrustedCertificateDetails trustedCertificateDetails =
                 trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
@@ -204,7 +209,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                     true
             );
             certificateIntegrationService.createCertificate(certificateDataIntegrationRequest);
-            trustedCertificateRepository.save(trustedCertificate);
+            save(trustedCertificate);
         }
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(trustedCertificate.getCertificateId());

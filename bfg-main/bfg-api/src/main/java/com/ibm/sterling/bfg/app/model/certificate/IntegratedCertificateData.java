@@ -1,16 +1,27 @@
 package com.ibm.sterling.bfg.app.model.certificate;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
 import com.ibm.sterling.bfg.app.model.DetailFormat;
+import com.ibm.sterling.bfg.app.service.certificate.IntegratedCertNameAndDate;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 public class IntegratedCertificateData {
     private String _id;
     private String _title;
     private String href;
-    private String certName;
+    @JsonUnwrapped
+    private IntegratedCertNameAndDate certNameAndDate;
     private String certData;
     private String systemCertId;
     private String createdOrUpdatedBy;
-    private String creationOrUpdateTime;
     private DetailFormat verifyValidity;
     private DetailFormat verifyAuthChain;
 
@@ -38,12 +49,12 @@ public class IntegratedCertificateData {
         this.href = href;
     }
 
-    public String getCertName() {
-        return certName;
+    public IntegratedCertNameAndDate getCertNameAndDate() {
+        return certNameAndDate;
     }
 
-    public void setCertName(String certName) {
-        this.certName = certName;
+    public void setCertNameAndDate(IntegratedCertNameAndDate certNameAndDate) {
+        this.certNameAndDate = certNameAndDate;
     }
 
     public String getCertData() {
@@ -70,14 +81,6 @@ public class IntegratedCertificateData {
         this.createdOrUpdatedBy = createdOrUpdatedBy;
     }
 
-    public String getCreationOrUpdateTime() {
-        return creationOrUpdateTime;
-    }
-
-    public void setCreationOrUpdateTime(String creationOrUpdateTime) {
-        this.creationOrUpdateTime = creationOrUpdateTime;
-    }
-
     public DetailFormat getVerifyValidity() {
         return verifyValidity;
     }
@@ -94,4 +97,15 @@ public class IntegratedCertificateData {
         this.verifyAuthChain = verifyAuthChain;
     }
 
+    public X509Certificate convertToX509Certificate() throws CertificateException {
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        X509Certificate x509Certificate;
+        byte[] decodedBytes = Base64.getDecoder().decode(certData);
+        try (InputStream inputStream = new ByteArrayInputStream(decodedBytes)) {
+            x509Certificate = (X509Certificate) factory.generateCertificate(inputStream);
+        } catch (CertificateException | IOException e) {
+            throw new FileNotValidException();
+        }
+        return x509Certificate;
+    }
 }

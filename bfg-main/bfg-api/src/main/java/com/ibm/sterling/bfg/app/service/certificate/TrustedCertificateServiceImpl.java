@@ -113,9 +113,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         if (trustedCertificateRepository.existsByCertificateName(name))
             existence.add("the BFGUI");
         if (existence.isEmpty()) return null;
-        return "The Trusted Certificate with this name already exists in " + existence
-                .stream()
-                .collect(Collectors.joining(" and ", "", "."));
+        return "The Trusted Certificate with this name already exists in " + String.join(" and ", existence);
     }
 
     @Override

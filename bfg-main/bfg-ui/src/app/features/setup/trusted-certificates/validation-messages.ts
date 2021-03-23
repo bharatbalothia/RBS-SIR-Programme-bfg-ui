@@ -5,7 +5,7 @@ export const TRUSTED_CERTIFICATE_VALIDATION_MESSAGES = {
         { type: 'required', message: `A ${getTrustedCertificateDisplayName('name')} is required for the Trusted Certificate` },
         {
             type: 'pattern',
-            message: `The Trusted Certificate ${getTrustedCertificateDisplayName('name')} can only contain the following characters: a-z A-Z 0-9 -_:. {space}`
+            message: `The Trusted Certificate ${getTrustedCertificateDisplayName('name')} can only contain the following characters: a-z A-Z 0-9 -_:.`
         },
     ]
 };

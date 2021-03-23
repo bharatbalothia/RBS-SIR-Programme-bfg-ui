@@ -33,8 +33,9 @@
                 *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
                 {{validation.message}}</mat-error>
             </mat-error>
-            <mat-error class="error-message" *ngIf="getErrorByField('name')">
-              {{getErrorByField('name')}}
+            <mat-error class="error-message"
+              *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError('nameExists')">
+              {{detailsTrustedCertificateFormGroup.get('name').getError('nameExists')}}
             </mat-error>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('edit-tc', 'name')"></app-tooltip>

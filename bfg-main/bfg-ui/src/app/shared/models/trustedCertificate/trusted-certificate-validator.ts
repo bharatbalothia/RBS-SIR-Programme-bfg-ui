@@ -29,7 +29,7 @@ export class TrustedCertificateValidators {
             return this.trustedCertificateService.isTrustedCertificateNameExists(control.value).pipe(
                 take(1),
                 map(exists => {
-                    return exists ? { nameExists: true } : null;
+                    return exists ? { nameExists: exists } : null;
                 }), catchError(() => of(null))
             );
         };

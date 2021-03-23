@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.annotation.PostConstruct;
 import javax.naming.InvalidNameException;
 import java.security.NoSuchAlgorithmException;
@@ -136,9 +135,8 @@ public class ImportedTrustedCertificateService {
         importedTrustedCertificateDetails
                 .stream()
                 .filter(cert -> !cert.isLatest())
-                .forEach(detail -> {
-                    trustedCertificateDetailsService.addError(detail, errorKey, errorValue);
-                });
+                .forEach(detail ->
+                        trustedCertificateDetailsService.addError(detail, errorKey, errorValue));
     }
 
     private void persistImportedCertificate(ImportedTrustedCertificateDetails trustedCertificateDetails) {

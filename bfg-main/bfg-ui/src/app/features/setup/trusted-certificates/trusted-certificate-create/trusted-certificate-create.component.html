@@ -164,14 +164,6 @@
             </div>
           </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="error">
-          <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <div class="mat-cell-value">
-              <mat-error class='error-table-cell'>{{element.error}}</mat-error>
-            </div>
-          </mat-cell>
-        </ng-container>
         <mat-header-row *matHeaderRowDef="confirmationDisplayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: confirmationDisplayedColumns;"></mat-row>
       </mat-table>

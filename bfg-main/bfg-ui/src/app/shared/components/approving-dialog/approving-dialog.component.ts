@@ -18,6 +18,7 @@ export class ApprovingDialogComponent implements OnInit {
 
   isLoading = false;
   hasErrors = false;
+  shouldDisableApprove = false;
 
   displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
   tabs: Tab[];
@@ -43,11 +44,17 @@ export class ApprovingDialogComponent implements OnInit {
     this.changeId = get(this.data, 'actionData.changeID', '');
     this.changer = get(this.data, 'actionData.changer');
 
-    const errorMessage = get(this.data, 'actionData.errorMessage');
+    this.shouldDisableApprove = get(this.data, 'actionData.shouldDisableApprove');
 
+    const errorMessage = get(this.data, 'actionData.errorMessage');
     if (errorMessage) {
       this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
       this.notificationService.showErrorWithWarningMessage(errorMessage);
+    }
+
+    const warningMessage = get(this.data, 'actionData.warningMessage');
+    if (warningMessage) {
+      this.notificationService.showWarningText(warningMessage);
     }
 
     this.displayName = this.data.displayName;

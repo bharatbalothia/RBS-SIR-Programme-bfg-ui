@@ -121,9 +121,14 @@ mat-form-field {
             overflow: visible !important;
         }
 
+        .table-container {
+            width: 100%;
+        }
+
         .mat-table {
             display: inline-block;
             margin-right: 15px;
+            width: 100%;
 
             .mat-row,
             .mat-header-row {

@@ -18,7 +18,7 @@
                 <button *ngIf="approveAction" mat-raised-button color="warn"
                     (click)="approvingAction(changeStatus.REJECTED)">Reject</button>
                 <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
-                    [disabled]="hasErrors">Accept</button>
+                    [disabled]="shouldDisableApprove || hasErrors">Accept</button>
             </div>
         </div>
         <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

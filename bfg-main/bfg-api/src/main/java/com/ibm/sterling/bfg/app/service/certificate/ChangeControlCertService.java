@@ -65,6 +65,7 @@ public class ChangeControlCertService {
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
+        changeControl.getTrustedCertificateLog().setCertificate(null);
         changeControlCertRepository.save(changeControl);
     }
 

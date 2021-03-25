@@ -138,8 +138,10 @@ public class TrustedCertificateDetailsService {
     public void addError(TrustedCertificateDetails trustedCertificateDetails, String errorKey, String errorValue) {
         List<Map<String, List<String>>> errors = Optional.ofNullable(trustedCertificateDetails.getCertificateErrors())
                 .orElseGet(ArrayList::new);
-        errors.add(Collections.singletonMap(errorKey, new ArrayList<>(Collections.singletonList(errorValue))));
-        trustedCertificateDetails.setValid(false);
-        trustedCertificateDetails.setCertificateErrors(errors);
+        if (errors.stream().noneMatch(error -> error.containsKey(errorKey))) {
+            errors.add(Collections.singletonMap(errorKey, new ArrayList<>(Collections.singletonList(errorValue))));
+            trustedCertificateDetails.setValid(false);
+            trustedCertificateDetails.setCertificateErrors(errors);
+        }
     }
 }

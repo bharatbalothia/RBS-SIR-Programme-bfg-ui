@@ -109,7 +109,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         LOG.info("Trusted certificate exists by {} name", name);
         List<String> existence = new ArrayList<>();
         if (Optional.ofNullable(certificateIntegrationService.getCertificateByName(name)).isPresent())
-            existence.add("the BFG");
+            existence.add("the Sterling B2B Integrator");
         if (trustedCertificateRepository.existsByCertificateName(name))
             existence.add("the BFGUI");
         if (existence.isEmpty()) return null;
@@ -217,7 +217,6 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(trustedCertificate.getCertificateId());
         changeControlCert.setTrustedCertificateLog(certLog);
-        changeControlCertService.save(changeControlCert);
         return trustedCertificate;
     }
 

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.service.certificate.ImportCertificatesConstants.*;
 import static com.ibm.sterling.bfg.app.service.certificate.ImportCertificatesConstants.ACTION_VALUE_FAILED;
-import static java.util.Map.Entry.comparingByKey;
 
 @Service
 @Transactional(timeout = 100000)

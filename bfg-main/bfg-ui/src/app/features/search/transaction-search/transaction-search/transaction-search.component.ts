@@ -11,13 +11,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
 import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
 import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/file/file-directions';
-import { TransactionTableComponent } from 'src/app/shared/components/transaction-table/transaction-table.component';
 import { ActivatedRoute } from '@angular/router';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Observable } from 'rxjs';
+import { AutorefreshDataComponent } from 'src/app/shared/components/autorefresh-data/autorefresh-data.component';
 
 @Component({
   selector: 'app-transaction-search',
@@ -26,8 +26,8 @@ import { Observable } from 'rxjs';
 })
 export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(TransactionTableComponent)
-  transactionTableComponent: TransactionTableComponent;
+  @ViewChild(AutorefreshDataComponent)
+  autoRefreshDataComponent: AutorefreshDataComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
@@ -253,10 +253,10 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.transactionTableComponent.autoRefreshChange(true);
+      this.autoRefreshDataComponent.autoRefreshChange(true);
     }
     else {
-      this.transactionTableComponent.autoRefreshChange(false);
+      this.autoRefreshDataComponent.autoRefreshChange(false);
     }
   }
 

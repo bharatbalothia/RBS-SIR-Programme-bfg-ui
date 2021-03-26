@@ -3,6 +3,8 @@
     <mat-card-title>Entity pending changes</mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
+    <app-autorefresh-data [getData]="getPendingChanges.bind(this, this.pageIndex, this.pageSize)">
+    </app-autorefresh-data>
     <div class="search-by-content">
       <form (ngSubmit)="getPendingChanges(0, pageSize)">
         <h3 class="search-by-label">Search by</h3>

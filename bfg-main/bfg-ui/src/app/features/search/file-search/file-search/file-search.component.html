@@ -150,8 +150,10 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Search results</ng-template>
-      <app-file-table [(isLoading)]="isLoading" [shouldAutoRefresh]="false" [pageIndex]="pageIndex"
-        [pageSize]="pageSize" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
+      <app-autorefresh-data [shouldAutoRefresh]="false"
+        [getData]="getFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+      <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize"
+        [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
       </app-file-table>
       <div class='stepper-actions'>
         <button mat-raised-button matStepperPrevious class="action-button">Back</button>

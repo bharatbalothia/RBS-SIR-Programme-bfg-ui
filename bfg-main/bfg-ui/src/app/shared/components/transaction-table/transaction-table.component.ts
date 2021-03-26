@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionSearchDisplayName } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
@@ -19,7 +18,7 @@ import { DetailsDialogComponent } from '../details-dialog/details-dialog.compone
   templateUrl: './transaction-table.component.html',
   styleUrls: ['./transaction-table.component.scss']
 })
-export class TransactionTableComponent implements OnInit, OnDestroy {
+export class TransactionTableComponent implements OnInit {
 
   getTransactionStatusIcon = getStatusIcon;
   getDirectionIcon = getDirectionIcon;
@@ -32,11 +31,8 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
   @Input() pageSize;
   @Input() shouldHidePaginator = false;
   @Input() shouldHideTableHeader = false;
-  @Input() shouldAutoRefresh = true;
 
   @Output() isLoadingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-  autoRefreshing: Subscription;
 
   displayedColumns: string[] = [
     'id',
@@ -58,7 +54,6 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.autoRefreshChange(this.shouldAutoRefresh);
   }
 
   setLoading(data) {
@@ -111,18 +106,5 @@ export class TransactionTableComponent implements OnInit, OnDestroy {
         }
       },
     }))
-
-  autoRefreshChange = (value) => {
-    if (value) {
-      this.autoRefreshing = interval(60000).subscribe(() => this.getTransactionList(this.pageIndex, this.pageSize));
-    }
-    else if (this.autoRefreshing) {
-      this.autoRefreshing.unsubscribe();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.autoRefreshChange(false);
-  }
 
 }

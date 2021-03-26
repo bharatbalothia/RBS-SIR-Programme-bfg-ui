@@ -1,6 +1,3 @@
-<mat-slide-toggle class="refresh-toggle" [checked]="autoRefreshing" (change)="autoRefreshChange($event.checked)">
-    Automatically refresh every minute
-</mat-slide-toggle>
 <h3 *ngIf="transactions && transactions.totalElements">
     {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize,
     transactions.pageable.pageNumber + 1)}}

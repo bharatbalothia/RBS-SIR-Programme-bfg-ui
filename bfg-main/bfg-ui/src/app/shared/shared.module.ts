@@ -56,6 +56,7 @@ import { InputUppercaseDirective } from './directives/input-uppercase/input-uppe
 import { PasswordConfirmationDialogComponent } from './components/password-confirmation-dialog/password-confirmation-dialog.component';
 import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete-enforce-selection/autocomplete-enforce-selection.directive';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { AutorefreshDataComponent } from './components/autorefresh-data/autorefresh-data.component';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -87,6 +88,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     FileTableComponent,
     TransactionTableComponent,
     OverlayInfoComponent,
+    AutorefreshDataComponent,
 
     // Directives
     InputLowercaseDirective,
@@ -184,6 +186,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     FileTableComponent,
     TransactionTableComponent,
     OverlayInfoComponent,
+    AutorefreshDataComponent,
 
     // Directives
     InputLowercaseDirective,

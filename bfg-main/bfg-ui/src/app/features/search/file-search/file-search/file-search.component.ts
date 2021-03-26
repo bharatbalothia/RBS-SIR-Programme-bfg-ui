@@ -12,13 +12,13 @@ import { FILE_DIRECTIONS, getDirectionStringValue } from 'src/app/shared/models/
 import { STATUS_ICON } from 'src/app/core/constants/status-icon';
 import { get, isEmpty, isFunction } from 'lodash';
 import * as moment from 'moment';
-import { FileTableComponent } from 'src/app/shared/components/file-table/file-table.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { Observable } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { AutorefreshDataComponent } from 'src/app/shared/components/autorefresh-data/autorefresh-data.component';
 
 @Component({
   selector: 'app-file-search',
@@ -26,8 +26,9 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
   styleUrls: ['./file-search.component.scss']
 })
 export class FileSearchComponent implements OnInit, AfterViewInit {
-  @ViewChild(FileTableComponent)
-  fileTableComponent: FileTableComponent;
+
+  @ViewChild(AutorefreshDataComponent)
+  autoRefreshDataComponent: AutorefreshDataComponent;
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
@@ -222,10 +223,10 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onStepChange(event) {
     if (event.selectedIndex === 1) {
-      this.fileTableComponent.autoRefreshChange(true);
+      this.autoRefreshDataComponent.autoRefreshChange(true);
     }
     else {
-      this.fileTableComponent.autoRefreshChange(false);
+      this.autoRefreshDataComponent.autoRefreshChange(false);
     }
   }
 

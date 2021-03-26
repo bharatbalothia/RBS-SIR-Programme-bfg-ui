@@ -4,8 +4,9 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex"
-            [pageSize]="pageSize" [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
+        <app-autorefresh-data [getData]="getFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+        <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
         </app-file-table>
     </mat-card-content>
     <mat-card-footer>

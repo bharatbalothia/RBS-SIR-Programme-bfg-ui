@@ -3,6 +3,8 @@
         <mat-card-title>Entities</mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
+        <app-autorefresh-data [getData]="getEntityList.bind(this, this.pageIndex, this.pageSize)">
+        </app-autorefresh-data>
         <div class="search-by-content">
             <form (ngSubmit)="getEntityList(0, pageSize)">
                 <h3 class="search-by-label">Search by</h3>

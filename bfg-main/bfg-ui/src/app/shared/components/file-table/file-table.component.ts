@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { interval, Subscription } from 'rxjs';
 import { getStatusIcon } from 'src/app/core/constants/status-icon';
 import { getDirectionIcon } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { FileDialogService } from '../../models/file/file-dialog.service';
@@ -12,7 +11,7 @@ import { FilesWithPagination } from '../../models/file/files-with-pagination.mod
   templateUrl: './file-table.component.html',
   styleUrls: ['./file-table.component.scss']
 })
-export class FileTableComponent implements OnInit, OnDestroy {
+export class FileTableComponent implements OnInit {
 
   getFileStatusIcon = getStatusIcon;
   getDirectionIcon = getDirectionIcon;
@@ -25,11 +24,8 @@ export class FileTableComponent implements OnInit, OnDestroy {
   @Input() pageSize;
   @Input() shouldHidePaginator = false;
   @Input() shouldHideTableHeader = false;
-  @Input() shouldAutoRefresh = true;
 
   @Output() isLoadingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-  autoRefreshing: Subscription;
 
   displayedColumns: string[] = [
     'status',
@@ -51,7 +47,6 @@ export class FileTableComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.autoRefreshChange(this.shouldAutoRefresh);
     this.fileDialogService.isLoadingChange.subscribe(data => this.isLoadingChange.emit(data));
   }
 
@@ -73,16 +68,4 @@ export class FileTableComponent implements OnInit, OnDestroy {
 
   openErrorDetailsDialog = (file: File) => this.fileDialogService.openErrorDetailsDialog(file, true);
 
-  autoRefreshChange = (value) => {
-    if (value) {
-      this.autoRefreshing = interval(60000).subscribe(() => this.getFileList(this.pageIndex, this.pageSize));
-    }
-    else if (this.autoRefreshing) {
-      this.autoRefreshing.unsubscribe();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.autoRefreshChange(false);
-  }
 }

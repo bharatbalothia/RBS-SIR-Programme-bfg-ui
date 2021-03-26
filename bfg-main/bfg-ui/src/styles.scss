@@ -157,7 +157,9 @@ mat-form-field {
 
     .mat-row,
     .mat-header-row,
-    .mat-cell {
+    .mat-cell,
+    .mat-footer-row,
+    .mat-footer-cell {
         min-height: 40px !important;
     }
 

@@ -43,6 +43,10 @@ export class NotificationService {
     }
   }
 
+  public showWarningText(text: string) {
+    this.toastrService.warning(text, '', this.toasterConfig);
+  }
+
   public showErrorWithWarningMessage(errorMessage: ErrorMessage) {
     this.showErrorMessage(errorMessage);
     this.showWarningMessage(errorMessage);

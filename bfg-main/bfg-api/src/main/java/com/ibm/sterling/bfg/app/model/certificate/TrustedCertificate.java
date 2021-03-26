@@ -42,8 +42,9 @@ public class TrustedCertificate implements CertType {
             message = "CERTIFICATE_NAME has to be unique")
     @UniqueBICertificate
     @NotBlank(message = "CERTIFICATE_NAME has to be present")
-    @Pattern(regexp = "^[0-9a-zA-Z _\\-:.]+$",
-            message = "Please match the requested format for certificateName")
+    @Pattern(regexp = "^[0-9a-zA-Z_\\-:.]+$",
+            message = "Please match the requested format for certificateName. " +
+                    "The following characters are not valid: ! @ # % ^ * ( ) + ? , < > { } [ ] | ; \" ' and space.")
     @Column(name = "CERTIFICATE_NAME")
     private String certificateName;
 

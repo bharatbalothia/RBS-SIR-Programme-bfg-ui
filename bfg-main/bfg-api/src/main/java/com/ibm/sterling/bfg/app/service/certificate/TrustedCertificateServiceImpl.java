@@ -32,10 +32,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
@@ -107,10 +105,15 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public Boolean existsByNameInDbAndBI(String name) throws JsonProcessingException {
+    public String existsByNameInDbAndBI(String name) throws JsonProcessingException {
         LOG.info("Trusted certificate exists by {} name", name);
-        return trustedCertificateRepository.existsByCertificateName(name) ||
-                Optional.ofNullable(certificateIntegrationService.getCertificateByName(name)).isPresent();
+        List<String> existence = new ArrayList<>();
+        if (Optional.ofNullable(certificateIntegrationService.getCertificateByName(name)).isPresent())
+            existence.add("the Sterling B2B Integrator");
+        if (trustedCertificateRepository.existsByCertificateName(name))
+            existence.add("the BFGUI");
+        if (existence.isEmpty()) return null;
+        return "The Trusted Certificate with this name already exists in " + String.join(" and ", existence);
     }
 
     @Override
@@ -214,7 +217,6 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(trustedCertificate.getCertificateId());
         changeControlCert.setTrustedCertificateLog(certLog);
-        changeControlCertService.save(changeControlCert);
         return trustedCertificate;
     }
 

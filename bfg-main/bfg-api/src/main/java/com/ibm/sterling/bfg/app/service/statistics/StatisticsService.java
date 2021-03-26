@@ -77,10 +77,13 @@ public class StatisticsService {
         return statisticalData.stream()
                 .flatMap(data -> {
                     String type = data.getType();
-                    int indexOfSecondUnderscoreInType = type.indexOf("_", type.indexOf("_") + 1);
+                    if (type.chars().filter(ch -> ch == '_').count() == 2) {
+                        type = type.concat("_TOTAL");
+                    }
+                    int indexOfLastUnderscoreInType = type.lastIndexOf("_");
                     return Collections.singletonMap(
-                            type.substring(0, indexOfSecondUnderscoreInType),
-                            Collections.singletonMap(type.substring(indexOfSecondUnderscoreInType + 1), data.getCount())
+                            type.substring(0, indexOfLastUnderscoreInType),
+                            Collections.singletonMap(type.substring(indexOfLastUnderscoreInType + 1), data.getCount())
                     ).entrySet().stream();
                 })
                 .collect(

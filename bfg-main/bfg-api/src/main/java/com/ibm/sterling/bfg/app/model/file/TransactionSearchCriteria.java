@@ -29,6 +29,9 @@ public class TransactionSearchCriteria extends SearchCriteria {
     @JsonAlias("hasMessageId")
     private Boolean hasMessageId;
     private Boolean payaway;
+    @JsonProperty("transaction-type")
+    @JsonAlias("transactionType")
+    private TransactionType transactionType;
 
     public String getEntity() {
         return entity;
@@ -84,6 +87,14 @@ public class TransactionSearchCriteria extends SearchCriteria {
 
     public void setPayaway(Boolean payaway) {
         this.payaway = payaway;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     @JsonIgnore

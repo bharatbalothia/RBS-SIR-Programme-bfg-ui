@@ -121,9 +121,14 @@ mat-form-field {
             overflow: visible !important;
         }
 
+        .table-container {
+            width: 100%;
+        }
+
         .mat-table {
             display: inline-block;
             margin-right: 15px;
+            width: 100%;
 
             .mat-row,
             .mat-header-row {
@@ -152,7 +157,9 @@ mat-form-field {
 
     .mat-row,
     .mat-header-row,
-    .mat-cell {
+    .mat-cell,
+    .mat-footer-row,
+    .mat-footer-cell {
         min-height: 40px !important;
     }
 
@@ -163,7 +170,7 @@ mat-form-field {
     .mat-header-cell,
     .mat-cell,
     .mat-cell>.mat-button {
-        word-break: break-all;
+        word-break: break-word;
         white-space: normal;
         line-height: normal;
         text-align: left;
@@ -287,4 +294,8 @@ mat-form-field {
     .ng-resizable-diagonal {
         border-bottom: 12px solid #5a287d;
     }
+}
+
+.mat-paginator-range-label {
+    margin: 0 !important;
 }

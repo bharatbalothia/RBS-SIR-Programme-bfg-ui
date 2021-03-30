@@ -38,6 +38,13 @@
 .mat-table {
     border-collapse: collapse;
     width: 100%;
+    min-width: 650px;
+
+    .mat-row,
+    .mat-header-row,
+    .mat-cell {
+        min-height: 34px !important;
+    }
 
     .mat-header-cell,
     .mat-cell,

@@ -155,10 +155,12 @@ public class ImportedTrustedCertificateService {
             changeControlCert.setResultMeta2(trustedCertificate.getThumbprint());
             changeControlCert.setResultMeta3(trustedCertificate.getThumbprint256());
             changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(trustedCertificate));
-            trustedCertificate.setChangeID(Objects.requireNonNull(changeControlCertService).save(changeControlCert).getChangeID());
-            LOG.info("Persisted CC {}", changeControlCert);
-            trustedCertificateService.save(trustedCertificate);
+            changeControlCert.getTrustedCertificateLog().setCertificate(null);
+            changeControlCert.getTrustedCertificateLog().setCertificateId(
+                    trustedCertificateService.save(trustedCertificate).getCertificateId());
             LOG.info("Persisted trusted certificate {}", trustedCertificate);
+            changeControlCertService.save(changeControlCert);
+            LOG.info("Persisted CC {}", changeControlCert);
             adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
         } catch (RuntimeException e) {
             LOG.info("Fail with importing {}", trustedCertificate);
@@ -188,6 +190,6 @@ public class ImportedTrustedCertificateService {
                     error.values().forEach(errors::addAll);
                     return errors.stream();
                 })
-                .collect(Collectors.joining(", ", "{", "}"));
+                .collect(Collectors.joining(", "));
     }
 }

@@ -166,9 +166,11 @@ export class EntityPendingComponent implements OnInit {
               changeID: changeControl.changeID,
               changer: changeControl.changer,
               errorMessage: {
-                message: (this.authService.isTheSameUser(changeCtrl.changer) ? ERROR_MESSAGES.approvingChanges : undefined),
-                errors: get(changeCtrl, 'errors')
+                message: null,
+                errors: get(changeCtrl, 'errors'),
               },
+              warningMessage: this.authService.isTheSameUser(changeCtrl.changer) && ERROR_MESSAGES.approvingChanges,
+              shouldDisableApprove: this.authService.isTheSameUser(changeCtrl.changer),
               approveAction:
                 (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
             }

@@ -3,7 +3,7 @@
         <div class="current-page">Page {{pageIndex + 1}} of {{max}}</div>
     </div>
     <div class="right-content">
-        <button mat-stroked-button class="go-to-button" (click)="getRows(pageIndex, pageSize)">Go to Page: </button>
+        <a mat-stroked-button class="go-to-button" (click)="getRows(pageIndex, pageSize)">Go to Page: </a>
         <mat-form-field class="page-select-field">
             <input matInput appNumberOnly [value]="pageIndex + 1"
                 (input)="setPageIndex($event.target.value > 0 ? $event.target.value -1 : 0)" [min]="min" [max]="max">

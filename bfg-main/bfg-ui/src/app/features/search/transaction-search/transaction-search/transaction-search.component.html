@@ -135,7 +135,9 @@
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>SCT Transaction Results</ng-template>
-            <app-transaction-table [(isLoading)]="isLoading" [shouldAutoRefresh]="false" [pageIndex]="pageIndex"
+            <app-autorefresh-data [shouldAutoRefresh]="false"
+                [getData]="getTransactionList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+            <app-transaction-table [(isLoading)]="isLoading" [pageIndex]="pageIndex"
                 [pageSize]="pageSize" [getTransactionList]="getTransactionList.bind(this)" [dataSource]="dataSource"
                 [transactions]="transactions">
             </app-transaction-table>

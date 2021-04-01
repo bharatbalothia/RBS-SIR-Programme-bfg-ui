@@ -7,6 +7,7 @@ import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.mod
 import * as moment from 'moment';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import 'moment-timezone';
+import { getDirectionIcon } from '../search/transaction-search/transaction-search-display-names';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ import 'moment-timezone';
 })
 export class HomeComponent implements OnInit {
 
+  getDirectionIcon = getDirectionIcon;
   ROUTING_PATHS = ROUTING_PATHS;
 
   isLoading = false;

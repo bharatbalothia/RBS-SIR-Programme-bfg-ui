@@ -1,33 +1,40 @@
 .home-card {
-    table {
-      border-collapse: collapse;
-      font-size: 20px;
+  table {
+    border-collapse: collapse;
+    font-size: 20px;
 
-      .table-header {
-        font-weight: bold;
-        text-align: center;
-      }
+    .table-header {
+      font-weight: bold;
+      text-align: center;
+    }
 
-      .left-table-header {
-        text-align: right;
-      }
+    .left-table-header {
+      text-align: right;
+    }
 
-      .sct-link {
-        text-align: center;
-      }
+    .sct-link {
+      text-align: center;
 
-      .icon-value {
-        display: flex;
-        align-items: center;
+      .traffic-details {
+        display: initial;
 
-        .value {
-          display: inline-block;
-          margin-left: 5px;
-        }
       }
     }
 
-    table, th, td {
-      padding: 10px;
+    .icon-value {
+      display: flex;
+      align-items: center;
+
+      .value {
+        display: inline-block;
+        margin-left: 5px;
+      }
     }
+  }
+
+  table,
+  th,
+  td {
+    padding: 10px;
+  }
 }

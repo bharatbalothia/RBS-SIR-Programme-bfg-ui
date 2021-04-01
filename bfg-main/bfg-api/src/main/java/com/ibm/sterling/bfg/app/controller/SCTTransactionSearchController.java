@@ -37,7 +37,7 @@ public class SCTTransactionSearchController {
     }
 
     @GetMapping("transaction-criteria-data")
-    public ResponseEntity<Map<String, List<Object>>> getFileCriteriaData(
+    public ResponseEntity<Map<String, List<Object>>> getTransactionCriteriaData(
             @RequestParam(value = "direction", required = false) String direction) throws JsonProcessingException {
         return ok(propertyService.getTransactionCriteriaData(direction));
     }

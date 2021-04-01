@@ -77,6 +77,9 @@ public class StatisticsService {
         return statisticalData.stream()
                 .flatMap(data -> {
                     String type = data.getType();
+                    if (type.chars().filter(ch -> ch == '_').count() == 2) {
+                        type = type.concat("_TOTAL");
+                    }
                     int indexOfLastUnderscoreInType = type.lastIndexOf("_");
                     return Collections.singletonMap(
                             type.substring(0, indexOfLastUnderscoreInType),

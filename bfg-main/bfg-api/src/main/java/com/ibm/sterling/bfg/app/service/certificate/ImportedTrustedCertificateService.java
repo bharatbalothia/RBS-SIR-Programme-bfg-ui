@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.PostConstruct;
 import javax.naming.InvalidNameException;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.service.certificate.ImportCertificatesConstants.*;
-import static com.ibm.sterling.bfg.app.service.certificate.ImportCertificatesConstants.ACTION_VALUE_FAILED;
 
 @Service
 @Transactional(timeout = 100000)
@@ -48,7 +48,7 @@ public class ImportedTrustedCertificateService {
     private AdminAuditService adminAuditService;
 
     @PostConstruct
-    public void importCertificatesFromB2B() throws JsonProcessingException, CertificateException {
+    public void importCertificatesFromB2B() throws JsonProcessingException {
         LOG.info("Import the certs from B2B on startup");
         List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails = new ArrayList<>(certificateIntegrationService.getCertificates()
                 .stream()

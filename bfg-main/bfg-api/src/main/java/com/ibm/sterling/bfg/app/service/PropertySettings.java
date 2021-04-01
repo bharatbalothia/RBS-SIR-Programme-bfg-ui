@@ -29,6 +29,7 @@ public class PropertySettings {
     private String useraccountGroupsKey;
     private String useraccountPermissionsKey;
     private String loginText;
+    private String trustedCertsImportSchedule;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -204,5 +205,13 @@ public class PropertySettings {
 
     public void setLoginText(String loginText) {
         this.loginText = loginText;
+    }
+
+    public String getTrustedCertsImportSchedule() {
+        return trustedCertsImportSchedule;
+    }
+
+    public void setTrustedCertsImportSchedule(String trustedCertsImportSchedule) {
+        this.trustedCertsImportSchedule = trustedCertsImportSchedule;
     }
 }

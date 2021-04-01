@@ -99,6 +99,17 @@ public class PropertyService {
                 .orElse("");
     }
 
+    public String getTrustedCertsImportSchedule() {
+        try {
+            return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), settings.getTrustedCertsImportSchedule())).stream()
+                    .map(property -> property.get(PROPERTY_VALUE))
+                    .findFirst()
+                    .orElse("0 0 10-18/2 * * MON-FRI");
+        } catch (JsonProcessingException e) {
+            return "0 0 10-18/2 * * MON-FRI";
+        }
+    }
+
     public List<String> getFileType() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getFileTypeKey());
     }

@@ -16,8 +16,8 @@
       text-align: center;
 
       .traffic-details {
-        display: initial;
-
+        display: inline-flex;
+        align-items: baseline;
       }
     }
 

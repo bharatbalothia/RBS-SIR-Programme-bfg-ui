@@ -4,14 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.event.Action;
+import com.ibm.sterling.bfg.app.model.event.ActionType;
+import com.ibm.sterling.bfg.app.model.event.EventType;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
-import com.ibm.sterling.bfg.app.utils.Decoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -219,6 +223,14 @@ public class PropertyService {
                 .orElse(null);
         return getPropertyList(url + "?_where=" +
                 Optional.ofNullable(multipleQuery).orElseGet(() -> queryStringToGetDataByPartialKey.apply(null)));
+    }
+
+    public Map<String, List<Object>> getEventCriteriaData() {
+        Map<String, List<Object>> eventCriteriaData = new HashMap<>();
+        eventCriteriaData.put("eventType", Arrays.asList(EventType.values()));
+        eventCriteriaData.put("action", Arrays.asList(Action.values()));
+        eventCriteriaData.put("actionType", Arrays.asList(ActionType.values()));
+        return eventCriteriaData;
     }
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {

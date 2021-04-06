@@ -47,7 +47,6 @@ public class ImportedTrustedCertificateService {
     @Autowired
     private AdminAuditService adminAuditService;
 
-    @PostConstruct
     public void importCertificatesFromB2B() throws JsonProcessingException {
         LOG.info("Import the certs from B2B on startup");
         List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails = new ArrayList<>(certificateIntegrationService.getCertificates()

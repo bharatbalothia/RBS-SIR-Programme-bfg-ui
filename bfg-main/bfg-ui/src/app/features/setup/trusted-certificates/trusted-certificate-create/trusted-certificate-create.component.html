@@ -176,7 +176,5 @@
       </div>
     </mat-step>
   </mat-horizontal-stepper>
-  <mat-card-footer>
-    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-  </mat-card-footer>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

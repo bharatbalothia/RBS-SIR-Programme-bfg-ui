@@ -55,8 +55,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.entity" [key]="'entity'" (insert)="insert($event)">
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.entity" [key]="'entity'"
+                            (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
@@ -88,9 +89,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundRequestorDN" [key]="'inboundRequestorDN'"
-                            (insert)="insert($event)">
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestorDN"
+                            [key]="'inboundRequestorDN'" (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
@@ -109,9 +110,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundResponderDN" [key]="'inboundResponderDN'"
-                            (insert)="insert($event)">
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundResponderDN"
+                            [key]="'inboundResponderDN'" (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
@@ -131,9 +132,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()" buttonName="Source Value"
-                            [overlayData]="editableEntity.inboundService" [key]="'inboundService'"
-                            (insert)="insert($event)">
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundService"
+                            [key]="'inboundService'" (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
@@ -274,9 +275,9 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.mailboxPathOut" [key]="'mailboxPathOut'"
-                            (insert)="insert($event)">
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.mailboxPathOut"
+                            [key]="'mailboxPathOut'" (insert)="insert($event)">
                         </app-overlay-info>
 
                         <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
@@ -307,8 +308,8 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity" buttonName="Source Value"
-                            [overlayData]="editableEntity.mailboxPathOut" [key]="'mqQueueOut'"
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.mailboxPathOut" [key]="'mqQueueOut'"
                             (insert)="insert($event)">
                         </app-overlay-info>
 
@@ -927,7 +928,5 @@
             </mat-step>
         </mat-horizontal-stepper>
     </mat-card-content>
-    <mat-card-footer>
-        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-    </mat-card-footer>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

@@ -97,7 +97,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.isURLParamsEmpty()) {
-      this.onNext();
+      this.stepper.selectedIndex = 1;
+      this.onNext(true);
       this.cdr.detectChanges();
     }
     setTimeout(() => {
@@ -322,9 +323,9 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     return !!this.transactionCriteriaData.entity.find(value => value === entity);
   }
 
-  onNext = () => {
+  onNext = (shouldDisableNext?: boolean) => {
     if (this.isValidEntity()) {
-      this.getTransactionList(0, this.pageSize, () => this.stepper.next());
+      this.getTransactionList(0, this.pageSize, !shouldDisableNext && (() => this.stepper.next()));
     }
   }
 

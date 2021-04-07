@@ -42,7 +42,6 @@ $theme: mat-light-theme((color: (primary: $primary,
 
 @include angular-material-theme($theme);
 
-
 html,
 body {
     height: 100%;
@@ -298,4 +297,9 @@ mat-form-field {
 
 .mat-paginator-range-label {
     margin: 0 !important;
+}
+
+.progress-bar {
+    position: absolute !important;
+    bottom: 5px;
 }

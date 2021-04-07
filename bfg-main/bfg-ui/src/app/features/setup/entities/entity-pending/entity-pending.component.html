@@ -28,13 +28,13 @@
         <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()">Clear</button>
       </form>
     </div>
-    <div class="table-container" *ngIf="!isLoading">
+    <div class="table-container">
       <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
         [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
         [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"
         [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
-      <mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="changeControls">
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -109,6 +109,6 @@
         [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
     </div>
-    <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
   </mat-card-content>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading || isLoadingDetails"></mat-progress-bar>

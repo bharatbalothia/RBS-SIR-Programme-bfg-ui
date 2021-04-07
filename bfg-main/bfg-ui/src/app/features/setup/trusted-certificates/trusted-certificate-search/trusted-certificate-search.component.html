@@ -29,7 +29,7 @@
         <button color="warn" mat-raised-button (click)="clearParams()">Clear</button>
       </form>
     </div>
-    <div class="table-container" *ngIf="!isLoading">
+    <div class="table-container">
       <app-table-paginator class="paginator" *ngIf="trustedCertificates" [value]="pageIndex + 1"
         [getRows]="getTrustedCertificateList.bind(this)" [min]="1"
         [max]="trustedCertificates && trustedCertificates.totalPages" [length]="trustedCertificates.totalElements"
@@ -134,6 +134,6 @@
         [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
       </app-table-paginator>
     </div>
-    <mat-spinner *ngIf="isLoading || isLoadingDetails"></mat-spinner>
   </mat-card-content>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading || isLoadingDetails"></mat-progress-bar>

@@ -86,7 +86,8 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.isURLParamsEmpty()) {
-      this.onNext();
+      this.stepper.selectedIndex = 1;
+      this.onNext(true);
       this.cdr.detectChanges();
     }
     setTimeout(() => {
@@ -254,9 +255,9 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onNext = () => {
+  onNext = (shouldDisableNext?: boolean) => {
     if (this.isValidEntity()) {
-      this.getFileList(0, this.pageSize, () => this.stepper.next());
+      this.getFileList(0, this.pageSize, !shouldDisableNext && (() => this.stepper.next()));
     }
   }
 

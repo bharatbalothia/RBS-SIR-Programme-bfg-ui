@@ -49,7 +49,7 @@ export class EntityService {
   }
 
   deletePendingChange(changeId) {
-    return this.http.delete(this.apiUrl + 'pending/' + changeId, { responseType: 'text' });
+    return this.http.delete(this.apiUrl + 'pending/' + changeId);
   }
 
   editPendingEntity(changeId, entity: Entity) {
@@ -120,7 +120,7 @@ export class EntityService {
 
   getSWIFTService() {
     return this.http.get(this.apiUrl + 'swift-service', { responseType: 'text' });
-  }	
+  }
 
   getDirectParticipantList(id?) {
     return this.http.get<string[]>(this.apiUrl + 'participants', { params: removeEmpties({ id }) });

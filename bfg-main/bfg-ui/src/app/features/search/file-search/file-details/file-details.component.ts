@@ -90,9 +90,8 @@ export class FileDetailsComponent implements OnInit {
       .then((data: Entity) => {
         this.isLoading = false;
         return data;
-      }).catch(error => {
+      }).finally(() => {
         this.isLoading = false;
-        return null;
       });
 
     getEntity().then((entity: Entity) => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({

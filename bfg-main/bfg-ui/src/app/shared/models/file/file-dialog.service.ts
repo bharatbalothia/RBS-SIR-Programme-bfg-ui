@@ -71,10 +71,9 @@ export class FileDialogService {
         this.isLoading = false;
         this.emitLoadingEvent(file.id);
         return data;
-      }).catch(error => {
+      }).finally(() => {
         this.isLoading = false;
         this.emitLoadingEvent(file.id);
-        return null;
       });
 
     getEntity().then((entity: Entity) => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({

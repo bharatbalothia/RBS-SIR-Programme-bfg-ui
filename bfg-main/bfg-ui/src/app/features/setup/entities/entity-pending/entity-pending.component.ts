@@ -97,9 +97,8 @@ export class EntityPendingComponent implements OnInit {
       .then((data: Entity) => {
         this.isLoadingDetails = false;
         return data;
-      }).catch(error => {
+      }).finally(() => {
         this.isLoadingDetails = false;
-        return null;
       });
   }
 
@@ -111,7 +110,9 @@ export class EntityPendingComponent implements OnInit {
         .then(data => {
           this.isLoadingDetails = false;
           return ({ ...changeControl, entityBefore: data });
-        }).catch(error => this.isLoadingDetails = false);
+        }).finally(() => {
+          this.isLoadingDetails = false;
+        });
     }
     else {
       return new Promise((res) => res(changeControl));
@@ -124,9 +125,8 @@ export class EntityPendingComponent implements OnInit {
       .then((data: Entity) => {
         this.isLoadingDetails = false;
         return ({ ...changeControl, entityLog: data });
-      }).catch(error => {
+      }).finally(() => {
         this.isLoadingDetails = false;
-        return null;
       });
   }
 

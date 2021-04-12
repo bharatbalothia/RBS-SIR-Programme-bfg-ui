@@ -100,8 +100,9 @@ public class EntityController {
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable String id) {
-        return changeControlService.findPendingChangeById(id)
+        return changeControlService.findById(id)
                 .map(record -> {
+                    changeControlService.checkStatusOfChangeControl(record);
                     Entity entity = record.convertEntityLogToEntity();
                     entity.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
@@ -113,8 +114,9 @@ public class EntityController {
     @GetMapping("changeControl/{id}")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<ChangeControl> getChangeControlById(@PathVariable String id) {
-        return changeControlService.findPendingChangeById(id)
+        return changeControlService.findById(id)
                 .map(changeControl -> {
+                    changeControlService.checkStatusOfChangeControl(changeControl);
                     EntityLog entityLog = changeControl.getEntityLog();
                     entityLog.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(entityLog.getInboundRequestType()));

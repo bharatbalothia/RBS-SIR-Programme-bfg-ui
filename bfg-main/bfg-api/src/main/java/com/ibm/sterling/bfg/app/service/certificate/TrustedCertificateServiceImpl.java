@@ -158,6 +158,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     @Override
     @Transactional
     public TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) {
+        changeControlCertService.checkOnPendingState(cert.getCertificateName());
         if (!operation.equals(Operation.DELETE)) {
             certificateValidation.validateCertificate(cert);
         }
@@ -212,7 +213,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                     true
             );
             certificateIntegrationService.createCertificate(certificateDataIntegrationRequest);
-            save(trustedCertificate);
+//            save(trustedCertificate);
         }
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(trustedCertificate.getCertificateId());
@@ -246,7 +247,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
     }
 
     @Override
-    public boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
+    public boolean fieldValueExists(Object value, String fieldName) {
         if (fieldName.equals("CERTIFICATE_NAME"))
             return trustedCertificateRepository.existsByCertificateName(String.valueOf(value));
         return false;

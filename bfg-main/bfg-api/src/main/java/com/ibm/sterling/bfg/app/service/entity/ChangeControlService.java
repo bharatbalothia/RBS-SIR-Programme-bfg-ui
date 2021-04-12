@@ -1,5 +1,8 @@
 package com.ibm.sterling.bfg.app.service.entity;
 
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusPendingException;
+import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 
 @Service
 @Transactional(readOnly = true)
@@ -89,13 +94,11 @@ public class ChangeControlService {
 
     @Transactional
     public void updateChangeControl(ChangeControl changeControl, Entity entity) {
+        LOGGER.info("Updating pending {}", changeControl);
+        checkStatusOfChangeControl(changeControl);
         Operation operation = changeControl.getOperation();
         if (!operation.equals(Operation.DELETE)) {
             entityValidation.validateEntity(entity, operation);
-        }
-        if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)
-                && (operation.equals(Operation.CREATE) ||
-                operation.equals(Operation.UPDATE))) {
             changeControl.setChangerComments(entity.getChangerComments());
             EntityLog entityLog = new EntityLog(entity);
             if (operation.equals(Operation.CREATE)) {
@@ -110,8 +113,21 @@ public class ChangeControlService {
 
     @Transactional
     public void deleteChangeControl(ChangeControl changeControl) {
-        if (changeControl.getStatus().equals(ChangeControlStatus.PENDING)) {
-            changeControlRepository.delete(changeControl);
+        LOGGER.info("Deleting pending {}", changeControl);
+        checkStatusOfChangeControl(changeControl);
+        changeControlRepository.delete(changeControl);
+    }
+
+    private void checkStatusOfChangeControl(ChangeControl changeControl) {
+        LOGGER.info("Checking status of change control {}", changeControl);
+        if (!PENDING.equals(changeControl.getStatus())) {
+            throw new StatusNotPendingException();
         }
+    }
+
+    public void checkOnPendingState(String entityName, String service) {
+        LOGGER.info("Checking if entity {} in a pending state", entityName);
+        if (changeControlRepository.existsByResultMeta1AndResultMeta2AndStatus(entityName, service, PENDING))
+            throw new StatusPendingException();
     }
 }

@@ -73,7 +73,7 @@ public class EntityController {
     @PreAuthorize("@entityPermissionEvaluator.checkApprovePermission(#approve)")
     public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
         ChangeControl changeControl = changeControlService.findById(String.valueOf(approve.get("changeID")))
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(ChangeControlNotFoundException::new);
         return Optional.ofNullable(entityService.getEntityAfterApprove(
                 changeControl,
                 Objects.toString(approve.get("approverComments"), null),

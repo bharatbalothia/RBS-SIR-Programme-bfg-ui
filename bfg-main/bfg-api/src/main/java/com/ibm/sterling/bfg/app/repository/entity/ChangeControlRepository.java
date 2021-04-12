@@ -25,4 +25,7 @@ public interface ChangeControlRepository extends JpaRepository<ChangeControl, St
     @EntityGraph(attributePaths = "entityLog")
     Optional<ChangeControl> findById(String changeID);
 
+    boolean existsByResultMeta1AndResultMeta2AndStatus(
+            String resultMeta1, String resultMeta2, ChangeControlStatus changeControlStatus);
+
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -6,12 +6,12 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AutoRefreshService {
 
-    shouldAutoRefresh: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    shouldAutoRefresh: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     constructor() {
     }
 
     setAutoRefresh(value: boolean) {
-        this.shouldAutoRefresh.next(value);
+        this.shouldAutoRefresh.emit(value);
     }
 }

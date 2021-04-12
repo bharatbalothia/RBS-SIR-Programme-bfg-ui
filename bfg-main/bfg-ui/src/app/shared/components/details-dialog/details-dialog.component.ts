@@ -26,6 +26,8 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   isLoadingSubscription: Subscription;
 
+  isAutoRefreshSubscription: Subscription;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private notificationService: NotificationService,
@@ -48,7 +50,7 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
     if (!this.data.data) {
       this.getTabsData();
     }
@@ -73,6 +75,9 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.isLoadingSubscription) {
       this.isLoadingSubscription.unsubscribe();
+    }
+    if (this.isAutoRefreshSubscription) {
+      this.isAutoRefreshSubscription.unsubscribe();
     }
   }
 

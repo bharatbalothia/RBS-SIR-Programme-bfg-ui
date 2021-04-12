@@ -1,16 +1,17 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
 import { AutoRefreshService } from '../../services/autorefresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-delete-dialog',
   templateUrl: './delete-dialog.component.html',
   styleUrls: ['./delete-dialog.component.scss']
 })
-export class DeleteDialogComponent implements OnInit {
+export class DeleteDialogComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
   tabs: Tab[] = [];
@@ -30,6 +31,8 @@ export class DeleteDialogComponent implements OnInit {
 
   displayName: (fieldName: string) => string;
   deleteAction: (id: string, changerComments: string) => any;
+
+  isAutoRefreshSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -59,13 +62,19 @@ export class DeleteDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
     if (!this.data.data) {
       this.getTabsData();
     }
     else {
       this.tabs = this.data.getTabs(this.data.data);
       this.updateSections();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.isAutoRefreshSubscription) {
+      this.isAutoRefreshSubscription.unsubscribe();
     }
   }
 

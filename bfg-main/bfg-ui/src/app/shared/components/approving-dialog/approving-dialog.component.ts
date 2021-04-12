@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DIALOG_TABS } from 'src/app/core/constants/dialog-tabs';
 import { CHANGE_STATUS } from '../../models/changeControl/change-status';
 import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
@@ -6,13 +6,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
 import { AutoRefreshService } from '../../services/autorefresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-approving-dialog',
   templateUrl: './approving-dialog.component.html',
   styleUrls: ['./approving-dialog.component.scss']
 })
-export class ApprovingDialogComponent implements OnInit {
+export class ApprovingDialogComponent implements OnInit, OnDestroy {
 
   dialogTabs = DIALOG_TABS;
   changeStatus = CHANGE_STATUS;
@@ -34,6 +35,8 @@ export class ApprovingDialogComponent implements OnInit {
   displayName: (fieldName: string) => string;
 
   approveAction: (params: { changeID: string, status: string, approverComments: string }) => any;
+
+  isAutoRefreshSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -69,12 +72,18 @@ export class ApprovingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
     if (!this.data.data) {
       this.getTabsData();
     }
     else {
       this.tabs = this.data.getTabs(this.data.data);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.isAutoRefreshSubscription) {
+      this.isAutoRefreshSubscription.unsubscribe();
     }
   }
 

@@ -40,7 +40,8 @@ export class FileDialogService {
         }
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `File - ${fileData.id}`,
-          tabs: getFileDetailsTabs(fileData),
+          data: fileData,
+          getTabs: getFileDetailsTabs,
           displayName: getFileSearchDisplayName,
           actionData: {
             actions: {
@@ -63,21 +64,27 @@ export class FileDialogService {
         });
   }
 
-  openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
-    .pipe(data => this.setLoading(data, file.id))
-    .subscribe((entity: Entity) => {
-      this.isLoading = false;
-      this.emitLoadingEvent(file.id);
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `${entity.service}: ${entity.entity}`,
-        tabs: getEntityDetailsTabs(entity, file.service),
-        displayName: getEntityDisplayName,
-      }));
-    },
-      error => {
+  openEntityDetailsDialog = (file: File) => {
+    const getEntity = () => this.entityService.getEntityById(file.entity.entityId)
+      .pipe(data => this.setLoading(data, file.id)).toPromise()
+      .then((data: Entity) => {
         this.isLoading = false;
         this.emitLoadingEvent(file.id);
-      })
+        return data;
+      }).catch(error => {
+        this.isLoading = false;
+        this.emitLoadingEvent(file.id);
+        return null;
+      });
+
+    getEntity().then((entity: Entity) => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      getTitle: (data: Entity) => `${data.service}: ${data.entity}`,
+      data: entity,
+      getData: getEntity,
+      getTabs: (data: Entity) => getEntityDetailsTabs(data, file.service),
+      displayName: getEntityDisplayName,
+    })));
+  }
 
 
   openErrorDetailsDialog = (file: File, рropagateErr?) => this.fileService.getErrorDetailsByCode(file.errorCode)
@@ -90,7 +97,8 @@ export class FileDialogService {
       }
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `${data.code}`,
-        tabs: getErrorDetailsTabs(data),
+        data,
+        getTabs: getErrorDetailsTabs,
         displayName: getFileSearchDisplayName,
       }));
     },
@@ -105,7 +113,7 @@ export class FileDialogService {
   openTransactionsDialog = (file: File) =>
     this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
       title: `Transactions for ${file.filename} [${file.id}]`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getFileSearchDisplayName,
       actionData: {
         fileId: file.id,
@@ -126,7 +134,8 @@ export class FileDialogService {
       this.emitLoadingEvent(file.id);
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: file.filename,
-        tabs: getFileDocumentInfoTabs(data),
+        data,
+        getTabs: getFileDocumentInfoTabs,
         displayName: getFileSearchDisplayName,
       }));
     },
@@ -142,7 +151,7 @@ export class FileDialogService {
   openBusinessProcessDialog = (file: File) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getBusinessProcessDisplayName,
       actionData: {
         id: file.workflowID,

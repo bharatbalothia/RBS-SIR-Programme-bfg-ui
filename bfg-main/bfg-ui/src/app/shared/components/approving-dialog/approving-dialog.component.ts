@@ -5,6 +5,7 @@ import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.mo
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
+import { AutoRefreshService } from '../../services/autorefresh.service';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -23,6 +24,9 @@ export class ApprovingDialogComponent implements OnInit {
   displayedColumns: string[] = ['fieldName', 'fieldValueBefore', 'fieldValue'];
   tabs: Tab[];
 
+  getData: () => Promise<any>;
+  getTabs: (data: any) => Tab[];
+
   changeId: string;
   changer: string;
   approverComments: string;
@@ -34,10 +38,13 @@ export class ApprovingDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<ApprovingDialogComponent>,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private autoRefreshService: AutoRefreshService
   ) {
-    this.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
+
+    this.getData = this.data.getData;
+    this.getTabs = this.data.getTabs;
 
     this.approveAction = get(this.data, 'actionData.approveAction');
 
@@ -47,6 +54,7 @@ export class ApprovingDialogComponent implements OnInit {
     this.shouldDisableApprove = get(this.data, 'actionData.shouldDisableApprove');
 
     const errorMessage = get(this.data, 'actionData.errorMessage');
+
     if (errorMessage) {
       this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
       this.notificationService.showErrorWithWarningMessage(errorMessage);
@@ -61,6 +69,24 @@ export class ApprovingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    if (!this.data.data) {
+      this.getTabsData();
+    }
+    else {
+      this.tabs = this.data.getTabs(this.data.data);
+    }
+  }
+
+  getTabsData = () => {
+    if (this.getData) {
+      this.getData().then((data: any) => {
+        if (this.data.getTitle) {
+          this.data.title = this.data.getTitle(data);
+        }
+        this.tabs = this.data.getTabs(data);
+      });
+    }
   }
 
   approvingAction(status) {

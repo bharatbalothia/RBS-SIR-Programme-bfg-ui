@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DetailsDialogData, Tab } from './details-dialog-data.model';
-import { MatDialogContainer, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isUndefined, get } from 'lodash';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
-import { AngularResizableDirective } from 'angular2-draggable';
+import { AutoRefreshService } from '../../services/autorefresh.service';
 
 @Component({
   selector: 'app-details-dialog',
@@ -16,9 +16,12 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   displayName: (fieldName: string) => string;
 
   displayedColumns: string[] = ['fieldName', 'fieldValue'];
-  tabs: Tab[] = [];
 
+  tabs: Tab[];
   actions;
+
+  getData: () => Promise<any>;
+  getTabs: (data: any) => Tab[];
 
   isLoading: boolean;
   isLoadingSubscription: Subscription;
@@ -26,11 +29,13 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private notificationService: NotificationService,
+    private autoRefreshService: AutoRefreshService
   ) {
-    this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
 
+    this.getData = this.data.getData;
+    this.getTabs = this.data.getTabs;
     this.actions = get(this.data, 'actionData.actions');
 
     if (get(this.data, 'actionData.errorMessage')) {
@@ -43,7 +48,26 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.updateSections();
+    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    if (!this.data.data) {
+      this.getTabsData();
+    }
+    else {
+      this.tabs = this.data.getTabs(this.data.data);
+      this.updateSections();
+    }
+  }
+
+  getTabsData = () => {
+    if (this.getData) {
+      this.getData().then((data: any) => {
+        if (this.data.getTitle) {
+          this.data.title = this.data.getTitle(data);
+        }
+        this.tabs = this.data.getTabs(data);
+        this.updateSections();
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -53,7 +77,7 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   }
 
   updateSections() {
-    this.data.tabs.forEach((tab, index) => {
+    this.tabs.forEach((tab, index) => {
       if (tab.tabSections) {
         tab.tabSections.forEach(section => section.sectionItems = section.sectionItems
           .filter(item => !isUndefined(item.fieldValue)));

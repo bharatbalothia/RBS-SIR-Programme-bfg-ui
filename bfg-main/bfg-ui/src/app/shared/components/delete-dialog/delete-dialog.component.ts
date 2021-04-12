@@ -3,6 +3,7 @@ import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.mo
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
+import { AutoRefreshService } from '../../services/autorefresh.service';
 
 @Component({
   selector: 'app-delete-dialog',
@@ -24,16 +25,22 @@ export class DeleteDialogComponent implements OnInit {
 
   shouldHideComments = false;
 
+  getData: () => Promise<any>;
+  getTabs: (data: any) => Tab[];
+
   displayName: (fieldName: string) => string;
   deleteAction: (id: string, changerComments: string) => any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private dialog: MatDialogRef<DeleteDialogComponent>,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private autoRefreshService: AutoRefreshService
   ) {
-    this.data.tabs = this.data.tabs || [];
     this.data.yesCaption = this.data.yesCaption || 'Close';
+
+    this.getData = this.data.getData;
+    this.getTabs = this.data.getTabs;
 
     this.id = get(this.data, 'actionData.id');
 
@@ -52,11 +59,29 @@ export class DeleteDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateSections();
+    this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    if (!this.data.data) {
+      this.getTabsData();
+    }
+    else {
+      this.tabs = this.data.getTabs(this.data.data);
+      this.updateSections();
+    }
+  }
+
+  getTabsData = () => {
+    if (this.getData) {
+      this.getData().then((data: any) => {
+        if (this.data.getTitle) {
+          this.data.title = this.data.getTitle(data);
+        }
+        this.tabs = this.data.getTabs(data);
+      });
+    }
   }
 
   updateSections() {
-    this.data.tabs.forEach((tab, index) => {
+    this.tabs.forEach((tab, index) => {
       if (tab.tabSections) {
         tab.tabSections.forEach(section => section.sectionItems ? section.sectionItems = section.sectionItems
           .filter(item => !isUndefined(item.fieldValue)) : null);

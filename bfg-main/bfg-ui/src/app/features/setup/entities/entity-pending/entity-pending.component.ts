@@ -131,85 +131,98 @@ export class EntityPendingComponent implements OnInit {
   }
 
   openInfoDialog(changeControl: ChangeControl) {
-    this.getPendingEntityDetails(changeControl)
-      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
-        .then((changeCtrl: ChangeControl) =>
-          changeCtrl && this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-            title: `Change Record: Pending`,
-            tabs: getPendingChangesTabs(changeCtrl),
-            displayName: getEntityDisplayName
-          }))));
+    const getChangeControl = () => this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data));
+
+    getChangeControl().then((changeCtrl: ChangeControl) => changeCtrl &&
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+        title: `Change Record: Pending`,
+        data: changeCtrl,
+        getData: getChangeControl,
+        getTabs: getPendingChangesTabs,
+        displayName: getEntityDisplayName
+      })));
   }
 
   openDetailsDialog(value: Entity | ChangeControl) {
     if (value.changeID && (value as ChangeControl).entityLog.entityId) {
-      return this.getEntityDetails((value as ChangeControl).entityLog).then((data: Entity) =>
-        data && this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-          title: `${data.service}: ${data.entity}`,
-          tabs: getEntityDetailsTabs(data),
+      const getEntityDetails = () => this.getEntityDetails((value as ChangeControl).entityLog);
+
+      getEntityDetails().then((entity: Entity) => entity &&
+        this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+          getTitle: (data: Entity) => `${data.service}: ${data.entity}`,
+          getData: getEntityDetails,
+          data: entity,
+          getTabs: getEntityDetailsTabs,
           displayName: getEntityDisplayName
         })));
     }
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.getPendingEntityDetails(changeControl)
+    const getChangeControl = () => this.getPendingEntityDetails(changeControl)
       .then((detailedChangeCtrl: ChangeControl) =>
-        detailedChangeCtrl && this.addEntityBeforeToChangeControl(detailedChangeCtrl).then((changeCtrl: ChangeControl) =>
-          changeCtrl &&
-          this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-            title: 'Approve Change',
-            yesCaption: 'Cancel',
-            tabs: getPendingChangesTabs(changeCtrl, true),
-            displayName: getEntityDisplayName,
-            actionData: {
-              changeID: changeControl.changeID,
-              changer: changeControl.changer,
-              errorMessage: {
-                message: null,
-                errors: get(changeCtrl, 'errors'),
-              },
-              warningMessage: this.authService.isTheSameUser(changeCtrl.changer) && ERROR_MESSAGES.approvingChanges,
-              shouldDisableApprove: this.authService.isTheSameUser(changeCtrl.changer),
-              approveAction:
-                (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
-            }
-          })).afterClosed().subscribe(data => {
-            if (get(data, 'refreshList')) {
-              this.notificationService.show(
-                `Entity ${get(data, 'status').toLowerCase()}`,
-                `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
-                'success'
-              );
-              this.getPendingChanges(this.pageIndex, this.pageSize);
-            }
-          })));
+        detailedChangeCtrl && this.addEntityBeforeToChangeControl(detailedChangeCtrl));
+
+    getChangeControl().then((changeCtrl: ChangeControl) => changeCtrl &&
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        yesCaption: 'Cancel',
+        getData: getChangeControl,
+        data: changeCtrl,
+        getTabs: (data: ChangeControl) => getPendingChangesTabs(data, true),
+        displayName: getEntityDisplayName,
+        actionData: {
+          changeID: changeControl.changeID,
+          changer: changeControl.changer,
+          errorMessage: {
+            message: null,
+            errors: get(changeCtrl, 'errors'),
+          },
+          warningMessage: this.authService.isTheSameUser(changeCtrl.changer) && ERROR_MESSAGES.approvingChanges,
+          shouldDisableApprove: this.authService.isTheSameUser(changeCtrl.changer),
+          approveAction:
+            (params: { changeID: string, status: string, approverComments: string }) => this.entityService.resolveChange(params)
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.notificationService.show(
+            `Entity ${get(data, 'status').toLowerCase()}`,
+            `Entity ${changeControl.entityLog.entity} has been ${get(data, 'status').toLowerCase()}`,
+            'success'
+          );
+          this.getPendingChanges(this.pageIndex, this.pageSize);
+        }
+      }));
   }
 
   deletePendingChange(changeControl: ChangeControl) {
-    this.getPendingEntityDetails(changeControl)
-      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data)
-        .then((changeCtrl: ChangeControl) =>
-          changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
-            title: `Delete ${changeCtrl.changeID}`,
-            yesCaption: 'Cancel',
-            tabs: getPendingChangesTabs(changeCtrl),
-            displayName: getEntityDisplayName,
-            actionData: {
-              id: changeCtrl.changeID,
-              shouldHideComments: true,
-              deleteAction: (id: string) => this.entityService.deletePendingChange(id)
-            }
-          })).afterClosed().subscribe(data => {
-            if (get(data, 'refreshList')) {
-              this.notificationService.show(
-                `Pending Change deleted`,
-                `The Pending change ${changeCtrl.changeID} has been deleted.`,
-                'success'
-              );
-              this.getPendingChanges(this.pageIndex, this.pageSize);
-            }
-          })));
+    const getPendingEntityDetails = () => this.getPendingEntityDetails(changeControl)
+      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data));
+
+    getPendingEntityDetails().then((changeCtrl: ChangeControl) =>
+      changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+        getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
+        data: changeCtrl,
+        getData: getPendingEntityDetails,
+        yesCaption: 'Cancel',
+        getTabs: getPendingChangesTabs,
+        displayName: getEntityDisplayName,
+        actionData: {
+          id: changeCtrl.changeID,
+          shouldHideComments: true,
+          deleteAction: (id: string) => this.entityService.deletePendingChange(id)
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.notificationService.show(
+            `Pending Change deleted`,
+            `The Pending change ${changeCtrl.changeID} has been deleted.`,
+            'success'
+          );
+          this.getPendingChanges(this.pageIndex, this.pageSize);
+        }
+      }));
   }
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);

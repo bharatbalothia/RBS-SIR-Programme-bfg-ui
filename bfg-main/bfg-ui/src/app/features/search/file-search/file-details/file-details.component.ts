@@ -75,7 +75,8 @@ export class FileDetailsComponent implements OnInit {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `File Document Information`,
-        tabs: getFileDocumentInfoTabs(data),
+        data,
+        getTabs: getFileDocumentInfoTabs,
         displayName: getFileSearchDisplayName,
       }));
     },
@@ -83,24 +84,30 @@ export class FileDetailsComponent implements OnInit {
         this.isLoading = false;
       })
 
-  openEntityDetailsDialog = (file: File) => this.entityService.getEntityById(file.entity.entityId)
-    .pipe(data => this.setLoading(data))
-    .subscribe((entity: Entity) => {
-      this.isLoading = false;
-      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: `${entity.service}: ${entity.entity}`,
-        tabs: getEntityDetailsTabs(entity, file.service),
-        displayName: getEntityDisplayName,
-      }));
-    },
-      error => {
+  openEntityDetailsDialog = (file: File) => {
+    const getEntity = () => this.entityService.getEntityById(file.entity.entityId)
+      .pipe(data => this.setLoading(data)).toPromise()
+      .then((data: Entity) => {
         this.isLoading = false;
-      })
+        return data;
+      }).catch(error => {
+        this.isLoading = false;
+        return null;
+      });
+
+    getEntity().then((entity: Entity) => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      getTitle: (data: Entity) => `${data.service}: ${data.entity}`,
+      data: entity,
+      getData: getEntity,
+      getTabs: (data: Entity) => getEntityDetailsTabs(data, file.service),
+      displayName: getEntityDisplayName,
+    })));
+  }
 
   openBusinessProcessDialog = (file: File) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getBusinessProcessDisplayName,
       actionData: {
         id: file.workflowID,
@@ -112,7 +119,7 @@ export class FileDetailsComponent implements OnInit {
   openTransactionsDialog = (file: File) =>
     this.dialog.open(TransactionsDialogComponent, new DetailsDialogConfig({
       title: `Transactions for ${file.filename} [${file.id}]`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getFileSearchDisplayName,
       actionData: {
         fileId: file.id,
@@ -126,7 +133,8 @@ export class FileDetailsComponent implements OnInit {
   openFileDetailsDialog = (file: File) => {
     this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
       title: `File - ${file.id}`,
-      tabs: getFileDetailsTabs(file),
+      data: file,
+      getTabs: getFileDetailsTabs,
       displayName: getFileSearchDisplayName,
       actionData: {
         actions: this.actions
@@ -140,7 +148,8 @@ export class FileDetailsComponent implements OnInit {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `${data.code}`,
-        tabs: getErrorDetailsTabs(data),
+        data,
+        getTabs: getErrorDetailsTabs,
         displayName: getFileSearchDisplayName,
       }));
     },

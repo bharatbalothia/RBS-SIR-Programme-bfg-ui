@@ -180,104 +180,117 @@ export class TrustedCertificatePendingComponent implements OnInit {
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   openInfoDialog(changeControl: ChangeControl) {
-    this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
-        .then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-          title: `Change Record: Pending`,
-          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayHeader,
-          actionData: {
-            errorMessage: {
-              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-              warnings: get(validatedChangeControl, 'warnings'),
-              errors: get(validatedChangeControl, 'errors')
-            },
-          }
-        }))));
+    const getValidatedChangeControl = () => this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+
+    getValidatedChangeControl().then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+      title: `Change Record: Pending`,
+      data: validatedChangeControl,
+      getData: getValidatedChangeControl,
+      getTabs: getTrustedCertificatePendingChangesTabs,
+      displayName: getTrustedCertificateDisplayHeader,
+      actionData: {
+        errorMessage: {
+          message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+          warnings: get(validatedChangeControl, 'warnings'),
+          errors: get(validatedChangeControl, 'errors')
+        },
+      }
+    })));
   }
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
     if (trustedCertificate.certificateId) {
-      this.addValidationToCertificate(trustedCertificate)
-        .then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-          title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
-          tabs: getTrustedCertificateDetailsTabs(validatedCertificate),
-          displayName: getTrustedCertificateDisplayHeader,
-          actionData: {
-            errorMessage: {
-              message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-              warnings: get(validatedCertificate, 'warnings'),
-              errors: get(validatedCertificate, 'errors')
-            },
-          }
-        })));
+
+      const getValidatedCertificate = () => this.addValidationToCertificate(trustedCertificate);
+
+      getValidatedCertificate().then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        getTitle: (data) => `Trusted Certificate: ${data.certificateName}`,
+        data: validatedCertificate,
+        getData: getValidatedCertificate,
+        getTabs: getTrustedCertificateDetailsTabs,
+        displayName: getTrustedCertificateDisplayHeader,
+        actionData: {
+          errorMessage: {
+            message: get(validatedCertificate, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+            warnings: get(validatedCertificate, 'warnings'),
+            errors: get(validatedCertificate, 'errors')
+          },
+        }
+      })));
     }
 
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
-        .then(validatedChangeControl =>
-          this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-            title: 'Approve Change',
-            tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl, true),
-            yesCaption: 'Cancel',
-            displayName: getTrustedCertificateDisplayHeader,
-            actionData: {
-              changeID: validatedChangeControl.changeID,
-              changer: validatedChangeControl.changer,
-              errorMessage: {
-                message: (get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors']),
-                warnings: get(validatedChangeControl, 'warnings'),
-                errors: get(validatedChangeControl, 'errors')
-              },
-              warningMessage: this.authService.isTheSameUser(changeCtrl.changer) && ERROR_MESSAGES.approvingChanges,
-              shouldDisableApprove: this.authService.isTheSameUser(changeCtrl.changer),
-              approveAction:
-                (params: { changeID: string, status: string, approverComments: string }) =>
-                  this.trustedCertificateService.resolveChange(params)
-            }
-          })).afterClosed().subscribe(data => {
-            if (get(data, 'refreshList')) {
-              this.notificationService.show(
-                `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
-                `Trusted Certificate ${changeCtrl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
-                'success'
-              );
-              this.getPendingChanges(this.pageIndex, this.pageSize);
-            }
-          })));
+    const getValidatedChangeControl = () => this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+
+    getValidatedChangeControl().then(validatedChangeControl =>
+      this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
+        title: 'Approve Change',
+        data: validatedChangeControl,
+        getData: getValidatedChangeControl,
+        getTabs: (data) => getTrustedCertificatePendingChangesTabs(data, true),
+        yesCaption: 'Cancel',
+        displayName: getTrustedCertificateDisplayHeader,
+        actionData: {
+          changeID: validatedChangeControl.changeID,
+          changer: validatedChangeControl.changer,
+          errorMessage: {
+            message: (get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors']),
+            warnings: get(validatedChangeControl, 'warnings'),
+            errors: get(validatedChangeControl, 'errors')
+          },
+          warningMessage: this.authService.isTheSameUser(validatedChangeControl.changer) && ERROR_MESSAGES.approvingChanges,
+          shouldDisableApprove: this.authService.isTheSameUser(validatedChangeControl.changer),
+          approveAction:
+            (params: { changeID: string, status: string, approverComments: string }) =>
+              this.trustedCertificateService.resolveChange(params)
+        }
+      })).afterClosed().subscribe(data => {
+        if (get(data, 'refreshList')) {
+          this.notificationService.show(
+            `Trusted Certificate ${get(data, 'status').toLowerCase()}`,
+            `Trusted Certificate ${validatedChangeControl.trustedCertificateLog.certificateName} has been ${get(data, 'status').toLowerCase()}`,
+            'success'
+          );
+          this.getPendingChanges(this.pageIndex, this.pageSize);
+        }
+      }));
   }
 
   deletePendingChange(changeControl: ChangeControl) {
-    this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)
-        .then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
-          title: `Delete ${validatedChangeControl.changeID}`,
-          yesCaption: 'Cancel',
-          tabs: getTrustedCertificatePendingChangesTabs(validatedChangeControl),
-          displayName: getTrustedCertificateDisplayHeader,
-          actionData: {
-            errorMessage: {
-              message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-              warnings: get(validatedChangeControl, 'warnings'),
-              errors: get(validatedChangeControl, 'errors')
-            },
-            shouldHideComments: true,
-            id: validatedChangeControl.changeID,
-            deleteAction: (id: string) => this.trustedCertificateService.deletePendingChange(id)
-          },
-        })).afterClosed().subscribe(data => {
-          if (get(data, 'refreshList')) {
-            this.notificationService.show(
-              `Pending Change deleted`,
-              `The Pending change ${changeCtrl.changeID} has been deleted.`,
-              'success'
-            );
-            this.getPendingChanges(this.pageIndex, this.pageSize);
-          }
-        })));
+    const getPendingChange = () => this.addCertificateBeforeToChangeControl(changeControl)
+      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+
+    getPendingChange().then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+      getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
+      yesCaption: 'Cancel',
+      data: validatedChangeControl,
+      getData: getPendingChange,
+      getTabs: getTrustedCertificatePendingChangesTabs,
+      displayName: getTrustedCertificateDisplayHeader,
+      actionData: {
+        errorMessage: {
+          message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
+          warnings: get(validatedChangeControl, 'warnings'),
+          errors: get(validatedChangeControl, 'errors')
+        },
+        shouldHideComments: true,
+        id: validatedChangeControl.changeID,
+        deleteAction: (id: string) => this.trustedCertificateService.deletePendingChange(id)
+      },
+    })).afterClosed().subscribe(data => {
+      if (get(data, 'refreshList')) {
+        this.notificationService.show(
+          `Pending Change deleted`,
+          `The Pending change ${validatedChangeControl.changeID} has been deleted.`,
+          'success'
+        );
+        this.getPendingChanges(this.pageIndex, this.pageSize);
+      }
+    }));
   }
 
   getCurrentRoute = () => this.router.url;

@@ -48,6 +48,7 @@ import { OverlayInfoComponent } from './components/overlay-info/overlay-info.com
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NotificationHttpInterceptor } from './services/notification-http.interceptor';
 import { NotificationService } from './services/notification.service';
+import { AutoRefreshService } from './services/autorefresh.service';
 import { ToastrModule } from 'ngx-toastr';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
@@ -203,6 +204,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
       multi: true
     },
     NotificationService,
+    AutoRefreshService,
     {
       provide: NGX_MAT_DATE_FORMATS,
       useValue: DATE_FORMAT

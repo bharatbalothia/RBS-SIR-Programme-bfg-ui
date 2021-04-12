@@ -1,8 +1,11 @@
 import { EventEmitter } from '@angular/core';
 
 export interface DetailsDialogData {
-  title: string;
-  tabs?: Tab[];
+  title?: string;
+  getTitle?: (data: any) => string;
+  getTabs?: (data?: any) => Tab[]; // set as required
+  getData?: () => Promise<any>;
+  data?: any;
   yesCaption?: string;
   actionData?: any;
   parentLoading?: EventEmitter<boolean>;

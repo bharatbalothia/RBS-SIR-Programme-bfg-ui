@@ -118,7 +118,7 @@ public class ChangeControlService {
         changeControlRepository.delete(changeControl);
     }
 
-    private void checkStatusOfChangeControl(ChangeControl changeControl) {
+    public void checkStatusOfChangeControl(ChangeControl changeControl) {
         LOGGER.info("Checking status of change control {}", changeControl);
         if (!PENDING.equals(changeControl.getStatus())) {
             throw new StatusNotPendingException();

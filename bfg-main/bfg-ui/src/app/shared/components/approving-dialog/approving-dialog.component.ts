@@ -7,6 +7,7 @@ import { get } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
 import { AutoRefreshService } from '../../services/autorefresh.service';
 import { Subscription } from 'rxjs';
+import { ErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-approving-dialog',
@@ -56,23 +57,19 @@ export class ApprovingDialogComponent implements OnInit, OnDestroy {
 
     this.shouldDisableApprove = get(this.data, 'actionData.shouldDisableApprove');
 
-    const errorMessage = get(this.data, 'actionData.errorMessage');
-
-    if (errorMessage) {
-      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
-      this.notificationService.showErrorWithWarningMessage(errorMessage);
-    }
-
-    const warningMessage = get(this.data, 'actionData.warningMessage');
-    if (warningMessage) {
-      this.notificationService.showWarningText(warningMessage);
-    }
-
     this.displayName = this.data.displayName;
+
+    this.getErrorMessage(get(this.data, 'actionData.errorMessage'));
+
   }
 
   ngOnInit() {
-    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => {
+      if (value) {
+        this.getTabsData();
+        this.getErrorMessage(get(this.data, 'actionData.errorMessage'));
+      }
+    });
     if (!this.data.data) {
       this.getTabsData();
     }
@@ -94,6 +91,8 @@ export class ApprovingDialogComponent implements OnInit, OnDestroy {
           this.data.title = this.data.getTitle(data);
         }
         this.tabs = this.data.getTabs(data);
+      }).catch(() => {
+        this.hasErrors = true;
       });
     }
   }
@@ -123,4 +122,17 @@ export class ApprovingDialogComponent implements OnInit, OnDestroy {
   getBeforeTab = (tab: Tab) => get(tab, 'tabTitle') === DIALOG_TABS.DIFFERENCES
     && this.tabs.find(el => el.tabTitle === DIALOG_TABS.BEFORE_CHANGES)
 
+  getErrorMessage = (errorMessage: ErrorMessage) => {
+    const warningMessage = get(this.data, 'actionData.warningMessage');
+    if (warningMessage) {
+      this.notificationService.showWarningText(warningMessage);
+    }
+    if (errorMessage) {
+      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
+      this.notificationService.showErrorWithWarningMessage(errorMessage);
+    }
+    else {
+      this.hasErrors = false;
+    }
+  }
 }

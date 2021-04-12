@@ -85,103 +85,78 @@ export class TrustedCertificatePendingComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.changeControls.content);
   }
 
+  getChangeControlDetails = (changeControl: ChangeControl) => {
+    this.isLoadingDetails = true;
+    return this.trustedCertificateService.getPendingChangeById(changeControl.changeID).toPromise()
+      .finally(() => {
+        this.isLoadingDetails = false;
+      });
+  }
+
   addValidationToCertificate(trustedCertificate: TrustedCertificate): Promise<any> {
-    const promise = new Promise((resolve) => {
-      const certificateId = get(trustedCertificate, 'certificateId');
-      const certificateLogId = get(trustedCertificate, 'certificateLogId');
-      if (certificateId || certificateLogId) {
-        this.isLoadingDetails = true;
-        let validateCertificate;
-        if (certificateId) {
-          validateCertificate = this.trustedCertificateService.validateCertificateById(certificateId);
-        }
-        else {
-          validateCertificate = this.trustedCertificateService.validateCertificateLogById(certificateLogId);
-        }
-        validateCertificate.toPromise()
-          .then(data => {
-            this.isLoadingDetails = false;
-            resolve({
-              ...trustedCertificate,
-              authChainReport: data.authChainReport,
-              valid: data.valid,
-              warnings: data.certificateWarnings,
-              errors: data.certificateErrors,
-            });
-          },
-            error => {
-              this.isLoadingDetails = false;
-            });
-      }
-      else {
-        resolve(trustedCertificate);
-      }
-    });
-    return promise;
+    const certificateId = get(trustedCertificate, 'certificateId');
+    const certificateLogId = get(trustedCertificate, 'certificateLogId');
+    this.isLoadingDetails = true;
+    let validateCertificate;
+    if (certificateId) {
+      validateCertificate = this.trustedCertificateService.validateCertificateById(certificateId);
+    }
+    else {
+      validateCertificate = this.trustedCertificateService.validateCertificateLogById(certificateLogId);
+    }
+    return validateCertificate.toPromise()
+      .then(data => {
+        return ({
+          ...trustedCertificate,
+          authChainReport: data.authChainReport,
+          valid: data.valid,
+          warnings: data.certificateWarnings,
+          errors: data.certificateErrors,
+        });
+      }).finally(() => {
+        this.isLoadingDetails = false;
+      });
   }
 
   addValidationToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const promise = new Promise((resolve) => {
-      const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
-      if (certificateLogId) {
-        this.isLoadingDetails = true;
-        this.trustedCertificateService.validateCertificateLogById(certificateLogId.toString()).toPromise()
-          .then(data => {
-            this.isLoadingDetails = false;
-            resolve({
-              ...changeControl,
-              trustedCertificateLog: {
-                ...changeControl.trustedCertificateLog,
-                authChainReport: data.authChainReport,
-                valid: data.valid
-              },
-              certificateBefore: changeControl.certificateBefore && {
-                ...changeControl.certificateBefore,
-                authChainReport: data.authChainReport,
-                valid: data.valid
-              },
-              warnings: data.certificateWarnings,
-              errors: data.certificateErrors,
-            });
+    const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
+    this.isLoadingDetails = true;
+    return this.trustedCertificateService.validateCertificateLogById(certificateLogId.toString()).toPromise()
+      .then(data => {
+        return ({
+          ...changeControl,
+          trustedCertificateLog: {
+            ...changeControl.trustedCertificateLog,
+            authChainReport: data.authChainReport,
+            valid: data.valid
           },
-            error => {
-              this.isLoadingDetails = false;
-            });
-      }
-      else {
-        resolve(changeControl);
-      }
-    });
-    return promise;
+          certificateBefore: changeControl.certificateBefore && {
+            ...changeControl.certificateBefore,
+            authChainReport: data.authChainReport,
+            valid: data.valid
+          },
+          warnings: data.certificateWarnings,
+          errors: data.certificateErrors,
+        });
+      }).finally(() => this.isLoadingDetails = false);
   }
 
   addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const promise = new Promise((resolve) => {
-      const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
-      if (certificateId) {
-        this.isLoadingDetails = true;
-        this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
-          .then(data => {
-            this.isLoadingDetails = false;
-            resolve({ ...changeControl, certificateBefore: data });
-          },
-            error => {
-              this.isLoadingDetails = false;
-            });
-      }
-      else {
-        resolve(changeControl);
-      }
-    });
-    return promise;
+    const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
+    this.isLoadingDetails = true;
+    return this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
+      .then(data => {
+        return ({ ...changeControl, certificateBefore: data });
+      }).finally(() => this.isLoadingDetails = false);
   }
 
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   openInfoDialog(changeControl: ChangeControl) {
-    const getValidatedChangeControl = () => this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+    const getValidatedChangeControl = () => this.getChangeControlDetails(changeControl)
+      .then((chngCtl: ChangeControl) => this.addCertificateBeforeToChangeControl(chngCtl)
+        .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
 
     getValidatedChangeControl().then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
       title: `Change Record: Pending`,
@@ -223,8 +198,9 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   openApprovingDialog(changeControl: ChangeControl) {
-    const getValidatedChangeControl = () => this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+    const getValidatedChangeControl = () => this.getChangeControlDetails(changeControl)
+      .then((chngCtl: ChangeControl) => this.addCertificateBeforeToChangeControl(chngCtl)
+        .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
 
     getValidatedChangeControl().then(validatedChangeControl =>
       this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
@@ -261,8 +237,9 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   deletePendingChange(changeControl: ChangeControl) {
-    const getPendingChange = () => this.addCertificateBeforeToChangeControl(changeControl)
-      .then(changeCtrl => this.addValidationToChangeControl(changeCtrl));
+    const getPendingChange = () => this.getChangeControlDetails(changeControl)
+      .then((chngCtl: ChangeControl) => this.addCertificateBeforeToChangeControl(chngCtl)
+        .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
 
     getPendingChange().then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
       getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,

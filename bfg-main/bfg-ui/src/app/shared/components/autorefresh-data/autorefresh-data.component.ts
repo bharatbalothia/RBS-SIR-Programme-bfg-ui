@@ -12,7 +12,7 @@ export class AutorefreshDataComponent implements OnInit, OnDestroy {
   @Input() shouldAutoRefresh = true;
   @Input() getData: () => any;
 
-  refreshInterval = 60000;
+  refreshInterval = 10000;
 
   autoRefreshing: Subscription;
 

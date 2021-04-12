@@ -5,6 +5,7 @@ import { get, isUndefined } from 'lodash';
 import { NotificationService } from '../../services/notification.service';
 import { AutoRefreshService } from '../../services/autorefresh.service';
 import { Subscription } from 'rxjs';
+import { ErrorMessage } from 'src/app/core/utils/error-template';
 
 @Component({
   selector: 'app-delete-dialog',
@@ -47,22 +48,22 @@ export class DeleteDialogComponent implements OnInit, OnDestroy {
 
     this.id = get(this.data, 'actionData.id');
 
-    const errorMessage = get(this.data, 'actionData.errorMessage');
-
-    if (errorMessage) {
-      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
-      this.notificationService.showErrorWithWarningMessage(errorMessage);
-    }
-
     this.displayName = this.data.displayName;
     this.deleteAction = get(this.data, 'actionData.deleteAction');
 
     this.tooltip = get(this.data, 'tooltip');
     this.shouldHideComments = get(this.data, 'actionData.shouldHideComments');
+
+    this.getErrorMessage(get(this.data, 'actionData.errorMessage'));
   }
 
   ngOnInit() {
-    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => value && this.getTabsData());
+    this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => {
+      if (value) {
+        this.getTabsData();
+        this.getErrorMessage(get(this.data, 'actionData.errorMessage'));
+      }
+    });
     if (!this.data.data) {
       this.getTabsData();
     }
@@ -85,7 +86,7 @@ export class DeleteDialogComponent implements OnInit, OnDestroy {
           this.data.title = this.data.getTitle(data);
         }
         this.tabs = this.data.getTabs(data);
-      });
+      }).catch(() => this.hasErrors = true);
     }
   }
 
@@ -113,4 +114,13 @@ export class DeleteDialogComponent implements OnInit, OnDestroy {
         });
   }
 
+  getErrorMessage = (errorMessage: ErrorMessage) => {
+    if (errorMessage) {
+      this.hasErrors = (errorMessage.message || errorMessage.errors) ? true : false;
+      this.notificationService.showErrorWithWarningMessage(errorMessage);
+    }
+    else {
+      this.hasErrors = false;
+    }
+  }
 }

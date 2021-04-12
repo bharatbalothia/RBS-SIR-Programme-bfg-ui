@@ -117,21 +117,15 @@ export class EntitySearchComponent implements OnInit {
   getEntityDetails = (entity: Entity) => {
     this.isLoadingDetails = true;
     return this.entityService.getEntityById(entity.entityId).toPromise()
-      .then((data: Entity) => {
-        this.isLoadingDetails = false;
-        return data;
-      }).finally(() => {
+      .finally(() => {
         this.isLoadingDetails = false;
       });
   }
 
   getPendingEntityDetails = (changeControl: ChangeControl) => {
     this.isLoadingDetails = true;
-    return this.entityService.getPendingEntityById(changeControl.changeID).toPromise()
-      .then((data: Entity) => {
-        this.isLoadingDetails = false;
-        return ({ ...changeControl, entityLog: data });
-      }).finally(() => {
+    return this.entityService.getPendingChangeById(changeControl.changeID).toPromise()
+      .finally(() => {
         this.isLoadingDetails = false;
       });
   }

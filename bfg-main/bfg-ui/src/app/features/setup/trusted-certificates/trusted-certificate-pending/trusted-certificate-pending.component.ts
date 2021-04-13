@@ -141,15 +141,9 @@ export class TrustedCertificatePendingComponent implements OnInit {
       }).finally(() => this.isLoadingDetails = false);
   }
 
-  addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
-    this.isLoadingDetails = true;
-    return this.trustedCertificateService.validateCertificateLogById(certificateLogId.toString()).toPromise()
-      .then(data => {
-        return ({ ...changeControl, certificateBefore: data });
-      }).finally(() => this.isLoadingDetails = false);
-  }
-
+  addCertificateBeforeToChangeControl = (changeControl: ChangeControl): Promise<any> =>
+    new Promise(resolve =>
+      resolve(changeControl.trustedCertificateLog && { ...changeControl, certificateBefore: changeControl.trustedCertificateLog }))
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 

@@ -147,14 +147,10 @@ export class TrustedCertificateSearchComponent implements OnInit {
       }).finally(() => this.isLoadingDetails = false);
   }
 
-  addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
-    const certificateId = get(changeControl.trustedCertificateLog, 'certificateId');
-    this.isLoadingDetails = true;
-    return this.trustedCertificateService.getCertificateById(certificateId.toString()).toPromise()
-      .then(data => {
-        return ({ ...changeControl, certificateBefore: data });
-      }).finally(() => this.isLoadingDetails = false);
-  }
+  addCertificateBeforeToChangeControl = (changeControl: ChangeControl): Promise<any> =>
+    new Promise(resolve =>
+      resolve(changeControl.trustedCertificateLog && { ...changeControl, certificateBefore: changeControl.trustedCertificateLog }))
+
 
   openInfoDialog(changeControl: ChangeControl) {
     const getValidatedChangeControl = () => this.getChangeControlDetails(changeControl)

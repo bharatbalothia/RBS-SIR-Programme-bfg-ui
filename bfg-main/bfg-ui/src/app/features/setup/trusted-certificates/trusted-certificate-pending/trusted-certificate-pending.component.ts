@@ -144,7 +144,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   addCertificateBeforeToChangeControl(changeControl: ChangeControl): Promise<any> {
     const certificateLogId = get(changeControl.trustedCertificateLog, 'certificateLogId');
     this.isLoadingDetails = true;
-    return this.trustedCertificateService.getCertificateById(certificateLogId.toString()).toPromise()
+    return this.trustedCertificateService.validateCertificateLogById(certificateLogId.toString()).toPromise()
       .then(data => {
         return ({ ...changeControl, certificateBefore: data });
       }).finally(() => this.isLoadingDetails = false);

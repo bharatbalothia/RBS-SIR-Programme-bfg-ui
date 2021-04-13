@@ -67,7 +67,6 @@ export class ApprovingDialogComponent implements OnInit, OnDestroy {
     this.isAutoRefreshSubscription = this.autoRefreshService.shouldAutoRefresh.subscribe(value => {
       if (value) {
         this.getTabsData();
-        this.getErrorMessage(get(this.data, 'actionData.errorMessage'));
       }
     });
     if (!this.data.data) {

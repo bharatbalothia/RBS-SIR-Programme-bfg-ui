@@ -213,7 +213,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                     true
             );
             certificateIntegrationService.createCertificate(certificateDataIntegrationRequest);
-//            save(trustedCertificate);
+            save(trustedCertificate);
         }
         TrustedCertificateLog certLog = changeControlCert.getTrustedCertificateLog();
         certLog.setCertificateId(trustedCertificate.getCertificateId());

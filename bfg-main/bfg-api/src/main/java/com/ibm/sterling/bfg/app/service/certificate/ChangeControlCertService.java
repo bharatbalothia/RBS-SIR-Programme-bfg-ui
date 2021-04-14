@@ -3,6 +3,7 @@ package com.ibm.sterling.bfg.app.service.certificate;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.ChangeControlCertNotFoundException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusPendingException;
 import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
 import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateLog;
@@ -41,8 +42,10 @@ public class ChangeControlCertService {
 
     public ChangeControlCert getChangeControlCertById(String id) {
         LOGGER.info("Certificate change control by id {}", id);
-        return changeControlCertRepository.findById(id)
+        ChangeControlCert changeControlCert = changeControlCertRepository.findById(id)
                 .orElseThrow(ChangeControlCertNotFoundException::new);
+        checkStatusOfChangeControl(changeControlCert);
+        return changeControlCert;
     }
 
     @Transactional
@@ -123,8 +126,15 @@ public class ChangeControlCertService {
     }
 
     private void checkStatusOfChangeControl(ChangeControlCert changeControlCert) {
+        LOGGER.info("Checking status of change control {}", changeControlCert);
         if (!PENDING.equals(changeControlCert.getStatus())) {
             throw new StatusNotPendingException();
         }
+    }
+
+    public void checkOnPendingState(String certName) {
+        LOGGER.info("Checking if trusted certificate {} in a pending state", certName);
+        if (changeControlCertRepository.existsByResultMeta1AndStatus(certName, PENDING))
+            throw new StatusPendingException();
     }
 }

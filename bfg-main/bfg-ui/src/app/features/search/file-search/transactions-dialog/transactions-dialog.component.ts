@@ -90,7 +90,8 @@ export class TransactionsDialogComponent implements OnInit {
         };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction -  ${data.id}`,
-          tabs: getTransactionDetailsTabs(data, ...actions),
+          data,
+          getTabs: () => getTransactionDetailsTabs(data, ...actions),
           displayName: getFileSearchDisplayName,
           actionData: {
             actions
@@ -107,11 +108,12 @@ export class TransactionsDialogComponent implements OnInit {
 
   openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
     .pipe(data => this.setLoading(data))
-    .subscribe((data: DocumentContent) => {
+    .subscribe((docCont: DocumentContent) => {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
-        title: data.document ? transaction.docID : `Primary Document`,
-        tabs: getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
+        getTitle: (data) => data.document ? transaction.docID : `Primary Document`,
+        data: docCont,
+        getTabs: (data) => getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),
         displayName: getFileSearchDisplayName,
         actionData: {
           actions: {
@@ -126,7 +128,7 @@ export class TransactionsDialogComponent implements OnInit {
   openBusinessProcessDialog = (transaction: Transaction) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getBusinessProcessDisplayName,
       actionData: {
         id: transaction.workflowID,

@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { AutoRefreshService } from '../../services/autorefresh.service';
 
 @Component({
   selector: 'app-autorefresh-data',
@@ -15,7 +16,7 @@ export class AutorefreshDataComponent implements OnInit, OnDestroy {
 
   autoRefreshing: Subscription;
 
-  constructor() { }
+  constructor(private autoRefreshService: AutoRefreshService) { }
 
   ngOnInit(): void {
     this.autoRefreshChange(this.shouldAutoRefresh);
@@ -23,9 +24,13 @@ export class AutorefreshDataComponent implements OnInit, OnDestroy {
 
   autoRefreshChange = (value) => {
     if (value) {
-      this.autoRefreshing = interval(this.refreshInterval).subscribe(() => this.getData());
+      this.autoRefreshing = interval(this.refreshInterval).subscribe(() => {
+        this.getData();
+        this.autoRefreshService.setAutoRefresh(true);
+      });
     }
     else if (this.autoRefreshing) {
+      this.autoRefreshService.setAutoRefresh(false);
       this.autoRefreshing.unsubscribe();
     }
   }

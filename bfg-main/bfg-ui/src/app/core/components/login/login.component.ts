@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Credentials } from '../../auth/credentials.model';
 import { AuthService } from '../../auth/auth.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router, RoutesRecognized } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { LOGIN_FORM_VALIDATION_MESSAGES } from './login-form-validation-messages';
 import { get } from 'lodash';
 import { ROUTING_PATHS } from '../../constants/routing-paths';
 import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
+import { filter, pairwise } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -49,7 +50,12 @@ export class LoginComponent implements OnInit {
     this.authService.logIn(this.credentials).subscribe(
       () => {
         this.isLoading = false;
-        this.router.navigate(['/']);
+        if (document.referrer) {
+          history.back();
+        }
+        else {
+          this.router.navigate(['/']);
+        }
       },
       (error) => {
         this.isLoading = false;

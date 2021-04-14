@@ -113,6 +113,7 @@ public class EntityServiceImpl implements EntityService {
 
     @Transactional
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
+        changeControlService.checkOnPendingState(entity.getEntity(), entity.getService());
         if (!operation.equals(Operation.DELETE)) {
             entityValidation.validateEntity(entity, operation);
         }

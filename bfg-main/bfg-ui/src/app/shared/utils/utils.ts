@@ -56,3 +56,5 @@ const selectByDblClick = (calendarPicker: NgxMatDatetimePicker<any>) => {
         });
     }, 0);
 };
+
+export const defineReferrer = (url) => !document.referrer && Object.defineProperty(document, 'referrer', { get: () => url });

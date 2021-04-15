@@ -25,6 +25,14 @@ public class TransactionSearchCriteria extends SearchCriteria {
     @JsonProperty("settlement-to")
     @JsonAlias("to")
     private String settlementTo;
+    @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for timestamp from")
+    @JsonProperty("ptimestamp-from")
+    @JsonAlias("pFrom")
+    private String ptimestampFrom;
+    @DateValid(pattern = "yyyy-MM-dd'T'HH:mm:ss", message = "Please match the requested format for timestamp to")
+    @JsonProperty("ptimestamp-to")
+    @JsonAlias("pTo")
+    private String ptimestampTo;
     @JsonProperty("has-message-id")
     @JsonAlias("hasMessageId")
     private Boolean hasMessageId;
@@ -100,6 +108,7 @@ public class TransactionSearchCriteria extends SearchCriteria {
     @JsonIgnore
     @Override
     public boolean isDateValid() {
-        return TimeUtil.isStringDateBefore(settlementFrom, settlementTo);
+        return TimeUtil.isStringDateBefore(settlementFrom, settlementTo) &&
+        TimeUtil.isStringDateBefore(ptimestampFrom, ptimestampTo)  ;
     }
 }

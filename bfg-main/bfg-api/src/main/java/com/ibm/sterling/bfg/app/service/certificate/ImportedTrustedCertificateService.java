@@ -48,7 +48,7 @@ public class ImportedTrustedCertificateService {
     private AdminAuditService adminAuditService;
 
     public void importCertificatesFromB2B() throws JsonProcessingException {
-        LOG.info("Import the certs from B2B on startup");
+        LOG.info("Import the certs from B2B");
         List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails = new ArrayList<>(certificateIntegrationService.getCertificates()
                 .stream()
                 .collect(Collectors.toMap(

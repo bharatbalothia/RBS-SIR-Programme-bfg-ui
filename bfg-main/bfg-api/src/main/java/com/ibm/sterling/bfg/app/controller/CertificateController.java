@@ -114,7 +114,7 @@ public class CertificateController {
 
     @GetMapping("pending/{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<ChangeControlCert> getPendingCertificate(@PathVariable(name = "id") String id) {
+    public ResponseEntity<ChangeControlCert> getChangeControlCertificate(@PathVariable(name = "id") String id) {
         return ok(changeControlCertService.getChangeControlCertById(id));
     }
 

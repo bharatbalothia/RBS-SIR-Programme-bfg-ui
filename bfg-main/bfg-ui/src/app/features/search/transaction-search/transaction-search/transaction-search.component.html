@@ -137,8 +137,8 @@
             <ng-template matStepLabel>SCT Transaction Results</ng-template>
             <app-autorefresh-data [shouldAutoRefresh]="false"
                 [getData]="getTransactionList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
-            <app-transaction-table [(isLoading)]="isLoading" [pageIndex]="pageIndex"
-                [pageSize]="pageSize" [getTransactionList]="getTransactionList.bind(this)" [dataSource]="dataSource"
+            <app-transaction-table [(isLoading)]="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize"
+                [getTransactionList]="getTransactionList.bind(this)" [dataSource]="dataSource"
                 [transactions]="transactions">
             </app-transaction-table>
             <div class='stepper-actions'>
@@ -146,7 +146,5 @@
             </div>
         </mat-step>
     </mat-horizontal-stepper>
-    <mat-card-footer>
-        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-    </mat-card-footer>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

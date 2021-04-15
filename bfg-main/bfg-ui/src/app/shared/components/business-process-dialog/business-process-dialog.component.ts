@@ -122,7 +122,8 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.isLoading = false;
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `Business Process Details`,
-          tabs: getBusinessProcessDetailsTabs(data),
+          data,
+          getTabs: getBusinessProcessDetailsTabs,
           displayName: getBusinessProcessDisplayName,
           actionData: {
           },
@@ -138,7 +139,9 @@ export class BusinessProcessDialogComponent implements OnInit {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
         title: `Primary Document`,
-        tabs: getBusinessProcessDocumentInfoTabs({ ...data, processName: this.bpHeader.bpName, serviceName: step.serviceName }),
+        data,
+        getTabs: (data) =>
+          getBusinessProcessDocumentInfoTabs({ ...data, processName: this.bpHeader.bpName, serviceName: step.serviceName }),
         displayName: getBusinessProcessDisplayName,
       }));
     },

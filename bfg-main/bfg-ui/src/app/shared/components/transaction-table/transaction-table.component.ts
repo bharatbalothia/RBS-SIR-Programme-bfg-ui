@@ -80,7 +80,8 @@ export class TransactionTableComponent implements OnInit {
         };
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction - ${data.id}`,
-          tabs: getTransactionDetailsTabs(data, actions),
+          data,
+          getTabs: () => getTransactionDetailsTabs(data, actions),
           displayName: getTransactionSearchDisplayName,
           actionData: {
             actions
@@ -98,7 +99,7 @@ export class TransactionTableComponent implements OnInit {
   openBusinessProcessDialog = (transaction: Transaction) =>
     this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
       title: `Business Process Detail`,
-      tabs: [],
+      getTabs: () => [],
       displayName: getBusinessProcessDisplayName,
       actionData: {
         id: transaction.workflowID,

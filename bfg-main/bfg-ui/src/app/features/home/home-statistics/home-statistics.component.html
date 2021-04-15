@@ -3,7 +3,14 @@
     <table *ngIf="systemErrors && alerts && SCTTraffic">
       <tr>
         <td class="table-header left-table-header">Last update on</td>
-        <td colspan="3">{{updateTime}}</td>
+        <td colspan="3">
+          {{updateTime}}
+          <button mat-button class="refresh-button" (click)="getSystemErrors()">
+            <div class="action-icon">
+              <mat-icon>refresh</mat-icon>
+            </div>
+          </button>
+        </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
@@ -210,7 +217,5 @@
       </tr>
     </table>
   </mat-card-content>
-  <mat-card-footer>
-    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-  </mat-card-footer>
+  <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
 </mat-card>

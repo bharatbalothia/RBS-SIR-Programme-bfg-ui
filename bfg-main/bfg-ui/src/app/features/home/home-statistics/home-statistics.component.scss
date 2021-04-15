@@ -1,11 +1,26 @@
 .home-statistics-card {
 
-    width: fit-content;
-    min-width: 746px;
-    min-height: 484px;
-    height: fit-content;
-    position: inherit;
-    overflow: hidden !important;
+    position: static !important;
+    max-width: calc(100vw - 60px);
+    margin-right: 0 !important;
+
+    .card-content {
+        min-width: 725px;
+    }
+
+    .refresh-button {
+        float: right;
+
+        .action-icon {
+            display: flex;
+
+            .mat-icon {
+                font-size: 30px;
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
 
     table {
         border-collapse: collapse;
@@ -43,6 +58,6 @@
     table,
     th,
     td {
-        padding: 10px;
+        padding: 5px;
     }
 }

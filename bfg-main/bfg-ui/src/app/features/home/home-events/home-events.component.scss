@@ -1,0 +1,10 @@
+.home-events-card {
+    position: static !important;
+    max-width: calc(100vw - 60px);
+    margin-left: 0;
+
+    .card-content {
+        min-width: 725px;
+    }
+
+}

@@ -3,6 +3,7 @@ import { HomeComponent } from './home.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HomeStatisticsComponent } from './home-statistics/home-statistics.component';
+import { HomeEventsComponent } from './home-events/home-events.component';
 
 
 
@@ -10,6 +11,7 @@ import { HomeStatisticsComponent } from './home-statistics/home-statistics.compo
   declarations: [
     HomeComponent,
     HomeStatisticsComponent,
+    HomeEventsComponent,
   ],
   imports: [
     SharedModule,

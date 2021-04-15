@@ -1,0 +1,48 @@
+.home-statistics-card {
+
+    width: fit-content;
+    min-width: 746px;
+    min-height: 484px;
+    height: fit-content;
+    position: inherit;
+    overflow: hidden !important;
+
+    table {
+        border-collapse: collapse;
+        font-size: 20px;
+
+        .table-header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .left-table-header {
+            text-align: right;
+        }
+
+        .sct-link {
+            text-align: center;
+
+            .traffic-details {
+                display: inline-flex;
+                align-items: baseline;
+            }
+        }
+
+        .icon-value {
+            display: flex;
+            align-items: center;
+
+            .value {
+                display: inline-block;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    table,
+    th,
+    td {
+        padding: 10px;
+    }
+}

@@ -13,6 +13,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
 public class AuditEventCriteria {
+    private Integer id;
+    private Integer size;
     @JsonProperty("event-type")
     @JsonAlias("eventType")
     private List<EventType> eventType;
@@ -26,6 +28,22 @@ public class AuditEventCriteria {
     @JsonProperty("action-type")
     @JsonAlias("actionType")
     private ActionType actionType;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
     @JsonGetter
     public String getEventType() {

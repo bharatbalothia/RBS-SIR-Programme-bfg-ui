@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public class AuditEvent {
+    private String id;
     private String actor;
     private ActionType actionType;
     private String eventContext;
@@ -13,6 +14,14 @@ public class AuditEvent {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created;
     private Action action;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getActor() {
         return actor;

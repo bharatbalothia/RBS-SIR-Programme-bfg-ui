@@ -33,6 +33,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
 
   minDate: moment.Moment = null;
   maxDate: moment.Moment = null;
+  pMinDate: moment.Moment = null;
+  pMaxDate: moment.Moment = null;
 
   searchingParametersFormGroup: FormGroup;
   initialTransactionCriteriaData: TransactionCriteriaData;
@@ -46,7 +48,9 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   isLinear = true;
   isLoading = false;
 
-  defaultSelectedData: { from: moment.Moment, to: moment.Moment } = {
+  defaultSelectedData: { pFrom: moment.Moment, pTo: moment.Moment, from: moment.Moment, to: moment.Moment } = {
+    pFrom: moment().startOf('day'),
+    pTo: null,
     from: moment().startOf('day'),
     to: null
   };
@@ -85,8 +89,10 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       this.URLParams = { ...params };
       if (params.startDate) {
         this.defaultSelectedData = {
-          from: params.startDate === 'none' ? null : moment(params.startDate),
-          to: null
+          pFrom: params.startDate === 'none' ? null : moment(params.startDate),
+          pTo: null,
+          to: null,
+          from: null
         };
         delete this.URLParams.startDate;
       }
@@ -127,6 +133,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       transactionID: [''],
       paymentBIC: [''],
       type: [''],
+      pFrom: [this.defaultSelectedData.pFrom],
+      pTo: [this.defaultSelectedData.pTo],
       from: [this.defaultSelectedData.from],
       to: [this.defaultSelectedData.to]
     });
@@ -136,8 +144,12 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   }
 
   initMinMaxDate() {
+    this.pMinDate = this.defaultSelectedData.pFrom;
+    this.pMaxDate = this.defaultSelectedData.pTo;
     this.minDate = this.defaultSelectedData.from;
     this.maxDate = this.defaultSelectedData.to;
+    this.searchingParametersFormGroup.controls.pFrom.markAsTouched();
+    this.searchingParametersFormGroup.controls.pTo.markAsTouched();
     this.searchingParametersFormGroup.controls.from.markAsTouched();
     this.searchingParametersFormGroup.controls.to.markAsTouched();
   }
@@ -209,6 +221,8 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     const formData = {
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
+      pFrom: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.pFrom')),
+      pTo: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.pTo')),
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),

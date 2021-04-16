@@ -82,50 +82,6 @@
                     </mat-form-field>
                     <app-tooltip [tip]="getTooltip('search', 'type')"></app-tooltip>
                 </section>
-                <section class="section-label">Timestamp</section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getTransactionSearchDisplayName('from')}}</mat-label>
-                        <input matInput [ngxMatDatetimePicker]="pFromPicker" placeholder="Choose a date"
-                            [formControl]="searchingParametersFormGroup.controls['pFrom']" [max]="pMaxDate"
-                            (dateChange)="handleDate($event, 'pMinDate')" />
-                        <mat-datepicker-toggle matSuffix [for]="pFromPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #pFromPicker (opened)="setCalendarDblClick(pFromPicker)"
-                            (monthSelected)="setCalendarDblClick(pFromPicker)">
-                        </ngx-mat-datetime-picker>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
-                            {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
-                        </mat-error>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
-                            {{getSearchValidationMessage('incorrect')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'settlement-from')"></app-tooltip>
-                </section>
-                <section class="form-field-section">
-                    <mat-form-field>
-                        <mat-label>{{getTransactionSearchDisplayName('to')}}</mat-label>
-                        <input matInput [ngxMatDatetimePicker]="pToPicker" placeholder="Choose a date"
-                            [formControl]="searchingParametersFormGroup.controls['pTo']" [min]="pMinDate"
-                            (dateChange)="handleDate($event, 'pMaxDate')" />
-                        <mat-datepicker-toggle matSuffix [for]="pToPicker"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #pToPicker (opened)="setCalendarDblClick(pToPicker)"
-                            (monthSelected)="setCalendarDblClick(pToPicker)">
-                        </ngx-mat-datetime-picker>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
-                            {{getSearchValidationMessage('maxDateLessThanMinDate')}}
-                        </mat-error>
-                        <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
-                            {{getSearchValidationMessage('incorrect')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'settlement-to')"></app-tooltip>
-                </section>
-
                 <section class="section-label">Settlement Date</section>
                 <section class="form-field-section">
                     <mat-form-field>
@@ -157,6 +113,49 @@
                         <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
                         <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
                             (monthSelected)="setCalendarDblClick(toPicker)">
+                        </ngx-mat-datetime-picker>
+                        <mat-error class="error-message"
+                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+                            {{getSearchValidationMessage('maxDateLessThanMinDate')}}
+                        </mat-error>
+                        <mat-error class="error-message"
+                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+                            {{getSearchValidationMessage('incorrect')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <app-tooltip [tip]="getTooltip('search', 'settlement-to')"></app-tooltip>
+                </section>
+                <section class="section-label">Timestamp</section>
+                <section class="form-field-section">
+                    <mat-form-field>
+                        <mat-label>{{getTransactionSearchDisplayName('from')}}</mat-label>
+                        <input matInput [ngxMatDatetimePicker]="pFromPicker" placeholder="Choose a date"
+                            [formControl]="searchingParametersFormGroup.controls['pFrom']" [max]="pMaxDate"
+                            (dateChange)="handleDate($event, 'pMinDate')" />
+                        <mat-datepicker-toggle matSuffix [for]="pFromPicker"></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #pFromPicker (opened)="setCalendarDblClick(pFromPicker)"
+                            (monthSelected)="setCalendarDblClick(pFromPicker)">
+                        </ngx-mat-datetime-picker>
+                        <mat-error class="error-message"
+                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+                            {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+                        </mat-error>
+                        <mat-error class="error-message"
+                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+                            {{getSearchValidationMessage('incorrect')}}
+                        </mat-error>
+                    </mat-form-field>
+                    <app-tooltip [tip]="getTooltip('search', 'settlement-from')"></app-tooltip>
+                </section>
+                <section class="form-field-section">
+                    <mat-form-field>
+                        <mat-label>{{getTransactionSearchDisplayName('to')}}</mat-label>
+                        <input matInput [ngxMatDatetimePicker]="pToPicker" placeholder="Choose a date"
+                            [formControl]="searchingParametersFormGroup.controls['pTo']" [min]="pMinDate"
+                            (dateChange)="handleDate($event, 'pMaxDate')" />
+                        <mat-datepicker-toggle matSuffix [for]="pToPicker"></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #pToPicker (opened)="setCalendarDblClick(pToPicker)"
+                            (monthSelected)="setCalendarDblClick(pToPicker)">
                         </ngx-mat-datetime-picker>
                         <mat-error class="error-message"
                             *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">

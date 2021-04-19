@@ -2,27 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import 'moment-timezone';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { Alerts } from 'src/app/shared/models/statistics/alerts.model';
 import { SCTTraffic } from 'src/app/shared/models/statistics/sct-traffic.model';
 import { StatisticsService } from 'src/app/shared/models/statistics/statistics.service';
-import { SystemErrors } from 'src/app/shared/models/statistics/system-errors.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { getDirectionIcon } from '../../search/transaction-search/transaction-search-display-names';
 
 @Component({
-  selector: 'app-home-statistics',
-  templateUrl: './home-statistics.component.html',
-  styleUrls: ['./home-statistics.component.scss']
+  selector: 'app-home-sct-traffic',
+  templateUrl: './home-sct-traffic.component.html',
+  styleUrls: ['./home-sct-traffic.component.scss']
 })
-export class HomeStatisticsComponent implements OnInit {
+export class HomeSCTTrafficComponent implements OnInit {
 
   getDirectionIcon = getDirectionIcon;
   ROUTING_PATHS = ROUTING_PATHS;
 
   isLoading = false;
 
-  systemErrors: SystemErrors;
-  alerts: Alerts;
   SCTTraffic: SCTTraffic;
   updateTime: string;
 
@@ -32,28 +28,13 @@ export class HomeStatisticsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getSystemErrors();
+    this.getSCTTraffic();
   }
 
   setLoading(data) {
     this.isLoading = true;
     return data;
   }
-
-  getSystemErrors = () =>
-    this.statisticsService.getSystemErrors().pipe(data => this.setLoading(data)).subscribe((data: SystemErrors) => {
-      this.getAlerts();
-      this.systemErrors = data;
-    },
-      error => this.isLoading = false
-    )
-
-  getAlerts = () => this.statisticsService.getAlerts().pipe(data => this.setLoading(data)).subscribe((data: Alerts) => {
-    this.getSCTTraffic();
-    this.alerts = data;
-  },
-    error => this.isLoading = false
-  )
 
   getSCTTraffic = () => this.statisticsService.getSCTTraffic().pipe(data => this.setLoading(data))
     .subscribe(

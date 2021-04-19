@@ -1,4 +1,4 @@
-<h3 *ngIf="!shouldHideTableHeader && files && files.totalElements">
+<h3 class="total-items" *ngIf="!shouldHideTableHeader && files && files.totalElements">
   {{getSearchingTableHeader(files.totalElements, files.pageable.pageSize, files.pageable.pageNumber + 1)}}
 </h3>
 <div class="table-container">

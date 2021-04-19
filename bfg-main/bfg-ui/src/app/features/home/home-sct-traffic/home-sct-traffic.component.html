@@ -1,69 +1,18 @@
-<mat-card class="home-statistics-card">
+<mat-card class="home-sct-traffic-card">
   <mat-card-content class="card-content">
-    <table *ngIf="systemErrors && alerts && SCTTraffic">
+    <table *ngIf="SCTTraffic">
       <tr>
         <td class="table-header left-table-header">Last update on</td>
-        <td colspan="3">
+        <td colspan="2">
           {{updateTime}}
-          <button mat-button class="refresh-button" (click)="getSystemErrors()">
+        </td>
+        <td>
+          <button mat-button class="refresh-button" (click)="getSCTTraffic()">
             <div class="action-icon">
               <mat-icon>refresh</mat-icon>
             </div>
           </button>
         </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td colspan="2"></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="table-header left-table-header">System Alerts </td>
-        <td colspan="3">
-          <div class="icon-value">
-            <mat-icon>{{systemErrors.count === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
-            <span class="value">There are&nbsp;{{systemErrors.count}}&nbsp;system errors.</span>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td colspan="2"></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td rowspan="2" class="table-header left-table-header">SCT Alerts</td>
-        <td colspan="2">
-          <div class="icon-value">
-            <mat-icon>{{alerts.SCT_ALERTS_FILE === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
-            <span class="value">There are&nbsp;
-              <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
-                [queryParams]="alerts.SCT_ALERTS_FILE > 0 && {isError:true, excludeArchive: true, service:'SCT', startDate: 'none'}">
-                {{alerts.SCT_ALERTS_FILE}}</a>
-              &nbsp;file errors (details).
-            </span>
-          </div>
-        </td>
-        <td rowspan="2"></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <div class="icon-value">
-            <mat-icon>{{alerts.SCT_ALERTS_TX === 0 ? 'check_circle_outline' : 'warning'}}</mat-icon>
-            <span class="value">There are&nbsp;
-              <a class="header-link" [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-                [queryParams]="alerts.SCT_ALERTS_TX > 0 ? {isError:true, hasMessageId: true, excludeArchive: true, startDate: 'none'} : {startDate: getMinusMonthsDate(1)}">
-                {{alerts.SCT_ALERTS_TX}}</a>
-              &nbsp;transaction errors (details).
-            </span>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td></td>
-        <td></td>
-        <td></td>
       </tr>
       <tr>
         <td class="table-header left-table-header">SCT Traffic Summary</td>

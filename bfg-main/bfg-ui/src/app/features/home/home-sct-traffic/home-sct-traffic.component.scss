@@ -1,11 +1,11 @@
-.home-statistics-card {
+.home-sct-traffic-card {
 
     position: static !important;
     max-width: calc(100vw - 60px);
     margin-right: 0 !important;
 
     .card-content {
-        min-width: 725px;
+        min-width: 576px;
     }
 
     .refresh-button {
@@ -58,6 +58,6 @@
     table,
     th,
     td {
-        padding: 5px;
+        padding: 7px 10px 7px 10px;
     }
 }

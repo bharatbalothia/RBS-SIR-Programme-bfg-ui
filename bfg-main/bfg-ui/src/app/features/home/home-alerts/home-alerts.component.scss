@@ -1,0 +1,63 @@
+.home-alerts-card {
+
+    position: static !important;
+    max-width: calc(100vw - 60px);
+    margin-right: 0 !important;
+
+    .card-content {
+        min-width: 576px;
+    }
+
+    .refresh-button {
+        float: right;
+
+        .action-icon {
+            display: flex;
+
+            .mat-icon {
+                font-size: 30px;
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 20px;
+
+        .table-header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .left-table-header {
+            text-align: right;
+        }
+
+        .sct-link {
+            text-align: center;
+
+            .traffic-details {
+                display: inline-flex;
+                align-items: baseline;
+            }
+        }
+
+        .icon-value {
+            display: flex;
+            align-items: center;
+
+            .value {
+                display: inline-block;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    table,
+    th,
+    td {
+        padding: 5px;
+    }
+}

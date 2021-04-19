@@ -2,4 +2,31 @@
     display: flex;
     flex-wrap: wrap;
     overflow: hidden;
+
+    .home-alerts {
+        order: 1;
+    }
+
+    .home-sct-traffic {
+        order: 3;
+    }
+
+    .home-events {
+        order: 2;
+    }
+
+    @media (max-width: 1493px) {
+
+        .home-alerts {
+            order: 1;
+        }
+
+        .home-sct-traffic {
+            order: 2;
+        }
+
+        .home-events {
+            order: 3;
+        }
+    }
 }

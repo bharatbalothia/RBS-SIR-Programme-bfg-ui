@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 public class AuditEvent {
     private String id;
     private String actor;
-    private ActionType actionType;
+    private String actionType;
     private String eventContext;
     private String eventType;
     private String objectActedOn;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created;
-    private Action action;
+    private String action;
 
     public String getId() {
         return id;
@@ -31,11 +31,11 @@ public class AuditEvent {
         this.actor = actor;
     }
 
-    public ActionType getActionType() {
+    public String getActionType() {
         return actionType;
     }
 
-    public void setActionType(ActionType actionType) {
+    public void setActionType(String actionType) {
         this.actionType = actionType;
     }
 
@@ -71,11 +71,11 @@ public class AuditEvent {
         this.created = created;
     }
 
-    public Action getAction() {
+    public String getAction() {
         return action;
     }
 
-    public void setAction(Action action) {
+    public void setAction(String action) {
         this.action = action;
     }
 }

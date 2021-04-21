@@ -1,5 +1,17 @@
 <mat-card class="home-events-card">
     <mat-card-content class="card-content">
-        EVENTS
+        <!-- <app-infinite-scroll (scrolled)="onScroll()" style="height: 400px; overflow-y: auto"> -->
+        <div infinite-scroll [scrollWindow]="false" (scrolled)="getAuditEvents(getLastAuditEventId())"
+            style="height: 400px; overflow-y: auto">
+            <div *ngFor="let adminEvent of auditEvents">
+                {{adminEvent.id}}
+            </div>
+
+            <div class="alert alert-dark" *ngIf="isLoading">
+                Fetching tweets...
+            </div>
+        </div>
+
+        <!-- </app-infinite-scroll> -->
     </mat-card-content>
 </mat-card>

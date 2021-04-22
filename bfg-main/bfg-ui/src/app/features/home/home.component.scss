@@ -3,30 +3,22 @@
     flex-wrap: wrap;
     overflow: hidden;
 
-    .home-alerts {
-        order: 1;
+    .home-statistics {
+        display: flex;
+        flex-direction: column;
     }
 
-    .home-sct-traffic {
-        order: 3;
-    }
+    @media (max-width: 1380px) {
 
-    .home-events {
-        order: 2;
-    }
-
-    @media (max-width: 1493px) {
-
-        .home-alerts {
+        .home-statistics {
+            flex-direction: unset;
+            flex-wrap: wrap;
             order: 1;
         }
 
-        .home-sct-traffic {
+        .home-events {
             order: 2;
         }
-
-        .home-events {
-            order: 3;
-        }
     }
+
 }

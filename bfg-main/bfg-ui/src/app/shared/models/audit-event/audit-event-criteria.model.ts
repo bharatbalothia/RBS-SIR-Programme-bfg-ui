@@ -1,6 +1,6 @@
 export interface AuditEventCriteria {
-    action?: string;
-    actionType?: string;
+    action?: string[];
+    actionType?: string[];
     eventType?: string[];
     id?: string;
     objectActedOn?: string;

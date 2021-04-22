@@ -306,11 +306,12 @@ export class TrustedCertificateSearchComponent implements OnInit {
   getCurrentRoute = () => this.router.url;
 
   clearParams = () => {
-    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '') {
-      this.certificateNameSearchingValue = '';
-      this.thumbprintSearchingValue = '';
-      this.getTrustedCertificateList(0, this.pageSize);
-    }
+    this.certificateNameSearchingValue = '';
+    this.thumbprintSearchingValue = '';
+    this.getTrustedCertificateList(0, this.pageSize);
     return false;
   }
+
+  isClearActive = () =>
+    this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== ''
 }

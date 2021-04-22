@@ -2,9 +2,39 @@
     position: static !important;
     max-width: calc(100vw - 60px);
     margin-left: 0;
+    margin-right: 0 !important;
+    padding-right: 0;
+    padding-bottom: 10px;
 
     .card-content {
-        min-width: 725px;
+        width: 600px;
+
+        .events-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-bottom: 10px;
+
+            .filter-button,
+            .clear-button {
+                height: 35px;
+                align-self: center;
+                margin-left: 10px;
+            }
+        }
+
+        .scrolling-events {
+            max-height: calc(100vh - 240px);
+            min-height: 221px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+    }
+
+    .mat-card-footer {
+        height: 4px;
+        margin: 0 !important;
+        padding-right: 16px;
     }
 
 }

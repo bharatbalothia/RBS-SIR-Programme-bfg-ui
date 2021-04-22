@@ -41,10 +41,9 @@ export class HomeSCTTrafficComponent implements OnInit {
       (data: SCTTraffic) => {
         this.isLoading = false;
         this.SCTTraffic = data;
+        this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss');
       },
-      error => this.isLoading = false,
-      () => this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss')
-    )
+      error => this.isLoading = false)
 
   checkCount = (count: number, rote: string) => count === 0 &&
     this.notificationService.show(

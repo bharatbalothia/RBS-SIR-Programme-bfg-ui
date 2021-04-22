@@ -3,9 +3,13 @@
     position: static !important;
     max-width: calc(100vw - 60px);
     margin-right: 0 !important;
+    padding-bottom: 10px;
+    margin-bottom: 0 !important;
 
     .card-content {
-        min-width: 576px;
+        min-width: 455px;
+        margin-bottom: 0px;
+        height: 147px;
     }
 
     .refresh-button {
@@ -15,16 +19,16 @@
             display: flex;
 
             .mat-icon {
-                font-size: 30px;
-                width: 30px;
-                height: 30px;
+                font-size: 27px;
+                width: 27px;
+                height: 27px;
             }
         }
     }
 
     table {
         border-collapse: collapse;
-        font-size: 20px;
+        font-size: 16px;
 
         .table-header {
             font-weight: bold;
@@ -42,6 +46,10 @@
                 display: inline-flex;
                 align-items: baseline;
             }
+
+            .mat-icon {
+                font-size: 20px;
+            }
         }
 
         .icon-value {
@@ -58,6 +66,11 @@
     table,
     th,
     td {
-        padding: 7px 10px 7px 10px;
+        padding: 0px 10px 7px 0px;
+    }
+
+    .mat-card-footer {
+        height: 4px;
+        margin: 0 !important
     }
 }

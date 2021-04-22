@@ -136,7 +136,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NgxMatMomentModule,
     MatDatepickerModule,
     AngularDraggableModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
   ],
   exports: [
     // Modules

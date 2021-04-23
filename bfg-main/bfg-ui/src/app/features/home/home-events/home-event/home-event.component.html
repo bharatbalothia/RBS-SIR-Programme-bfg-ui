@@ -1,0 +1,14 @@
+<div class="audit-event">
+
+    <div class="event-label" *ngIf="event.actionType !== AUDIT_EVENT_TYPES.TRANSMIT">
+        {{event.actor}} {{event.action}} a {{event.actionType}} action on {{event.eventType ===
+        AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE ?
+        'trusted certificate' : 'entity'}} with name {{event.objectActedOn}} (pending
+        change {{event.eventContext}}) at {{event.created}}.
+    </div>
+
+    <div class="event-label" *ngIf="event.actionType === AUDIT_EVENT_TYPES.TRANSMIT">
+        transmit format message
+    </div>
+
+</div>

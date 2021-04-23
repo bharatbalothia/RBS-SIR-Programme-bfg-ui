@@ -5,6 +5,7 @@
     margin-right: 0 !important;
     padding-right: 0;
     padding-bottom: 10px;
+    padding-top: 10px;
 
     .card-content {
         width: 600px;
@@ -15,6 +16,18 @@
             justify-content: center;
             padding-bottom: 10px;
 
+            .chips-list {
+                width: 100%;
+
+                .mat-chip {
+                    margin: 2px !important;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    padding-right: 8px;
+                    padding-left: 10px;
+                }
+            }
+
             .filter-button,
             .clear-button {
                 height: 35px;
@@ -24,8 +37,9 @@
         }
 
         .scrolling-events {
-            max-height: calc(100vh - 240px);
-            min-height: 221px;
+            max-height: calc(100vh - 290px);
+            min-height: 169px;
+            height: 100%;
             overflow-y: auto;
             margin-bottom: 15px;
         }

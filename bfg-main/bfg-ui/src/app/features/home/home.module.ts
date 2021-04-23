@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HomeSCTTrafficComponent } from './home-sct-traffic/home-sct-traffic.component';
 import { HomeEventsComponent } from './home-events/home-events.component';
 import { HomeAlertsComponent } from './home-alerts/home-alerts.component';
+import { HomeEventComponent } from './home-events/home-event/home-event.component';
 
 
 
@@ -14,6 +15,7 @@ import { HomeAlertsComponent } from './home-alerts/home-alerts.component';
     HomeSCTTrafficComponent,
     HomeEventsComponent,
     HomeAlertsComponent,
+    HomeEventComponent,
   ],
   imports: [
     SharedModule,

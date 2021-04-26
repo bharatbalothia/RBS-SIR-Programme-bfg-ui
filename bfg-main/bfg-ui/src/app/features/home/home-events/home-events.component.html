@@ -5,7 +5,8 @@
                 <mat-form-field class="filter-by-field chips-list"
                     *ngIf="auditEventCriteriaData && auditEventCriteriaData.eventType">
                     <mat-label>Filter by event type</mat-label>
-                    <mat-select name="eventTypes" multiple [(ngModel)]="eventTypes">
+                    <mat-select name="eventTypes" multiple [(ngModel)]="eventTypes"
+                        (selectionChange)="refreshAuditEvents()">
                         <mat-select-trigger>
                             <mat-chip-list>
                                 <mat-chip *ngFor="let eventType of eventTypes" [removable]="true"
@@ -21,7 +22,8 @@
                 </mat-form-field>
                 <mat-form-field class="filter-by-field" *ngIf="auditEventCriteriaData && auditEventCriteriaData.action">
                     <mat-label>Filter by action</mat-label>
-                    <mat-select [(ngModel)]="action" name="action" [disabled]="shouldDisableActionOrActionType()">
+                    <mat-select [(ngModel)]="action" name="action" [disabled]="shouldDisableActionOrActionType()"
+                        (selectionChange)="refreshAuditEvents()">
                         <mat-option *ngFor="let item of auditEventCriteriaData.action" [value]="item">{{item}}
                         </mat-option>
                     </mat-select>
@@ -29,7 +31,7 @@
                 <mat-form-field class="filter-by-field"
                     *ngIf="auditEventCriteriaData && auditEventCriteriaData.actionType">
                     <mat-label>Filter by action type</mat-label>
-                    <mat-select [(ngModel)]="actionType" name="actionType"
+                    <mat-select [(ngModel)]="actionType" name="actionType" (selectionChange)="refreshAuditEvents()"
                         [disabled]="shouldDisableActionOrActionType()">
                         <mat-option *ngFor="let item of auditEventCriteriaData.actionType" [value]="item">{{item}}
                         </mat-option>
@@ -51,7 +53,7 @@
         <div class="scrolling-events" infinite-scroll [scrollWindow]="false" [alwaysCallback]="true"
             (scrolled)="getAuditEvents(getLastAuditEventId())">
             <div *ngFor="let adminEvent of auditEvents">
-                <app-home-event [event]="adminEvent"></app-home-event>
+                <app-home-event [event]="adminEvent" [(isLoading)]="isLoading"></app-home-event>
             </div>
         </div>
     </mat-card-content>

@@ -5,4 +5,10 @@
     margin-right: 5px;
     padding: 10px;
     border: #fafafa solid 1px;
+
+    .action-button {
+        padding: 0;
+        min-width: auto;
+        line-height: 25px;
+    }
 }

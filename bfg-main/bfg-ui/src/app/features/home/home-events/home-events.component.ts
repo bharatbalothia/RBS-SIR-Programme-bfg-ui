@@ -62,11 +62,13 @@ export class HomeEventsComponent implements OnInit {
   getEventCriteriaData = () =>
     this.auditEventService.getEventCriteriaData().pipe(data => this.setLoading(data)).subscribe((data: AuditEventCriteria) => {
       this.auditEventCriteriaData = data;
-      this.eventTypes = [...get(this.auditEventCriteriaData, 'eventType', [])];
+      this.eventTypes = [...this.getEventTypeCriteriaData()];
       this.getAuditEvents();
     },
       () => this.isLoading = false
     )
+
+  getEventTypeCriteriaData = () => get(this.auditEventCriteriaData, 'eventType', []);
 
   getLastAuditEventId = () => this.auditEvents.length > 0 && this.auditEvents[this.auditEvents.length - 1].id;
 
@@ -75,18 +77,23 @@ export class HomeEventsComponent implements OnInit {
     this.username = '';
     this.action = '';
     this.actionType = '';
-    this.eventTypes = [...get(this.auditEventCriteriaData, 'eventType', [])];
+    this.eventTypes = [...this.getEventTypeCriteriaData()];
     this.refreshAuditEvents();
     return false;
   }
 
   isClearActive = () =>
-    this.objectActedOn !== '' || this.username !== '' || this.action !== '' || this.actionType !== '' || this.eventTypes.length !== 0
+    this.objectActedOn !== ''
+    || this.username !== ''
+    || this.action !== ''
+    || this.actionType !== ''
+    || this.eventTypes.length !== this.getEventTypeCriteriaData().length
 
   onEventTypeRemoved = (eventType: string) => {
     const eventTypes = this.eventTypes;
     removeFirst(eventTypes, eventType);
     this.eventTypes = [...eventTypes];
+    this.refreshAuditEvents();
   }
 
   shouldDisableActionOrActionType = () => this.eventTypes.length === 1 && this.eventTypes[0] === 'transmit';

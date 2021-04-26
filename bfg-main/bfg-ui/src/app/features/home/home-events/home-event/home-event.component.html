@@ -1,14 +1,27 @@
 <div class="audit-event">
 
-    <div class="event-label" *ngIf="event.actionType !== AUDIT_EVENT_TYPES.TRANSMIT">
+    <div *ngIf="event.eventType !== AUDIT_EVENT_TYPES.BP">
         {{event.actor}} {{event.action}} a {{event.actionType}} action on {{event.eventType ===
         AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE ?
         'trusted certificate' : 'entity'}} with name {{event.objectActedOn}} (pending
-        change {{event.eventContext}}) at {{event.created}}.
+        change
+        <a mat-button *ngIf="event.eventType === AUDIT_EVENT_TYPES.ENTITY 
+            && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)"
+            class="action-button" (click)="openEntityApprovingDialog(event.eventContext)">
+            {{event.eventContext}}
+        </a>
+        <a mat-button class="action-button" (click)="openTrustedCertificateApprovingDialog(event.eventContext)"
+            *ngIf="event.eventType === AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE 
+            && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
+            {{event.eventContext}}
+        </a>
+        {{(event.action !== AUDIT_EVENT_ACTIONS.REQUESTED && event.action !== AUDIT_EVENT_ACTIONS.REQUEST_EDITED) ?
+        event.eventContext : ''}}) at {{event.created}}.
     </div>
 
-    <div class="event-label" *ngIf="event.actionType === AUDIT_EVENT_TYPES.TRANSMIT">
-        transmit format message
+    <div class="event-label" *ngIf="event.eventType === AUDIT_EVENT_TYPES.BP">
+        {{event.actor}} {{event.action}} a {{event.actionType}} on {{event.eventType}} with name {{event.eventContext}}
+        ({{event.created}}).
     </div>
 
 </div>

@@ -34,7 +34,7 @@ public class AuditEventController {
     }
 
     @GetMapping("event-criteria-data")
-    public ResponseEntity<Map<String, List<Object>>> getEventCriteriaData() {
+    public ResponseEntity<Map<String, Object>> getEventCriteriaData() {
         return ok(propertyService.getEventCriteriaData());
     }
 

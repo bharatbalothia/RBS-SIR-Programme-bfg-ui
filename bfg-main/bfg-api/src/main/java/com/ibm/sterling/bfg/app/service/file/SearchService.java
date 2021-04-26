@@ -288,4 +288,13 @@ public class SearchService {
         return Optional.ofNullable(getListFromSBI(new FileSearchCriteria(), fileSearchUrl, File.class));
     }
 
+    public Integer getWfIdByWfcId(String wfcId) throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                workflowStepsUrl + wfcId,
+                HttpMethod.GET,
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                String.class);
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        return objectMapper.convertValue(root.get("workFlowId"), Integer.class);
+    }
 }

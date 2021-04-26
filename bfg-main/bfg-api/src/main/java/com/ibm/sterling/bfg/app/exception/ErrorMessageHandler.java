@@ -10,8 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@PropertySource({"classpath:response.properties", "classpath:entityresponse.properties", "classpath:authresponse.properties",
-        "classpath:certificateresponse.properties", "classpath:fileresponse.properties"})
+@PropertySource({"classpath:response.properties", "classpath:entityresponse.properties",
+        "classpath:authresponse.properties", "classpath:certificateresponse.properties",
+        "classpath:fileresponse.properties", "classpath:eventresponse.properties"})
 public class ErrorMessageHandler {
 
     @Autowired

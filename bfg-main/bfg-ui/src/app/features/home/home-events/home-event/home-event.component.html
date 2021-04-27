@@ -5,22 +5,33 @@
         AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE ?
         'trusted certificate' : 'entity'}} with name {{event.objectActedOn}} (pending
         change
-        <a mat-button *ngIf="event.eventType === AUDIT_EVENT_TYPES.ENTITY 
-            && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)"
-            class="action-button" (click)="openEntityApprovingDialog(event.eventContext)">
-            {{event.eventContext}}
-        </a>
-        <a mat-button class="action-button" (click)="openTrustedCertificateApprovingDialog(event.eventContext)"
-            *ngIf="event.eventType === AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE 
-            && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
-            {{event.eventContext}}
-        </a>
+        <div class="event-context" *ngIf="event.eventType === AUDIT_EVENT_TYPES.ENTITY 
+        && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
+            <a mat-button *ngIf="hasPermission(ENTITY_PERMISSIONS.VIEW)" class="action-button"
+                (click)="openEntityApprovingDialog(event.eventContext)">
+                {{event.eventContext}}
+            </a>
+            {{!hasPermission(ENTITY_PERMISSIONS.VIEW) ? event.eventContext : ''}}
+        </div>
+
+        <div class="event-context" *ngIf="event.eventType === AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE 
+        && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
+            <a mat-button *ngIf="hasPermission(TRUSTED_CERTIFICATE_PERMISSIONS.VIEW)" class="action-button"
+                (click)="openTrustedCertificateApprovingDialog(event.eventContext)">
+                {{event.eventContext}}
+            </a>
+            {{!hasPermission(TRUSTED_CERTIFICATE_PERMISSIONS.VIEW) ? event.eventContext : ''}}
+        </div>
+
         {{(event.action !== AUDIT_EVENT_ACTIONS.REQUESTED && event.action !== AUDIT_EVENT_ACTIONS.REQUEST_EDITED) ?
         event.eventContext : ''}}) at {{event.created}}.
     </div>
 
     <div class="event-label" *ngIf="event.eventType === AUDIT_EVENT_TYPES.BP">
-        {{event.actor}} {{event.action}} a {{event.actionType}} on {{event.eventType}} with name {{event.eventContext}}
+        {{event.actor}} {{event.action}} a {{event.actionType}} on {{event.eventType}} with name
+        <a mat-button class="action-button" (click)="openBusinessProcessDialog(event)">
+            {{event.eventContext}}
+        </a>
         ({{event.created}}).
     </div>
 

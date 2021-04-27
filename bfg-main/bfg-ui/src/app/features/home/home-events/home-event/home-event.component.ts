@@ -10,9 +10,16 @@ import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/de
 import { AuditEvent } from 'src/app/shared/models/audit-event/audit-event.model';
 import { AUDIT_EVENT_TYPES, AUDIT_EVENT_ACTIONS } from 'src/app/shared/models/audit-event/audit-events-constants';
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
+import { TRUSTED_CERTIFICATE_PERMISSIONS } from 'src/app/shared/models/trustedCertificate/trusted-certificate-constants';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
+import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
+import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { BusinessProcessService } from 'src/app/shared/models/business-process/business-process.service';
+import { WorkFlow } from 'src/app/shared/models/business-process/workflow.model';
 
 @Component({
   selector: 'app-home-event',
@@ -23,6 +30,8 @@ export class HomeEventComponent implements OnInit {
 
   AUDIT_EVENT_TYPES = AUDIT_EVENT_TYPES;
   AUDIT_EVENT_ACTIONS = AUDIT_EVENT_ACTIONS;
+  TRUSTED_CERTIFICATE_PERMISSIONS = TRUSTED_CERTIFICATE_PERMISSIONS;
+  ENTITY_PERMISSIONS = ENTITY_PERMISSIONS;
 
   @Input() event: AuditEvent;
   @Input() isLoading = false;
@@ -35,6 +44,7 @@ export class HomeEventComponent implements OnInit {
     private trustedCertificateService: TrustedCertificateService,
     private dialog: MatDialog,
     private notificationService: NotificationService,
+    private businessProcessService: BusinessProcessService,
   ) { }
 
   ngOnInit(): void {
@@ -174,4 +184,33 @@ export class HomeEventComponent implements OnInit {
         });
       }).finally(() => this.isLoadingChange.emit(false));
   }
+
+  hasPermission = (permission) => this.authService.isEnoughPermissions([permission]);
+
+  openBusinessProcessDialog = (event: AuditEvent) => {
+    this.isLoadingChange.emit(true);
+    this.businessProcessService.getWorkflowId(this.getWfcId(event.objectActedOn)).subscribe((data: WorkFlow) => {
+      this.isLoadingChange.emit(false);
+      this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
+        title: `Business Process Detail`,
+        getTabs: () => [],
+        displayName: getBusinessProcessDisplayName,
+        actionData: {
+          id: data.workFlowId,
+          bpHeader: {
+            bpName: event.eventContext,
+            bpRef: `${event.eventContext}/${data.wfdVersion}`,
+          },
+          actions: {
+          }
+        },
+      }));
+    }, () => this.isLoadingChange.emit(false));
+  }
+
+  getWfcId = (objectActedOn: string) => {
+    const splittedParams = objectActedOn.split('/');
+    return splittedParams[splittedParams.length - 1];
+  }
+
 }

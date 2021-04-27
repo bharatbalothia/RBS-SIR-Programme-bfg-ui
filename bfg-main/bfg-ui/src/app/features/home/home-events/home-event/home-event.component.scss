@@ -6,6 +6,10 @@
     padding: 10px;
     border: #fafafa solid 1px;
 
+    .event-context {
+        display: inline-block;
+    }
+
     .action-button {
         padding: 0;
         min-width: auto;

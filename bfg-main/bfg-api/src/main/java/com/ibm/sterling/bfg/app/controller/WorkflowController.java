@@ -40,9 +40,9 @@ public class WorkflowController {
     }
 
     @GetMapping("wfcId/{wfcId}")
-    public ResponseEntity<Integer> getWfId(@PathVariable String wfcId)
+    public ResponseEntity<Map<String, Integer>> getWfIdAndVersion(@PathVariable String wfcId)
             throws JsonProcessingException {
-        return ok(searchService.getWfIdByWfcId(wfcId));
+        return ok(searchService.getWfIdAndVersionByWfcId(wfcId));
     }
 
     @GetMapping("document-content")

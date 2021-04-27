@@ -1,4 +1,4 @@
-<mat-card class="home-events-card">
+<mat-card class="home-events-card" *ngIf="!shouldHideEvents">
     <mat-card-content class="card-content">
         <div>
             <form (ngSubmit)="refreshAuditEvents()" class="events-filters">

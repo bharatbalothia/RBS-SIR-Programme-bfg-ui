@@ -25,6 +25,8 @@ export class HomeEventsComponent implements OnInit {
   actionType = '';
   eventTypes = [];
 
+  shouldHideEvents: boolean;
+
   constructor(
     private auditEventService: AuditEventService
   ) { }
@@ -65,7 +67,10 @@ export class HomeEventsComponent implements OnInit {
       this.eventTypes = [...this.getEventTypeCriteriaData()];
       this.getAuditEvents();
     },
-      () => this.isLoading = false
+      () => {
+        this.isLoading = false;
+        this.shouldHideEvents = true;
+      }
     )
 
   getEventTypeCriteriaData = () => get(this.auditEventCriteriaData, 'eventType', []);

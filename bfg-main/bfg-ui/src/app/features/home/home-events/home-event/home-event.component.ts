@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { getEntityDisplayName, getPendingChangesTabs } from 'src/app/features/setup/entities/entity-display-names';
+import { getEntityDetailsTabs, getEntityDisplayName, getPendingChangesTabs } from 'src/app/features/setup/entities/entity-display-names';
 import { getTrustedCertificateDisplayHeader, getTrustedCertificatePendingChangesTabs } from 'src/app/features/setup/trusted-certificates/trusted-certificate-display-names';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
@@ -20,6 +20,8 @@ import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessService } from 'src/app/shared/models/business-process/business-process.service';
 import { WorkFlow } from 'src/app/shared/models/business-process/workflow.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
 
 @Component({
   selector: 'app-home-event',
@@ -111,6 +113,15 @@ export class HomeEventComponent implements OnInit {
       });
   }
 
+  openEntityDetailsDialog = (event: AuditEvent) => {
+    this.entityService.getEntityById(this.getObjectActedOnParams(event.objectActedOn, true)).subscribe((data: Entity) =>
+      this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${data.service}: ${data.entity}`,
+        data,
+        getTabs: getEntityDetailsTabs,
+        displayName: getEntityDisplayName
+      })));
+  }
 
   openTrustedCertificateApprovingDialog(changeID: string) {
     const getValidatedChangeControl = () => this.getChangeControlDetails(changeID)
@@ -189,7 +200,7 @@ export class HomeEventComponent implements OnInit {
 
   openBusinessProcessDialog = (event: AuditEvent) => {
     this.isLoadingChange.emit(true);
-    this.businessProcessService.getWorkflowId(this.getWfcId(event.objectActedOn)).subscribe((data: WorkFlow) => {
+    this.businessProcessService.getWorkflowId(this.getObjectActedOnParams(event.objectActedOn)).subscribe((data: WorkFlow) => {
       this.isLoadingChange.emit(false);
       this.dialog.open(BusinessProcessDialogComponent, new BusinessProcessDialogConfig({
         title: `Business Process Detail`,
@@ -208,9 +219,9 @@ export class HomeEventComponent implements OnInit {
     }, () => this.isLoadingChange.emit(false));
   }
 
-  getWfcId = (objectActedOn: string) => {
+  getObjectActedOnParams = (objectActedOn: string, shouldFirst?: boolean) => {
     const splittedParams = objectActedOn.split('/');
-    return splittedParams[splittedParams.length - 1];
+    return shouldFirst ? splittedParams[0] : splittedParams[splittedParams.length - 1];
   }
 
 }

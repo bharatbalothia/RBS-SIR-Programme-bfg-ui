@@ -1,14 +1,20 @@
 .home-content {
     display: flex;
-    flex-wrap: wrap;
     overflow: hidden;
+    padding-bottom: 2px;
 
     .home-statistics {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        max-height: 384px;
     }
 
-    @media (max-width: 1380px) {
+}
+
+@media (max-width: 1380px) {
+
+    .home-content {
+        flex-wrap: wrap;
 
         .home-statistics {
             flex-direction: unset;
@@ -20,5 +26,4 @@
             order: 2;
         }
     }
-
 }

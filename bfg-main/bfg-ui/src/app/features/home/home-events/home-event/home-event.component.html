@@ -28,7 +28,13 @@
     </div>
 
     <div class="event-label" *ngIf="event.eventType === AUDIT_EVENT_TYPES.BP">
-        {{event.actor}} {{event.action}} a {{event.actionType}} on {{event.eventType}} with name
+        {{event.actor}} {{event.action}} {{event.actionType}} for entity with id
+        <a mat-button *ngIf="hasPermission(ENTITY_PERMISSIONS.VIEW)" class="action-button"
+            (click)="openEntityDetailsDialog(event)">
+            {{getObjectActedOnParams(event.objectActedOn, true)}}
+        </a>
+        {{!hasPermission(ENTITY_PERMISSIONS.VIEW) ? getObjectActedOnParams(event.objectActedOn, true) : ''}}
+        on {{event.eventType |uppercase}}
         <a mat-button class="action-button" (click)="openBusinessProcessDialog(event)">
             {{event.eventContext}}
         </a>

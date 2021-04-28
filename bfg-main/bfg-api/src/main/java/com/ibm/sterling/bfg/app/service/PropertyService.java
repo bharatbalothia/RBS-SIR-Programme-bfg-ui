@@ -237,7 +237,7 @@ public class PropertyService {
         return eventCriteriaData;
     }
 
-    private List<EventType> getEventTypesForUser() {
+    public List<EventType> getEventTypesForUser() {
         List<String> listOfPermissions =
                 SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)

@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.event.AuditEvent;
 import com.ibm.sterling.bfg.app.model.event.AuditEventCriteria;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AdminAuditService {
@@ -45,6 +47,9 @@ public class AdminAuditService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private PropertyService propertyService;
+
     public void fireAdminAuditEvent(AdminAuditEventRequest adminAuditEventRequest) {
         try {
             new RestTemplate().postForObject(
@@ -58,6 +63,9 @@ public class AdminAuditService {
     }
 
     public List<AuditEvent> getAuditEvents(AuditEventCriteria auditEventCriteria) {
+        if (auditEventCriteria.getEventType() == null) {
+            auditEventCriteria.setEventType(propertyService.getEventTypesForUser());
+        }
         MultiValueMap<String, String> auditCriteriaMultiValueMap = new LinkedMultiValueMap<>();
         objectMapper.convertValue(auditEventCriteria, new TypeReference<Map<String, String>>() {
         }).forEach(auditCriteriaMultiValueMap::add);

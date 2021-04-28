@@ -224,12 +224,13 @@ export class EntityPendingComponent implements OnInit {
   getCurrentRoute = () => this.router.url;
 
   clearParams = () => {
-    if (this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== '') {
-      this.entityNameSearchingValue = '';
-      this.serviceSearchingValue = '';
-      this.DNSearchingValue = '';
-      this.getPendingChanges(0, this.pageSize);
-    }
+    this.entityNameSearchingValue = '';
+    this.serviceSearchingValue = '';
+    this.DNSearchingValue = '';
+    this.getPendingChanges(0, this.pageSize);
     return false;
   }
+
+  isClearActive = () =>
+    this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== ''
 }

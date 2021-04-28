@@ -277,11 +277,12 @@ export class TrustedCertificatePendingComponent implements OnInit {
   }
 
   clearParams = () => {
-    if (this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== '') {
-      this.certificateNameSearchingValue = '';
-      this.thumbprintSearchingValue = '';
-      this.getPendingChanges(0, this.pageSize);
-    }
+    this.certificateNameSearchingValue = '';
+    this.thumbprintSearchingValue = '';
+    this.getPendingChanges(0, this.pageSize);
     return false;
   }
+
+  isClearActive = () =>
+    this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== ''
 }

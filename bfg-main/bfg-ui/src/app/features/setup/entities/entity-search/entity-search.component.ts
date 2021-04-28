@@ -271,12 +271,13 @@ export class EntitySearchComponent implements OnInit {
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
 
   clearParams = () => {
-    if (this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== '') {
-      this.entityNameSearchingValue = '';
-      this.serviceSearchingValue = '';
-      this.DNSearchingValue = '';
-      this.getEntityList(0, this.pageSize);
-    }
+    this.entityNameSearchingValue = '';
+    this.serviceSearchingValue = '';
+    this.DNSearchingValue = '';
+    this.getEntityList(0, this.pageSize);
     return false;
   }
+
+  isClearActive = () =>
+    this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== ''
 }

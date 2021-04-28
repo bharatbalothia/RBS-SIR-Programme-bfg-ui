@@ -5,7 +5,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog
 import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { removeNullOrUndefined } from 'src/app/shared/utils/utils';
+import { removeFirst, removeNullOrUndefined } from 'src/app/shared/utils/utils';
 import { ErrorMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
 import { get, isEmpty } from 'lodash';
 import { ENTITY_DISPLAY_NAMES } from '../entity-display-names';
@@ -539,15 +539,8 @@ export class EntityCreateComponent implements OnInit {
 
   onInboundRequestTypeRemoved(inboundRequestType: string) {
     const inboundRequestTypeList = this.entityPageFormGroup.get('inboundRequestType').value as string[];
-    this.removeFirst(inboundRequestTypeList, inboundRequestType);
-    this.entityPageFormGroup.get('inboundRequestType').setValue(inboundRequestTypeList);
-  }
-
-  private removeFirst<T>(array: T[], toRemove: T): void {
-    const index = array.indexOf(toRemove);
-    if (index !== -1) {
-      array.splice(index, 1);
-    }
+    removeFirst(inboundRequestTypeList, inboundRequestType);
+    this.entityPageFormGroup.get('inboundRequestType').setValue([...inboundRequestTypeList]);
   }
 
   onRouteInboundChanging = (value: boolean) => {

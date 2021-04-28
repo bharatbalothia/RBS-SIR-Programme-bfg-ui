@@ -1,4 +1,4 @@
-<h3 *ngIf="transactions && transactions.totalElements">
+<h3 class="total-items" *ngIf="transactions && transactions.totalElements">
     {{getSearchingTableHeader(transactions.totalElements, transactions.pageable.pageSize,
     transactions.pageable.pageNumber + 1)}}
 </h3>

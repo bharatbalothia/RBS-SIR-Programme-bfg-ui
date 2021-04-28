@@ -1,40 +1,29 @@
-.home-card {
-  table {
-    border-collapse: collapse;
-    font-size: 20px;
+.home-content {
+    display: flex;
+    overflow: hidden;
+    padding-bottom: 2px;
 
-    .table-header {
-      font-weight: bold;
-      text-align: center;
+    .home-statistics {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 384px;
     }
 
-    .left-table-header {
-      text-align: right;
+}
+
+@media (max-width: 1380px) {
+
+    .home-content {
+        flex-wrap: wrap;
+
+        .home-statistics {
+            flex-direction: unset;
+            flex-wrap: wrap;
+            order: 1;
+        }
+
+        .home-events {
+            order: 2;
+        }
     }
-
-    .sct-link {
-      text-align: center;
-
-      .traffic-details {
-        display: inline-flex;
-        align-items: baseline;
-      }
-    }
-
-    .icon-value {
-      display: flex;
-      align-items: center;
-
-      .value {
-        display: inline-block;
-        margin-left: 5px;
-      }
-    }
-  }
-
-  table,
-  th,
-  td {
-    padding: 10px;
-  }
 }

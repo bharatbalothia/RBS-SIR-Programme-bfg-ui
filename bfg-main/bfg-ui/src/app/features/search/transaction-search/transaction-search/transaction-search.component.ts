@@ -49,7 +49,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   isLoading = false;
 
   defaultSelectedData: { pFrom: moment.Moment, pTo: moment.Moment, from: moment.Moment, to: moment.Moment } = {
-    pFrom: moment().startOf('day'),
+    pFrom: null,
     pTo: null,
     from: moment().startOf('day'),
     to: null
@@ -319,13 +319,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
     return toolTip.length > 0 ? toolTip : this.getTransactionSearchDisplayName(field);
   }
 
-  handleDate(event: any, field: string) {
-    const date: moment.Moment = event.value;
-
-    if (date) {
-      this[field] = date;
-    }
-  }
+  handleDate = (event: any, field: string) => this[field] = event.value;
 
   isValidEntity(): boolean {
     const entity = this.searchingParametersFormGroup.controls.entity.value;

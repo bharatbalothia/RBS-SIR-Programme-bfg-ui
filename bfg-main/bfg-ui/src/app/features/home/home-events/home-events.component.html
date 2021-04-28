@@ -6,7 +6,7 @@
                     *ngIf="auditEventCriteriaData && auditEventCriteriaData.eventType">
                     <mat-label>Filter by event type</mat-label>
                     <mat-select name="eventTypes" multiple [(ngModel)]="eventTypes"
-                        (selectionChange)="refreshAuditEvents()">
+                        (selectionChange)="onEventTypeSelection();refreshAuditEvents()">
                         <mat-select-trigger>
                             <mat-chip-list>
                                 <mat-chip *ngFor="let eventType of eventTypes" [removable]="true"

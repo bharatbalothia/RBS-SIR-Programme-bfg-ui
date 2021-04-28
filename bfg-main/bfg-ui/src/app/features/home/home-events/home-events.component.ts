@@ -97,8 +97,14 @@ export class HomeEventsComponent implements OnInit {
   onEventTypeRemoved = (eventType: string) => {
     const eventTypes = this.eventTypes;
     removeFirst(eventTypes, eventType);
-    this.eventTypes = [...eventTypes];
+    this.eventTypes = eventTypes.length ? [...eventTypes] : [...this.getEventTypeCriteriaData()];
     this.refreshAuditEvents();
+  }
+
+  onEventTypeSelection = () => {
+    if (!this.eventTypes.length) {
+      this.eventTypes = [...this.getEventTypeCriteriaData()];
+    }
   }
 
   shouldDisableActionOrActionType = () => this.eventTypes.length === 1 && this.eventTypes[0] === 'transmit';

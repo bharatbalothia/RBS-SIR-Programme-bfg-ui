@@ -1,7 +1,7 @@
 <div class="audit-event">
 
     <div *ngIf="event.eventType !== AUDIT_EVENT_TYPES.BP">
-        {{event.actor}} {{event.action}} a {{event.actionType}} action on {{event.eventType ===
+        {{event.actor}} {{event.action}} {{event.actionType}} action on {{event.eventType ===
         AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE ?
         'trusted certificate' : 'entity'}} with name {{event.objectActedOn}} (pending
         change

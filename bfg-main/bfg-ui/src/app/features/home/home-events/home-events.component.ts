@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { get } from 'lodash';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
 import { AuditEventCriteria } from 'src/app/shared/models/audit-event/audit-event-criteria.model';
 import { AuditEvent } from 'src/app/shared/models/audit-event/audit-event.model';
 import { AuditEventService } from 'src/app/shared/models/audit-event/audit-event.service';
@@ -28,7 +29,8 @@ export class HomeEventsComponent implements OnInit {
   shouldHideEvents: boolean;
 
   constructor(
-    private auditEventService: AuditEventService
+    private auditEventService: AuditEventService,
+    private toolTip: TooltipService,
   ) { }
 
   ngOnInit(): void {
@@ -108,4 +110,14 @@ export class HomeEventsComponent implements OnInit {
   }
 
   shouldDisableActionOrActionType = () => this.eventTypes.length === 1 && this.eventTypes[0] === 'transmit';
+
+  getTooltip(step: string, field: string): string {
+    const toolTip = this.toolTip.getTooltip({
+      type: 'home',
+      qualifier: step,
+      mode: 'search',
+      fieldName: field
+    });
+    return toolTip.length > 0 ? toolTip : field;
+  }
 }

@@ -7,15 +7,23 @@
     padding-right: 0;
     padding-bottom: 10px;
     padding-top: 10px;
+    overflow: visible !important;
 
     .card-content {
-        width: 600px;
+        width: 585px;
+        overflow: visible !important;
 
         .events-filters {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             padding-bottom: 10px;
+
+            .tooltip {
+                display: flex;
+                align-items: center;
+                margin-left: -10px;
+            }
 
             .chips-list {
                 width: 100%;
@@ -35,6 +43,14 @@
                 align-self: center;
                 margin-left: 10px;
             }
+
+            .filter-button {
+                margin-left: auto;
+            }
+
+            .clear-button {
+                margin-right: 15px;
+            }
         }
 
         .scrolling-events {
@@ -43,6 +59,13 @@
             height: 100%;
             overflow-y: auto;
             margin-bottom: 15px;
+        }
+
+        @media screen and (-ms-high-contrast: active),
+        (-ms-high-contrast: none) {
+            .scrolling-events {
+                max-height: calc(100vh - 303px);
+            }
         }
     }
 

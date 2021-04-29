@@ -174,4 +174,5 @@ export const TOOLTIP_CONTENT: TooltipContent = {
     'sct-search.search.settlement-to.search': 'Select to find transaction settled up to a particular date/time',
     'sct-search.search.ptimestamp-from.search': 'Select to find transaction with timestamp after a particular date/time',
     'sct-search.search.ptimestamp-to.search': 'Select to find transaction with timestamp to a particular date/time',
+    'home.audit-events.object-acted-on.search': 'Wildcard matched, case insensitive of the target of the event, e.g. the entity name, trusted certificate name, entity id.'
 };

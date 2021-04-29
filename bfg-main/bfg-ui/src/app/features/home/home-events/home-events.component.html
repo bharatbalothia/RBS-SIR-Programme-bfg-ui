@@ -45,7 +45,10 @@
                     <mat-label>Filter by Object Acted On</mat-label>
                     <input matInput [(ngModel)]="objectActedOn" name="objectActedOn">
                 </mat-form-field>
-                <button class="filter-button" color="primary" type="submit" mat-raised-button>Filter</button>
+                <app-tooltip class="tooltip" [tip]="getTooltip('audit-events', 'object-acted-on')"></app-tooltip>
+                <button class="filter-button" color="primary" type="submit" mat-raised-button>
+                    <mat-icon>refresh</mat-icon>
+                </button>
                 <button color="warn" class="clear-button" mat-raised-button (click)="clearParams()"
                     [disabled]="!isClearActive()">Clear</button>
             </form>

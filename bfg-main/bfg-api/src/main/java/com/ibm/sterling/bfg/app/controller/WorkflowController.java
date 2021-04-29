@@ -39,6 +39,12 @@ public class WorkflowController {
         return ok(searchService.getBPHeader(wfdVersion, wfdID));
     }
 
+    @GetMapping("wfcId/{wfcId}")
+    public ResponseEntity<Map<String, Integer>> getWfIdAndVersion(@PathVariable String wfcId)
+            throws JsonProcessingException {
+        return ok(searchService.getWfIdAndVersionByWfcId(wfcId));
+    }
+
     @GetMapping("document-content")
     public ResponseEntity<Document> getDocumentContent(@RequestParam(value = "id") String documentId)
             throws JsonProcessingException {

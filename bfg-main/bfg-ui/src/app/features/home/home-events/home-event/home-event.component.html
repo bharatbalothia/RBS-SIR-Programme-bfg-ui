@@ -1,0 +1,44 @@
+<div class="audit-event">
+
+    <div *ngIf="event.eventType !== AUDIT_EVENT_TYPES.BP">
+        {{event.actor}} {{event.action}} {{event.actionType}} action on {{event.eventType ===
+        AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE ?
+        'trusted certificate' : 'entity'}} with name {{event.objectActedOn}} (pending
+        change
+        <div class="event-context" *ngIf="event.eventType === AUDIT_EVENT_TYPES.ENTITY 
+        && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
+            <a mat-button *ngIf="hasPermission(ENTITY_PERMISSIONS.VIEW)" class="action-button"
+                (click)="openEntityApprovingDialog(event.eventContext)">
+                {{event.eventContext}}
+            </a>
+            {{!hasPermission(ENTITY_PERMISSIONS.VIEW) ? event.eventContext : ''}}
+        </div>
+
+        <div class="event-context" *ngIf="event.eventType === AUDIT_EVENT_TYPES.TRUSTED_CERTIFICATE 
+        && (event.action === AUDIT_EVENT_ACTIONS.REQUESTED || event.action === AUDIT_EVENT_ACTIONS.REQUEST_EDITED)">
+            <a mat-button *ngIf="hasPermission(TRUSTED_CERTIFICATE_PERMISSIONS.VIEW)" class="action-button"
+                (click)="openTrustedCertificateApprovingDialog(event.eventContext)">
+                {{event.eventContext}}
+            </a>
+            {{!hasPermission(TRUSTED_CERTIFICATE_PERMISSIONS.VIEW) ? event.eventContext : ''}}
+        </div>
+
+        {{(event.action !== AUDIT_EVENT_ACTIONS.REQUESTED && event.action !== AUDIT_EVENT_ACTIONS.REQUEST_EDITED) ?
+        event.eventContext : ''}}) at {{event.created}}.
+    </div>
+
+    <div class="event-label" *ngIf="event.eventType === AUDIT_EVENT_TYPES.BP">
+        {{event.actor}} {{event.action}} {{event.actionType}} for entity with id
+        <a mat-button *ngIf="hasPermission(ENTITY_PERMISSIONS.VIEW)" class="action-button"
+            (click)="openEntityDetailsDialog(event)">
+            {{getObjectActedOnParams(event.objectActedOn, true)}}
+        </a>
+        {{!hasPermission(ENTITY_PERMISSIONS.VIEW) ? getObjectActedOnParams(event.objectActedOn, true) : ''}}
+        on {{event.eventType |uppercase}}
+        <a mat-button class="action-button" (click)="openBusinessProcessDialog(event)">
+            {{event.eventContext}}
+        </a>
+        ({{event.created}}).
+    </div>
+
+</div>

@@ -58,6 +58,7 @@ import { PasswordConfirmationDialogComponent } from './components/password-confi
 import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete-enforce-selection/autocomplete-enforce-selection.directive';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { AutorefreshDataComponent } from './components/autorefresh-data/autorefresh-data.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -134,7 +135,8 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
     MatDatepickerModule,
-    AngularDraggableModule
+    AngularDraggableModule,
+    InfiniteScrollModule,
   ],
   exports: [
     // Modules
@@ -172,6 +174,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     NgxMatMomentModule,
     MatDatepickerModule,
     AngularDraggableModule,
+    InfiniteScrollModule,
 
     // Components
     ConfirmDialogComponent,

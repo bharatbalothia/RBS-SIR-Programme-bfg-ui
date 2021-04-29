@@ -311,3 +311,11 @@ mat-form-field {
     position: absolute !important;
     bottom: 5px;
 }
+
+.filter-by-field {
+    margin-right: 15px;
+
+    .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+    }
+}

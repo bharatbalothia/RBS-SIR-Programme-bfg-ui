@@ -248,12 +248,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     return toolTip.length > 0 ? toolTip : this.getFileSearchDisplayName(field);
   }
 
-  handleDate(event, field: string) {
-    const date: moment.Moment = event.value;
-    if (date) {
-      this[field] = date;
-    }
-  }
+  handleDate = (event: any, field: string) => this[field] = event.value;
 
   onNext = (shouldDisableNext?: boolean) => {
     if (this.isValidEntity()) {

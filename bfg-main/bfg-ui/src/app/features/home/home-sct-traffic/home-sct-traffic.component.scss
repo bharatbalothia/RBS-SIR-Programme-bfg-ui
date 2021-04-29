@@ -1,0 +1,76 @@
+.home-sct-traffic-card {
+
+    position: static !important;
+    max-width: calc(100vw - 60px);
+    margin-right: 0 !important;
+    padding-bottom: 10px;
+    margin-bottom: 0 !important;
+
+    .card-content {
+        min-width: 455px;
+        margin-bottom: 0px;
+        height: 147px;
+    }
+
+    .refresh-button {
+        float: right;
+
+        .action-icon {
+            display: flex;
+
+            .mat-icon {
+                font-size: 27px;
+                width: 27px;
+                height: 27px;
+            }
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 16px;
+
+        .table-header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .left-table-header {
+            text-align: right;
+        }
+
+        .sct-link {
+            text-align: center;
+
+            .traffic-details {
+                display: inline-flex;
+                align-items: baseline;
+            }
+
+            .mat-icon {
+                font-size: 20px;
+            }
+        }
+
+        .icon-value {
+            display: flex;
+            align-items: center;
+
+            .value {
+                display: inline-block;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    table,
+    th,
+    td {
+        padding: 0px 10px 7px 0px;
+    }
+
+    .mat-card-footer {
+        height: 4px;
+        margin: 0 !important
+    }
+}

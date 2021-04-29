@@ -3,15 +3,23 @@ package com.ibm.sterling.bfg.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.sterling.bfg.app.exception.audit.InvalidUserForEventLogAccessException;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
+import com.ibm.sterling.bfg.app.model.event.Action;
+import com.ibm.sterling.bfg.app.model.event.ActionType;
+import com.ibm.sterling.bfg.app.model.event.EventType;
+import com.ibm.sterling.bfg.app.model.event.EventTypePermission;
 import com.ibm.sterling.bfg.app.model.file.ErrorDetail;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
-import com.ibm.sterling.bfg.app.utils.Decoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -219,6 +227,32 @@ public class PropertyService {
                 .orElse(null);
         return getPropertyList(url + "?_where=" +
                 Optional.ofNullable(multipleQuery).orElseGet(() -> queryStringToGetDataByPartialKey.apply(null)));
+    }
+
+    public Map<String, Object> getEventCriteriaData() {
+        Map<String, Object> eventCriteriaData = new HashMap<>();
+        eventCriteriaData.put("eventType", getEventTypesForUser());
+        eventCriteriaData.put("action", Arrays.asList(Action.values()));
+        eventCriteriaData.put("actionType", Arrays.asList(ActionType.values()));
+        return eventCriteriaData;
+    }
+
+    public List<EventType> getEventTypesForUser() {
+        List<String> listOfPermissions =
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList());
+        List<EventType> eventTypes = Stream.of(EventTypePermission.values())
+                .map(EventTypePermission::getNeededPermission)
+                .filter(
+                        eventPermission ->
+                                listOfPermissions.stream().anyMatch(s -> s.contains(eventPermission)))
+                .map(EventTypePermission::convertNeededPermissionToEventType)
+                .collect(Collectors.toList());
+        if (eventTypes.isEmpty()) {
+            throw new InvalidUserForEventLogAccessException();
+        }
+        return eventTypes;
     }
 
     public Map<String, List<Object>> getTransactionCriteriaData(String direction) throws JsonProcessingException {

@@ -66,6 +66,7 @@ export class BusinessProcessDialogComponent implements OnInit {
 
     this.id = get(this.data, 'actionData.id');
     this.actions = this.actions = get(this.data, 'actionData.actions');
+    this.bpHeader = get(this.data, 'actionData.bpHeader');
   }
 
   ngOnInit() {
@@ -83,10 +84,18 @@ export class BusinessProcessDialogComponent implements OnInit {
         this.workflowSteps = data;
         this.updateTable();
 
-        if (!(this.wfdId && this.wfdVersion) && data.content.length > 0) {
+        if (!this.bpHeader && !(this.wfdId && this.wfdVersion) && data.content.length > 0) {
           this.wfdId = data.content[0].wfdId;
           this.wfdVersion = data.content[0].wfdVersion;
           this.getBPHeader(this.wfdId, this.wfdVersion);
+        }
+
+        if (!this.workflowSteps.fullTracking) {
+          this.notificationService.showWarningMessage({
+            warnings: [{ warning: ERROR_MESSAGES.fullTrackingSteps }],
+            code: null,
+            message: null
+          });
         }
 
       },
@@ -102,14 +111,6 @@ export class BusinessProcessDialogComponent implements OnInit {
       .subscribe((data: BusinessProcessHeader) => {
         this.isBPHeaderLoading = false;
         this.bpHeader = data;
-
-        if (!this.workflowSteps.fullTracking) {
-          this.notificationService.showWarningMessage({
-            warnings: [{ warning: ERROR_MESSAGES.fullTrackingSteps }],
-            code: null,
-            message: null
-          });
-        }
       },
         error => this.isBPHeaderLoading = false
       );

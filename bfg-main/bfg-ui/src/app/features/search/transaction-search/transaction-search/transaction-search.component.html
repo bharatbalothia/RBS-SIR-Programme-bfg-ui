@@ -137,15 +137,15 @@
                             (monthSelected)="setCalendarDblClick(pFromPicker)">
                         </ngx-mat-datetime-picker>
                         <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+                            *ngIf="searchingParametersFormGroup.controls['pFrom'].errors?.matDatetimePickerMax">
                             {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
                         </mat-error>
                         <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+                            *ngIf="searchingParametersFormGroup.controls['pFrom'].errors?.matDatetimePickerParse">
                             {{getSearchValidationMessage('incorrect')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'settlement-from')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('search', 'ptimestamp-from')"></app-tooltip>
                 </section>
                 <section class="form-field-section">
                     <mat-form-field>
@@ -158,15 +158,15 @@
                             (monthSelected)="setCalendarDblClick(pToPicker)">
                         </ngx-mat-datetime-picker>
                         <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+                            *ngIf="searchingParametersFormGroup.controls['pTo'].errors?.matDatetimePickerMin">
                             {{getSearchValidationMessage('maxDateLessThanMinDate')}}
                         </mat-error>
                         <mat-error class="error-message"
-                            *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+                            *ngIf="searchingParametersFormGroup.controls['pTo'].errors?.matDatetimePickerParse">
                             {{getSearchValidationMessage('incorrect')}}
                         </mat-error>
                     </mat-form-field>
-                    <app-tooltip [tip]="getTooltip('search', 'settlement-to')"></app-tooltip>
+                    <app-tooltip [tip]="getTooltip('search', 'ptimestamp-to')"></app-tooltip>
                 </section>
                 <div class='stepper-actions'>
                     <button mat-raised-button class="action-button" [disabled]="!searchingParametersFormGroup.valid"

@@ -10,7 +10,7 @@
     overflow: visible !important;
 
     .card-content {
-        width: 600px;
+        width: 585px;
         overflow: visible !important;
 
         .events-filters {
@@ -42,6 +42,14 @@
                 height: 35px;
                 align-self: center;
                 margin-left: 10px;
+            }
+
+            .filter-button {
+                margin-left: auto;
+            }
+
+            .clear-button {
+                margin-right: 15px;
             }
         }
 

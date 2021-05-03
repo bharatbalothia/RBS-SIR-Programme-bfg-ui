@@ -1,0 +1,26 @@
+.form-field {
+    margin-right: 15px;
+}
+
+.total-elements {
+    margin: 0 !important;
+}
+
+.table-container {
+
+    .mat-table {
+
+        .mat-column-type {
+            min-width: 60px;
+        }
+
+        .mat-column-transactions {
+            min-width: 75px;
+        }
+
+        .mat-column-filename {
+            min-width: 200px;
+        }
+
+    }
+}

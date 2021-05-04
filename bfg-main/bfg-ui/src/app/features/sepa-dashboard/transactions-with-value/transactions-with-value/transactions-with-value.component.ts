@@ -9,7 +9,7 @@ import { FileDialogService } from 'src/app/shared/models/file/file-dialog.servic
 import { removeEmpties, setCalendarDblClick } from 'src/app/shared/utils/utils';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { getFileSearchDisplayName } from 'src/app/features/search/file-search/file-search-display-names';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { get } from 'lodash';
 
@@ -125,8 +125,11 @@ export class TransactionsWithValueComponent implements OnInit {
 
   openTransactionsDialog = (file) => this.fileDialogService.openTransactionsDialog(file);
 
-  resetSearchParameters = () => {
-    this.searchingParametersFormGroup.reset();
+  resetControl = (control: AbstractControl, field?: string) => {
+    control.reset();
+    if (field) {
+      this[field] = '';
+    }
     this.getSEPAFileList(this.pageIndex, this.pageSize);
   }
 

@@ -1,5 +1,13 @@
-.form-field {
-    margin-right: 15px;
+.search-params-section {
+    display: flex;
+
+    .form-field {
+        margin-right: 15px;
+    }
+
+    .action-button {
+        align-self: center;
+    }
 }
 
 .total-elements {

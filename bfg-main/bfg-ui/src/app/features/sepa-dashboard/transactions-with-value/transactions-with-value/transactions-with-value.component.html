@@ -5,7 +5,7 @@
   </mat-card-header>
   <mat-card-content class="card-content">
     <app-autorefresh-data [getData]="getSEPAFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
-    <section>
+    <section class="search-params-section">
       <mat-form-field class="form-field">
         <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
@@ -41,6 +41,8 @@
           {{getSearchValidationMessage('incorrect')}}
         </mat-error>
       </mat-form-field>
+      <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
+        Clear</button>
     </section>
     <h3 class="total-elements" *ngIf="SEPAFiles && SEPAFiles.totalElements">
       {{getSearchingTableHeader(SEPAFiles.totalElements, SEPAFiles.pageable.pageSize, SEPAFiles.pageable.pageNumber +

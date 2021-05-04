@@ -124,4 +124,10 @@ export class TransactionsWithValueComponent implements OnInit {
   openFileDocumentInfo = (file) => this.fileDialogService.openFileDocumentInfo(file, true);
 
   openTransactionsDialog = (file) => this.fileDialogService.openTransactionsDialog(file);
+
+  resetSearchParameters = () => {
+    this.searchingParametersFormGroup.reset();
+    this.getSEPAFileList(this.pageIndex, this.pageSize);
+  }
+
 }

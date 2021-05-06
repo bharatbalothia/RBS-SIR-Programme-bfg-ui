@@ -37,7 +37,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
   isLoading = true;
   isLoadingDetails = false;
   trustedCertificates: TrustedCertificatesWithPagination;
-  displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
+  displayedColumns: string[] = ['action', 'name', 'thumbprint', 'thumbprint256'];
   dataSource: MatTableDataSource<TrustedCertificate>;
 
   pageIndex = 0;
@@ -150,28 +150,6 @@ export class TrustedCertificateSearchComponent implements OnInit {
   addCertificateBeforeToChangeControl = (changeControl: ChangeControl): Promise<any> =>
     new Promise(resolve =>
       resolve(changeControl.trustedCertificateLog && { ...changeControl, certificateBefore: changeControl.trustedCertificateLog }))
-
-
-  openInfoDialog(changeControl: ChangeControl) {
-    const getValidatedChangeControl = () => this.getChangeControlDetails(changeControl)
-      .then((chngCtl: ChangeControl) => this.addCertificateBeforeToChangeControl(chngCtl)
-        .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
-
-    getValidatedChangeControl().then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-      title: `Change Record: Pending`,
-      data: validatedChangeControl,
-      getData: getValidatedChangeControl,
-      getTabs: getTrustedCertificatePendingChangesTabs,
-      displayName: getTrustedCertificateDisplayHeader,
-      actionData: {
-        errorMessage: {
-          message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-          warnings: get(validatedChangeControl, 'warnings'),
-          errors: get(validatedChangeControl, 'errors')
-        },
-      }
-    })));
-  }
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
     if (trustedCertificate.certificateId) {

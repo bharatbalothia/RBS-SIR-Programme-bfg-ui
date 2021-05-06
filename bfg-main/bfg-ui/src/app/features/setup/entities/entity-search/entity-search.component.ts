@@ -42,7 +42,7 @@ export class EntitySearchComponent implements OnInit {
   isLoadingDetails = false;
 
   entities: EntitiesWithPagination;
-  displayedColumns: string[] = ['action', 'changes', 'entity', 'service'];
+  displayedColumns: string[] = ['action', 'entity', 'service'];
   dataSource: MatTableDataSource<Entity | ChangeControl>;
 
   pageIndex = 0;
@@ -128,20 +128,6 @@ export class EntitySearchComponent implements OnInit {
       .finally(() => {
         this.isLoadingDetails = false;
       });
-  }
-
-  openInfoDialog(changeControl: ChangeControl) {
-    const getChangeControl = () => this.getPendingEntityDetails(changeControl)
-      .then((data: ChangeControl) => data && this.addEntityBeforeToChangeControl(data));
-
-    getChangeControl().then((changeCtrl: ChangeControl) =>
-      changeCtrl && this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-        title: `Change Record: Pending`,
-        data: changeCtrl,
-        getData: getChangeControl,
-        getTabs: getPendingChangesTabs,
-        displayName: getEntityDisplayName
-      })));
   }
 
   openDetailsDialog(value: ChangeControl | Entity) {

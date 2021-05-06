@@ -8,23 +8,33 @@
     <div class="search-by-content">
       <form (ngSubmit)="getPendingChanges(0, pageSize)">
         <h3 class="search-by-label">Search by</h3>
-        <mat-form-field class="search-by-field">
-          <mat-label>Search by service</mat-label>
-          <mat-select [(ngModel)]="serviceSearchingValue" name="serviceSearchingValue">
-            <mat-option value="">ALL</mat-option>
-            <mat-option value="GPL">GPL</mat-option>
-            <mat-option value="SCT">SCT</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="search-by-field">
-          <mat-label>Search by entity name</mat-label>
-          <input matInput [(ngModel)]="entityNameSearchingValue" name="entityNameSearchingValue">
-        </mat-form-field>
-        <mat-form-field class="search-by-field">
-          <mat-label>Search by DN</mat-label>
-          <input matInput [(ngModel)]="DNSearchingValue" name="DNSearchingValue">
-        </mat-form-field>
-        <button color="primary" type="submit" mat-raised-button>Search</button>
+
+        <div class="search-field">
+          <mat-form-field class="search-by-field">
+            <mat-label>Search by service</mat-label>
+            <mat-select [(ngModel)]="serviceSearchingValue" name="serviceSearchingValue">
+              <mat-option value="">ALL</mat-option>
+              <mat-option value="GPL">GPL</mat-option>
+              <mat-option value="SCT">SCT</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="search-field">
+          <mat-form-field class="search-by-field">
+            <mat-label>Search by entity name</mat-label>
+            <input matInput [(ngModel)]="entityNameSearchingValue" name="entityNameSearchingValue">
+          </mat-form-field>
+        </div>
+
+        <div class="search-field">
+          <mat-form-field class="search-by-field">
+            <mat-label>Search by DN</mat-label>
+            <input matInput [(ngModel)]="DNSearchingValue" name="DNSearchingValue">
+          </mat-form-field>
+        </div>
+
+        <button color="primary" type="submit" class="search-button" mat-raised-button>Search</button>
         <button color="warn" class="clear-button" mat-raised-button [disabled]="!isClearActive()"
           (click)="clearParams()">Clear</button>
       </form>

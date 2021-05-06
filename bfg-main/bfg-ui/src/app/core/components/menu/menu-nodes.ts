@@ -54,7 +54,7 @@ export const MENU_DATA: MenuNode[] = [
     name: 'SEPA Dashboard',
     children: [
       {
-        name: 'Number of transactions with value',
+        name: 'Transactions with value',
         route: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE
       },
     ]

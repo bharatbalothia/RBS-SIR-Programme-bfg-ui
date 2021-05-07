@@ -12,7 +12,9 @@ import { ApplicationDataService } from 'src/app/shared/models/application-data/a
 })
 export class LayoutComponent implements OnInit {
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  minWidthForWeb = 900;
+
+  isWeb$: Observable<boolean> = this.breakpointObserver.observe(`(min-width: ${this.minWidthForWeb}px)`)
     .pipe(
       map(result => result.matches),
       shareReplay()

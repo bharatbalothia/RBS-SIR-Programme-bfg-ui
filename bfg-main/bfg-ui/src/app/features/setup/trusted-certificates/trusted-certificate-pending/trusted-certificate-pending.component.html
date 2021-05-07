@@ -63,17 +63,6 @@
           </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="changes">
-          <mat-header-cell *matHeaderCellDef> Changes </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <a mat-button class="action-button" (click)="openInfoDialog(element)">
-              <div class="action-icon">
-                <mat-icon inline>info</mat-icon> info
-              </div>
-            </a>
-          </mat-cell>
-        </ng-container>
-
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
           <mat-cell *matCellDef="let element">

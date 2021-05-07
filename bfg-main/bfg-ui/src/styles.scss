@@ -128,25 +128,6 @@ mat-form-field {
             display: inline-block;
             margin-right: 15px;
             width: 100%;
-
-            .mat-row,
-            .mat-header-row {
-                border-width: none;
-                border-bottom-width: none;
-                border-style: none;
-                display: inline-flex;
-                min-width: 100%;
-            }
-
-            .mat-header-cell,
-            .mat-cell {
-                border-width: 0;
-                border-bottom-width: 1px;
-                border-style: solid;
-                border-bottom-color: rgba(0, 0, 0, .12);
-                padding-right: 10px;
-            }
-
         }
 
     }
@@ -160,6 +141,12 @@ mat-form-field {
     .mat-footer-row,
     .mat-footer-cell {
         min-height: 40px !important;
+    }
+
+    .mat-header-cell,
+    .mat-cell,
+    .mat-footer-cell {
+        padding-right: 10px !important;
     }
 
     .mat-cell:empty {

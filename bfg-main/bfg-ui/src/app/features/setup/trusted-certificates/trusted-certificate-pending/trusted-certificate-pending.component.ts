@@ -38,7 +38,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
   isLoadingDetails = false;
 
   changeControls: ChangeControlsWithPagination;
-  displayedColumns: string[] = ['action', 'changes', 'name', 'thumbprint', 'thumbprint256'];
+  displayedColumns: string[] = ['action', 'name', 'thumbprint', 'thumbprint256'];
   dataSource: MatTableDataSource<ChangeControl>;
 
   pageIndex = 0;
@@ -146,27 +146,6 @@ export class TrustedCertificatePendingComponent implements OnInit {
       resolve(changeControl.trustedCertificateLog && { ...changeControl, certificateBefore: changeControl.trustedCertificateLog }))
 
   isTheSameUser = (user) => this.authService.isTheSameUser(user);
-
-  openInfoDialog(changeControl: ChangeControl) {
-    const getValidatedChangeControl = () => this.getChangeControlDetails(changeControl)
-      .then((chngCtl: ChangeControl) => this.addCertificateBeforeToChangeControl(chngCtl)
-        .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
-
-    getValidatedChangeControl().then(validatedChangeControl => this.dialog.open(ApprovingDialogComponent, new DetailsDialogConfig({
-      title: `Change Record: Pending`,
-      data: validatedChangeControl,
-      getData: getValidatedChangeControl,
-      getTabs: getTrustedCertificatePendingChangesTabs,
-      displayName: getTrustedCertificateDisplayHeader,
-      actionData: {
-        errorMessage: {
-          message: get(validatedChangeControl, 'errors') && ERROR_MESSAGES['trustedCertificateErrors'],
-          warnings: get(validatedChangeControl, 'warnings'),
-          errors: get(validatedChangeControl, 'errors')
-        },
-      }
-    })));
-  }
 
   openTrustedCertificateDetailsDialog(trustedCertificate: TrustedCertificate) {
     if (trustedCertificate.certificateId) {

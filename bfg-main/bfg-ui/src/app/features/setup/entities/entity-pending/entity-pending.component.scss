@@ -7,20 +7,23 @@
 
     .search-by-content {
 
+      .search-field {
+        display: inline-flex;
+        margin-right: 40px;
+      }
+
       .search-by-label {
         margin-bottom: 0px;
       }
 
       .search-by-field {
         margin-right: 15px;
+        width: 240px;
       }
 
-      button {
-        vertical-align: text-bottom;
-      }
-
-      .clear-button {
-        margin-left: 10px;
+      .search-button {
+        margin-right: 10px;
+        margin-left: -25px;
       }
 
     }

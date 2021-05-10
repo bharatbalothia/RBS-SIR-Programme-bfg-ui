@@ -93,7 +93,7 @@
         <ng-container matColumnDef="totalSettleAmount">
           <mat-header-cell *matHeaderCellDef> Total Settle Amount </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            {{element.settleAmountTotal}}
+            {{element.settleAmountTotal | number: '1.2-2'}}
           </mat-cell>
         </ng-container>
 

@@ -33,7 +33,14 @@ public class FileSearchController {
 
     @PostMapping
     public Page<File> getFiles(@Valid @RequestBody(required = false) FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
-        return fileSearchService.getFilesList(Optional.ofNullable(fileSearchCriteria).orElse(new FileSearchCriteria()));
+        return fileSearchService.getFilesList(Optional.ofNullable(fileSearchCriteria).orElse(new FileSearchCriteria()),
+                File.class);
+    }
+
+    @PostMapping("sepa")
+    public Page<SEPAFile> getSEPAFiles(@Valid @RequestBody(required = false) FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        return fileSearchService.getFilesList(Optional.ofNullable(fileSearchCriteria).orElse(new FileSearchCriteria()),
+                SEPAFile.class);
     }
 
     @GetMapping("{id}")

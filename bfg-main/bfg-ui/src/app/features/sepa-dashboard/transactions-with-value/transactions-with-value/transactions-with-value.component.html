@@ -1,0 +1,121 @@
+<mat-card class="error-monitor-card">
+  <mat-card-header>
+    <mat-card-title>Number of transactions with value
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <app-autorefresh-data [getData]="getSEPAFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+    <section class="search-params-section">
+      <mat-form-field class="form-field">
+        <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
+          [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
+          (dateChange)="handleDate($event, 'minDate');getSEPAFileList(pageIndex, pageSize)" />
+        <button mat-button *ngIf="searchingParametersFormGroup.controls['from'].value" matSuffix mat-icon-button
+          aria-label="Clear" (click)="resetControl(searchingParametersFormGroup.controls['from'], 'minDate')">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)"
+          (monthSelected)="setCalendarDblClick(fromPicker)">
+        </ngx-mat-datetime-picker>
+        <mat-error class="error-message"
+          *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+          {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+        </mat-error>
+        <mat-error class="error-message"
+          *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+          {{getSearchValidationMessage('incorrect')}}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
+          [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
+          (dateChange)="handleDate($event, 'maxDate');getSEPAFileList(pageIndex, pageSize)" />
+        <button mat-button *ngIf="searchingParametersFormGroup.controls['to'].value" matSuffix mat-icon-button
+          aria-label="Clear" (click)="resetControl(searchingParametersFormGroup.controls['to'], 'maxDate')">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
+          (monthSelected)="setCalendarDblClick(toPicker)"></ngx-mat-datetime-picker>
+        <mat-error class="error-message"
+          *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+          {{getSearchValidationMessage('maxDateLessThanMinDate')}}
+        </mat-error>
+        <mat-error class="error-message"
+          *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+          {{getSearchValidationMessage('incorrect')}}
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <h3 class="total-elements" *ngIf="SEPAFiles && SEPAFiles.totalElements">
+      {{getSearchingTableHeader(SEPAFiles.totalElements, SEPAFiles.pageable.pageSize, SEPAFiles.pageable.pageNumber +
+      1)}}
+    </h3>
+    <div class="table-container">
+      <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && SEPAFiles" [value]="pageIndex + 1"
+        [getRows]="getSEPAFileList.bind(this)" [min]="1" [max]="SEPAFiles && SEPAFiles.totalPages"
+        [length]="SEPAFiles.totalElements" [(pageIndex)]="SEPAFiles.pageable.pageNumber"
+        [pageSize]="SEPAFiles.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+        [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
+      </app-table-paginator>
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="filename">
+          <mat-header-cell *matHeaderCellDef> Filename </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <a mat-button (click)="openFileDocumentInfo(element)">
+              {{element.filename}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.type}}
+            <mat-icon>{{getDirectionIcon(element.direction)}}</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="transactions">
+          <mat-header-cell *matHeaderCellDef> Transactions </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <a [disabled]="element.transactionTotal <= 0" mat-button
+              (click)="element.transactionTotal > 0 && openTransactionsDialog(element)">
+              {{element.transactionTotal}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="totalSettleAmount">
+          <mat-header-cell *matHeaderCellDef> Total Settle Amount </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.settleAmountTotal}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="noData">
+          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+            No records found.
+          </mat-footer-cell>
+        </ng-container>
+
+        <mat-footer-row *matFooterRowDef="['noData']"
+          [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+        </mat-footer-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <app-table-paginator class="paginator" *ngIf="!shouldHidePaginator && SEPAFiles" [value]="pageIndex + 1"
+        [getRows]="getSEPAFileList.bind(this)" [min]="1" [max]="SEPAFiles && SEPAFiles.totalPages"
+        [length]="SEPAFiles.totalElements" [(pageIndex)]="SEPAFiles.pageable.pageNumber"
+        [pageSize]="SEPAFiles.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons
+        [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
+      </app-table-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

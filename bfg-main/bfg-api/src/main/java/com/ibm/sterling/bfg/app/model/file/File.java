@@ -1,17 +1,33 @@
 package com.ibm.sterling.bfg.app.model.file;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ibm.sterling.bfg.app.model.DetailFormat;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-public class File extends SEPAFile{
+public class File {
+    private Integer id;
     private Integer status;
+    private String filename;
     private String errorCode;
     private String reference;
+    private String type;
     private String service;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
     private Integer workflowID;
+    private String docID;
+    private Integer transactionTotal;
+    private Direction direction;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getStatus() {
         return status;
@@ -19,6 +35,14 @@ public class File extends SEPAFile{
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getErrorCode() {
@@ -35,6 +59,14 @@ public class File extends SEPAFile{
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getService() {
@@ -62,4 +94,27 @@ public class File extends SEPAFile{
         this.workflowID = workflowID;
     }
 
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
+    public Integer getTransactionTotal() {
+        return transactionTotal;
+    }
+
+    public void setTransactionTotal(Integer transactionTotal) {
+        this.transactionTotal = transactionTotal;
+    }
+
+    public String getDirection() {
+        return Optional.ofNullable(direction).map(Direction::direction).orElse("");
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
 }

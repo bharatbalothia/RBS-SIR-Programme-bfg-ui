@@ -56,11 +56,6 @@ const routes: Routes = [
         loadChildren: () => import('./features/setup/trusted-certificates/trusted-certificates.module')
           .then(m => m.TrustedCertificatesModule)
       },
-      {
-        path: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE,
-        loadChildren: () => import('./features/sepa-dashboard/transactions-with-value/transactions-with-value.module')
-          .then(m => m.TransactionsWithValueModule)
-      },
       { path: ROUTING_PATHS.PAGE_NOT_FOUND, component: PageNotFoundComponent },
     ]
   }

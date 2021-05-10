@@ -25,5 +25,8 @@ export const ROUTING_PATHS = {
 
   // setup routes
   ENTITIES: 'entities',
-  TRUSTED_CERTIFICATES: 'trusted-certificates'
+  TRUSTED_CERTIFICATES: 'trusted-certificates',
+
+  // SEPA Dashboard routes
+  TRANSACTIONS_WITH_VALUE: 'transactions-with-value',
 };

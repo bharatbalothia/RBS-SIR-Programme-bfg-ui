@@ -35,4 +35,8 @@ public class StatisticsController {
         return ok(statisticsService.getSCTTrafficSummary());
     }
 
+    @GetMapping("sepa-traffic")
+    public ResponseEntity<Map<String, Integer>> getSepaTrafficSummary() throws JsonProcessingException {
+        return ok(statisticsService.getSepaTrafficSummary());
+    }
 }

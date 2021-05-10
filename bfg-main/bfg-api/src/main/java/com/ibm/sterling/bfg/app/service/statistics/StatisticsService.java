@@ -29,6 +29,9 @@ public class StatisticsService {
     @Value("${sctTrafficSummary.url}")
     private String sctTrafficSummaryUrl;
 
+    @Value("${sepaTrafficSummary.url}")
+    private String sepaTrafficSummaryUrl;
+
     @Value("${api.userName}")
     private String userName;
 
@@ -97,4 +100,23 @@ public class StatisticsService {
                 );
     }
 
+    public Map<String, Integer> getSepaTrafficSummary() throws JsonProcessingException {
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                sepaTrafficSummaryUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                String.class);
+        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+        List<StatisticalData> statisticalData = objectMapper.convertValue(root, new TypeReference<List<StatisticalData>>() {
+        });
+        return statisticalData
+                .stream()
+                .filter(stat -> stat.getType().endsWith("_HOUR"))
+                .collect(Collectors.toMap(
+                        data -> {
+                            String type = data.getType();
+                            return type.substring(0, type.lastIndexOf('_'));
+                        },
+                        StatisticalData::getCount));
+    }
 }

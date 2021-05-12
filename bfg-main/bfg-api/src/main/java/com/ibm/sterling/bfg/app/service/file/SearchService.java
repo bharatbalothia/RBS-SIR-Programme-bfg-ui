@@ -316,7 +316,7 @@ public class SearchService {
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
         fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
         List<File> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class);
-        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total settlement Amount", "Settlement Date", "Direction"};
+        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n settlement\n Amount", "Settlement\n Date", "Direction"};
         try (Workbook workbook = new HSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("SEPA Files");
 
@@ -330,6 +330,9 @@ public class SearchService {
             headerStyle.setBorderTop(BorderStyle.THIN);
             headerStyle.setBorderLeft(BorderStyle.THIN);
             headerStyle.setBorderRight(BorderStyle.THIN);
+            headerStyle.setWrapText(true);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
             Row headerRow = sheet.createRow(0);
             for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {

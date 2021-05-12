@@ -326,6 +326,10 @@ public class SearchService {
 
             CellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFont(headerFont);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
 
             Row headerRow = sheet.createRow(0);
             for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
@@ -333,6 +337,12 @@ public class SearchService {
                 cell.setCellValue(columns[columnIndex]);
                 cell.setCellStyle(headerStyle);
             }
+
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            CellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(
+                    creationHelper.createDataFormat().getFormat("ddMMyyhhmm")
+            );
 
             int rowIndex = 1;
             for (File file : files) {
@@ -342,7 +352,9 @@ public class SearchService {
                 row.createCell(2).setCellValue(file.getType());
                 row.createCell(3).setCellValue(file.getTransactionTotal());
                 row.createCell(4).setCellValue(file.getSettleAmountTotal());
-                row.createCell(5).setCellValue(file.getTimestamp());
+                Cell timestampCell = row.createCell(5);
+                timestampCell.setCellValue(file.getTimestamp());
+                timestampCell.setCellStyle(dateStyle);
                 row.createCell(6).setCellValue(file.getDirection());
                 rowIndex++;
             }

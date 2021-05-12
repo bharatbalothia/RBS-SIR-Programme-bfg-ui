@@ -98,7 +98,7 @@ public class FileSearchController {
             @RequestParam(value = "to", required = false) String to) throws IOException {
         ByteArrayInputStream in = fileSearchService.generateExcelReport(from, to);
         LocalDateTime currentDate = LocalDateTime.now();
-        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyy"));
+        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyhhmm"));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".xls");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));

@@ -8,12 +8,18 @@ import com.ibm.sterling.bfg.app.model.file.*;
 import com.ibm.sterling.bfg.app.service.file.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,5 +90,17 @@ public class FileSearchController {
     @GetMapping("file-monitor")
     public ResponseEntity<List<File>> getFileMonitor() throws JsonProcessingException {
         return ok(fileSearchService.getFileMonitor().orElseThrow(FileNotFoundException::new));
+    }
+
+    @GetMapping("sepa/export-excel")
+    public ResponseEntity<InputStreamResource> exportExcel(
+            @RequestParam(value = "from", required = false) String from,
+            @RequestParam(value = "to", required = false) String to) throws IOException {
+        ByteArrayInputStream in = fileSearchService.generateExcelReport(from, to);
+        LocalDateTime currentDate = LocalDateTime.now();
+        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyy"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".xls");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
     }
 }

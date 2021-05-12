@@ -4,21 +4,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.exception.file.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +30,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
@@ -75,6 +82,8 @@ public class SearchService {
 
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
+
+    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));
@@ -299,5 +308,51 @@ public class SearchService {
         map.put("workFlowId", objectMapper.convertValue(root.get("workFlowId"), Integer.class));
         map.put("wfdVersion", objectMapper.convertValue(root.get("wfdVersion"), Integer.class));
         return map;
+    }
+
+    public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
+        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
+        Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
+        fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
+        List<File> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class);
+        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total settlement Amount", "Settlement Date", "Direction"};
+        try (Workbook workbook = new HSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("SEPA Files");
+
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.VIOLET.index);
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(headerFont);
+
+            Row headerRow = sheet.createRow(0);
+            for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+                Cell cell = headerRow.createCell(columnIndex);
+                cell.setCellValue(columns[columnIndex]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            int rowIndex = 1;
+            for (File file : files) {
+                Row row = sheet.createRow(rowIndex);
+                row.createCell(0).setCellValue(rowIndex);
+                row.createCell(1).setCellValue(file.getFilename());
+                row.createCell(2).setCellValue(file.getType());
+                row.createCell(3).setCellValue(file.getTransactionTotal());
+                row.createCell(4).setCellValue(file.getSettleAmountTotal());
+                row.createCell(5).setCellValue(file.getTimestamp());
+                row.createCell(6).setCellValue(file.getDirection());
+                rowIndex++;
+            }
+
+            for (int i = 0; i < columns.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        }
     }
 }

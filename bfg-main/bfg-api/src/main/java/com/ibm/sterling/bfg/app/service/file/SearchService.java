@@ -13,8 +13,8 @@ import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -315,9 +315,9 @@ public class SearchService {
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
         fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
-        List<File> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class);
+        List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
         String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n settlement\n Amount", "Settlement\n Date", "Direction"};
-        try (Workbook workbook = new HSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("SEPA Files");
 
             Font headerFont = workbook.createFont();
@@ -348,7 +348,7 @@ public class SearchService {
             );
 
             int rowIndex = 1;
-            for (File file : files) {
+            for (SEPAFile file : files) {
                 Row row = sheet.createRow(rowIndex);
                 row.createCell(0).setCellValue(rowIndex);
                 row.createCell(1).setCellValue(file.getFilename());
@@ -360,6 +360,7 @@ public class SearchService {
                 timestampCell.setCellStyle(dateStyle);
                 row.createCell(6).setCellValue(file.getDirection());
                 rowIndex++;
+
             }
 
             for (int i = 0; i < columns.length; i++) {

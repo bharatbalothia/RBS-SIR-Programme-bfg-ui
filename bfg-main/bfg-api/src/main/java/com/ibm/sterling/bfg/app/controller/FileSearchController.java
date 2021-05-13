@@ -100,7 +100,7 @@ public class FileSearchController {
         LocalDateTime currentDate = LocalDateTime.now();
         String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyhhmm"));
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".xls");
+        headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
     }
 }

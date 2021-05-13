@@ -1,0 +1,22 @@
+.dialog-container {
+    position: relative;
+
+    .search-params-section {
+        display: flex;
+
+        .form-field {
+            margin-right: 15px;
+        }
+    }
+
+    .mat-dialog-actions {
+
+        justify-content: flex-end;
+
+        .action-button {
+            background-color: green;
+            color: #fff;
+        }
+    }
+
+}

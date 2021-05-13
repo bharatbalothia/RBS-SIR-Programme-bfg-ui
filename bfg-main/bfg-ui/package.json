@@ -27,6 +27,7 @@
     "@auth0/angular-jwt": "^4.1.2",
     "angular2-draggable": "^2.3.2",
     "classlist.js": "^1.1.20150312",
+    "file-saver": "^2.0.5",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.33",

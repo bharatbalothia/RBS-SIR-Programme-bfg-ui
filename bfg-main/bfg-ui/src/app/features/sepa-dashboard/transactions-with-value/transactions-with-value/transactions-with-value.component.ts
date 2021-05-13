@@ -8,10 +8,13 @@ import { take } from 'rxjs/operators';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 import { removeEmpties, setCalendarDblClick } from 'src/app/shared/utils/utils';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
-import { getFileSearchDisplayName } from 'src/app/features/search/file-search/file-search-display-names';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { get } from 'lodash';
+import { getTransactionsWithValueDisplayName } from '../transactions-with-value-display-names';
+import { MatDialog } from '@angular/material/dialog';
+import { TransactionsWithValueReportsDialogComponent } from './transactions-with-value-reports-dialog/transactions-with-value-reports-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 
 @Component({
   selector: 'app-transactions-with-value',
@@ -23,7 +26,7 @@ export class TransactionsWithValueComponent implements OnInit {
   getDirectionIcon = getDirectionIcon;
   setCalendarDblClick = setCalendarDblClick;
   getSearchValidationMessage = getSearchValidationMessage;
-  getFileSearchDisplayName = getFileSearchDisplayName;
+  getTransactionsWithValueDisplayName = getTransactionsWithValueDisplayName;
 
   isLoading: boolean;
 
@@ -57,6 +60,7 @@ export class TransactionsWithValueComponent implements OnInit {
     private SEPADashboardService: SEPADashboardService,
     private fileDialogService: FileDialogService,
     private formBuilder: FormBuilder,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -133,4 +137,8 @@ export class TransactionsWithValueComponent implements OnInit {
     this.getSEPAFileList(this.pageIndex, this.pageSize);
   }
 
+  openGenerateReportsDialog = () => this.dialog.open(TransactionsWithValueReportsDialogComponent, {
+    data: { title: 'Generate Excel/PDF Reports' },
+    width: '470px',
+  })
 }

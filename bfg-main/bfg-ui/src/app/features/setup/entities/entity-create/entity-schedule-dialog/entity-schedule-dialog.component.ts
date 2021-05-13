@@ -4,11 +4,11 @@ import { DetailsDialogData } from 'src/app/shared/components/details-dialog/deta
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { get, isUndefined } from 'lodash';
-import { getEntityDisplayName } from '../entity-display-names';
-import { SCHEDULE_VALIDATION_MESSAGES } from '../validation-messages';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { getEntityDisplayName } from '../../entity-display-names';
+import { SCHEDULE_VALIDATION_MESSAGES } from '../../validation-messages';
 
 @Component({
   selector: 'app-entity-schedule-dialog',

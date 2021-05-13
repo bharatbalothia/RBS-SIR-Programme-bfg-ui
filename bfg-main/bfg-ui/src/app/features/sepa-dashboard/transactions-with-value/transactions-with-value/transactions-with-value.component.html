@@ -7,7 +7,7 @@
     <app-autorefresh-data [getData]="getSEPAFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
     <section class="search-params-section">
       <mat-form-field class="form-field">
-        <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+        <mat-label>{{getTransactionsWithValueDisplayName('from')}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
           [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
           (dateChange)="handleDate($event, 'minDate');getSEPAFileList(pageIndex, pageSize)" />
@@ -29,7 +29,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="form-field">
-        <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+        <mat-label>{{getTransactionsWithValueDisplayName('to')}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
           [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
           (dateChange)="handleDate($event, 'maxDate');getSEPAFileList(pageIndex, pageSize)" />
@@ -116,6 +116,7 @@
         [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
       </app-table-paginator>
     </div>
+    <button class="reports-button" mat-raised-button (click)="openGenerateReportsDialog()">Generate Reports</button>
   </mat-card-content>
 </mat-card>
 <mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

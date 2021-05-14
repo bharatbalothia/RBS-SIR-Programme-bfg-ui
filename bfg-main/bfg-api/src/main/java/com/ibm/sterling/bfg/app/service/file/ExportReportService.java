@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExportReportService {
@@ -53,40 +54,42 @@ public class ExportReportService {
                     creationHelper.createDataFormat().getFormat("ddMMyyhhmm"));
             setBorderStyle(dateStyle, BorderStyle.THIN);
 
-            int rowIndex = 1;
-            for (SEPAFile file : files) {
-                Row row = sheet.createRow(rowIndex);
-                Cell cellIndex = row.createCell(0);
-                cellIndex.setCellValue(rowIndex);
-                cellIndex.setCellStyle(cellStyle);
 
-                Cell cellFileName = row.createCell(1);
-                cellFileName.setCellValue(file.getFilename());
-                cellFileName.setCellStyle(cellStyle);
+            Optional.ofNullable(files).ifPresent(sepaFiles -> {
+                int rowIndex = 1;
+                for (SEPAFile file : sepaFiles) {
+                    Row row = sheet.createRow(rowIndex);
+                    Cell cellIndex = row.createCell(0);
+                    cellIndex.setCellValue(rowIndex);
+                    cellIndex.setCellStyle(cellStyle);
 
-                Cell cellType = row.createCell(2);
-                cellType.setCellValue(file.getType());
-                cellType.setCellStyle(cellStyle);
+                    Cell cellFileName = row.createCell(1);
+                    cellFileName.setCellValue(file.getFilename());
+                    cellFileName.setCellStyle(cellStyle);
 
-                Cell cellTrxTotal = row.createCell(3);
-                cellTrxTotal.setCellValue(file.getTransactionTotal());
-                cellTrxTotal.setCellStyle(cellStyle);
+                    Cell cellType = row.createCell(2);
+                    cellType.setCellValue(file.getType());
+                    cellType.setCellStyle(cellStyle);
 
-                Cell cellAmountTotal = row.createCell(4);
-                cellAmountTotal.setCellValue(file.getSettleAmountTotal());
-                cellAmountTotal.setCellStyle(cellStyle);
+                    Cell cellTrxTotal = row.createCell(3);
+                    cellTrxTotal.setCellValue(file.getTransactionTotal());
+                    cellTrxTotal.setCellStyle(cellStyle);
 
-                Cell cellTimestamp = row.createCell(5);
-                cellTimestamp.setCellValue(file.getTimestamp());
-                cellTimestamp.setCellStyle(dateStyle);
+                    Cell cellAmountTotal = row.createCell(4);
+                    cellAmountTotal.setCellValue(file.getSettleAmountTotal());
+                    cellAmountTotal.setCellStyle(cellStyle);
 
-                Cell cellDirection = row.createCell(6);
-                cellDirection.setCellValue(file.getDirection());
-                cellDirection.setCellStyle(cellStyle);
+                    Cell cellTimestamp = row.createCell(5);
+                    cellTimestamp.setCellValue(file.getTimestamp());
+                    cellTimestamp.setCellStyle(dateStyle);
 
-                rowIndex++;
+                    Cell cellDirection = row.createCell(6);
+                    cellDirection.setCellValue(file.getDirection());
+                    cellDirection.setCellStyle(cellStyle);
 
-            }
+                    rowIndex++;
+                }
+            });
 
             for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);

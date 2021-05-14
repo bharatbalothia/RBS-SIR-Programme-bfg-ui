@@ -14,6 +14,7 @@ import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,6 +83,9 @@ public class SearchService {
 
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
+
+    @Autowired
+    private ExportReportService exportService;
 
     private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
@@ -316,59 +320,6 @@ public class SearchService {
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
         fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
-        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n settlement\n Amount", "Settlement\n Date", "Direction"};
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("SEPA Files");
-
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setColor(IndexedColors.VIOLET.index);
-
-            CellStyle headerStyle = workbook.createCellStyle();
-            headerStyle.setFont(headerFont);
-            headerStyle.setBorderBottom(BorderStyle.THIN);
-            headerStyle.setBorderTop(BorderStyle.THIN);
-            headerStyle.setBorderLeft(BorderStyle.THIN);
-            headerStyle.setBorderRight(BorderStyle.THIN);
-            headerStyle.setWrapText(true);
-            headerStyle.setAlignment(HorizontalAlignment.CENTER);
-            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-            Row headerRow = sheet.createRow(0);
-            for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-                Cell cell = headerRow.createCell(columnIndex);
-                cell.setCellValue(columns[columnIndex]);
-                cell.setCellStyle(headerStyle);
-            }
-
-            CreationHelper creationHelper = workbook.getCreationHelper();
-            CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.setDataFormat(
-                    creationHelper.createDataFormat().getFormat("ddMMyyhhmm")
-            );
-
-            int rowIndex = 1;
-            for (SEPAFile file : files) {
-                Row row = sheet.createRow(rowIndex);
-                row.createCell(0).setCellValue(rowIndex);
-                row.createCell(1).setCellValue(file.getFilename());
-                row.createCell(2).setCellValue(file.getType());
-                row.createCell(3).setCellValue(file.getTransactionTotal());
-                row.createCell(4).setCellValue(file.getSettleAmountTotal());
-                Cell timestampCell = row.createCell(5);
-                timestampCell.setCellValue(file.getTimestamp());
-                timestampCell.setCellStyle(dateStyle);
-                row.createCell(6).setCellValue(file.getDirection());
-                rowIndex++;
-
-            }
-
-            for (int i = 0; i < columns.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            workbook.write(out);
-            return new ByteArrayInputStream(out.toByteArray());
-        }
+        return exportService.generateExcelReport(files);
     }
 }

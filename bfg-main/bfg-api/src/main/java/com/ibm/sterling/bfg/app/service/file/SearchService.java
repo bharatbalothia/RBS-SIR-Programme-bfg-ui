@@ -320,6 +320,8 @@ public class SearchService {
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
         fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
+        Optional.ofNullable(files).orElseThrow(
+                () -> new FileNotFoundException("{\"message\": \"No files matched your search criteria\"}"));
         return exportService.generateExcelReport(files);
     }
 }

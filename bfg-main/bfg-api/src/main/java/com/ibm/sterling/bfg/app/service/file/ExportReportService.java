@@ -5,6 +5,7 @@ import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,11 @@ public class ExportReportService {
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
         LOGGER.info("Generate an excel report");
-        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n settlement\n Amount", "Settlement\n Date", "Direction"};
+        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("SEPA Files");
             sheet.createFreezePane(0, 1);
+            sheet.setAutoFilter(new CellRangeAddress(0, 0, 1, 6));
 
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);

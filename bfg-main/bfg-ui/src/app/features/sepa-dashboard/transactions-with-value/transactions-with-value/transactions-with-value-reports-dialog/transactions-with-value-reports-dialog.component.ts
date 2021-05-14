@@ -8,6 +8,7 @@ import { removeEmpties, setCalendarDblClick } from 'src/app/shared/utils/utils';
 import { getTransactionsWithValueDisplayName } from '../../transactions-with-value-display-names';
 import { saveAs } from 'file-saver';
 import { get } from 'lodash';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-transactions-with-value-reports-dialog',
@@ -27,13 +28,12 @@ export class TransactionsWithValueReportsDialogComponent implements OnInit {
   reportsParametersFormGroup: FormGroup;
 
   defaultSelectedData: { from: moment.Moment, to: moment.Moment } = {
-    from: null,
-    to: null
+    from: moment().startOf('day'),
+    to: moment().endOf('day')
   };
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
-    private dialog: MatDialogRef<TransactionsWithValueReportsDialogComponent>,
     private formBuilder: FormBuilder,
     private SEPADashboardService: SEPADashboardService
   ) {

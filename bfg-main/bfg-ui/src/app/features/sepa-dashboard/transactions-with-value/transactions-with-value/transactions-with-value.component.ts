@@ -14,7 +14,6 @@ import { get } from 'lodash';
 import { getTransactionsWithValueDisplayName } from '../transactions-with-value-display-names';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionsWithValueReportsDialogComponent } from './transactions-with-value-reports-dialog/transactions-with-value-reports-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 
 @Component({
   selector: 'app-transactions-with-value',
@@ -111,7 +110,7 @@ export class TransactionsWithValueComponent implements OnInit {
         this.SEPAFiles = data;
         this.updateTable();
       },
-        error => this.isLoading = false
+        () => this.isLoading = false
       );
   }
 
@@ -139,6 +138,6 @@ export class TransactionsWithValueComponent implements OnInit {
 
   openGenerateReportsDialog = () => this.dialog.open(TransactionsWithValueReportsDialogComponent, {
     data: { title: 'Generate Excel/PDF Reports' },
-    width: '470px',
+    width: '510px',
   })
 }

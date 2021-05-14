@@ -1,11 +1,28 @@
 .dialog-container {
     position: relative;
 
+    .header {
+        display: flex;
+        margin: -24px -24px -14px -24px !important;
+        padding: 24px 24px;
+        word-break: break-all;
+
+        .dialog-title {
+            margin: 0 !important;
+        }
+
+        .close-icon {
+            margin-left: auto;
+            cursor: pointer !important;
+        }
+    }
+
     .search-params-section {
         display: flex;
 
         .form-field {
             margin-right: 15px;
+            min-width: 222px;
         }
     }
 

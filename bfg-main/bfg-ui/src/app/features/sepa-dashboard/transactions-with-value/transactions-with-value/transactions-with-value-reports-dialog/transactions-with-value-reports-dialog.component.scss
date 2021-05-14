@@ -30,7 +30,7 @@
 
         justify-content: flex-end;
 
-        .action-button {
+        .action-button:not(.mat-button-disabled) {
             background-color: green;
             color: #fff;
         }

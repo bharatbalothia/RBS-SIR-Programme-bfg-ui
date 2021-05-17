@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,6 @@ public class ExportReportService {
 
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
-            headerFont.setColor(IndexedColors.VIOLET.index);
 
             XSSFCellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFont(headerFont);
@@ -39,7 +39,8 @@ public class ExportReportService {
             headerStyle.setWrapText(true);
             headerStyle.setAlignment(HorizontalAlignment.CENTER);
             headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             XSSFCellStyle cellStyle = workbook.createCellStyle();
             setBorderStyle(cellStyle, BorderStyle.THIN);
 

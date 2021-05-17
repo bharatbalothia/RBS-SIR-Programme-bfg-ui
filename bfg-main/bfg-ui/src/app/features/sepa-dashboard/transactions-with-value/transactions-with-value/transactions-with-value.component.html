@@ -49,6 +49,8 @@
           {{getSearchValidationMessage('incorrect')}}
         </mat-error>
       </mat-form-field>
+      <button class="reports-button" *ngIf="SEPAFiles" mat-raised-button (click)="openGenerateReportsDialog()">Generate
+        Reports</button>
     </section>
     <h3 class="total-elements" *ngIf="SEPAFiles && SEPAFiles.totalElements">
       {{getSearchingTableHeader(SEPAFiles.totalElements, SEPAFiles.pageable.pageSize, SEPAFiles.pageable.pageNumber +
@@ -116,8 +118,6 @@
         [hidden]="shouldHidePaginator || (dataSource && dataSource.data.length === 0)">
       </app-table-paginator>
     </div>
-    <button class="reports-button" *ngIf="SEPAFiles" mat-raised-button (click)="openGenerateReportsDialog()">Generate
-      Reports</button>
   </mat-card-content>
 </mat-card>
 <mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

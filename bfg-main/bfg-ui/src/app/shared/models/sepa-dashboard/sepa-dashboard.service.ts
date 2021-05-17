@@ -25,8 +25,6 @@ export class SEPADashboardService {
       responseType: 'blob' as 'json',
       params
     });
-
-    // return this.http.get<any>(this.apiUrl + '/export-excel', { params });
   }
 
 }

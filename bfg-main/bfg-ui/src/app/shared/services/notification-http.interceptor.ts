@@ -18,7 +18,12 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
             try {
-              this.notificationService.showErrorMessage(getApiErrorMessage(error));
+              if (error.error instanceof Blob) {
+                this.interceptBlobError(error);
+              }
+              else {
+                this.notificationService.showErrorMessage(getApiErrorMessage(error));
+              }
             } catch (e) {
               this.notificationService.showErrorMessage({
                 code: `${error.status}`,
@@ -28,5 +33,11 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
           }
           return throwError(error);
         }));
+  }
+
+  interceptBlobError = (error: HttpErrorResponse) => {
+    const reader: FileReader = new FileReader();
+    reader.onloadend = () => this.notificationService.showErrorMessage(getApiErrorMessage(JSON.parse(reader.result as string)));
+    reader.readAsText(error.error);
   }
 }

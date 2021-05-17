@@ -1,5 +1,6 @@
 .search-params-section {
     display: flex;
+    align-items: baseline;
 
     .form-field {
         margin-right: 15px;
@@ -36,8 +37,5 @@
 .reports-button {
     background-color: green;
     color: #fff;
-    margin-left: auto;
-    display: block;
-    margin-bottom: 10px !important;
-    margin-top: 10px !important;
+    min-width: 140px;
 }

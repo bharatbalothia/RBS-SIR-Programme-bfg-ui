@@ -1,0 +1,41 @@
+<mat-card class="list-of-files-card">
+    <mat-card-header>
+        <mat-card-title>
+            List of Files
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <table *ngIf="SEPATraffic">
+            <tr>
+                <td class="table-header left-table-header">Last update on</td>
+                <td colspan="3">
+                    {{updateTime}}
+                </td>
+                <td>
+                    <button mat-button class="refresh-button" (click)="getSEPATraffic()">
+                        <div class="action-icon">
+                            <mat-icon>refresh</mat-icon>
+                        </div>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-header left-table-header">Type</td>
+                <td class="table-header">Total Count</td>
+            </tr>
+            <tr *ngFor="let type of SEPATraffic">
+                <td class="left-table-header">{{type.key}}</td>
+                <td class="count-link">
+                    <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]" [queryParams]="{type: type.key}"
+                    (click)="checkCount(type.value)">
+                        {{type.value}}
+                    </a>
+                </td>
+            </tr>
+
+        </table>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>

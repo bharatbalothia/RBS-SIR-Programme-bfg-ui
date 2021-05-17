@@ -59,6 +59,7 @@ import { AutocompleteEnforceSelectionDirective } from './directives/autocomplete
 import { AngularDraggableModule } from 'angular2-draggable';
 import { AutorefreshDataComponent } from './components/autorefresh-data/autorefresh-data.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { MatBadgeModule } from '@angular/material/badge';
 
 const DATE_FORMAT: NgxMatDateFormats = {
   parse: {
@@ -137,6 +138,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatDatepickerModule,
     AngularDraggableModule,
     InfiniteScrollModule,
+    MatBadgeModule
   ],
   exports: [
     // Modules
@@ -175,6 +177,7 @@ const DATE_FORMAT: NgxMatDateFormats = {
     MatDatepickerModule,
     AngularDraggableModule,
     InfiniteScrollModule,
+    MatBadgeModule,
 
     // Components
     ConfirmDialogComponent,

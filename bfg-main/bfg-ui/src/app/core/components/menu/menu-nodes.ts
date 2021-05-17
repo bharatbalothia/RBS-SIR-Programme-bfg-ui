@@ -57,6 +57,10 @@ export const MENU_DATA: MenuNode[] = [
         name: 'Transactions with value',
         route: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE
       },
+      {
+        name: 'List of files',
+        route: ROUTING_PATHS.LIST_OF_FILES
+      },
     ]
   },
 ];

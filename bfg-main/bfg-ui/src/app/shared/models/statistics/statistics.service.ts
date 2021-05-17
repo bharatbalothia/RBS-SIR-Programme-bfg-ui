@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Alerts } from './alerts.model';
 import { SCTTraffic } from './sct-traffic.model';
+import { SEPATraffic } from './sepa-traffic.model';
 import { SystemErrors } from './system-errors.model';
 
 @Injectable({
@@ -25,5 +26,9 @@ export class StatisticsService {
 
     getSCTTraffic() {
         return this.http.get<SCTTraffic>(this.apiUrl + 'sct-traffic');
+    }
+
+    getSEPATraffic() {
+        return this.http.get<SEPATraffic>(this.apiUrl + 'sepa-traffic');
     }
 }

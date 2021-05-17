@@ -44,4 +44,6 @@ export class ListOfFilesComponent implements OnInit {
 
   checkCount = (count: number) => count === 0 &&
     this.notificationService.show('File search', 'No files matched your search criteria', 'warning')
+
+  getMinusHoursDate = (hours) => moment().tz('Europe/London').subtract(hours, 'hours').format('YYYY-MM-DDTHH:mm:ss');
 }

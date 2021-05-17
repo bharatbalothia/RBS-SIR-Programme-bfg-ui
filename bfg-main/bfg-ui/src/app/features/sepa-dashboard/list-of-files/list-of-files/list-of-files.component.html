@@ -26,8 +26,9 @@
             <tr *ngFor="let type of SEPATraffic">
                 <td class="left-table-header">{{type.key}}</td>
                 <td class="count-link">
-                    <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]" [queryParams]="{type: type.key}"
-                    (click)="checkCount(type.value)">
+                    <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
+                        [queryParams]="type.value > 0 && {startDate: getMinusHoursDate(1), type: type.key}"
+                        (click)="checkCount(type.value)">
                         {{type.value}}
                     </a>
                 </td>

@@ -1,5 +1,8 @@
 package com.ibm.sterling.bfg.app.model.file;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class SEPAFile {
@@ -10,6 +13,8 @@ public class SEPAFile {
     private Integer transactionTotal;
     private Direction direction;
     private Double settleAmountTotal = 0.0;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime timestamp;
 
     public Integer getId() {
         return id;
@@ -64,5 +69,14 @@ public class SEPAFile {
 
     public void setSettleAmountTotal(Double settleAmountTotal) {
         this.settleAmountTotal = settleAmountTotal;
+    }
+
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

@@ -10,10 +10,14 @@
     min-width: 650px;
 
     .mat-column-id,
-    .mat-column-status,
     .mat-column-workflowID {
         flex: 0 0 11% !important;
         width: 11% !important;
+    }
+
+    .mat-column-status {
+        flex: 0 0 9% !important;
+        width: 9% !important;
     }
 
     .mat-column-settleAmount {

@@ -1,13 +1,13 @@
-<mat-card class="error-monitor-card">
+<mat-card>
   <mat-card-header>
-    <mat-card-title>Number of transactions with value
+    <mat-card-title>Transactions with value
     </mat-card-title>
   </mat-card-header>
   <mat-card-content class="card-content">
     <app-autorefresh-data [getData]="getSEPAFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
     <section class="search-params-section">
       <mat-form-field class="form-field">
-        <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+        <mat-label>{{getTransactionsWithValueDisplayName('from')}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
           [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
           (dateChange)="handleDate($event, 'minDate');getSEPAFileList(pageIndex, pageSize)" />
@@ -29,7 +29,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="form-field">
-        <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+        <mat-label>{{getTransactionsWithValueDisplayName('to')}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
           [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
           (dateChange)="handleDate($event, 'maxDate');getSEPAFileList(pageIndex, pageSize)" />
@@ -49,6 +49,8 @@
           {{getSearchValidationMessage('incorrect')}}
         </mat-error>
       </mat-form-field>
+      <button class="reports-button" *ngIf="SEPAFiles" mat-raised-button (click)="openGenerateReportsDialog()">Generate
+        Reports</button>
     </section>
     <h3 class="total-elements" *ngIf="SEPAFiles && SEPAFiles.totalElements">
       {{getSearchingTableHeader(SEPAFiles.totalElements, SEPAFiles.pageable.pageSize, SEPAFiles.pageable.pageNumber +

@@ -1,0 +1,61 @@
+<div class="dialog-container">
+    <div class="header" mat-dialog-title>
+        <h2 class="dialog-title">{{data.title}}</h2>
+        <mat-icon class="close-icon" mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content>
+        <section class="search-params-section">
+            <mat-form-field class="form-field">
+                <mat-label>{{getTransactionsWithValueDisplayName('from')}}</mat-label>
+                <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
+                    [formControl]="reportsParametersFormGroup.controls['from']" [max]="maxDate"
+                    (dateChange)="handleDate($event, 'minDate')" />
+                <button mat-button *ngIf="reportsParametersFormGroup.controls['from'].value" matSuffix mat-icon-button
+                    aria-label="Clear" (click)="resetControl(reportsParametersFormGroup.controls['from'], 'minDate')">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)"
+                    (monthSelected)="setCalendarDblClick(fromPicker)">
+                </ngx-mat-datetime-picker>
+                <mat-error class="error-message"
+                    *ngIf="reportsParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+                    {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+                </mat-error>
+                <mat-error class="error-message"
+                    *ngIf="reportsParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+                    {{getSearchValidationMessage('incorrect')}}
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field">
+                <mat-label>{{getTransactionsWithValueDisplayName('to')}}</mat-label>
+                <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
+                    [formControl]="reportsParametersFormGroup.controls['to']" [min]="minDate"
+                    (dateChange)="handleDate($event, 'maxDate')" />
+                <button mat-button *ngIf="reportsParametersFormGroup.controls['to'].value" matSuffix mat-icon-button
+                    aria-label="Clear" (click)="resetControl(reportsParametersFormGroup.controls['to'], 'maxDate')">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
+                    (monthSelected)="setCalendarDblClick(toPicker)"></ngx-mat-datetime-picker>
+                <mat-error class="error-message"
+                    *ngIf="reportsParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+                    {{getSearchValidationMessage('maxDateLessThanMinDate')}}
+                </mat-error>
+                <mat-error class="error-message"
+                    *ngIf="reportsParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+                    {{getSearchValidationMessage('incorrect')}}
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button class="action-button" [disabled]="!reportsParametersFormGroup.valid" mat-raised-button
+            (click)="exportExcelReport()">Generate Excel Report</button>
+        <button class="action-button" [disabled]="!reportsParametersFormGroup.valid" mat-raised-button>Generate PDF
+            Report</button>
+        <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+    </mat-dialog-actions>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+</div>

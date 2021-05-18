@@ -18,8 +18,6 @@ import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ENTITY_SERVICE_TYPE, ENTITY_PERMISSIONS } from 'src/app/shared/models/entity/entity-constants';
 import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
 import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
-import { EntityScheduleDialogComponent } from '../entity-schedule-dialog/entity-schedule-dialog.component';
-import { EntityScheduleDialogConfig } from '../entity-schedule-dialog/entity-schedule-dialog-config.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MQDetails } from 'src/app/shared/models/entity/mq-details.model';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
@@ -29,6 +27,8 @@ import { ChangeControl } from 'src/app/shared/models/changeControl/change-contro
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { map, startWith } from 'rxjs/operators';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { EntityScheduleDialogComponent } from './entity-schedule-dialog/entity-schedule-dialog.component';
+import { EntityScheduleDialogConfig } from './entity-schedule-dialog/entity-schedule-dialog-config.model';
 
 @Component({
   selector: 'app-entity-create',

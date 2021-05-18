@@ -1,16 +1,11 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.time.LocalDateTime;
-
 public class File extends SEPAFile{
     private Integer status;
     private String errorCode;
     private String reference;
     private String service;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime timestamp;
+
     private Integer workflowID;
 
     public Integer getStatus() {
@@ -43,15 +38,6 @@ public class File extends SEPAFile{
 
     public void setService(String service) {
         this.service = service;
-    }
-
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
     public Integer getWorkflowID() {

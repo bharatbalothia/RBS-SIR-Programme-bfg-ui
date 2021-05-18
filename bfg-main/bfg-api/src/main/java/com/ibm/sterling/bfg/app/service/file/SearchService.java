@@ -4,21 +4,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.exception.file.BPHeaderNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +31,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static com.ibm.sterling.bfg.app.config.cache.CacheSpec.CACHE_BP_HEADERS;
@@ -75,6 +83,11 @@ public class SearchService {
 
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
+
+    @Autowired
+    private ExportReportService exportService;
+
+    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));
@@ -299,5 +312,16 @@ public class SearchService {
         map.put("workFlowId", objectMapper.convertValue(root.get("workFlowId"), Integer.class));
         map.put("wfdVersion", objectMapper.convertValue(root.get("wfdVersion"), Integer.class));
         return map;
+    }
+
+    public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
+        FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
+        Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
+        Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
+        fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
+        List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
+        Optional.ofNullable(files).orElseThrow(
+                () -> new FileNotFoundException("{\"message\": \"No files matched your search criteria\"}"));
+        return exportService.generateExcelReport(files);
     }
 }

@@ -65,3 +65,5 @@ export const removeFirst = (array: any[], toRemove: any): void => {
         array.splice(index, 1);
     }
 };
+
+export const getMappedObjectArray = (obj) => Object.keys(obj).map(key => ({ key, value: obj[key] }));

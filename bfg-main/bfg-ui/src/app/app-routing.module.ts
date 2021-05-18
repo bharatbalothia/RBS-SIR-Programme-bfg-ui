@@ -61,6 +61,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/sepa-dashboard/transactions-with-value/transactions-with-value.module')
           .then(m => m.TransactionsWithValueModule)
       },
+      {
+        path: ROUTING_PATHS.LIST_OF_FILES,
+        loadChildren: () => import('./features/sepa-dashboard/list-of-files/list-of-files.module')
+          .then(m => m.ListOfFilesModule)
+      },
       { path: ROUTING_PATHS.PAGE_NOT_FOUND, component: PageNotFoundComponent },
     ]
   }

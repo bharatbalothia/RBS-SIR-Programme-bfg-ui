@@ -29,4 +29,5 @@ export const ROUTING_PATHS = {
 
   // SEPA Dashboard routes
   TRANSACTIONS_WITH_VALUE: 'transactions-with-value',
+  LIST_OF_FILES: 'list-of-files',
 };

@@ -1,0 +1,61 @@
+.list-of-files-card {
+
+    position: static !important;
+    max-width: calc(100vw - 60px);
+    padding-bottom: 10px;
+    margin-bottom: 0 !important;
+    width: 340px;
+
+    .card-content {
+        min-width: 355px;
+        margin-bottom: 0px;
+        height: 170px;
+
+        .type-button {
+            margin-right: 10px;
+        }
+    }
+
+    .refresh-button {
+        float: right;
+
+        .action-icon {
+            display: flex;
+
+            .mat-icon {
+                font-size: 27px;
+                width: 27px;
+                height: 27px;
+            }
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 16px;
+
+        .table-header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .left-table-header {
+            text-align: right;
+        }
+
+        .count-link {
+            text-align: center;
+        }
+    }
+
+    table,
+    th,
+    td {
+        padding: 0px 10px 7px 0px;
+    }
+
+    .mat-card-footer {
+        height: 4px;
+        margin: 0 !important
+    }
+}

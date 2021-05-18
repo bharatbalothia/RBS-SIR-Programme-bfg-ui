@@ -12,7 +12,7 @@ export const TRUSTED_CERTIFICATE_DISPLAY_NAMES = {
   thumbprint: 'SHA-1 Thumbprint',
   thumbprint256: 'SHA-2 Thumbprint',
   validDates: 'Valid Dates',
-  startDate: 'Start Date',
+  from: 'Start Date',
   endDate: 'End Date',
   issuer: 'Issuer',
   subject: 'Subject',
@@ -71,7 +71,7 @@ const getTrustedCertificateDataSource = (trustedCertificate: TrustedCertificate)
   { fieldName: getTrustedCertificateDisplayName('serialNumber'), fieldValue: trustedCertificate.serialNumber },
   { fieldName: getTrustedCertificateDisplayName('thumbprint'), fieldValue: trustedCertificate.thumbprint },
   { fieldName: getTrustedCertificateDisplayName('thumbprint256'), fieldValue: trustedCertificate.thumbprint256 },
-  { fieldName: getTrustedCertificateDisplayName('startDate'), fieldValue: trustedCertificate.startDate },
+  { fieldName: getTrustedCertificateDisplayName('from'), fieldValue: trustedCertificate.from },
   { fieldName: getTrustedCertificateDisplayName('endDate'), fieldValue: trustedCertificate.endDate },
   ...getTrustedCertificateItemInfoValuesOrdered(trustedCertificate.issuer).map((value, index) => ({
     fieldName: index === 0 ? `${getTrustedCertificateDisplayName('issuer')}:` : undefined,

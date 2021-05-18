@@ -7,7 +7,7 @@ export interface TrustedCertificate {
     serialNumber: string;
     thumbprint: string;
     thumbprint256: string;
-    startDate: Date;
+    from: Date;
     endDate: Date;
     issuer: TSItemInfo;
     subject: TSItemInfo;

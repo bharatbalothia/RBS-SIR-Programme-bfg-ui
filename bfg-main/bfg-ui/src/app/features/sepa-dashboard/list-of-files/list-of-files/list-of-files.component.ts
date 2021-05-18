@@ -38,9 +38,19 @@ export class ListOfFilesComponent implements OnInit {
   getSEPATraffic = () =>
     this.statisticsService.getSEPATraffic().pipe(data => this.setLoading(data)).subscribe((data: SEPATraffic) => {
       this.isLoading = false;
-      this.SEPATraffic = getMappedObjectArray(data);
+      this.SEPATraffic = getMappedObjectArray(data).sort(this.compareByKey);
       this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss');
     }, () => this.isLoading = false)
+
+  compareByKey = (a, b) => {
+    if (a.key < b.key) {
+      return -1;
+    }
+    if (a.key > b.key) {
+      return 1;
+    }
+    return 0;
+  };
 
   checkCount = (count: number) => count === 0 &&
     this.notificationService.show('File search', 'No files matched your search criteria', 'warning')

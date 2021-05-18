@@ -27,7 +27,7 @@
                 <td class="left-table-header">{{type.key}}</td>
                 <td class="count-link">
                     <a [routerLink]="['/' + ROUTING_PATHS.FILE_SEARCH]"
-                        [queryParams]="type.value > 0 && {startDate: getMinusHoursDate(1), type: type.key}"
+                        [queryParams]="type.value > 0 && {from: getMinusHoursDate(1), type: type.key}"
                         (click)="checkCount(type.value)">
                         {{type.value}}
                     </a>

@@ -72,12 +72,12 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.URLParams = { ...params };
-      if (params.startDate) {
+      if (params.from) {
         this.defaultSelectedData = {
-          from: params.startDate === 'none' ? null : moment(params.startDate),
+          from: params.from === 'none' ? null : moment(params.from),
           to: null
         };
-        delete this.URLParams.startDate;
+        delete this.URLParams.from;
       }
       this.initSearchingParametersFormGroup();
       this.initFileCriteriaData();
@@ -109,15 +109,15 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   initSearchingParametersFormGroup() {
     this.searchingParametersFormGroup = this.formBuilder.group({
       entityId: [''],
-      service: [''],
-      direction: [''],
+      service: [get(this.URLParams, 'service', '')],
+      direction: [get(this.URLParams, 'direction', '')],
       fileStatus: [''],
-      bpstate: [''],
-      filename: [''],
-      reference: [''],
-      type: [''],
-      from: [this.defaultSelectedData.from],
-      to: [this.defaultSelectedData.to]
+      bpstate: [get(this.URLParams, 'bpstate', '')],
+      filename: [get(this.URLParams, 'filename', '')],
+      reference: [get(this.URLParams, 'reference', '')],
+      type: [get(this.URLParams, 'type', '')],
+      from: [get(this.URLParams, 'from', this.defaultSelectedData.from)],
+      to: [get(this.URLParams, 'to', this.defaultSelectedData.to)]
     });
 
     this.initMinMaxDate();
@@ -184,7 +184,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   getFileList(pageIndex: number, pageSize: number, callback?) {
     const formData = {
       ...this.searchingParametersFormGroup.value,
-      ...!isEmpty(this.URLParams) && this.URLParams,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),
@@ -277,40 +276,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onDirectionSelect = (event) => {
     this.filterFileCriteriaData();
-  }
-
-  onStatusSelect = (event) => {
-    // const fromStatus = event.value;
-
-    // if (fromStatus !== this.ALL) {
-    //   let refreshRequired = false;
-    //   const serviceControl = this.searchingParametersFormGroup.controls.service;
-    //   const initialService = serviceControl.value;
-    //   const directionControl = this.searchingParametersFormGroup.controls.direction;
-    //   const initialDirection = directionControl.value;
-
-    //   const newService = this.fileCriteriaData.service.find((element) =>
-    //     element.toUpperCase() === fromStatus.service.toUpperCase()
-    //   );
-
-    //   const newDirection = this.fileCriteriaData.direction.find((element) =>
-    //     element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
-    //   );
-
-    //   if (newDirection && (initialDirection !== newDirection)) {
-    //     directionControl.setValue(newDirection);
-    //     refreshRequired = true;
-    //   }
-
-    //   if (newService && (initialService !== newService)) {
-    //     serviceControl.setValue(newService);
-    //     refreshRequired = true;
-    //   }
-
-    //   if (refreshRequired) {
-    //     this.filterFileCriteriaData();
-    //   }
-    // }
   }
 
   isValidEntity(): boolean {

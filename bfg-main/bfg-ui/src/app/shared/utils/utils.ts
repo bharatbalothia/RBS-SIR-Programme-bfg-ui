@@ -1,5 +1,5 @@
 import { NgxMatDatetimePicker } from '@angular-material-components/datetime-picker';
-import { transform, isEqual, isObject, uniq } from 'lodash';
+import { transform, isEqual, isObject } from 'lodash';
 
 export const removeEmpties = (obj) => {
     for (const propName in obj) {

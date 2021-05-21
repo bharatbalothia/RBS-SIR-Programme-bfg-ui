@@ -315,16 +315,6 @@ public class SearchService {
     }
 
     public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
-        List<SEPAFile> files = getSepaFiles(from, to);
-        return exportService.generateExcelReport(files);
-    }
-
-    public ByteArrayInputStream generatePDFReport(String from, String to) throws IOException {
-        List<SEPAFile> files = getSepaFiles(from, to);
-        return exportService.generatePDFReport(files);
-    }
-
-    private List<SEPAFile> getSepaFiles(String from, String to) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
@@ -332,6 +322,6 @@ public class SearchService {
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
         Optional.ofNullable(files).orElseThrow(
                 () -> new FileNotFoundException("{\"message\": \"No files matched your search criteria\"}"));
-        return files;
+        return exportService.generateExcelReport(files);
     }
 }

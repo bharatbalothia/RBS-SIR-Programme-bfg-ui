@@ -1,16 +1,13 @@
 package com.ibm.sterling.bfg.app.service.file;
 
 import com.ibm.sterling.bfg.app.model.file.SEPAFile;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +21,10 @@ import java.util.Optional;
 public class ExportReportService {
 
     private static final Logger LOGGER = LogManager.getLogger(ExportReportService.class);
-    private static final String[] COLUMNS = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
         LOGGER.info("Generate an excel report");
-
+        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("SEPA Files");
             sheet.createFreezePane(0, 1);
@@ -49,9 +45,9 @@ public class ExportReportService {
             setBorderStyle(cellStyle, BorderStyle.THIN);
 
             Row headerRow = sheet.createRow(0);
-            for (int columnIndex = 0; columnIndex < COLUMNS.length; columnIndex++) {
+            for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
                 Cell cell = headerRow.createCell(columnIndex);
-                cell.setCellValue(COLUMNS[columnIndex]);
+                cell.setCellValue(columns[columnIndex]);
                 cell.setCellStyle(headerStyle);
             }
 
@@ -98,7 +94,7 @@ public class ExportReportService {
                 }
             });
 
-            for (int i = 0; i < COLUMNS.length; i++) {
+            for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
 
@@ -112,58 +108,5 @@ public class ExportReportService {
         headerStyle.setBorderTop(borderStyle);
         headerStyle.setBorderLeft(borderStyle);
         headerStyle.setBorderRight(borderStyle);
-    }
-
-    public ByteArrayInputStream generatePDFReport(List<SEPAFile> files) throws IOException {
-        Document document = new Document();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-//            String header = "SEPA files";
-////            Header headerHandler = new Header(header, header);
-////            new Footer
-
-            PdfPTable table = new PdfPTable(7);
-            table.setWidthPercentage(100);
-            table.setWidths(new int[] {65, 220, 55, 100, 100, 100, 80});
-
-            com.itextpdf.text.Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-
-            PdfPCell headerCell;
-
-            for (String column : COLUMNS) {
-                headerCell= new PdfPCell(new Phrase(column, headerFont));
-                headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                table.addCell(headerCell);
-            }
-
-            int rowIndex = 100000;
-
-            for (SEPAFile file : files) {
-                addPdfCell(table, String.valueOf(rowIndex));
-                addPdfCell(table, file.getFilename());
-                addPdfCell(table, file.getType());
-                addPdfCell(table, String.valueOf(file.getTransactionTotal()));
-                addPdfCell(table, String.valueOf(file.getSettleAmountTotal()));
-                addPdfCell(table, String.valueOf(file.getTimestamp()));
-                addPdfCell(table, file.getDirection());
-                rowIndex ++;
-            }
-
-            PdfWriter.getInstance(document, out);
-            document.open();
-            document.add(table);
-            document.close();
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (DocumentException e) {
-            LOGGER.error("Error appears in pdf document");
-        }
-        return new ByteArrayInputStream(out.toByteArray());
-    }
-
-    private void addPdfCell(PdfPTable table, String type) {
-        PdfPCell cell = new PdfPCell(new Phrase(type));
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.addCell(cell);
     }
 }

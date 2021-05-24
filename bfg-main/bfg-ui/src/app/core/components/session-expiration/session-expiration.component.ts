@@ -5,8 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { PasswordConfirmationDialogComponent } from 'src/app/shared/components/password-confirmation-dialog/password-confirmation-dialog.component';
 import { AuthService } from '../../auth/auth.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { Router } from '@angular/router';
-import { ROUTING_PATHS } from '../../constants/routing-paths';
 
 @Component({
   selector: 'app-session-expiration',
@@ -22,7 +20,6 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
     private passwordConfirmationDialog: MatDialog,
     private authService: AuthService,
     private notificationService: NotificationService,
-    private router: Router
   ) { }
 
   ngOnInit() {
@@ -38,12 +35,10 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
       if (t === alertAtSec) {
         this.openPasswordConfirmationDialog();
       }
-
       if (t === 0) {
         this.stopSessionTime();
         this.passwordConfirmationDialog.closeAll();
         this.authService.logOut();
-        this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TrustedCertificatesHomeComponent } from './trusted-certificate-home.component';
 
@@ -6,7 +6,7 @@ describe('TrustedCertificatesHomeComponent', () => {
   let component: TrustedCertificatesHomeComponent;
   let fixture: ComponentFixture<TrustedCertificatesHomeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TrustedCertificatesHomeComponent ]
     })

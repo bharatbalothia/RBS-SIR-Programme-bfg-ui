@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DragableDialogWrapperComponent } from './dragable-dialog-wrapper.component';
 
@@ -6,7 +6,7 @@ describe('DragableDialogWrapperComponent', () => {
   let component: DragableDialogWrapperComponent;
   let fixture: ComponentFixture<DragableDialogWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DragableDialogWrapperComponent ]
     })

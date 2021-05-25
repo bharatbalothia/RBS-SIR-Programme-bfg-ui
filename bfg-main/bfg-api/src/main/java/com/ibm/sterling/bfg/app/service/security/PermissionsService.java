@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -100,13 +101,16 @@ public class PermissionsService {
     }
 
     public Set<String> getPermissionsOfGroup(String group, boolean isChild, List<String> listBFGUIPermissions) throws JsonProcessingException {
-        ResponseEntity<String> response = new RestTemplate().exchange(
-                groupsUrl + "?_range=0-999&searchFor=" + group,
-                HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders()),
-                String.class);
+        try {
+            ResponseEntity<String> response = new RestTemplate().exchange(
+                    groupsUrl + "?_range=0-999&searchFor=" + group,
+                    HttpMethod.GET,
+                    new HttpEntity<>(getHttpHeaders()),
+                    String.class);
+
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        List<Map<String, String>> authorityList = Optional.ofNullable(objectMapper.convertValue(root, List.class)).orElseGet(ArrayList::new);
+        List<Map<String, String>> authorityList = Optional.ofNullable(objectMapper.convertValue(root, List.class))
+                .orElseGet(ArrayList::new);
 
         return authorityList.stream()
                 .flatMap(authorities -> {
@@ -126,6 +130,9 @@ public class PermissionsService {
                             return permissionSet.stream();
                         }
                 ).collect(Collectors.toSet());
+        } catch (HttpClientErrorException ex) {
+            return new HashSet<>();
+        }
     }
 
     private Predicate<String> isNotNeededAuthorityPredicate(List<String> userAccountAuthorities) {

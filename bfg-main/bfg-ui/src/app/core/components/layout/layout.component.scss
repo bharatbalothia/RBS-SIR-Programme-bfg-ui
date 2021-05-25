@@ -21,11 +21,12 @@
       position: absolute;
       right: 0;
       left: 0;
-      height: 5px;
+      top: 0;
+      height: 65px;
       font-size: 26px;
       align-self: center;
       justify-content: center;
-      align-items: baseline;
+      align-items: center;
 
       .app-version {
         font-size: 14px;

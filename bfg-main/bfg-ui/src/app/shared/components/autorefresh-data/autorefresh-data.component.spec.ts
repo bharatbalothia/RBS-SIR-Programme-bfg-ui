@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AutorefreshDataComponent } from './autorefresh-data.component';
 
@@ -6,7 +6,7 @@ describe('AutorefreshDataComponent', () => {
   let component: AutorefreshDataComponent;
   let fixture: ComponentFixture<AutorefreshDataComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ AutorefreshDataComponent ]
     })

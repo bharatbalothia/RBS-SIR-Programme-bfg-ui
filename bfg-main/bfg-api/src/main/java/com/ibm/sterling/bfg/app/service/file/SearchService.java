@@ -86,8 +86,8 @@ public class SearchService {
     @Autowired
     private ExportPDFReportService exportPDFService;
 
-    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100;
-//    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
+//    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100;
+    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));

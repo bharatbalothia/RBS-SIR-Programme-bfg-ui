@@ -53,7 +53,7 @@ public class ConverterToPDF {
     private void drawTableSubsetToPage(
             Table table, PDPageContentStream contentStream, String[][] currentPageContent, int pageNumber, int pageCount) throws IOException {
         float tableTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getMargin() : table.getPageSize().getHeight() - table.getMargin();
-//        drawTableGrid(table, currentPageContent, contentStream, tableTopY);
+        drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
         float nextTextX = table.getMargin() + table.getCellMargin();
         float nextTextY = tableTopY - (table.getRowHeight() / 2)
@@ -106,11 +106,26 @@ public class ConverterToPDF {
 
     private void drawTableGrid(Table table, String[][] currentPageContent,
                                PDPageContentStream contentStream, float tableTopY) throws IOException {
-        float newtY = tableTopY;
-        for (int i = 0; i <= currentPageContent.length; i++) {
-            contentStream.addRect(table.getMargin(), newtY, table.getWidth() / table.getColumnsCount(), table.getHeight());
-            newtY -= table.getRowHeight();
+        float nextY = tableTopY;
+        for (int i = 0; i <= currentPageContent.length + 1; i++) {
+            contentStream.moveTo(table.getMargin(), nextY);
+            contentStream.lineTo(table.getMargin() + table.getWidth(), nextY);
+            contentStream.stroke();
+            nextY -= table.getRowHeight();
         }
+
+        final float tableYLength = table.getRowHeight() + (table.getRowHeight() * currentPageContent.length);
+        final float tableBottomY = tableTopY - tableYLength;
+        float nextX = table.getMargin();
+        for (int i = 0; i < table.getColumnsCount(); i++) {
+            contentStream.moveTo(nextX, tableTopY);
+            contentStream.lineTo(nextX, tableBottomY);
+            contentStream.stroke();
+            nextX += table.getColumns().get(i).getWidth();
+        }
+        contentStream.moveTo(nextX, tableTopY);
+        contentStream.lineTo(nextX, tableBottomY);
+        contentStream.stroke();
     }
 
     private String[][] getContentPerPage(Table table, int rowsPerPage, int pageNumber) {

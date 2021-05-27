@@ -174,6 +174,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
       const getValidatedCertificate = () => this.addValidationToCertificate(trustedCertificate);
 
       getValidatedCertificate().then(validatedCertificate => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `Trusted Certificate: ${validatedCertificate.certificateName}`,
         getTitle: (data) => `Trusted Certificate: ${data.certificateName}`,
         data: validatedCertificate,
         getData: getValidatedCertificate,
@@ -236,6 +237,7 @@ export class TrustedCertificatePendingComponent implements OnInit {
         .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
 
     getPendingChange().then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+      title: `Delete ${validatedChangeControl.changeID}`,
       getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
       yesCaption: 'Cancel',
       data: validatedChangeControl,

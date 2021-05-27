@@ -157,6 +157,7 @@ export class EntitySearchComponent implements OnInit {
     }
     detailsData().then((entity: Entity) => entity &&
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: `${entity.service}: ${entity.entity}`,
         getTitle: (data: Entity) => `${data.service}: ${data.entity}`,
         data: entity,
         getData: detailsData,
@@ -233,6 +234,7 @@ export class EntitySearchComponent implements OnInit {
 
     getPendingEntityDetails().then((changeCtrl: ChangeControl) =>
       changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+        title:  `Delete ${changeCtrl.changeID}`,
         getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
         data: changeCtrl,
         getData: getPendingEntityDetails,

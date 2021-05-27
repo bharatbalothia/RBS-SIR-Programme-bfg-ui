@@ -183,6 +183,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   getFileList(pageIndex: number, pageSize: number, callback?) {
     const formData = {
+      ...!isEmpty(this.URLParams) && this.URLParams,
       ...this.searchingParametersFormGroup.value,
       ...!isEmpty(this.URLParams) && this.URLParams,
       from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),

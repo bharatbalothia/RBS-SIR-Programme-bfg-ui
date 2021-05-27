@@ -95,6 +95,7 @@ export class FileDetailsComponent implements OnInit {
       });
 
     getEntity().then((entity: Entity) => this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+      title: `${entity.service}: ${entity.entity}`,
       getTitle: (data: Entity) => `${data.service}: ${data.entity}`,
       data: entity,
       getData: getEntity,

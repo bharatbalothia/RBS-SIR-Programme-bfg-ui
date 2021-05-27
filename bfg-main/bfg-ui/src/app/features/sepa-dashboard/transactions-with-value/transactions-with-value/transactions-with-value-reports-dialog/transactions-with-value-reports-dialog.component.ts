@@ -9,6 +9,7 @@ import { getTransactionsWithValueDisplayName } from '../../transactions-with-val
 import { saveAs } from 'file-saver';
 import { get } from 'lodash';
 import * as moment from 'moment';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-transactions-with-value-reports-dialog',
@@ -81,7 +82,14 @@ export class TransactionsWithValueReportsDialogComponent implements OnInit {
     from: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.from')),
     to: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.to')),
   })).pipe(data => this.setLoading(data)).toPromise()
+
+  exportPDFReport = () => this.SEPADashboardService.exportPDF(removeEmpties({
+    from: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.from')),
+    to: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.to')),
+  })).pipe(data => this.setLoading(data)).toPromise()
+
+
+  saveFile = (reportRequest: Promise<any>) => reportRequest
     .then((response: any) => saveAs(response.body, response.headers.get('content-disposition').split(';')[1].trim().split('=')[1]))
     .finally(() => this.isLoading = false)
-
 }

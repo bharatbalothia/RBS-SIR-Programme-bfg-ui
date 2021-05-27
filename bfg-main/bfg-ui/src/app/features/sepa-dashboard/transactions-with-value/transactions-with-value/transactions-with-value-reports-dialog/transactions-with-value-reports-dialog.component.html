@@ -52,8 +52,9 @@
     </mat-dialog-content>
     <mat-dialog-actions>
         <button class="action-button" [disabled]="!reportsParametersFormGroup.valid" mat-raised-button
-            (click)="exportExcelReport()">Generate Excel Report</button>
-        <button class="action-button" [disabled]="!reportsParametersFormGroup.valid" mat-raised-button>Generate PDF
+            (click)="saveFile(exportExcelReport())">Generate Excel Report</button>
+        <button class="action-button" [disabled]="!reportsParametersFormGroup.valid" mat-raised-button
+            (click)="saveFile(exportPDFReport())">Generate PDF
             Report</button>
         <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
     </mat-dialog-actions>

@@ -27,4 +27,12 @@ export class SEPADashboardService {
     });
   }
 
+  exportPDF(params?: { from?: string, to?: string }): Observable<HttpResponse<Blob>> {
+    return this.http.get<Blob>(this.apiUrl + '/export-pdf', {
+      observe: 'response',
+      responseType: 'blob' as 'json',
+      params
+    });
+  }
+
 }

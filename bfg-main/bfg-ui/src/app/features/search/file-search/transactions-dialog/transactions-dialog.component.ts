@@ -111,6 +111,7 @@ export class TransactionsDialogComponent implements OnInit {
     .subscribe((docCont: DocumentContent) => {
       this.isLoading = false;
       this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
+        title: docCont.document ? transaction.docID : `Primary Document`,
         getTitle: (data) => data.document ? transaction.docID : `Primary Document`,
         data: docCont,
         getTabs: (data) => getTransactionDocumentInfoTabs({ ...data, processID: transaction.workflowID }),

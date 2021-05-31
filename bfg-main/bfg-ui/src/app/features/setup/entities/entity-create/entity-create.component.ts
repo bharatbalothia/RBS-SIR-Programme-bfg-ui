@@ -836,9 +836,11 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.inboundRequestType.setValue(
           this.inboundRequestTypeList.filter(el => value.includes(el.value as never))
         );
+        this.entityPageFormGroup.controls.inboundRequestType.markAsTouched();
         break;
       default:
         this.entityPageFormGroup.controls[key].patchValue(value);
+        this.entityPageFormGroup.controls[key].markAsTouched();
     }
   }
 

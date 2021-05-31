@@ -263,6 +263,7 @@ export class TrustedCertificateSearchComponent implements OnInit {
         .then(changeCtrl => this.addValidationToChangeControl(changeCtrl)));
 
     getPendingChange().then((validatedChangeControl: ChangeControl) => this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
+      title: `Delete ${validatedChangeControl.changeID}`,
       getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
       yesCaption: 'Cancel',
       data: validatedChangeControl,

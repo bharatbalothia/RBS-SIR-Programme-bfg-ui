@@ -1,6 +1,6 @@
 .home-events-card {
     position: static !important;
-    max-width: calc(100vw - 60px);
+    max-width: calc(100vw - 295px);
     margin-left: 0 !important;
     margin-right: 0;
     margin-bottom: 8px !important;
@@ -77,4 +77,11 @@
         padding-right: 16px;
     }
 
+}
+
+@media (max-width: 900px) {
+
+    .home-events-card {
+        max-width: calc(100vw - 60px);
+    }
 }

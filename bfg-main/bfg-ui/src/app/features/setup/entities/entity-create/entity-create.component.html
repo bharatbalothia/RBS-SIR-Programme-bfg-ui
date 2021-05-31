@@ -140,7 +140,7 @@
                         <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
                             [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
                     </section>
-                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundRequestType')">
+                    <section class="form-field-section mat-select-field" *ngIf="entityPageFormGroup.get('inboundRequestType')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
                             <mat-select formControlName="inboundRequestType" multiple
@@ -170,7 +170,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <app-overlay-info
+                        <app-overlay-info class="source-value-button"
                             *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
                             buttonName="Source Value" [overlayData]="editableEntity.inboundRequestType"
                             [key]="'inboundRequestType'" (insert)="insert($event)">

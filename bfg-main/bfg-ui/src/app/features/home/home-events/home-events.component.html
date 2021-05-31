@@ -41,11 +41,13 @@
                     <mat-label>Filter by username</mat-label>
                     <input matInput [(ngModel)]="username" name="username">
                 </mat-form-field>
-                <mat-form-field class="filter-by-field">
-                    <mat-label>Filter by Object Acted On</mat-label>
-                    <input matInput [(ngModel)]="objectActedOn" name="objectActedOn">
-                </mat-form-field>
-                <app-tooltip class="tooltip" [tip]="getTooltip('audit-events', 'object-acted-on')"></app-tooltip>
+                <div class="field-wrapper">
+                    <mat-form-field class="filter-by-field">
+                        <mat-label>Filter by Object Acted On</mat-label>
+                        <input matInput [(ngModel)]="objectActedOn" name="objectActedOn">
+                    </mat-form-field>
+                    <app-tooltip class="tooltip" [tip]="getTooltip('audit-events', 'object-acted-on')"></app-tooltip>
+                </div>
                 <button class="filter-button" color="primary" type="submit" mat-raised-button>
                     <mat-icon>refresh</mat-icon>
                 </button>

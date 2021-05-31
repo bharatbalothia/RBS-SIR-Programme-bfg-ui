@@ -35,15 +35,19 @@
                 }
             }
 
+            .field-wrapper {
+                display: inline-flex;
+            }
+
             .filter-button,
             .clear-button {
                 height: 35px;
                 align-self: center;
-                margin-left: 10px;
             }
 
             .filter-button {
                 margin-left: auto;
+                margin-right: 10px;
             }
 
             .clear-button {

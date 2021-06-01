@@ -6,12 +6,14 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import java.util.List;
 
 public class Table {
+    private String name;
     private float margin;
     private float height;
     private PDRectangle pageSize;
     private boolean isLandscape;
     private float rowHeight;
     private PDFont textFont;
+    private PDFont headerTextFont;
     private float fontSize;
     private Integer rowNumber;
     private List<Column> columns;
@@ -19,6 +21,14 @@ public class Table {
     private float cellMargin;
 
     public Table() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String[] getColumnsNamesAsArray() {
@@ -83,6 +93,14 @@ public class Table {
 
     public void setTextFont(PDFont textFont) {
         this.textFont = textFont;
+    }
+
+    public PDFont getHeaderTextFont() {
+        return headerTextFont;
+    }
+
+    public void setHeaderTextFont(PDFont headerTextFont) {
+        this.headerTextFont = headerTextFont;
     }
 
     public float getFontSize() {

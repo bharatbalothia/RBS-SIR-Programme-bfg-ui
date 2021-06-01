@@ -114,13 +114,12 @@ public class FileSearchController {
         return ResponseEntity
                 .ok()
                 .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(in));
     }
 
     private HttpHeaders getHttpHeaders() {
         LocalDateTime currentDate = LocalDateTime.now();
-        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyhhmm"));
+        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyHHmm"));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".pdf");
         return headers;

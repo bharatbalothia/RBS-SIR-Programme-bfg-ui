@@ -6,7 +6,13 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import java.util.List;
 
 public class TableBuilder {
+
     private Table table = new Table();
+
+    public TableBuilder withName(String name) {
+        table.setName(name);
+        return this;
+    }
 
     public TableBuilder withMargin(float margin) {
         table.setMargin(margin);
@@ -35,6 +41,11 @@ public class TableBuilder {
 
     public TableBuilder withTextFont(PDFont textFont) {
         table.setTextFont(textFont);
+        return this;
+    }
+
+    public TableBuilder withHeaderTextFont(PDFont textFont) {
+        table.setHeaderTextFont(textFont);
         return this;
     }
 

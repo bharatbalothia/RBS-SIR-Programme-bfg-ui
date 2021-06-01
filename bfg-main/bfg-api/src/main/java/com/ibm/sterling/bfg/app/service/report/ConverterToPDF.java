@@ -55,16 +55,24 @@ public class ConverterToPDF {
         float tableTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getMargin() : table.getPageSize().getHeight() - table.getMargin();
         drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
+        if (pageNumber == 0) {
+            float tableNameTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getMargin() / 3 * 2 :
+                    table.getPageSize().getHeight() - table.getMargin() / 3 * 2;
+            float tableNameTopX = table.isLandscape() ? table.getPageSize().getHeight() / 2 - table.getName().length() / 2 :
+                    table.getPageSize().getWidth() / 2 - table.getName().length() / 2;
+            writeTableName(contentStream, tableNameTopX, tableNameTopY, table);
+        }
+
         float nextTextX = table.getMargin() + table.getCellMargin();
         float nextTextY = tableTopY - (table.getRowHeight() / 2)
                 - ((table.getTextFont().getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * table.getFontSize()) / 4);
 
-        writeHeaders(table.getColumns(), contentStream, nextTextX, nextTextY, table);
+        writeTableHeaders(table.getColumns(), contentStream, nextTextX, nextTextY, table);
         nextTextY -= table.getRowHeight();
         nextTextX = table.getMargin() + table.getCellMargin();
 
         for (int i = 0; i < currentPageContent.length; i++) {
-            writeContentLine(currentPageContent[i], contentStream, nextTextX, nextTextY, table);
+            writeRowContent(currentPageContent[i], contentStream, nextTextX, nextTextY, table);
             nextTextY -= table.getRowHeight();
             nextTextX = table.getMargin() + table.getCellMargin();
         }
@@ -72,8 +80,16 @@ public class ConverterToPDF {
         contentStream.close();
     }
 
-    private void writeHeaders(List<Column> columns, PDPageContentStream contentStream, float nextTextX,
-                                  float nextTextY, Table table) throws IOException {
+    private void writeTableName(PDPageContentStream contentStream, float nextTextX,
+                                float nextTextY, Table table) throws IOException {
+        contentStream.beginText();
+        contentStream.newLineAtOffset(nextTextX, nextTextY);
+        contentStream.showText(table.getName());
+        contentStream.endText();
+    }
+
+    private void writeTableHeaders(List<Column> columns, PDPageContentStream contentStream, float nextTextX,
+                                   float nextTextY, Table table) throws IOException {
         for(Column column : columns) {
             contentStream.beginText();
             contentStream.newLineAtOffset(nextTextX, nextTextY);
@@ -83,8 +99,9 @@ public class ConverterToPDF {
         }
     }
 
-    private void writeContentLine(String[] lineContent, PDPageContentStream contentStream, float nextTextX, float nextTextY,
-                                  Table table) throws IOException {
+    private void writeRowContent(String[] lineContent, PDPageContentStream contentStream, float nextTextX, float nextTextY,
+                                 Table table) throws IOException {
+        contentStream.setFont(table.getTextFont(), table.getFontSize());
         for (int i = 0; i < table.getColumnsCount(); i++) {
             String text = lineContent[i];
             contentStream.beginText();
@@ -97,11 +114,11 @@ public class ConverterToPDF {
 
     private void writePageNumber(int pageNumber, int pageCount, Table table, PDPageContentStream contentStream)
             throws IOException {
-            contentStream.setFont(PDType1Font.COURIER, 8);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(table.getMargin(), table.getMargin() / 2);
-            contentStream.showText("Page " + (pageNumber + 1) + " from " + pageCount);
-            contentStream.endText();
+        contentStream.setFont(PDType1Font.COURIER, 8);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(table.getMargin(), table.getMargin() / 2);
+        contentStream.showText("Page " + (pageNumber + 1) + " from " + pageCount);
+        contentStream.endText();
     }
 
     private void drawTableGrid(Table table, String[][] currentPageContent,
@@ -140,7 +157,7 @@ public class ConverterToPDF {
     private PDPageContentStream generateContentStreamPerPage(PDDocument document, PDPage page, Table table)
             throws IOException {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(table.getTextFont(), table.getFontSize());
+        contentStream.setFont(table.getHeaderTextFont(), table.getFontSize());
         if (table.isLandscape()) {
             contentStream.transform(new Matrix(0, 1, -1, 0, table.getPageSize().getWidth(), 0));
         }

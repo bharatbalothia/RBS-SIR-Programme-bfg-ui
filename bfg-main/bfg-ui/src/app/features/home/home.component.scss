@@ -2,11 +2,16 @@
     display: flex;
     overflow: hidden;
     padding-bottom: 2px;
+    padding-left: 15px;
 
     .home-statistics {
         display: flex;
         flex-wrap: wrap;
         max-height: 384px;
+    }
+
+    .home-events {
+        display: flex;
     }
 
 }
@@ -24,6 +29,7 @@
 
         .home-events {
             order: 2;
+
         }
     }
 }

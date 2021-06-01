@@ -1,17 +1,15 @@
 .home-events-card {
     position: static !important;
-    max-width: calc(100vw - 60px);
-    margin-left: 0;
-    margin-right: 0 !important;
+    max-width: calc(100vw - 295px);
+    margin-left: 0 !important;
+    margin-right: 0;
     margin-bottom: 8px !important;
     padding-right: 0;
     padding-bottom: 10px;
     padding-top: 10px;
-    overflow: visible !important;
 
     .card-content {
-        width: 585px;
-        overflow: visible !important;
+        min-width: 585px;
 
         .events-filters {
             display: flex;
@@ -37,15 +35,19 @@
                 }
             }
 
+            .field-wrapper {
+                display: inline-flex;
+            }
+
             .filter-button,
             .clear-button {
                 height: 35px;
                 align-self: center;
-                margin-left: 10px;
             }
 
             .filter-button {
                 margin-left: auto;
+                margin-right: 10px;
             }
 
             .clear-button {
@@ -75,4 +77,11 @@
         padding-right: 16px;
     }
 
+}
+
+@media (max-width: 900px) {
+
+    .home-events-card {
+        max-width: calc(100vw - 60px);
+    }
 }

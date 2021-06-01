@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model.pdf;
+package com.ibm.sterling.bfg.app.model.report;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;

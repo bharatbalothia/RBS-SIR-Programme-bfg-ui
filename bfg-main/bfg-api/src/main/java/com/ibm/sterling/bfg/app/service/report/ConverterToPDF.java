@@ -1,7 +1,7 @@
 package com.ibm.sterling.bfg.app.service.report;
 
-import com.ibm.sterling.bfg.app.model.pdf.Column;
-import com.ibm.sterling.bfg.app.model.pdf.Table;
+import com.ibm.sterling.bfg.app.model.report.Column;
+import com.ibm.sterling.bfg.app.model.report.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;

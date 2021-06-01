@@ -1,9 +1,9 @@
 package com.ibm.sterling.bfg.app.service.file;
 
 import com.ibm.sterling.bfg.app.model.file.SEPAFile;
-import com.ibm.sterling.bfg.app.model.pdf.Column;
-import com.ibm.sterling.bfg.app.model.pdf.Table;
-import com.ibm.sterling.bfg.app.model.pdf.TableBuilder;
+import com.ibm.sterling.bfg.app.model.report.Column;
+import com.ibm.sterling.bfg.app.model.report.Table;
+import com.ibm.sterling.bfg.app.model.report.TableBuilder;
 import com.ibm.sterling.bfg.app.service.report.ConverterToPDF;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;

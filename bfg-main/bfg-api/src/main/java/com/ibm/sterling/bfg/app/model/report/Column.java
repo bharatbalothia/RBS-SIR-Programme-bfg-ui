@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.model.pdf;
+package com.ibm.sterling.bfg.app.model.report;
 
 public class Column {
     private String name;

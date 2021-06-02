@@ -339,7 +339,7 @@ public class SearchService {
             throws IOException {
         List<Transaction> transactions = getTransactionsForReport(fileId, size);
         if (reportType.equals(ReportType.EXCEL)) {
-            return exportExcelService.generateExcelReportForTransactions(transactions);
+            return exportExcelService.generateExcelReportForTransactions(transactions, fileName);
         } else {
             return exportPDFService.generatePDFReportForTransactions(transactions, fileName, fileId);
         }

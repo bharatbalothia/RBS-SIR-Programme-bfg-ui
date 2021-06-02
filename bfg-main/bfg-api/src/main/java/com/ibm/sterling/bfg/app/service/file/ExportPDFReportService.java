@@ -84,7 +84,7 @@ public class ExportPDFReportService {
         columns.add(new Column("Transaction ID", 130));
         columns.add(new Column("Type", 55));
         columns.add(new Column("Settlement amount", 110));
-        columns.add(new Column("Settlement Date", 80));
+        columns.add(new Column("Settlement Date", 90));
         String[][] content = new String[transactions.size()][7];
         int index = 0;
         for(Transaction transaction : transactions) {

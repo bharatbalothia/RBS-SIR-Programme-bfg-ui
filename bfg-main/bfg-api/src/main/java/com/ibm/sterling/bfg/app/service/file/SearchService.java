@@ -9,6 +9,7 @@ import com.ibm.sterling.bfg.app.exception.file.DocumentContentNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
+import com.ibm.sterling.bfg.app.model.report.ReportType;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
@@ -86,7 +87,6 @@ public class SearchService {
     @Autowired
     private ExportPDFReportService exportPDFService;
 
-//    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100;
     private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
@@ -315,11 +315,11 @@ public class SearchService {
     }
 
     public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
-        List<SEPAFile> files = getSepaFiles(from, to);
+        List<SEPAFile> files = getSepaFilesForReport(from, to);
         return exportExcelService.generateExcelReport(files);
     }
 
-    private List<SEPAFile> getSepaFiles(String from, String to) throws JsonProcessingException {
+    private List<SEPAFile> getSepaFilesForReport(String from, String to) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
@@ -331,7 +331,27 @@ public class SearchService {
     }
 
     public ByteArrayInputStream generatePDFReport(String from, String to) throws IOException {
-        List<SEPAFile> files = getSepaFiles(from, to);
+        List<SEPAFile> files = getSepaFilesForReport(from, to);
         return exportPDFService.generatePDFReport(files);
+    }
+
+    public ByteArrayInputStream generateReportForTransactions(Integer fileId, String fileName, Integer size, ReportType reportType)
+            throws IOException {
+        List<Transaction> transactions = getTransactionsForReport(fileId, size);
+        if (reportType.equals(ReportType.EXCEL)) {
+            return exportExcelService.generateExcelReportForTransactions(transactions);
+        } else {
+            return exportPDFService.generatePDFReportForTransactions(transactions, fileName, fileId);
+        }
+    }
+
+    private List<Transaction> getTransactionsForReport(Integer fileId, Integer size) throws JsonProcessingException {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setSize(size);
+        List<Transaction> transactions = getListFromSBI(searchCriteria,
+                fileSearchUrl + "/" + fileId + "/transactions", Transaction.class);
+//        Optional.ofNullable(transactions).orElseThrow(
+//                () -> new Transac("{\"message\": \"No files matched your search criteria\"}"));
+        return transactions;
     }
 }

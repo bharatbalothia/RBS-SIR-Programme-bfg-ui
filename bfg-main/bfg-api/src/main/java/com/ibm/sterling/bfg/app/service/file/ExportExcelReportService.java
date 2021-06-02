@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.service.file;
 
 import com.ibm.sterling.bfg.app.model.file.SEPAFile;
+import com.ibm.sterling.bfg.app.model.file.Transaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
@@ -106,5 +107,9 @@ public class ExportExcelReportService {
         headerStyle.setBorderTop(borderStyle);
         headerStyle.setBorderLeft(borderStyle);
         headerStyle.setBorderRight(borderStyle);
+    }
+
+    public ByteArrayInputStream generateExcelReportForTransactions(List<Transaction> transactions) {
+        return null;
     }
 }

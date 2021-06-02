@@ -95,7 +95,7 @@ public class FileSearchController {
     }
 
     @GetMapping("sepa/export-report")
-    public ResponseEntity<InputStreamResource> exportPDF(
+    public ResponseEntity<InputStreamResource> exportFilesReport(
             @RequestParam(value = "from", required = false) String from,
             @RequestParam(value = "to", required = false) String to,
             @RequestParam String type) throws IOException {
@@ -106,11 +106,33 @@ public class FileSearchController {
         } else {
             in = fileSearchService.generateExcelReport(from, to);
         }
+        HttpHeaders headers = getHttpHeadersForReport(reportType, "SEPA_");
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(reportType.mediaType())
+                .body(new InputStreamResource(in));
+    }
+
+    private HttpHeaders getHttpHeadersForReport(ReportType reportType, String fileNamePrefix) {
         LocalDateTime currentDate = LocalDateTime.now();
         String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyHHmm"));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition",
-                "attachment; filename=SEPA_" + ddMMyy + reportType.extension());
+                "attachment; filename="+ fileNamePrefix + ddMMyy + reportType.extension());
+        return headers;
+    }
+
+    @GetMapping("{fileId}/transactions/export-report")
+    public ResponseEntity<InputStreamResource> exportTransactionsReport
+            (@PathVariable Integer fileId,
+             @RequestParam String fileName,
+             @RequestParam(value = "size", defaultValue = "100000", required = false) Integer size,
+             @RequestParam String type)
+            throws IOException {
+        ReportType reportType = new ObjectMapper().convertValue(type, ReportType.class);
+        ByteArrayInputStream in = fileSearchService.generateReportForTransactions(fileId, fileName, size, reportType);
+        HttpHeaders headers = getHttpHeadersForReport(reportType, "Transactions_for_file_" + fileId + "_");
         return ResponseEntity
                 .ok()
                 .headers(headers)

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { SEPADashboardService } from 'src/app/shared/models/sepa-dashboard/sepa-dashboard.service';
@@ -9,6 +9,7 @@ import { getTransactionsWithValueDisplayName } from '../../transactions-with-val
 import { saveAs } from 'file-saver';
 import { get } from 'lodash';
 import * as moment from 'moment';
+import { REPORT_TYPE } from 'src/app/shared/models/sepa-dashboard/sepa-report-types';
 
 @Component({
   selector: 'app-transactions-with-value-reports-dialog',
@@ -17,6 +18,7 @@ import * as moment from 'moment';
 })
 export class TransactionsWithValueReportsDialogComponent implements OnInit {
 
+  REPORT_TYPE = REPORT_TYPE;
   setCalendarDblClick = setCalendarDblClick;
   getSearchValidationMessage = getSearchValidationMessage;
   getTransactionsWithValueDisplayName = getTransactionsWithValueDisplayName;
@@ -76,12 +78,11 @@ export class TransactionsWithValueReportsDialogComponent implements OnInit {
     return data;
   }
 
-
-  exportExcelReport = () => this.SEPADashboardService.exportExcel(removeEmpties({
+  exportReport = (type: string) => this.SEPADashboardService.exportReport(removeEmpties({
     from: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.from')),
     to: this.convertDateToFormat(get(this.reportsParametersFormGroup, 'value.to')),
-  })).pipe(data => this.setLoading(data)).toPromise()
-    .then((response: any) => saveAs(response.body, response.headers.get('content-disposition').split(';')[1].trim().split('=')[1]))
+    type
+  })).pipe(data => this.setLoading(data)).toPromise().then((response: any) => saveAs(response.body, response.headers.get('content-disposition').split(';')[1].trim().split('=')[1]))
     .finally(() => this.isLoading = false)
 
 }

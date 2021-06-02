@@ -13,9 +13,6 @@ import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -85,8 +81,12 @@ public class SearchService {
     private APIDetailsHandler apiDetailsHandler;
 
     @Autowired
-    private ExportReportService exportService;
+    private ExportExcelReportService exportExcelService;
 
+    @Autowired
+    private ExportPDFReportService exportPDFService;
+
+//    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100;
     private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
@@ -315,6 +315,11 @@ public class SearchService {
     }
 
     public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
+        List<SEPAFile> files = getSepaFiles(from, to);
+        return exportExcelService.generateExcelReport(files);
+    }
+
+    private List<SEPAFile> getSepaFiles(String from, String to) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
@@ -322,6 +327,11 @@ public class SearchService {
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
         Optional.ofNullable(files).orElseThrow(
                 () -> new FileNotFoundException("{\"message\": \"No files matched your search criteria\"}"));
-        return exportService.generateExcelReport(files);
+        return files;
+    }
+
+    public ByteArrayInputStream generatePDFReport(String from, String to) throws IOException {
+        List<SEPAFile> files = getSepaFiles(from, to);
+        return exportPDFService.generatePDFReport(files);
     }
 }

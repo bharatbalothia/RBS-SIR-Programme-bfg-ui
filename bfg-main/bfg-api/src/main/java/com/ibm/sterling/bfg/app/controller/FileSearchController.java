@@ -1,10 +1,12 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.exception.file.ErrorDetailsNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileNotFoundException;
 import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.*;
+import com.ibm.sterling.bfg.app.model.report.ReportType;
 import com.ibm.sterling.bfg.app.service.file.SearchService;
 import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,15 +94,27 @@ public class FileSearchController {
         return ok(fileSearchService.getFileMonitor().orElseThrow(FileNotFoundException::new));
     }
 
-    @GetMapping("sepa/export-excel")
-    public ResponseEntity<InputStreamResource> exportExcel(
+    @GetMapping("sepa/export-report")
+    public ResponseEntity<InputStreamResource> exportPDF(
             @RequestParam(value = "from", required = false) String from,
-            @RequestParam(value = "to", required = false) String to) throws IOException {
-        ByteArrayInputStream in = fileSearchService.generateExcelReport(from, to);
+            @RequestParam(value = "to", required = false) String to,
+            @RequestParam String type) throws IOException {
+        ReportType reportType = new ObjectMapper().convertValue(type, ReportType.class);
+        ByteArrayInputStream in;
+        if (reportType.equals(ReportType.PDF)) {
+            in = fileSearchService.generatePDFReport(from, to);
+        } else {
+            in = fileSearchService.generateExcelReport(from, to);
+        }
         LocalDateTime currentDate = LocalDateTime.now();
-        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyhhmm"));
+        String ddMMyy = currentDate.format(DateTimeFormatter.ofPattern("ddMMyyHHmm"));
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=SEPA_" + ddMMyy + ".xlsx");
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
+        headers.add("Content-Disposition",
+                "attachment; filename=SEPA_" + ddMMyy + reportType.extension());
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(reportType.mediaType())
+                .body(new InputStreamResource(in));
     }
 }

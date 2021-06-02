@@ -18,9 +18,8 @@ export class SEPADashboardService {
     return this.http.post<SEPAFilesWithPagination>(this.apiUrl, params);
   }
 
-
-  exportExcel(params?: { from?: string, to?: string }): Observable<HttpResponse<Blob>> {
-    return this.http.get<Blob>(this.apiUrl + '/export-excel', {
+  exportReport(params?: { from?: string, to?: string, type: string }): Observable<HttpResponse<Blob>> {
+    return this.http.get<Blob>(this.apiUrl + '/export-report', {
       observe: 'response',
       responseType: 'blob' as 'json',
       params

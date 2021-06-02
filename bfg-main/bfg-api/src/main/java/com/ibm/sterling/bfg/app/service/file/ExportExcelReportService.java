@@ -1,13 +1,11 @@
 package com.ibm.sterling.bfg.app.service.file;
 
 import com.ibm.sterling.bfg.app.model.file.SEPAFile;
-import com.ibm.sterling.bfg.app.service.PropertyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ExportReportService {
+public class ExportExcelReportService {
 
-    private static final Logger LOGGER = LogManager.getLogger(ExportReportService.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExportExcelReportService.class);
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
         LOGGER.info("Generate an excel report");

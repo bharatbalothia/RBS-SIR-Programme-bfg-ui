@@ -36,6 +36,7 @@ public class ExportPDFReportService {
     private static final float CELL_MARGIN = 5;
     private float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
     private float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
+    private static final String DATE_FORMAT = "ddMMyyHHmm";
 
     public ByteArrayInputStream generatePDFReport(List<SEPAFile> files) throws IOException {
         List<Column> columns = new ArrayList<>();
@@ -54,7 +55,7 @@ public class ExportPDFReportService {
             content[index][2] = file.getType();
             content[index][3] = String.valueOf(file.getTransactionTotal());
             content[index][4] = String.valueOf(file.getSettleAmountTotal());
-            content[index][5] = file.getTimestamp().format(DateTimeFormatter.ofPattern("ddMMyyHHmm"));
+            content[index][5] = file.getTimestamp().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
             content[index][6] = file.getDirection();
             index++;
         }
@@ -81,10 +82,10 @@ public class ExportPDFReportService {
     public ByteArrayInputStream generatePDFReportForTransactions(List<Transaction> transactions, String fileName, Integer fileId) throws IOException {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 60));
-        columns.add(new Column("Transaction ID", 130));
+        columns.add(new Column("Transaction ID", 190));
         columns.add(new Column("Type", 55));
         columns.add(new Column("Settlement amount", 110));
-        columns.add(new Column("Settlement Date", 90));
+        columns.add(new Column("Settlement Date", 85));
         String[][] content = new String[transactions.size()][7];
         int index = 0;
         for(Transaction transaction : transactions) {
@@ -92,7 +93,7 @@ public class ExportPDFReportService {
             content[index][1] = String.valueOf(transaction.getTransactionID());
             content[index][2] = transaction.getType();
             content[index][3] = String.valueOf(transaction.getSettleAmount());
-            content[index][4] = transaction.getSettleDate().format(DateTimeFormatter.ofPattern("ddMMyyHHmm"));
+            content[index][4] = transaction.getSettleDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
             index++;
         }
         Table table = new TableBuilder()

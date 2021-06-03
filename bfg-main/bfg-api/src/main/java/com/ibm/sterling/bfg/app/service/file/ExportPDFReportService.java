@@ -24,7 +24,7 @@ public class ExportPDFReportService {
     private ConverterToPDF converterToPDF;
 
     private static final String TABLE_NAME_FILE = "SEPA Files";
-    private static final String TABLE_NAME_TRANSACTIONS = "Transactions for %s(%d)";
+    private static final String TABLE_NAME_TRANSACTIONS = "Transactions for %s (%d)";
     private static final PDRectangle PAGE_SIZE = PDRectangle.A4;
     private static final float TABLE_MARGIN = 25;
     private static final float TABLE_MARGIN_TRANSACTION = 45;
@@ -81,10 +81,10 @@ public class ExportPDFReportService {
     public ByteArrayInputStream generatePDFReportForTransactions(List<Transaction> transactions, String fileName, Integer fileId) throws IOException {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 60));
-        columns.add(new Column("Transaction ID", 130));
+        columns.add(new Column("Transaction ID", 190));
         columns.add(new Column("Type", 55));
         columns.add(new Column("Settlement amount", 110));
-        columns.add(new Column("Settlement Date", 90));
+        columns.add(new Column("Settlement Date", 85));
         String[][] content = new String[transactions.size()][7];
         int index = 0;
         for(Transaction transaction : transactions) {

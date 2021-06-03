@@ -20,20 +20,42 @@ import java.util.Optional;
 public class ExportExcelReportService {
 
     private static final Logger LOGGER = LogManager.getLogger(ExportExcelReportService.class);
-    private static final String[] SEPA_COLUMNS = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
-    private static final String SEPA_SHEET_NAME = "SEPA Files";
-    private static final String[] TRX_COLUMNS = {"SI.No", "Transaction ID", "Type", "Settlement\n Amount", "Settlement\n Date"};
-    private static final String TRX_SHEET_NAME = "Transactions for %s";
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
         LOGGER.info("Generate an excel report");
-
+        String[] columns = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("SEPA Files");
+            sheet.createFreezePane(0, 1);
+            sheet.setAutoFilter(new CellRangeAddress(0, 0, 1, 6));
 
-            Sheet sheet = createSheet(workbook, SEPA_SHEET_NAME, SEPA_COLUMNS);
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
 
-            XSSFCellStyle cellStyle = getCellStyle(workbook);
-            XSSFCellStyle dateCellStyle = getDateCellStyle(workbook);
+            XSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(headerFont);
+            setBorderStyle(headerStyle, BorderStyle.MEDIUM);
+            headerStyle.setWrapText(true);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            XSSFCellStyle cellStyle = workbook.createCellStyle();
+            setBorderStyle(cellStyle, BorderStyle.THIN);
+
+            Row headerRow = sheet.createRow(0);
+            for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+                Cell cell = headerRow.createCell(columnIndex);
+                cell.setCellValue(columns[columnIndex]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            XSSFCellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(
+                    creationHelper.createDataFormat().getFormat("ddMMyyhhmm"));
+            setBorderStyle(dateStyle, BorderStyle.THIN);
+
 
             Optional.ofNullable(files).ifPresent(sepaFiles -> {
                 int rowIndex = 1;
@@ -61,7 +83,7 @@ public class ExportExcelReportService {
 
                     Cell cellTimestamp = row.createCell(5);
                     cellTimestamp.setCellValue(file.getTimestamp());
-                    cellTimestamp.setCellStyle(dateCellStyle);
+                    cellTimestamp.setCellStyle(dateStyle);
 
                     Cell cellDirection = row.createCell(6);
                     cellDirection.setCellValue(file.getDirection());
@@ -71,7 +93,7 @@ public class ExportExcelReportService {
                 }
             });
 
-            for (int i = 0; i < SEPA_COLUMNS.length; i++) {
+            for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
 
@@ -80,14 +102,48 @@ public class ExportExcelReportService {
         }
     }
 
+    private void setBorderStyle(XSSFCellStyle headerStyle, BorderStyle borderStyle) {
+        headerStyle.setBorderBottom(borderStyle);
+        headerStyle.setBorderTop(borderStyle);
+        headerStyle.setBorderLeft(borderStyle);
+        headerStyle.setBorderRight(borderStyle);
+    }
+
     public ByteArrayInputStream generateExcelReportForTransactions(List<Transaction> transactions, String fileName) throws IOException {
         LOGGER.info("Generate an excel report");
-
+        String[] columns = {"SI.No", "Transaction ID", "Type", "Settlement\n Amount", "Settlement\n Date"};
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = createSheet(workbook, String.format(TRX_SHEET_NAME, fileName), TRX_COLUMNS);
+            Sheet sheet = workbook.createSheet("Transactions for " + fileName);
+            sheet.createFreezePane(0, 1);
+            sheet.setAutoFilter(new CellRangeAddress(0, 0, 1, 4));
 
-            XSSFCellStyle cellStyle = getCellStyle(workbook);
-            XSSFCellStyle dateCellStyle = getDateCellStyle(workbook);
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+
+            XSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(headerFont);
+            setBorderStyle(headerStyle, BorderStyle.MEDIUM);
+            headerStyle.setWrapText(true);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            XSSFCellStyle cellStyle = workbook.createCellStyle();
+            setBorderStyle(cellStyle, BorderStyle.THIN);
+
+            Row headerRow = sheet.createRow(0);
+            for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+                Cell cell = headerRow.createCell(columnIndex);
+                cell.setCellValue(columns[columnIndex]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            XSSFCellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(
+                    creationHelper.createDataFormat().getFormat("ddMMyyhhmm"));
+            setBorderStyle(dateStyle, BorderStyle.THIN);
+
 
             Optional.ofNullable(transactions).ifPresent(transactionList -> {
                 int rowIndex = 1;
@@ -111,67 +167,18 @@ public class ExportExcelReportService {
 
                     Cell cellTimestamp = row.createCell(4);
                     cellTimestamp.setCellValue(transaction.getTimestamp());
-                    cellTimestamp.setCellStyle(dateCellStyle);
+                    cellTimestamp.setCellStyle(dateStyle);
 
                     rowIndex++;
                 }
             });
 
-            for (int i = 0; i < TRX_COLUMNS.length; i++) {
+            for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
 
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         }
-    }
-
-    private Sheet createSheet(XSSFWorkbook workbook, String sheetName, String[] columns) {
-        Sheet sheet = workbook.createSheet(sheetName);
-        sheet.createFreezePane(0, 1);
-        sheet.setAutoFilter(new CellRangeAddress(0, 0, 1, columns.length - 1));
-
-        Font headerFont = workbook.createFont();
-        headerFont.setBold(true);
-
-        XSSFCellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFont(headerFont);
-        setBorderStyle(headerStyle, BorderStyle.MEDIUM);
-        headerStyle.setWrapText(true);
-        headerStyle.setAlignment(HorizontalAlignment.CENTER);
-        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        Row headerRow = sheet.createRow(0);
-        for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-            Cell cell = headerRow.createCell(columnIndex);
-            cell.setCellValue(columns[columnIndex]);
-            cell.setCellStyle(headerStyle);
-        }
-
-        return sheet;
-    }
-
-    private void setBorderStyle(XSSFCellStyle headerStyle, BorderStyle borderStyle) {
-        headerStyle.setBorderBottom(borderStyle);
-        headerStyle.setBorderTop(borderStyle);
-        headerStyle.setBorderLeft(borderStyle);
-        headerStyle.setBorderRight(borderStyle);
-    }
-
-    private XSSFCellStyle getCellStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle cellStyle = workbook.createCellStyle();
-        setBorderStyle(cellStyle, BorderStyle.THIN);
-        return cellStyle;
-    }
-
-    private XSSFCellStyle getDateCellStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle dateStyle = workbook.createCellStyle();
-        CreationHelper creationHelper = workbook.getCreationHelper();
-        dateStyle.setDataFormat(
-                creationHelper.createDataFormat().getFormat("ddMMyyhhmm"));
-        setBorderStyle(dateStyle, BorderStyle.THIN);
-        return dateStyle;
     }
 }

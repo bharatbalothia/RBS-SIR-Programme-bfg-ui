@@ -16,6 +16,8 @@ import { BusinessProcessDialogComponent } from 'src/app/shared/components/busine
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
+import { REPORT_TYPE } from 'src/app/shared/constants/report-types';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -24,6 +26,7 @@ import { FileDialogService } from 'src/app/shared/models/file/file-dialog.servic
 })
 export class TransactionsDialogComponent implements OnInit {
 
+  REPORT_TYPE = REPORT_TYPE;
   getFileSearchDisplayName = getFileSearchDisplayName;
   getDirectionIcon = getDirectionIcon;
 
@@ -39,6 +42,7 @@ export class TransactionsDialogComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   fileId: number;
+  fileName: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
@@ -48,7 +52,8 @@ export class TransactionsDialogComponent implements OnInit {
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
-    this.fileId = get(this.data, 'actionData.fileId');
+    this.fileId = get(this.data, 'actionData.file.id');
+    this.fileName = get(this.data, 'actionData.file.filename');
   }
 
   ngOnInit() {
@@ -137,4 +142,10 @@ export class TransactionsDialogComponent implements OnInit {
         }
       },
     }))
+
+  exportReport = (type: string) =>
+    this.fileService.exportTransactionsReport(this.fileId, { fileName: this.fileName, size: this.transactions.totalElements, type })
+      .pipe(data => this.setLoading(data)).toPromise()
+      .then((response: any) => saveAs(response.body, response.headers.get('content-disposition').split(';')[1].trim().split('=')[1]))
+      .finally(() => this.isLoading = false)
 }

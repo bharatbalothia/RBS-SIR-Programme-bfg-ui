@@ -9,6 +9,12 @@
     width: 100%;
     min-width: 650px;
 
+    .mat-header-cell,
+    .mat-cell,
+    .mat-footer-cell {
+        padding-right: 5px !important;
+    }
+
     .mat-column-id,
     .mat-column-workflowID {
         flex: 0 0 11% !important;
@@ -44,10 +50,11 @@
 
 .mat-dialog-actions {
 
-    display: block;
+    justify-content: flex-end;
 
-    .close-button {
-        float: right;
+    .action-button:not(.mat-button-disabled) {
+        background-color: green;
+        color: #fff;
     }
 }
 

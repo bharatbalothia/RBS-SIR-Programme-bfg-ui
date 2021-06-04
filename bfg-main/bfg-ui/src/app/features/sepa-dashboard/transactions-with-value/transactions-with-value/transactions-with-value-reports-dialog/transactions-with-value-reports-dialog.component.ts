@@ -9,7 +9,7 @@ import { getTransactionsWithValueDisplayName } from '../../transactions-with-val
 import { saveAs } from 'file-saver';
 import { get } from 'lodash';
 import * as moment from 'moment';
-import { REPORT_TYPE } from 'src/app/shared/models/sepa-dashboard/sepa-report-types';
+import { REPORT_TYPE } from 'src/app/shared/constants/report-types';
 
 @Component({
   selector: 'app-transactions-with-value-reports-dialog',

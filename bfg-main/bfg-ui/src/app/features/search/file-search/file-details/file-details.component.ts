@@ -122,7 +122,7 @@ export class FileDetailsComponent implements OnInit {
       getTabs: () => [],
       displayName: getFileSearchDisplayName,
       actionData: {
-        fileId: file.id,
+        file: file,
         actions: {
           file: () => this.openFileDetailsDialog(file),
           workflowID: () => this.openBusinessProcessDialog(file)

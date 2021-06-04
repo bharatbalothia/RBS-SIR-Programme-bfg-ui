@@ -52,29 +52,33 @@ public class ConverterToPDF {
 
     private void drawTableSubsetToPage(
             Table table, PDPageContentStream contentStream, String[][] currentPageContent, int pageNumber, int pageCount) throws IOException {
-        float tableTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getMargin() : table.getPageSize().getHeight() - table.getMargin();
+        float tableTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getTopMargin() :
+                table.getPageSize().getHeight() - table.getTopMargin();
         drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
         if (pageNumber == 0) {
-            float tableNameTopY = table.isLandscape() ? table.getPageSize().getWidth() - table.getMargin() / 3 * 2 :
-                    table.getPageSize().getHeight() - table.getMargin() / 3 * 2;
-            float tableNameTopX = table.isLandscape() ? table.getPageSize().getHeight() / 2 - table.getName().length() / 2 :
-                    table.getPageSize().getWidth() / 2 - table.getName().length() / 2;
+            float nameLength = (float) table.getName().length();
+            float tableNameTopY = table.isLandscape() ?
+                    table.getPageSize().getWidth() - table.getTopMargin() / 3 * 2 :
+                    table.getPageSize().getHeight() - table.getTopMargin() / 3 * 2;
+            float tableNameTopX = table.isLandscape() ?
+                    table.getPageSize().getHeight() / 2 - table.getLeftMargin() - nameLength / 2 :
+                    table.getLeftMargin() + nameLength / 2;
             writeTableName(contentStream, tableNameTopX, tableNameTopY, table);
         }
 
-        float nextTextX = table.getMargin() + table.getCellMargin();
+        float nextTextX = table.getLeftMargin() + table.getCellMargin();
         float nextTextY = tableTopY - (table.getRowHeight() / 2)
                 - ((table.getTextFont().getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * table.getFontSize()) / 4);
 
         writeTableHeaders(table.getColumns(), contentStream, nextTextX, nextTextY, table);
         nextTextY -= table.getRowHeight();
-        nextTextX = table.getMargin() + table.getCellMargin();
+        nextTextX = table.getLeftMargin() + table.getCellMargin();
 
         for (int i = 0; i < currentPageContent.length; i++) {
             writeRowContent(currentPageContent[i], contentStream, nextTextX, nextTextY, table);
             nextTextY -= table.getRowHeight();
-            nextTextX = table.getMargin() + table.getCellMargin();
+            nextTextX = table.getLeftMargin() + table.getCellMargin();
         }
         writePageNumber(pageNumber, pageCount, table, contentStream);
         contentStream.close();
@@ -116,7 +120,7 @@ public class ConverterToPDF {
             throws IOException {
         contentStream.setFont(PDType1Font.COURIER, 8);
         contentStream.beginText();
-        contentStream.newLineAtOffset(table.getMargin(), table.getMargin() / 2);
+        contentStream.newLineAtOffset(table.getLeftMargin(), table.getTopMargin() / 2);
         contentStream.showText("Page " + (pageNumber + 1) + " from " + pageCount);
         contentStream.endText();
     }
@@ -125,15 +129,15 @@ public class ConverterToPDF {
                                PDPageContentStream contentStream, float tableTopY) throws IOException {
         float nextY = tableTopY;
         for (int i = 0; i <= currentPageContent.length + 1; i++) {
-            contentStream.moveTo(table.getMargin(), nextY);
-            contentStream.lineTo(table.getMargin() + table.getWidth(), nextY);
+            contentStream.moveTo(table.getLeftMargin(), nextY);
+            contentStream.lineTo(table.getLeftMargin() + table.getWidth(), nextY);
             contentStream.stroke();
             nextY -= table.getRowHeight();
         }
 
         final float tableYLength = table.getRowHeight() + (table.getRowHeight() * currentPageContent.length);
         final float tableBottomY = tableTopY - tableYLength;
-        float nextX = table.getMargin();
+        float nextX = table.getLeftMargin();
         for (int i = 0; i < table.getColumnsCount(); i++) {
             contentStream.moveTo(nextX, tableTopY);
             contentStream.lineTo(nextX, tableBottomY);

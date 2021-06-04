@@ -14,8 +14,13 @@ public class TableBuilder {
         return this;
     }
 
-    public TableBuilder withMargin(float margin) {
-        table.setMargin(margin);
+    public TableBuilder withLeftMargin(float margin) {
+        table.setLeftMargin(margin);
+        return this;
+    }
+
+    public TableBuilder withTopMargin(float margin) {
+        table.setTopMargin(margin);
         return this;
     }
 

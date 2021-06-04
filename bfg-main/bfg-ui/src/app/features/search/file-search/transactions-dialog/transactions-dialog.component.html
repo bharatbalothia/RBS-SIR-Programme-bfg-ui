@@ -84,6 +84,11 @@
         </app-table-paginator>
     </mat-dialog-content>
     <mat-dialog-actions>
+        <button class="action-button" *ngIf="transactions" [disabled]="!transactions.totalElements" mat-raised-button
+            (click)="exportReport(REPORT_TYPE.EXCEL)">Generate Excel Report</button>
+        <button class="action-button" *ngIf="transactions" [disabled]="!transactions.totalElements" mat-raised-button
+            (click)="exportReport(REPORT_TYPE.PDF)">Generate PDF
+            Report</button>
         <button mat-raised-button class="close-button" [mat-dialog-close]="true">{{data.yesCaption}}</button>
     </mat-dialog-actions>
     <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>

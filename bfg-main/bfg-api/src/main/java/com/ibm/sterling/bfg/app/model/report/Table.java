@@ -7,7 +7,8 @@ import java.util.List;
 
 public class Table {
     private String name;
-    private float margin;
+    private float leftMargin;
+    private float topMargin;
     private float height;
     private PDRectangle pageSize;
     private boolean isLandscape;
@@ -39,12 +40,20 @@ public class Table {
         return columnNames;
     }
 
-    public float getMargin() {
-        return margin;
+    public float getLeftMargin() {
+        return leftMargin;
     }
 
-    public void setMargin(float margin) {
-        this.margin = margin;
+    public void setLeftMargin(float leftMargin) {
+        this.leftMargin = leftMargin;
+    }
+
+    public float getTopMargin() {
+        return topMargin;
+    }
+
+    public void setTopMargin(float topMargin) {
+        this.topMargin = topMargin;
     }
 
     public float getHeight() {

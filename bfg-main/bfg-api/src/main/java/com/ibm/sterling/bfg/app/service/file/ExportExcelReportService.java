@@ -97,7 +97,6 @@ public class ExportExcelReportService {
 
             XSSFCellStyle dateStyle = getDateCellStyle(workbook);
 
-
             Optional.ofNullable(transactions).ifPresent(transactionList -> {
                 int rowIndex = 1;
                 for (Transaction transaction : transactionList) {

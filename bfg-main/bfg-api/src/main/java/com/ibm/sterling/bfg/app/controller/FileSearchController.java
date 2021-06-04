@@ -100,12 +100,7 @@ public class FileSearchController {
             @RequestParam(value = "to", required = false) String to,
             @RequestParam String type) throws IOException {
         ReportType reportType = new ObjectMapper().convertValue(type, ReportType.class);
-        ByteArrayInputStream in;
-        if (reportType.equals(ReportType.PDF)) {
-            in = fileSearchService.generatePDFReport(from, to);
-        } else {
-            in = fileSearchService.generateExcelReport(from, to);
-        }
+        ByteArrayInputStream in = fileSearchService.generateReportForSEPAFiles(from, to, reportType);
         HttpHeaders headers = getHttpHeadersForReport(reportType, "SEPA_");
         return ResponseEntity
                 .ok()

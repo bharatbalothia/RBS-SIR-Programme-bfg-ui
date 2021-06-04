@@ -314,11 +314,6 @@ public class SearchService {
         return map;
     }
 
-    public ByteArrayInputStream generateExcelReport(String from, String to) throws IOException {
-        List<SEPAFile> files = getSepaFilesForReport(from, to);
-        return exportExcelService.generateExcelReport(files);
-    }
-
     private List<SEPAFile> getSepaFilesForReport(String from, String to) throws JsonProcessingException {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
@@ -330,12 +325,18 @@ public class SearchService {
         return files;
     }
 
-    public ByteArrayInputStream generatePDFReport(String from, String to) throws IOException {
+    public ByteArrayInputStream generateReportForSEPAFiles(String from, String to, ReportType reportType) throws IOException {
         List<SEPAFile> files = getSepaFilesForReport(from, to);
-        return exportPDFService.generatePDFReport(files);
+        if (reportType.equals(ReportType.EXCEL)) {
+            return exportExcelService.generateExcelReport(files);
+        } else {
+            return exportPDFService.generatePDFReport(files);
+        }
+
     }
 
-    public ByteArrayInputStream generateReportForTransactions(Integer fileId, String fileName, Integer size, ReportType reportType)
+    public ByteArrayInputStream generateReportForTransactions(
+            Integer fileId, String fileName, Integer size, ReportType reportType)
             throws IOException {
         List<Transaction> transactions = getTransactionsForReport(fileId, size);
         if (reportType.equals(ReportType.EXCEL)) {

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExportPDFReportService {
@@ -55,7 +56,8 @@ public class ExportPDFReportService {
             content[index][2] = file.getType();
             content[index][3] = String.valueOf(file.getTransactionTotal());
             content[index][4] = String.valueOf(file.getSettleAmountTotal());
-            content[index][5] = file.getTimestamp().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+            content[index][5] = Optional.ofNullable(file.getTimestamp())
+                    .map(date -> date.format(DateTimeFormatter.ofPattern(DATE_FORMAT))).orElse("");
             content[index][6] = file.getDirection();
             index++;
         }
@@ -93,7 +95,8 @@ public class ExportPDFReportService {
             content[index][1] = String.valueOf(transaction.getTransactionID());
             content[index][2] = transaction.getType();
             content[index][3] = String.valueOf(transaction.getSettleAmount());
-            content[index][4] = transaction.getSettleDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+            content[index][4] = Optional.ofNullable(transaction.getSettleDate())
+                    .map(date -> date.format(DateTimeFormatter.ofPattern(DATE_FORMAT))).orElse("");
             index++;
         }
         Table table = new TableBuilder()

@@ -118,7 +118,7 @@ public class ExportExcelReportService {
                     cellAmountTotal.setCellStyle(cellStyle);
 
                     Cell cellTimestamp = row.createCell(4);
-                    cellTimestamp.setCellValue(transaction.getTimestamp());
+                    cellTimestamp.setCellValue(transaction.getSettleDate());
                     cellTimestamp.setCellStyle(dateStyle);
 
                     rowIndex++;

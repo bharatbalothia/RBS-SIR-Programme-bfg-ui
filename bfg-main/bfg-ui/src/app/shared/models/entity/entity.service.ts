@@ -49,7 +49,7 @@ export class EntityService {
   }
 
   deletePendingChange(changeId) {
-    return this.http.delete(this.apiUrl + 'pending/' + changeId);
+    return this.http.delete(this.apiUrl + 'pending/' + changeId, { responseType: 'text' });
   }
 
   editPendingEntity(changeId, entity: Entity) {

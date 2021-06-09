@@ -78,7 +78,7 @@ export class TrustedCertificateService {
   }
 
   deletePendingChange(changeId) {
-    return this.http.delete(this.apiUrl + 'pending/' + changeId, { responseType: 'text' });
+    return this.http.delete(this.apiUrl + 'pending/' + changeId);
   }
 
 }

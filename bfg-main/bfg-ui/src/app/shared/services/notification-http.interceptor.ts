@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { isJson } from 'src/app/shared/utils/utils';
 
 @Injectable()
 export class NotificationHttpInterceptor implements HttpInterceptor {
@@ -19,12 +18,7 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
             try {
-              if (typeof error.error === 'string' && isJson(error.error)) {
-                this.notificationService.showErrorMessage(getApiErrorMessage(JSON.parse(error.error as string)));
-              }
-              else {
-                this.notificationService.showErrorMessage(getApiErrorMessage(error));
-              }
+              this.notificationService.showErrorMessage(getApiErrorMessage(error));
             } catch (e) {
               this.notificationService.showErrorMessage({
                 code: `${error.status}`,

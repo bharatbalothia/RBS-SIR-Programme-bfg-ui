@@ -51,7 +51,7 @@
           <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('fileStatus')}}
             </mat-label>
-            <mat-select formControlName="fileStatus" (selectionChange)="onStatusSelect($event)">
+            <mat-select formControlName="fileStatus">
               <mat-option value="">ALL</mat-option>
               <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
                 {{fileStatus.label}}</mat-option>

@@ -280,40 +280,6 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     this.filterFileCriteriaData();
   }
 
-  onStatusSelect = (event) => {
-    // const fromStatus = event.value;
-
-    // if (fromStatus !== this.ALL) {
-    //   let refreshRequired = false;
-    //   const serviceControl = this.searchingParametersFormGroup.controls.service;
-    //   const initialService = serviceControl.value;
-    //   const directionControl = this.searchingParametersFormGroup.controls.direction;
-    //   const initialDirection = directionControl.value;
-
-    //   const newService = this.fileCriteriaData.service.find((element) =>
-    //     element.toUpperCase() === fromStatus.service.toUpperCase()
-    //   );
-
-    //   const newDirection = this.fileCriteriaData.direction.find((element) =>
-    //     element.toUpperCase() === getDirectionStringValue(fromStatus.outbound)
-    //   );
-
-    //   if (newDirection && (initialDirection !== newDirection)) {
-    //     directionControl.setValue(newDirection);
-    //     refreshRequired = true;
-    //   }
-
-    //   if (newService && (initialService !== newService)) {
-    //     serviceControl.setValue(newService);
-    //     refreshRequired = true;
-    //   }
-
-    //   if (refreshRequired) {
-    //     this.filterFileCriteriaData();
-    //   }
-    // }
-  }
-
   isValidEntity(): boolean {
     const entityId = this.searchingParametersFormGroup.controls.entityId.value;
 

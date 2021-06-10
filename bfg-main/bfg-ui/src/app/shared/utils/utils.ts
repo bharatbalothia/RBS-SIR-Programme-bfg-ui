@@ -67,3 +67,12 @@ export const removeFirst = (array: any[], toRemove: any): void => {
 };
 
 export const getMappedObjectArray = (obj) => Object.keys(obj).map(key => ({ key, value: obj[key] }));
+
+export const isJson = (str) => {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}

@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { get } from 'lodash';
 import { ENTITY_TRANSMIT_FILE_TYPE } from '../../models/entity/entity-constants';
 import { Entity } from '../../models/entity/entity.model';
-import { PasswordConfirmationDialogComponent } from '../password-confirmation-dialog/password-confirmation-dialog.component';
 import { NotificationService } from '../../services/notification.service';
+import { DetailsDialogData } from '../details-dialog/details-dialog-data.model';
+import { PasswordConfirmationDialogComponent } from '../password-confirmation-dialog/password-confirmation-dialog.component';
 
 @Component({
   selector: 'app-transmit-dialog',

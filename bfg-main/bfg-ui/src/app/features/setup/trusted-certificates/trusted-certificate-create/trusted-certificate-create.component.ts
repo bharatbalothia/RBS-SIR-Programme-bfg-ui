@@ -1,7 +1,23 @@
-import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { ErrorMessage, getErrorsMessage, getApiErrorMessage, getErrorByField } from 'src/app/core/utils/error-template';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { entries, get, isArray } from 'lodash';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
+import { ErrorMessage, getApiErrorMessage, getErrorByField, getErrorsMessage } from 'src/app/core/utils/error-template';
+import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { TrustedCertificateValidators } from 'src/app/shared/models/trustedCertificate/trusted-certificate-validator';
+import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
 import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
-import { FormBuilder, FormGroup, Validators, FormGroupDirective, FormControl } from '@angular/forms';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 import {
   getTrustedCertificateDisplayName,
   getTrustedCertificateItemInfoValues,
@@ -9,22 +25,6 @@ import {
   getValidityLabel
 } from '../trusted-certificate-display-names';
 import { TRUSTED_CERTIFICATE_VALIDATION_MESSAGES } from '../validation-messages';
-import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { entries, get, isArray } from 'lodash';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ConfirmDialogConfig } from 'src/app/shared/components/confirm-dialog/confirm-dialog-config.model';
-import { removeEmpties } from 'src/app/shared/utils/utils';
-import { TRUSTED_CERTIFICATE_NAME } from 'src/app/core/constants/validation-regexes';
-import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { TrustedCertificateValidators } from 'src/app/shared/models/trustedCertificate/trusted-certificate-validator';
-import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
-import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-trusted-certificate-create',

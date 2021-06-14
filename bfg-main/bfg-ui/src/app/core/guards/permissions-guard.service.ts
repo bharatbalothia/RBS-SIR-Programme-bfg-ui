@@ -3,8 +3,6 @@ import { Router, CanActivate, ActivatedRouteSnapshot, UrlTree } from '@angular/r
 import { AuthService } from '../auth/auth.service';
 import { ERROR_MESSAGES } from '../constants/error-messages';
 import { GLOBAL_PERMISSIONS } from '../constants/global-permissions';
-import { ROUTING_PATHS } from '../constants/routing-paths';
-
 
 @Injectable({
     providedIn: 'root'

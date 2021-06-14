@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { DetailsDialogData, Tab } from './details-dialog-data.model';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { isUndefined, get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 import { Subscription } from 'rxjs';
-import { NotificationService } from '../../services/notification.service';
 import { AutoRefreshService } from '../../services/autorefresh.service';
+import { NotificationService } from '../../services/notification.service';
+import { DetailsDialogData, Tab } from './details-dialog-data.model';
 
 @Component({
   selector: 'app-details-dialog',

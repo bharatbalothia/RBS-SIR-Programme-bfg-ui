@@ -57,7 +57,7 @@ public class ConverterToPDF {
         drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
         if (pageNumber == 0) {
-            float nameLength = (float) table.getName().length();
+            float nameLength = table.getTextFont().getStringWidth(table.getName())/1000*table.getFontSize();
             float tableNameTopY = table.isLandscape() ?
                     table.getPageSize().getWidth() - table.getTopMargin() / 3 * 2 :
                     table.getPageSize().getHeight() - table.getTopMargin() / 3 * 2;

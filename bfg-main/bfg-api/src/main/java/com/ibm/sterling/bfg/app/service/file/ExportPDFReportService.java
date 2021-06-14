@@ -37,22 +37,23 @@ public class ExportPDFReportService {
     private static final float CELL_MARGIN = 5;
     private float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
     private float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
-    private static final String DATE_FORMAT = "ddMMyyHHmm";
+    private static final String DATE_FORMAT = "ddMMyy";
+    private static final int FILE_NAME_LENGTH = 50;
 
     public ByteArrayInputStream generatePDFReport(List<SEPAFile> files) throws IOException {
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("SI.No", 60));
-        columns.add(new Column("File Name", 300));
-        columns.add(new Column("Type", 55));
-        columns.add(new Column("Transaction", 100));
+        columns.add(new Column("SI.No", 45));
+        columns.add(new Column("File Name", 370));
+        columns.add(new Column("Type", 35));
+        columns.add(new Column("Transaction", 80));
         columns.add(new Column("Total Settlement Amount", 130));
-        columns.add(new Column("Settlement Date", 90));
-        columns.add(new Column("Direction", 60));
+        columns.add(new Column("Settlement Date", 85));
+        columns.add(new Column("Direction", 55));
         String[][] content = new String[files.size()][7];
         int index = 0;
         for(SEPAFile file : files) {
             content[index][0] = String.valueOf(index + 1);
-            content[index][1] = file.getFilename();
+            content[index][1] = cutByMaxLength(file.getFilename());
             content[index][2] = file.getType();
             content[index][3] = String.valueOf(file.getTransactionTotal());
             content[index][4] = String.valueOf(file.getSettleAmountTotal());
@@ -79,6 +80,10 @@ public class ExportPDFReportService {
                 .build();
 
         return converterToPDF.convertTableToPDF(table);
+    }
+
+    private String cutByMaxLength(String filename) {
+        return filename.substring(0, Math.min(FILE_NAME_LENGTH, filename.length()));
     }
 
     public ByteArrayInputStream generatePDFReportForTransactions(List<Transaction> transactions, String fileName, Integer fileId) throws IOException {

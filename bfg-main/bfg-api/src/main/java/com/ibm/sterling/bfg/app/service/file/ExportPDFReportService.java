@@ -28,7 +28,7 @@ public class ExportPDFReportService {
     private static final String TABLE_NAME_TRANSACTIONS = "Transactions for %s(%d)";
     private static final PDRectangle PAGE_SIZE = PDRectangle.A4;
     private static final float TABLE_MARGIN = 25;
-    private static final float TABLE_MARGIN_TRANSACTION = 45;
+    private static final float TABLE_MARGIN_TRANSACTION = 80;
     private static final boolean IS_LANDSCAPE = true;
     private static final PDFont TEXT_FONT = PDType1Font.HELVETICA;
     private static final PDFont HEADER_TEXT_FONT = PDType1Font.HELVETICA_BOLD;
@@ -37,22 +37,23 @@ public class ExportPDFReportService {
     private static final float CELL_MARGIN = 5;
     private float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
     private float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
-    private static final String DATE_FORMAT = "ddMMyyHHmm";
+    private static final String DATE_FORMAT = "ddMMyy";
+    private static final int NAME_LENGTH = 50;
 
     public ByteArrayInputStream generatePDFReport(List<SEPAFile> files) throws IOException {
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("SI.No", 60));
-        columns.add(new Column("File Name", 300));
-        columns.add(new Column("Type", 55));
-        columns.add(new Column("Transaction", 100));
+        columns.add(new Column("SI.No", 45));
+        columns.add(new Column("File Name", 370));
+        columns.add(new Column("Type", 35));
+        columns.add(new Column("Transaction", 80));
         columns.add(new Column("Total Settlement Amount", 130));
-        columns.add(new Column("Settlement Date", 90));
-        columns.add(new Column("Direction", 60));
+        columns.add(new Column("Settlement Date", 85));
+        columns.add(new Column("Direction", 55));
         String[][] content = new String[files.size()][7];
         int index = 0;
         for(SEPAFile file : files) {
             content[index][0] = String.valueOf(index + 1);
-            content[index][1] = file.getFilename();
+            content[index][1] = cutByMaxLength(file.getFilename());
             content[index][2] = file.getType();
             content[index][3] = String.valueOf(file.getTransactionTotal());
             content[index][4] = String.valueOf(file.getSettleAmountTotal());
@@ -81,10 +82,14 @@ public class ExportPDFReportService {
         return converterToPDF.convertTableToPDF(table);
     }
 
+    private String cutByMaxLength(String name) {
+        return name.substring(0, Math.min(NAME_LENGTH, name.length()));
+    }
+
     public ByteArrayInputStream generatePDFReportForTransactions(List<Transaction> transactions, String fileName, Integer fileId) throws IOException {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 60));
-        columns.add(new Column("Transaction ID", 190));
+        columns.add(new Column("Transaction ID", 370));
         columns.add(new Column("Type", 55));
         columns.add(new Column("Settlement amount", 110));
         columns.add(new Column("Settlement Date", 85));
@@ -92,7 +97,7 @@ public class ExportPDFReportService {
         int index = 0;
         for(Transaction transaction : transactions) {
             content[index][0] = String.valueOf(index + 1);
-            content[index][1] = String.valueOf(transaction.getTransactionID());
+            content[index][1] = cutByMaxLength(String.valueOf(transaction.getTransactionID()));
             content[index][2] = transaction.getType();
             content[index][3] = String.valueOf(transaction.getSettleAmount());
             content[index][4] = Optional.ofNullable(transaction.getSettleDate())
@@ -105,8 +110,8 @@ public class ExportPDFReportService {
                 .withColumns(columns)
                 .withContent(content)
                 .withFontSize(FONT_SIZE)
-                .withHeight(TABLE_HEIGHT)
-                .withLandscape(!IS_LANDSCAPE)
+                .withHeight(TABLE_HEIGHT_LANDSCAPE)
+                .withLandscape(IS_LANDSCAPE)
                 .withLeftMargin(TABLE_MARGIN_TRANSACTION)
                 .withTopMargin(TABLE_MARGIN)
                 .withPageSize(PAGE_SIZE)

@@ -76,3 +76,5 @@ export const isJson = (str) => {
     }
     return true;
 }
+
+export const isHtml = (str) => /<\/?[a-z][\s\S]*>/i.test(str);

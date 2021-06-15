@@ -25,12 +25,14 @@ export class NotificationService {
     return this.toastrService.show(message, title, this.toasterConfig, `toast-${type}`);
   }
 
-  public showErrorMessage(errorMessage: ErrorMessage) {
+  public showErrorMessage(errorMessage: ErrorMessage, shouldDisableTimer?: boolean) {
     if (errorMessage.message || errorMessage.errors) {
       const title = `${errorMessage.message || ''} ${errorMessage.code ? `(${errorMessage.code})` : ''}`;
       const message = this.composeHtmlBody(errorMessage.errors);
-
-      this.toastrService.error(message, title, this.toasterConfig);
+      if (shouldDisableTimer) {
+        this.toasterConfig.disableTimeOut = true;
+      }
+      this.toastrService.error(message, title, { ...this.toasterConfig, disableTimeOut: shouldDisableTimer });
     }
   }
 

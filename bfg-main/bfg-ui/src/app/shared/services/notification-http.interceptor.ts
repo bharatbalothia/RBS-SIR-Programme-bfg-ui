@@ -23,7 +23,7 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
                 this.notificationService.showErrorMessage(getApiErrorMessage(JSON.parse(error.error as string)));
               }
               else if (typeof error.error === 'string' && isHtml(error.error)) {
-                this.notificationService.showErrorMessage({ code: null, message: this.parseHtmlError(error.error) }, true);
+                this.showHtmlError(error.error);
               }
               else {
                 this.notificationService.showErrorMessage(getApiErrorMessage(error));
@@ -39,6 +39,15 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
         }));
   }
 
-  parseHtmlError = (htmlError) => new DOMParser().parseFromString(htmlError, 'text/html').getElementsByTagName("body")[0].firstChild.textContent
+  showHtmlError = (htmlError) => {
+    const parsedError = new DOMParser().parseFromString(htmlError, 'text/html').getElementsByTagName("body")[0].firstChild.textContent;
+    const htmlContent = 'This is F5 related issue in testing environment. Please share the error details  to:' +
+      '</br><a href="mailto:Sriram.jayaraman@natwest.com">Sriram.jayaraman@natwest.com</a>' +
+      '</br><a href="mailto:Manoj.Bansal@natwest.com">Manoj.Bansal@natwest.com</a>' +
+      '</br><a href="mailto:Maryia.Sukhaparava@natwest.com">Maryia.Sukhaparava@natwest.com</a>' +
+      '</br><a href="mailto:arokia.williamvijay@rbs.co.uk">arokia.williamvijay@rbs.co.uk</a>'
+    this.notificationService.showErrorMessage({ code: null, message: parsedError, errors: [{ htmlContent }] }, true);
+
+  }
 
 }

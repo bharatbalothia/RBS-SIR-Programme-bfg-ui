@@ -32,7 +32,7 @@ export class NotificationService {
       if (shouldDisableTimer) {
         this.toasterConfig.disableTimeOut = true;
       }
-      this.toastrService.error(message, title, { ...this.toasterConfig, disableTimeOut: shouldDisableTimer });
+      this.toastrService.error(message, title, { ...this.toasterConfig, disableTimeOut: shouldDisableTimer, tapToDismiss: !shouldDisableTimer });
     }
   }
 

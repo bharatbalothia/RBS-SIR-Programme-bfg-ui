@@ -138,7 +138,7 @@ public class ExportExcelReportService {
         XSSFCellStyle dateStyle = workbook.createCellStyle();
         CreationHelper creationHelper = workbook.getCreationHelper();
         dateStyle.setDataFormat(
-                creationHelper.createDataFormat().getFormat("ddMMyyhhmm"));
+                creationHelper.createDataFormat().getFormat("ddMMyy"));
         setBorderStyle(dateStyle, BorderStyle.THIN);
         return dateStyle;
     }

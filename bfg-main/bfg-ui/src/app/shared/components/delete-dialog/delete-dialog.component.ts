@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { Tab, DetailsDialogData } from '../details-dialog/details-dialog-data.model';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
-import { NotificationService } from '../../services/notification.service';
-import { AutoRefreshService } from '../../services/autorefresh.service';
 import { Subscription } from 'rxjs';
 import { ErrorMessage } from 'src/app/core/utils/error-template';
+import { AutoRefreshService } from '../../services/autorefresh.service';
+import { NotificationService } from '../../services/notification.service';
+import { DetailsDialogData, Tab } from '../details-dialog/details-dialog-data.model';
 
 @Component({
   selector: 'app-delete-dialog',

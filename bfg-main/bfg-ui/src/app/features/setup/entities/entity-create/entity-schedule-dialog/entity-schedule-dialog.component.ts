@@ -1,12 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { get, isUndefined } from 'lodash';
-import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
-import { TIME_24, NON_NEGATIVE_INT } from 'src/app/core/constants/validation-regexes';
+import { NON_NEGATIVE_INT, TIME_24 } from 'src/app/core/constants/validation-regexes';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { SCHEDULE_TYPE } from 'src/app/shared/models/schedule/schedule-type';
+import { Schedule } from 'src/app/shared/models/schedule/schedule.model';
 import { getEntityDisplayName } from '../../entity-display-names';
 import { SCHEDULE_VALIDATION_MESSAGES } from '../../validation-messages';
 
@@ -105,12 +104,13 @@ export class EntityScheduleDialogComponent implements OnInit {
     }
   }
 
-  getTooltip(field: string): string{
+  getTooltip(field: string): string {
     const toolTip = this.toolTip.getTooltip({
       type: 'entity',
       qualifier: 'sct-schedule',
       mode: this.isEditStatus() ? 'edit' : 'create',
-      fieldName: field});
+      fieldName: field
+    });
     return toolTip.length > 0 ? toolTip : (this.getEntityDisplayName(field) || '');
   }
 }

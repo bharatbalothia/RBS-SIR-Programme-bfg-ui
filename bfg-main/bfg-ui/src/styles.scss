@@ -104,6 +104,14 @@ mat-form-field {
             position: static;
         }
     }
+
+    .mat-select {
+        display: flex;
+
+        .mat-select-trigger {
+            width: 100%;
+        }
+    }
 }
 
 .main {
@@ -128,6 +136,18 @@ mat-form-field {
             display: inline-block;
             margin-right: 15px;
             width: 100%;
+
+            .mat-row,
+            .mat-header-row {
+                display: inline-flex;
+                min-width: 100%;
+            }
+
+            .mat-header-cell,
+            .mat-cell {
+                padding-right: 10px;
+            }
+
         }
 
     }

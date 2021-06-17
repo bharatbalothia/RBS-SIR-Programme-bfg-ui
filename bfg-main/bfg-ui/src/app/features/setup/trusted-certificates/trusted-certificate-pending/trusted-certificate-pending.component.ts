@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
-import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayHeader, getTrustedCertificateDisplayName, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { MatTableDataSource } from '@angular/material/table';
-import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
-import { take } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { get } from 'lodash';
-import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { Router } from '@angular/router';
+import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { NotificationService } from 'src/app/shared/services/notification.service';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { TooltipService } from 'src/app/shared/components/tooltip/tooltip.service';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { TrustedCertificate } from 'src/app/shared/models/trustedCertificate/trusted-certificate.model';
+import { TrustedCertificateService } from 'src/app/shared/models/trustedCertificate/trusted-certificate.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
+import { getTrustedCertificateDetailsTabs, getTrustedCertificateDisplayHeader, getTrustedCertificateDisplayName, getTrustedCertificatePendingChangesTabs } from '../trusted-certificate-display-names';
 
 @Component({
   selector: 'app-trusted-certificate-pending',

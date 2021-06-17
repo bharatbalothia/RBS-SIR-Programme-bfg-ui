@@ -1,20 +1,20 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { FileError } from './file-error.model';
+import { MatDialog } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
 import { getErrorDetailsTabs, getFileDetailsTabs, getFileDocumentInfoTabs, getFileSearchDisplayName } from 'src/app/features/search/file-search/file-search-display-names';
-import { DetailsDialogConfig } from '../../components/details-dialog/details-dialog-config.model';
-import { DetailsDialogComponent } from '../../components/details-dialog/details-dialog.component';
-import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
-import { Entity } from '../entity/entity.model';
 import { TransactionsDialogComponent } from 'src/app/features/search/file-search/transactions-dialog/transactions-dialog.component';
-import { DocumentContent } from './document-content.model';
+import { getEntityDetailsTabs, getEntityDisplayName } from 'src/app/features/setup/entities/entity-display-names';
+import { File } from 'src/app/shared/models/file/file.model';
 import { BusinessProcessDialogConfig } from '../../components/business-process-dialog/business-process-dialog-config.model';
 import { BusinessProcessDialogComponent } from '../../components/business-process-dialog/business-process-dialog.component';
+import { DetailsDialogConfig } from '../../components/details-dialog/details-dialog-config.model';
+import { DetailsDialogComponent } from '../../components/details-dialog/details-dialog.component';
 import { getBusinessProcessDisplayName } from '../business-process/business-process-display-names';
-import { MatDialog } from '@angular/material/dialog';
-import { File } from 'src/app/shared/models/file/file.model';
-import { FileService } from './file.service';
+import { Entity } from '../entity/entity.model';
 import { EntityService } from '../entity/entity.service';
-import { Subject } from 'rxjs';
+import { DocumentContent } from './document-content.model';
+import { FileError } from './file-error.model';
+import { FileService } from './file.service';
 
 @Injectable({
   providedIn: 'root'

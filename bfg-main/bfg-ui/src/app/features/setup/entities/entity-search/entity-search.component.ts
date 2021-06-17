@@ -1,26 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
-import { getEntityDetailsTabs, getEntityDisplayName, getPendingChangesTabs } from '../entity-display-names';
 import { MatDialog } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
-import { Entity } from 'src/app/shared/models/entity/entity.model';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { removeEmpties } from 'src/app/shared/utils/utils';
-import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { get } from 'lodash';
+import { take } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
 import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
 import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
 import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
 import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dialog/transmit-dialog.component';
-import { Router } from '@angular/router';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
+import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
+import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { Entity } from 'src/app/shared/models/entity/entity.model';
+import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
+import { getEntityDetailsTabs, getEntityDisplayName, getPendingChangesTabs } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-search',

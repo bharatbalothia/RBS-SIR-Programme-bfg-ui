@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { get } from 'lodash';
+import { take } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
+import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
+import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
+import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
+import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
+import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { take } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getPendingChangesTabs, getEntityDisplayName } from '../entity-display-names';
-import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
-import { get, isEmpty } from 'lodash';
-import { ChangeControlsWithPagination } from 'src/app/shared/models/changeControl/change-controls-with-pagination.model';
-import { ApprovingDialogComponent } from 'src/app/shared/components/approving-dialog/approving-dialog.component';
-import { ERROR_MESSAGES } from 'src/app/core/constants/error-messages';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { ROUTING_PATHS } from 'src/app/core/constants/routing-paths';
-import { Router } from '@angular/router';
-import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
-import { DeleteDialogComponent } from 'src/app/shared/components/delete-dialog/delete-dialog.component';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { removeEmpties } from 'src/app/shared/utils/utils';
+import { ENTITY_DISPLAY_NAMES, getEntityDetailsTabs, getEntityDisplayName, getPendingChangesTabs } from '../entity-display-names';
 
 @Component({
   selector: 'app-entity-pending',

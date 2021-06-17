@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TooltipKey } from './tooltip.model';
 import { TOOLTIP_CONTENT } from './tooltip.contetnt';
+import { TooltipKey } from './tooltip.model';
 
 @Injectable({
   providedIn: 'root'

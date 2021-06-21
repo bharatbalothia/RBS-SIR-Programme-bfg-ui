@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,16 +72,15 @@ public class FileSearchController {
     @GetMapping("document-content")
     public ResponseEntity<Map<String, String>> getDocumentContent(
             @RequestParam(value = "id", required = false) String documentId,
-            @RequestParam(value = "messageId", required = false) Integer messageId)
-            throws JsonProcessingException {
+            @RequestParam(value = "messageId", required = false) Integer messageId) {
+        Map<String, String> emptyMap = Collections.singletonMap("document", null);
         return Optional.ofNullable(documentId).map(docId -> {
             try {
                 return ok(fileSearchService.getDocumentPayload(documentId));
             } catch (JsonProcessingException e) {
-                return null;
+                return ok(emptyMap);
             }
         }).orElse(ok(fileSearchService.getDocumentPayloadByMessageId(messageId)));
-//        return ok(fileSearchService.getDocumentPayload(documentId.isEmpty() ? null : documentId));
     }
 
     @GetMapping("file-monitor")

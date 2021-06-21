@@ -2,6 +2,7 @@ package com.ibm.sterling.bfg.app.service.file;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
@@ -42,6 +43,9 @@ public class SearchService {
 
     @Value("${document.url}")
     private String documentUrl;
+
+    @Value("${message.url}")
+    private String messageUrl;
 
     @Value("${workflowSteps.url}")
     private String workflowStepsUrl;
@@ -162,6 +166,31 @@ public class SearchService {
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody())).get("response");
         return Collections.singletonMap("document", jsonNode.asText());
+    }
+
+    public Map<String, String> getDocumentPayloadByMessageId(Integer messageId) {
+        Map<String, String> emptyMap = Collections.singletonMap("document", null);
+        return Optional.ofNullable(messageId).map(id -> {
+            ResponseEntity<String> response;
+            try {
+                response = new RestTemplate().exchange(
+                        messageUrl + "?messageId=" + id,
+                        HttpMethod.GET,
+                        new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                        String.class);
+                        return Optional.ofNullable(
+                        objectMapper.convertValue(response.getBody(), String.class))
+                        .map((String documentId1) -> {
+                            try {
+                                return getDocumentPayload(documentId1);
+                            } catch (JsonProcessingException e) {
+                                return emptyMap;
+                            }
+                        }).orElse(emptyMap);
+            } catch (HttpStatusCodeException e) {
+                return emptyMap;
+            }
+        }).orElse(emptyMap);
     }
 
     public Document getDocumentById(String documentId) throws JsonProcessingException {
@@ -300,4 +329,6 @@ public class SearchService {
         map.put("wfdVersion", objectMapper.convertValue(root.get("wfdVersion"), Integer.class));
         return map;
     }
+
+
 }

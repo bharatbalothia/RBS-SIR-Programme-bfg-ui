@@ -69,7 +69,7 @@ export class FileDetailsComponent implements OnInit {
     return data;
   }
 
-  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
+  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID, file.messageID)
     .pipe(data => this.setLoading(data))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;

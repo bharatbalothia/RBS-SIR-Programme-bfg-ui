@@ -20,6 +20,7 @@ public class File {
     private String docID;
     private Integer transactionTotal;
     private Direction direction;
+    private Integer messageID;
 
     public Integer getId() {
         return id;
@@ -116,5 +117,13 @@ public class File {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public Integer getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(Integer messageID) {
+        this.messageID = messageID;
     }
 }

@@ -25,8 +25,8 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
               else if (typeof error.error === 'string' && isJson(error.error)) {
                 this.notificationService.showErrorMessage(getApiErrorMessage(JSON.parse(error.error as string)));
               }
-              else if (typeof error.error === 'string' && isHtml(error.error)) {
-                this.showHtmlError(error.error);
+              else if (typeof error.error.text === 'string' && isHtml(error.error.text)) {
+                this.showHtmlError(error.error.text);
               }
               else {
                 this.notificationService.showErrorMessage(getApiErrorMessage(error));
@@ -38,6 +38,8 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
               });
             }
           }
+
+
           return throwError(error);
         }));
   }

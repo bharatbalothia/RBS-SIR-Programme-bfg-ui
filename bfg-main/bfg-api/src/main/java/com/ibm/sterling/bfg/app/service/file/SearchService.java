@@ -80,6 +80,8 @@ public class SearchService {
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
+    private int range = 999;
+
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class));
     }
@@ -303,8 +305,23 @@ public class SearchService {
 
     @Cacheable(cacheNames = CACHE_BP_HEADERS)
     public List<BPName> getBPNames() throws JsonProcessingException {
+        int fromRange = 0;
+        int toRange = range;
+        List<BPName> bpNames = new ArrayList<>();
+        List<BPName> bpNamesByRange = getBPByRange(fromRange, toRange);
+        while (!bpNamesByRange.isEmpty()) {
+            bpNames.addAll(bpNamesByRange);
+            fromRange = toRange + 1;
+            toRange = fromRange + range;
+            bpNamesByRange = getBPByRange(fromRange, toRange);
+        }
+        return bpNames;
+    }
+
+    private List<BPName> getBPByRange(int fromRange, int toRange) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
-                workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",
+                workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=" + fromRange + "-" + toRange +
+                        "&fieldList=brief",
                 HttpMethod.GET,
                 new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);

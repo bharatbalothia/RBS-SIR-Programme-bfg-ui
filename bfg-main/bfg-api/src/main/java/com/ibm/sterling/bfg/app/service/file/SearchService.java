@@ -2,7 +2,6 @@ package com.ibm.sterling.bfg.app.service.file;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
@@ -80,7 +79,7 @@ public class SearchService {
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
-    private int range = 999;
+    private final int RANGE = 999;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class));
@@ -306,13 +305,13 @@ public class SearchService {
     @Cacheable(cacheNames = CACHE_BP_HEADERS)
     public List<BPName> getBPNames() throws JsonProcessingException {
         int fromRange = 0;
-        int toRange = range;
+        int toRange = RANGE;
         List<BPName> bpNames = new ArrayList<>();
         List<BPName> bpNamesByRange = getBPByRange(fromRange, toRange);
         while (!bpNamesByRange.isEmpty()) {
             bpNames.addAll(bpNamesByRange);
             fromRange = toRange + 1;
-            toRange = fromRange + range;
+            toRange = fromRange + RANGE;
             bpNamesByRange = getBPByRange(fromRange, toRange);
         }
         return bpNames;

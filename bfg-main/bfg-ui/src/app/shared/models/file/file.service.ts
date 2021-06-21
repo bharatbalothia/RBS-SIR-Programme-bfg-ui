@@ -44,8 +44,6 @@ export class FileService {
     }
 
     getDocumentContent(id, messageId?) {
-        console.log(id, messageId);
-        
         const params = removeEmpties({ id, messageId: id ? null : messageId });
         return this.http.get<FileError>(this.apiUrl + 'document-content/', { params });
     }

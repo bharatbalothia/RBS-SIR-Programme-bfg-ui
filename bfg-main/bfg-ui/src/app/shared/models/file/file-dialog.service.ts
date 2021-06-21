@@ -9,6 +9,7 @@ import { BusinessProcessDialogConfig } from '../../components/business-process-d
 import { BusinessProcessDialogComponent } from '../../components/business-process-dialog/business-process-dialog.component';
 import { DetailsDialogConfig } from '../../components/details-dialog/details-dialog-config.model';
 import { DetailsDialogComponent } from '../../components/details-dialog/details-dialog.component';
+import { removeEmpties } from '../../utils/utils';
 import { getBusinessProcessDisplayName } from '../business-process/business-process-display-names';
 import { Entity } from '../entity/entity.model';
 import { EntityService } from '../entity/entity.service';
@@ -124,7 +125,7 @@ export class FileDialogService {
       },
     }))
 
-  openFileDocumentInfo = (file: File, рropagateErr?) => this.fileService.getDocumentContent(file.docID)
+  openFileDocumentInfo = (file: File, рropagateErr?) => this.fileService.getDocumentContent(removeEmpties({ id: file.docID, messageId: file.messageID }))
     .pipe(data => this.setLoading(data, file.id, рropagateErr))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;

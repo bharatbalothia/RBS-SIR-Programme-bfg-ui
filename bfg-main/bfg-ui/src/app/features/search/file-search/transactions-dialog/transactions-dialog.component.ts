@@ -16,6 +16,7 @@ import { BusinessProcessDialogComponent } from 'src/app/shared/components/busine
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -106,7 +107,7 @@ export class TransactionsDialogComponent implements OnInit {
     this.fileDialogService.openFileDetailsDialog(file, true);
   }
 
-  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
+  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(removeEmpties({ id: transaction.docID }))
     .pipe(data => this.setLoading(data))
     .subscribe((docCont: DocumentContent) => {
       this.isLoading = false;

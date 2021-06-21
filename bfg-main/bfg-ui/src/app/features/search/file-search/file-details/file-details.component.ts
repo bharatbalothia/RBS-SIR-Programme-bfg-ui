@@ -14,6 +14,7 @@ import { DocumentContent } from 'src/app/shared/models/file/document-content.mod
 import { FileError } from 'src/app/shared/models/file/file-error.model';
 import { File } from 'src/app/shared/models/file/file.model';
 import { FileService } from 'src/app/shared/models/file/file.service';
+import { removeEmpties } from 'src/app/shared/utils/utils';
 import { getErrorDetailsTabs, getFileDetailsTabs, getFileDocumentInfoTabs, getFileSearchDisplayName } from '../file-search-display-names';
 import { TransactionsDialogComponent } from '../transactions-dialog/transactions-dialog.component';
 
@@ -69,7 +70,7 @@ export class FileDetailsComponent implements OnInit {
     return data;
   }
 
-  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(file.docID)
+  openFileDocumentInfo = (file: File) => this.fileService.getDocumentContent(removeEmpties({ id: file.docID, messageId: file.messageID }))
     .pipe(data => this.setLoading(data))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;

@@ -1,22 +1,21 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
-import { MatTableDataSource } from '@angular/material/table';
-import { FileService } from 'src/app/shared/models/file/file.service';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
 import { get } from 'lodash';
-import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
-import { getFileSearchDisplayName } from '../file-search-display-names';
-import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
-import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
-import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
-import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
-import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
-import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { take } from 'rxjs/operators';
 import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-process-dialog/business-process-dialog-config.model';
+import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
+import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
+import { DetailsDialogData } from 'src/app/shared/components/details-dialog/details-dialog-data.model';
+import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog/details-dialog.component';
+import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
+import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
-import { removeEmpties } from 'src/app/shared/utils/utils';
+import { FileService } from 'src/app/shared/models/file/file.service';
+import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
+import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
+import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
+import { getFileSearchDisplayName } from '../file-search-display-names';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -107,7 +106,7 @@ export class TransactionsDialogComponent implements OnInit {
     this.fileDialogService.openFileDetailsDialog(file, true);
   }
 
-  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(removeEmpties({ id: transaction.docID }))
+  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID )
     .pipe(data => this.setLoading(data))
     .subscribe((docCont: DocumentContent) => {
       this.isLoading = false;

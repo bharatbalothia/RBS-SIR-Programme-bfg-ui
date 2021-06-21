@@ -7,6 +7,7 @@ import { FilesWithPagination } from './files-with-pagination.model';
 import { TransactionsWithPagination } from '../transaction/transactions-with-pagination.model';
 import { FileError } from './file-error.model';
 import { Transaction } from '../transaction/transaction.model';
+import { removeEmpties } from '../../utils/utils';
 
 @Injectable({
     providedIn: 'root'
@@ -42,7 +43,10 @@ export class FileService {
         return this.http.get<FileError>(this.apiUrl + 'error/' + errorCode);
     }
 
-    getDocumentContent(params: { id?: string, messageId?: string }) {
+    getDocumentContent(id, messageId?) {
+        console.log(id, messageId);
+        
+        const params = removeEmpties({ id, messageId: id ? null : messageId });
         return this.http.get<FileError>(this.apiUrl + 'document-content/', { params });
     }
 

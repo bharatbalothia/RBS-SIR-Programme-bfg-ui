@@ -1,11 +1,10 @@
 package com.ibm.sterling.bfg.app.model.file;
 
-public class File extends SEPAFile{
+public class File extends SEPAFile {
     private Integer status;
     private String errorCode;
     private String reference;
     private String service;
-
     private Integer workflowID;
 
     public Integer getStatus() {
@@ -47,5 +46,6 @@ public class File extends SEPAFile{
     public void setWorkflowID(Integer workflowID) {
         this.workflowID = workflowID;
     }
+
 
 }

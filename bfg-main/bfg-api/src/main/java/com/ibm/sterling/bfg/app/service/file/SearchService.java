@@ -48,6 +48,9 @@ public class SearchService {
     @Value("${document.url}")
     private String documentUrl;
 
+    @Value("${message.url}")
+    private String messageUrl;
+
     @Value("${workflowSteps.url}")
     private String workflowStepsUrl;
 
@@ -88,9 +91,14 @@ public class SearchService {
     private ExportPDFReportService exportPDFService;
 
     private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
+	
+	private final int RANGE = 999;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));
+
+     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
+        return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class));
     }
 
     public Optional<FileDetails> getFileById(Integer id) throws JsonProcessingException {
@@ -175,6 +183,31 @@ public class SearchService {
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody())).get("response");
         return Collections.singletonMap("document", jsonNode.asText());
+    }
+
+    public Map<String, String> getDocumentPayloadByMessageId(Integer messageId) {
+        Map<String, String> emptyMap = Collections.singletonMap("document", null);
+        return Optional.ofNullable(messageId).map(id -> {
+            ResponseEntity<String> response;
+            try {
+                response = new RestTemplate().exchange(
+                        messageUrl + "?messageId=" + id,
+                        HttpMethod.GET,
+                        new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                        String.class);
+                        return Optional.ofNullable(
+                        objectMapper.convertValue(response.getBody(), String.class))
+                        .map((String documentId1) -> {
+                            try {
+                                return getDocumentPayload(documentId1);
+                            } catch (JsonProcessingException e) {
+                                return emptyMap;
+                            }
+                        }).orElse(emptyMap);
+            } catch (HttpStatusCodeException e) {
+                return emptyMap;
+            }
+        }).orElse(emptyMap);
     }
 
     public Document getDocumentById(String documentId) throws JsonProcessingException {
@@ -287,8 +320,23 @@ public class SearchService {
 
     @Cacheable(cacheNames = CACHE_BP_HEADERS)
     public List<BPName> getBPNames() throws JsonProcessingException {
+        int fromRange = 0;
+        int toRange = RANGE;
+        List<BPName> bpNames = new ArrayList<>();
+        List<BPName> bpNamesByRange = getBPByRange(fromRange, toRange);
+        while (!bpNamesByRange.isEmpty()) {
+            bpNames.addAll(bpNamesByRange);
+            fromRange = toRange + 1;
+            toRange = fromRange + RANGE;
+            bpNamesByRange = getBPByRange(fromRange, toRange);
+        }
+        return bpNames;
+    }
+
+    private List<BPName> getBPByRange(int fromRange, int toRange) throws JsonProcessingException {
         ResponseEntity<String> response = new RestTemplate().exchange(
-                workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=0-999&fieldList=brief",
+                workflowsUrl + "?_include=wfdVersion,wfdID,name&_range=" + fromRange + "-" + toRange +
+                        "&fieldList=brief",
                 HttpMethod.GET,
                 new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                 String.class);

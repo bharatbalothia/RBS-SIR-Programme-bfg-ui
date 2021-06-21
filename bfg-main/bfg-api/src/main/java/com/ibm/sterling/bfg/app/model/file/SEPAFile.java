@@ -15,6 +15,7 @@ public class SEPAFile {
     private Double settleAmountTotal = 0.0;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
+    private Integer messageID;
 
     public Integer getId() {
         return id;
@@ -78,5 +79,13 @@ public class SEPAFile {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Integer getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(Integer messageID) {
+        this.messageID = messageID;
     }
 }

@@ -124,7 +124,7 @@ export class FileDialogService {
       },
     }))
 
-  openFileDocumentInfo = (file: File, рropagateErr?) => this.fileService.getDocumentContent(file.docID)
+  openFileDocumentInfo = (file: File, рropagateErr?) => this.fileService.getDocumentContent(file.docID, file.messageID)
     .pipe(data => this.setLoading(data, file.id, рropagateErr))
     .subscribe((data: DocumentContent) => {
       this.isLoading = false;

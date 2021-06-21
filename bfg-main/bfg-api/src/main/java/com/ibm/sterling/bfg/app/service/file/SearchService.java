@@ -96,6 +96,7 @@ public class SearchService {
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));
+    }
 
      public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class));

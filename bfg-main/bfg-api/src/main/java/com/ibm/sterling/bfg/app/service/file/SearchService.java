@@ -92,7 +92,7 @@ public class SearchService {
 
     private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
 	
-	private final int RANGE = 999;
+	private static final int RANGE = 999;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, elementClass));

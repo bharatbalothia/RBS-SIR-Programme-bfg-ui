@@ -79,7 +79,7 @@ public class SearchService {
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
-    private final int RANGE = 999;
+    private final static int RANGE = 999;
 
     public Page<File> getFilesList(FileSearchCriteria fileSearchCriteria) throws JsonProcessingException {
         return convertListToPage(fileSearchCriteria, getListFromSBI(fileSearchCriteria, fileSearchUrl, File.class));

@@ -37,11 +37,11 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
 
     boolean existsByEntityAndServiceAndDeletedAndEntityIdNot(String entity, String service, Boolean deleted, Integer entityId);
 
-    List<Entity> findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
-            String inboundRequestorDN, String inboundResponderDN, String inboundService);
+    List<Entity> findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCase(
+            String inboundRequestorDN, String inboundResponderDN, String inboundService, Boolean deleted);
 
-    List<Entity> findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCaseAndEntityIdNot(
-            String inboundRequestorDN, String inboundResponderDN, String inboundService, Integer entityId);
+    List<Entity> findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
+            String inboundRequestorDN, String inboundResponderDN, String inboundService, Boolean deleted, Integer entityId);
 
     List<Entity> findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
             String directParticipant,String entityParticipantType, Boolean deleted);

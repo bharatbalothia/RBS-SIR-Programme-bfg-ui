@@ -403,12 +403,6 @@
                                 <mat-option value='INDIRECT'>INDIRECT</mat-option>
                                 <mat-option value='DIRECT'>DIRECT</mat-option>
                             </mat-select>
-                            <button
-                                *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.entityParticipantType)"
-                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-                                (click)="entityPageFormGroup.controls.entityParticipantType.setValue(''); $event.stopPropagation()">
-                                <mat-icon>close</mat-icon>
-                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('entityParticipantType')">
                                 {{getErrorByField('entityParticipantType')}}
                             </mat-error>

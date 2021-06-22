@@ -89,6 +89,12 @@ export class HomeEventsComponent implements OnInit {
     return false;
   }
 
+  clearField = (event, field) => {
+    this[field] = '';
+    this.refreshAuditEvents();
+    event.stopPropagation();
+  }
+
   isClearActive = () =>
     this.objectActedOn !== ''
     || this.username !== ''

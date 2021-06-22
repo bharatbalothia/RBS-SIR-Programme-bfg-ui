@@ -13,6 +13,10 @@
           <mat-form-field class="search-by-field">
             <mat-label>Search by Certificate Name</mat-label>
             <input matInput [(ngModel)]="certificateNameSearchingValue" name="certificateNameSearchingValue">
+            <button *ngIf="certificateNameSearchingValue" mat-button type="button" matSuffix mat-icon-button
+              aria-label="Clear" (click)="clearField($event,'certificateNameSearchingValue')">
+              <mat-icon>close</mat-icon>
+            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'by-cert-name')" position="below"></app-tooltip>
         </div>
@@ -21,6 +25,10 @@
           <mat-form-field class="search-by-field">
             <mat-label>Search by SHA Thumbprint</mat-label>
             <input matInput [(ngModel)]="thumbprintSearchingValue" name="thumbprintSearchingValue">
+            <button *ngIf="thumbprintSearchingValue" mat-button type="button" matSuffix mat-icon-button
+              aria-label="Clear" (click)="clearField($event,'thumbprintSearchingValue')">
+              <mat-icon>close</mat-icon>
+            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
         </div>

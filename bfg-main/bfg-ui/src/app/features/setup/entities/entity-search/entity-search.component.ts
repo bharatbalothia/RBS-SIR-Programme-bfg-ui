@@ -234,7 +234,7 @@ export class EntitySearchComponent implements OnInit {
 
     getPendingEntityDetails().then((changeCtrl: ChangeControl) =>
       changeCtrl && this.dialog.open(DeleteDialogComponent, new DetailsDialogConfig({
-        title:  `Delete ${changeCtrl.changeID}`,
+        title: `Delete ${changeCtrl.changeID}`,
         getTitle: (data: ChangeControl) => `Delete ${data.changeID}`,
         data: changeCtrl,
         getData: getPendingEntityDetails,
@@ -282,4 +282,10 @@ export class EntitySearchComponent implements OnInit {
 
   isClearActive = () =>
     this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== ''
+
+  clearField = (event, field) => {
+    this[field] = '';
+    this.getEntityList(0, this.pageSize);
+    event.stopPropagation();
+  }
 }

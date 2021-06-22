@@ -20,8 +20,8 @@
                                 {{entity}}
                             </mat-option>
                         </mat-autocomplete>
-                        <button *ngIf="searchingParametersFormGroup.controls.entity.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.entity.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.entity.setValue('')">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -38,8 +38,8 @@
                             <mat-option *ngFor="let direction of transactionCriteriaData.direction" [value]="direction">
                                 {{direction.directionLabel}}</mat-option>
                         </mat-select>
-                        <button *ngIf="searchingParametersFormGroup.controls.direction.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.direction.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.direction.setValue(''); $event.stopPropagation()">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -56,8 +56,8 @@
                             <mat-option *ngFor="let trxStatus of transactionCriteriaData.trxStatus" [value]="trxStatus">
                                 {{trxStatus.label}}</mat-option>
                         </mat-select>
-                        <button *ngIf="searchingParametersFormGroup.controls.trxStatus.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.trxStatus.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.trxStatus.setValue(''); $event.stopPropagation()">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -68,8 +68,8 @@
                     <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('reference')}}</mat-label>
                         <input matInput formControlName="reference">
-                        <button *ngIf="searchingParametersFormGroup.controls.reference.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.reference.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.reference.setValue('')">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -80,8 +80,8 @@
                     <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('transactionID')}}</mat-label>
                         <input matInput formControlName="transactionID">
-                        <button *ngIf="searchingParametersFormGroup.controls.transactionID.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.transactionID.value" mat-button
+                            type="button" matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.transactionID.setValue('')">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -92,8 +92,8 @@
                     <mat-form-field>
                         <mat-label>{{getTransactionSearchDisplayName('paymentBIC')}}</mat-label>
                         <input matInput formControlName="paymentBIC">
-                        <button *ngIf="searchingParametersFormGroup.controls.paymentBIC.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.paymentBIC.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.paymentBIC.setValue('')">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -109,8 +109,8 @@
                             <mat-option *ngFor="let type of transactionCriteriaData.type" [value]="type">
                                 {{type}}</mat-option>
                         </mat-select>
-                        <button *ngIf="searchingParametersFormGroup.controls.type.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
+                        <button *ngIf="searchingParametersFormGroup.controls.type.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
                             (click)="searchingParametersFormGroup.controls.type.setValue(''); $event.stopPropagation()">
                             <mat-icon>close</mat-icon>
                         </button>
@@ -124,9 +124,9 @@
                         <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
                             [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
                             (dateChange)="handleDate($event, 'minDate')" />
-                        <button *ngIf="searchingParametersFormGroup.controls.from.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
-                            (click)="searchingParametersFormGroup.controls.from.setValue('')">
+                        <button *ngIf="searchingParametersFormGroup.controls.from.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
+                            (click)="searchingParametersFormGroup.controls.from.setValue(''); minDate = null">
                             <mat-icon>close</mat-icon>
                         </button>
                         <mat-datepicker-toggle type="button" matSuffix [for]="fromPicker"></mat-datepicker-toggle>
@@ -150,9 +150,9 @@
                         <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
                             [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
                             (dateChange)="handleDate($event, 'maxDate')" />
-                        <button *ngIf="searchingParametersFormGroup.controls.to.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
-                            (click)="searchingParametersFormGroup.controls.to.setValue('')">
+                        <button *ngIf="searchingParametersFormGroup.controls.to.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
+                            (click)="searchingParametersFormGroup.controls.to.setValue(''); maxDate = null">
                             <mat-icon>close</mat-icon>
                         </button>
                         <mat-datepicker-toggle type="button" matSuffix [for]="toPicker"></mat-datepicker-toggle>
@@ -177,9 +177,9 @@
                         <input matInput [ngxMatDatetimePicker]="pFromPicker" placeholder="Choose a date"
                             [formControl]="searchingParametersFormGroup.controls['pFrom']" [max]="pMaxDate"
                             (dateChange)="handleDate($event, 'pMinDate')" />
-                        <button *ngIf="searchingParametersFormGroup.controls.pFrom.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
-                            (click)="searchingParametersFormGroup.controls.pFrom.setValue('')">
+                        <button *ngIf="searchingParametersFormGroup.controls.pFrom.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
+                            (click)="searchingParametersFormGroup.controls.pFrom.setValue(''); pMinDate = null">
                             <mat-icon>close</mat-icon>
                         </button>
                         <mat-datepicker-toggle type="button" matSuffix [for]="pFromPicker"></mat-datepicker-toggle>
@@ -203,9 +203,9 @@
                         <input matInput [ngxMatDatetimePicker]="pToPicker" placeholder="Choose a date"
                             [formControl]="searchingParametersFormGroup.controls['pTo']" [min]="pMinDate"
                             (dateChange)="handleDate($event, 'pMaxDate')" />
-                        <button *ngIf="searchingParametersFormGroup.controls.pTo.value" mat-button type="button" matSuffix
-                            mat-icon-button aria-label="Clear"
-                            (click)="searchingParametersFormGroup.controls.pTo.setValue('')">
+                        <button *ngIf="searchingParametersFormGroup.controls.pTo.value" mat-button type="button"
+                            matSuffix mat-icon-button aria-label="Clear"
+                            (click)="searchingParametersFormGroup.controls.pTo.setValue(''); pMaxDate = null">
                             <mat-icon>close</mat-icon>
                         </button>
                         <mat-datepicker-toggle type="button" matSuffix [for]="pToPicker"></mat-datepicker-toggle>

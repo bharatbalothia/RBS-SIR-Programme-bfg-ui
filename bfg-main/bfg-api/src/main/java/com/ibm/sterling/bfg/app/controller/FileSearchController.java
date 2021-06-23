@@ -50,12 +50,6 @@ public class FileSearchController {
         return fileSearchService.getTransactionsList(fileId, page, size);
     }
 
-    @GetMapping("{fileId}/transactions/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Integer fileId,
-                                                          @PathVariable Integer id) throws JsonProcessingException {
-        return ok(fileSearchService.getTransactionById(fileId, id).orElseThrow(FileTransactionNotFoundException::new));
-    }
-
     @GetMapping("error/{errorCode}")
     public ResponseEntity<ErrorDetail> getErrorDetailsByCode(@PathVariable String errorCode) throws JsonProcessingException {
         return ok(propertyService.getErrorDetailsByCode(errorCode)

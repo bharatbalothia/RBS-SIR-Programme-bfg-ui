@@ -13,6 +13,7 @@ import { DocumentContent } from 'src/app/shared/models/file/document-content.mod
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
+import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { getFileSearchDisplayName } from '../file-search-display-names';
@@ -43,6 +44,7 @@ export class TransactionsDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private fileService: FileService,
+    private transactionService: TransactionService,
     private fileDialogService: FileDialogService,
     private dialog: MatDialog
   ) {
@@ -80,7 +82,7 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.fileService.getTransactionById(fileId, id)
+    this.transactionService.getTransactionById(id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;
@@ -106,7 +108,7 @@ export class TransactionsDialogComponent implements OnInit {
     this.fileDialogService.openFileDetailsDialog(file, true);
   }
 
-  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID )
+  openTransactionDocumentInfo = (transaction: Transaction) => this.fileService.getDocumentContent(transaction.docID)
     .pipe(data => this.setLoading(data))
     .subscribe((docCont: DocumentContent) => {
       this.isLoading = false;

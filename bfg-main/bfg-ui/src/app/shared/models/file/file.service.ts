@@ -1,13 +1,12 @@
-import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FileCriteriaData } from './file-criteria.model';
 import { Observable } from 'rxjs';
-import { FilesWithPagination } from './files-with-pagination.model';
-import { TransactionsWithPagination } from '../transaction/transactions-with-pagination.model';
-import { FileError } from './file-error.model';
-import { Transaction } from '../transaction/transaction.model';
+import { environment } from 'src/environments/environment';
 import { removeEmpties } from '../../utils/utils';
+import { TransactionsWithPagination } from '../transaction/transactions-with-pagination.model';
+import { FileCriteriaData } from './file-criteria.model';
+import { FileError } from './file-error.model';
+import { FilesWithPagination } from './files-with-pagination.model';
 
 @Injectable({
     providedIn: 'root'
@@ -33,10 +32,6 @@ export class FileService {
 
     getTransactionListByFileId(fileId: number, params?: { page?: string, size?: string }) {
         return this.http.get<TransactionsWithPagination>(this.apiUrl + fileId + '/transactions', { params });
-    }
-
-    getTransactionById(fileId: number, id: number) {
-        return this.http.get<Transaction>(this.apiUrl + fileId + '/transactions/' + id);
     }
 
     getErrorDetailsByCode(errorCode: string) {

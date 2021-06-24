@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TransactionsWithPagination } from './transactions-with-pagination.model';
 import { TransactionCriteriaData } from './transaction-criteria.model';
+import { Transaction } from './transaction.model';
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +22,10 @@ export class TransactionService {
 
     getTransactionList(params?): Observable<TransactionsWithPagination> {
         return this.http.post<TransactionsWithPagination>(this.apiUrl, params);
+    }
+
+    getTransactionById(id: number) {
+        return this.http.get<Transaction>(this.apiUrl + id);
     }
 
 }

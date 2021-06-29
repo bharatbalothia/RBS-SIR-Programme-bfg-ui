@@ -31,30 +31,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_TX_HOUR.TOTAL > 0 ? {from: getMinusHoursDate(1), service:'SCT', transactionType: 'transaction'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_TX_HOUR.TOTAL > 0 ? {startDate: getMinusHoursDate(1), transactionType: 'transaction'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_TX_HOUR.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX_HOUR.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_TX_HOUR.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_HOUR.IB > 0 ? {from: getMinusHoursDate(1), service:'SCT', direction: ['inbound'], payaway: false} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_HOUR.IB > 0 ? {startDate: getMinusHoursDate(1), direction: ['inbound'], payaway: false} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_HOUR.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_HOUR.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_HOUR.OB > 0 ? {from: getMinusHoursDate(1), service:'SCT', direction: ['outbound'], payaway: false} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_HOUR.OB > 0 ? {startDate: getMinusHoursDate(1), direction: ['outbound'], payaway: false} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_HOUR.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_HOUR.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)
@@ -62,30 +50,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_PAW_HOUR.TOTAL > 0 ? {from: getMinusHoursDate(1), service:'SCT', transactionType: 'payaway'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_PAW_HOUR.TOTAL > 0 ? {startDate: getMinusHoursDate(1), transactionType: 'payaway'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_PAW_HOUR.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW_HOUR.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_PAW_HOUR.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_HOUR.IB > 0 ? {from: getMinusHoursDate(1), service:'SCT', direction: ['inbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_HOUR.IB > 0 ? {startDate: getMinusHoursDate(1), direction: ['inbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_HOUR.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_HOUR.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_HOUR.OB > 0 ? {from: getMinusHoursDate(1), service:'SCT', direction: ['outbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_HOUR.OB > 0 ? {startDate: getMinusHoursDate(1), direction: ['outbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_HOUR.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_HOUR.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)
@@ -103,30 +79,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_TX_DAY.TOTAL > 0 ? {from: getMinusDaysDate(1), service:'SCT', transactionType: 'transaction'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_TX_DAY.TOTAL > 0 ? {startDate: getMinusDaysDate(1), transactionType: 'transaction'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_TX_DAY.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX_DAY.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_TX_DAY.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_DAY.IB > 0 ? {from: getMinusDaysDate(1), service:'SCT', direction: ['inbound'], payaway: false} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_DAY.IB > 0 ? {startDate: getMinusDaysDate(1), direction: ['inbound'], payaway: false} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_DAY.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_DAY.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_DAY.OB > 0 ? {from: getMinusDaysDate(1), service:'SCT', direction: ['outbound'], payaway: false} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_DAY.OB > 0 ? {startDate: getMinusDaysDate(1), direction: ['outbound'], payaway: false} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_DAY.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_DAY.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)
@@ -134,30 +98,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_PAW_DAY.TOTAL > 0 ? {from: getMinusDaysDate(1), service:'SCT', transactionType: 'payaway'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_PAW_DAY.TOTAL > 0 ? {startDate: getMinusDaysDate(1), transactionType: 'payaway'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_PAW_DAY.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW_DAY.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_PAW_DAY.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_DAY.IB > 0 ? {from: getMinusDaysDate(1), service:'SCT', direction: ['inbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_DAY.IB > 0 ? {startDate: getMinusDaysDate(1), direction: ['inbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_DAY.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_DAY.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_DAY.OB > 0 ? {from: getMinusDaysDate(1), service:'SCT', direction: ['outbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_DAY.OB > 0 ? {startDate: getMinusDaysDate(1), direction: ['outbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_DAY.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_DAY.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)
@@ -175,30 +127,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_TX_WEEK.TOTAL > 0 ? {from: getMinusDaysDate(7), service:'SCT', transactionType: 'transaction'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_TX_WEEK.TOTAL > 0 ? {startDate: getMinusDaysDate(7), transactionType: 'transaction'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_TX_WEEK.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_TX_WEEK.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_TX_WEEK.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_WEEK.IB > 0 ? {from: getMinusDaysDate(7), service:'SCT', direction: ['inbound'], payaway: false } : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_WEEK.IB > 0 ? {startDate: getMinusDaysDate(7), direction: ['inbound'], payaway: false } : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_WEEK.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_WEEK.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_TX_WEEK.OB > 0 ? {from: getMinusDaysDate(7), service:'SCT', direction: ['outbound'], payaway: false} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_TX_WEEK.OB > 0 ? {startDate: getMinusDaysDate(7), direction: ['outbound'], payaway: false} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_TX_WEEK.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_TX_WEEK.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)
@@ -206,30 +146,18 @@
         </td>
         <td class="sct-link">
           <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-            [queryParams]="SCTTraffic.SCT_PAW_WEEK.TOTAL > 0 ? {from: getMinusDaysDate(7), service:'SCT', transactionType: 'payaway'} : {from: getMinusMonthsDate(1)}"
-=======
             [queryParams]="SCTTraffic.SCT_PAW_WEEK.TOTAL > 0 ? {startDate: getMinusDaysDate(7), transactionType: 'payaway'} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
             (click)="checkCount(SCTTraffic.SCT_PAW_WEEK.TOTAL, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
             {{SCTTraffic.SCT_PAW_WEEK.TOTAL}}
           </a>
           <div class="traffic-details" *ngIf="SCTTraffic.SCT_PAW_WEEK.TOTAL > 0">&nbsp;
             (<a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_WEEK.IB > 0 ? {from: getMinusDaysDate(7), service:'SCT', direction: ['inbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_WEEK.IB > 0 ? {startDate: getMinusDaysDate(7), direction: ['inbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_WEEK.IB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_WEEK.IB}} <mat-icon>{{getDirectionIcon('inbound')}}</mat-icon>
             </a>
             <a [routerLink]="['/' + ROUTING_PATHS.SCT_TRANSACTION_SEARCH]"
-<<<<<<< HEAD
-              [queryParams]="SCTTraffic.SCT_PAW_WEEK.OB > 0 ? {from: getMinusDaysDate(7), service:'SCT', direction: ['outbound'], payaway: true} : {from: getMinusMonthsDate(1)}"
-=======
               [queryParams]="SCTTraffic.SCT_PAW_WEEK.OB > 0 ? {startDate: getMinusDaysDate(7), direction: ['outbound'], payaway: true} : {startDate: getMinusMonthsDate(1)}"
->>>>>>> develop
               (click)="checkCount(SCTTraffic.SCT_PAW_WEEK.OB, ROUTING_PATHS.SCT_TRANSACTION_SEARCH)">
               {{SCTTraffic.SCT_PAW_WEEK.OB}} <mat-icon>{{getDirectionIcon('outbound')}}</mat-icon>
             </a>)

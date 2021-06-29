@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { FileService } from 'src/app/shared/models/file/file.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -11,11 +10,8 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
-<<<<<<< HEAD
-=======
 import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
 import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
->>>>>>> develop
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';

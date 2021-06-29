@@ -12,6 +12,10 @@
           <mat-form-field>
             <input type="text" matInput placeholder="Username" [(ngModel)]="credentials.login" name="login"
               #username="ngModel" required>
+            <button *ngIf="credentials.login" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+              (click)="credentials.login = ''">
+              <mat-icon>close</mat-icon>
+            </button>
             <mat-error *ngFor="let validation of validationMessages.login">
               <mat-error class="error-message" *ngIf="isFormFieldHasError('login', validation.type)">
                 {{validation.message}}</mat-error>
@@ -22,6 +26,10 @@
           <mat-form-field>
             <input type="password" matInput placeholder="Password" [(ngModel)]="credentials.password" name="password"
               #password="ngModel" required>
+            <button *ngIf="credentials.password" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+              (click)="credentials.password = ''">
+              <mat-icon>close</mat-icon>
+            </button>
             <mat-error *ngFor="let validation of validationMessages.password">
               <mat-error class="error-message" *ngIf="isFormFieldHasError('password', validation.type)">
                 {{validation.message}}</mat-error>

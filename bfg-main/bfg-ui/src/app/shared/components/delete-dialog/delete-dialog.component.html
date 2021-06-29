@@ -12,6 +12,10 @@
                 <mat-form-field>
                     <mat-label>Changer Comments</mat-label>
                     <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
+                    <button *ngIf="changerComments" mat-button type="button" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="changerComments = ''">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </mat-form-field>
                 <app-tooltip *ngIf="tooltip" [tip]="tooltip"></app-tooltip>
             </div>

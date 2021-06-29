@@ -221,4 +221,10 @@ export class EntityPendingComponent implements OnInit {
 
   isClearActive = () =>
     this.entityNameSearchingValue !== '' || this.serviceSearchingValue !== '' || this.DNSearchingValue !== ''
+
+  clearField = (event, field) => {
+    this[field] = '';
+    this.getPendingChanges(0, this.pageSize);
+    event.stopPropagation();
+  }
 }

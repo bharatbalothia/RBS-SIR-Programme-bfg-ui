@@ -22,8 +22,7 @@
         <ng-container matColumnDef="status">
             <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-icon *ngIf="element.status !== 0" [svgIcon]="getTransactionStatusIcon(element.status)"></mat-icon>
-                <mat-spinner [diameter]="24" *ngIf="element.status === 0"></mat-spinner>
+                <mat-icon [svgIcon]="getTransactionStatusIcon(element.status)"></mat-icon>
                 &nbsp;{{element.status}}
             </mat-cell>
         </ng-container>

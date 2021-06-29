@@ -145,11 +145,11 @@ public class SearchService {
         return convertListToPage(transactionSearchCriteria, getListFromSBI(transactionSearchCriteria, transactionSearchUrl, Transaction.class));
     }
 
-    public Optional<TransactionDetails> getTransactionById(Integer id) throws JsonProcessingException {
+    public Optional<TransactionDetails> getTransactionById(Integer fileId, Integer id) throws JsonProcessingException {
         ResponseEntity<String> response;
         try {
             response = new RestTemplate().exchange(
-                    transactionSearchUrl + "/" + id,
+                    fileSearchUrl + "/" + fileId + "/transactions/" + id,
                     HttpMethod.GET,
                     new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);

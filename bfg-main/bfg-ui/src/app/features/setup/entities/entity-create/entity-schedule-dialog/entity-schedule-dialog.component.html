@@ -9,11 +9,6 @@
                         [value]="scheduleType[type] === scheduleType.WINDOW">{{scheduleType[type]}}
                     </mat-option>
                 </mat-select>
-                <button *ngIf="scheduleFormGroup.controls.isWindow.value" mat-button type="button" matSuffix
-                    mat-icon-button aria-label="Clear"
-                    (click)="scheduleFormGroup.controls.isWindow.setValue(''); $event.stopPropagation()">
-                    <mat-icon>close</mat-icon>
-                </button>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.isWindow">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('isWindow',validation.type)">
                         {{validation.message}}</mat-error>
@@ -25,10 +20,6 @@
             <mat-form-field>
                 <mat-label>{{getEntityDisplayName('timeStart')}}</mat-label>
                 <input matInput type="time" formControlName="timeStart" required>
-                <button *ngIf="scheduleFormGroup.controls.timeStart.value" mat-button type="button" matSuffix
-                    mat-icon-button aria-label="Clear" (click)="scheduleFormGroup.controls.timeStart.setValue('')">
-                    <mat-icon>close</mat-icon>
-                </button>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.timeStart">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('timeStart',validation.type)">
                         {{validation.message}}</mat-error>
@@ -41,10 +32,6 @@
                 <mat-form-field>
                     <mat-label>{{getEntityDisplayName('windowEnd')}}</mat-label>
                     <input matInput type="time" formControlName="windowEnd" required>
-                    <button *ngIf="scheduleFormGroup.controls.windowEnd.value" mat-button type="button" matSuffix
-                        mat-icon-button aria-label="Clear" (click)="scheduleFormGroup.controls.windowEnd.setValue('')">
-                        <mat-icon>close</mat-icon>
-                    </button>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowEnd">
                         <mat-error class="error-message" *ngIf="ifFieldHasError('windowEnd',validation.type)">
                             {{validation.message}}</mat-error>
@@ -56,11 +43,6 @@
                 <mat-form-field>
                     <mat-label>{{getEntityDisplayName('windowInterval')}}</mat-label>
                     <input matInput type="number" min="0" formControlName="windowInterval" required>
-                    <button *ngIf="scheduleFormGroup.controls.windowInterval.value" mat-button type="button" matSuffix
-                        mat-icon-button aria-label="Clear"
-                        (click)="scheduleFormGroup.controls.windowInterval.setValue('')">
-                        <mat-icon>close</mat-icon>
-                    </button>
                     <mat-error *ngFor="let validation of scheduleValidationMessages.windowInterval">
                         <mat-error class="error-message" *ngIf="ifFieldHasError('windowInterval',validation.type)">
                             {{validation.message}}</mat-error>
@@ -75,11 +57,6 @@
                 <mat-select formControlName="fileType" required>
                     <mat-option *ngFor="let fileType of fileTypes" [value]="fileType">{{fileType}}</mat-option>
                 </mat-select>
-                <button *ngIf="scheduleFormGroup.controls.fileType.value" mat-button type="button" matSuffix
-                    mat-icon-button aria-label="Clear"
-                    (click)="scheduleFormGroup.controls.fileType.setValue(''); $event.stopPropagation()">
-                    <mat-icon>close</mat-icon>
-                </button>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.fileType">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('fileType',validation.type)">
                         {{validation.message}}</mat-error>

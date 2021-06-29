@@ -293,10 +293,4 @@ export class TrustedCertificateSearchComponent implements OnInit {
 
   isClearActive = () =>
     this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== ''
-
-  clearField = (event, field) => {
-    this[field] = '';
-    this.getTrustedCertificateList(0, this.pageSize);
-    event.stopPropagation();
-  }
 }

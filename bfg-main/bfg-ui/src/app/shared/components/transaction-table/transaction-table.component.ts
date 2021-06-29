@@ -5,8 +5,8 @@ import { getStatusIcon } from 'src/app/core/constants/status-icon';
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionSearchDisplayName } from 'src/app/features/search/transaction-search/transaction-search-display-names';
 import { getBusinessProcessDisplayName } from '../../models/business-process/business-process-display-names';
 import { FileDialogService } from '../../models/file/file-dialog.service';
+import { FileService } from '../../models/file/file.service';
 import { Transaction } from '../../models/transaction/transaction.model';
-import { TransactionService } from '../../models/transaction/transaction.service';
 import { TransactionsWithPagination } from '../../models/transaction/transactions-with-pagination.model';
 import { BusinessProcessDialogConfig } from '../business-process-dialog/business-process-dialog-config.model';
 import { BusinessProcessDialogComponent } from '../business-process-dialog/business-process-dialog.component';
@@ -48,7 +48,7 @@ export class TransactionTableComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
-    private transactionService: TransactionService,
+    private fileService: FileService,
     private dialog: MatDialog,
     private fileDialogService: FileDialogService
   ) { }
@@ -69,7 +69,7 @@ export class TransactionTableComponent implements OnInit {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.transactionService.getTransactionById(id)
+    this.fileService.getTransactionById(fileId, id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;

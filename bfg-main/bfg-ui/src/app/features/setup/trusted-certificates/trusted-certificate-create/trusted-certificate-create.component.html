@@ -28,12 +28,6 @@
           <mat-form-field *ngIf="detailsTrustedCertificateFormGroup.get('name')">
             <mat-label>{{getTrustedCertificateDisplayName('name')}}</mat-label>
             <input matInput formControlName="name" required>
-            <button
-              *ngIf="detailsTrustedCertificateFormGroup.controls.name.value"
-              mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-              (click)="detailsTrustedCertificateFormGroup.controls.name.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
             <mat-error *ngFor="let validation of trustedCertificateValidationMessages.name">
               <mat-error class="error-message"
                 *ngIf="detailsTrustedCertificateFormGroup.get('name').hasError(validation.type)">
@@ -126,12 +120,6 @@
             <mat-label>{{getTrustedCertificateDisplayName('changerComments')}}
             </mat-label>
             <textarea matInput formControlName="changerComments"></textarea>
-            <button
-              *ngIf="detailsTrustedCertificateFormGroup.controls.changerComments.value"
-              mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-              (click)="detailsTrustedCertificateFormGroup.controls.changerComments.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
             <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
               {{getErrorByField('changerComments')}}
             </mat-error>

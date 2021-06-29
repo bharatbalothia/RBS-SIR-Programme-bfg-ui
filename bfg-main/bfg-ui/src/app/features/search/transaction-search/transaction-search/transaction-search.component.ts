@@ -227,6 +227,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),
       size: pageSize.toString(),
+      service: ENTITY_SERVICE_TYPE.SCT
     };
 
     if (get(formData, 'direction.payaway')) {

@@ -17,10 +17,6 @@
               <mat-option value="GPL">GPL</mat-option>
               <mat-option value="SCT">SCT</mat-option>
             </mat-select>
-            <button *ngIf="serviceSearchingValue" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-              (click)="clearField($event,'serviceSearchingValue')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
         </div>
 
@@ -28,10 +24,6 @@
           <mat-form-field class="search-by-field">
             <mat-label>Search by entity name</mat-label>
             <input matInput [(ngModel)]="entityNameSearchingValue" name="entityNameSearchingValue">
-            <button *ngIf="entityNameSearchingValue" mat-button type="button" matSuffix mat-icon-button
-              aria-label="Clear" (click)="clearField($event,'entityNameSearchingValue')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
         </div>
 
@@ -39,10 +31,6 @@
           <mat-form-field class="search-by-field">
             <mat-label>Search by DN</mat-label>
             <input matInput [(ngModel)]="DNSearchingValue" name="DNSearchingValue">
-            <button *ngIf="DNSearchingValue" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-              (click)="clearField($event,'DNSearchingValue')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
         </div>
 

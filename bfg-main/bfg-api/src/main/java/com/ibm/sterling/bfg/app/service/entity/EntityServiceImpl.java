@@ -314,8 +314,8 @@ public class EntityServiceImpl implements EntityService {
                                                         String inboundService, List<String> inboundRequestType) {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, inboundRequestType - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCase(
-                inboundRequestorDN, inboundResponderDN, inboundService, false);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCase(
+                inboundRequestorDN, inboundResponderDN, inboundService);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
                         Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))
@@ -329,8 +329,8 @@ public class EntityServiceImpl implements EntityService {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, " +
                         "inboundRequestType - {}, entityId - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType, entityId);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
-                inboundRequestorDN, inboundResponderDN, inboundService, false, entityId);
+        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAllIgnoreCaseAndEntityIdNot(
+                inboundRequestorDN, inboundResponderDN, inboundService, entityId);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),
                         Optional.ofNullable(inboundRequestType).orElse(new ArrayList<>())))

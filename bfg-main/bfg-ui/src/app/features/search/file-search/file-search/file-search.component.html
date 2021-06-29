@@ -20,10 +20,6 @@
                 {{entity.entityName}}
               </mat-option>
             </mat-autocomplete>
-            <button *ngIf="searchingParametersFormGroup.controls.entityId.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.entityId.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
         </section>
@@ -36,11 +32,6 @@
               <mat-option *ngFor="let service of fileCriteriaData.service" [value]="service">
                 {{service}}</mat-option>
             </mat-select>
-            <button *ngIf="searchingParametersFormGroup.controls.service.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.service.setValue(''); $event.stopPropagation()">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'service')"></app-tooltip>
         </section>
@@ -53,11 +44,6 @@
               <mat-option *ngFor="let direction of fileCriteriaData.direction" [value]="direction">
                 {{direction}}</mat-option>
             </mat-select>
-            <button *ngIf="searchingParametersFormGroup.controls.direction.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.direction.setValue(''); $event.stopPropagation()">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
         </section>
@@ -70,11 +56,6 @@
               <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
                 {{fileStatus.label}}</mat-option>
             </mat-select>
-            <button *ngIf="searchingParametersFormGroup.controls.fileStatus.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.fileStatus.setValue(''); $event.stopPropagation()">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'file-status')"></app-tooltip>
         </section>
@@ -89,11 +70,6 @@
                 {{bpstate}}
               </mat-option>
             </mat-select>
-            <button *ngIf="searchingParametersFormGroup.controls.bpstate.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.bpstate.setValue(''); $event.stopPropagation()">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'bp-state')"></app-tooltip>
         </section>
@@ -101,10 +77,6 @@
           <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
             <input matInput formControlName="filename">
-            <button *ngIf="searchingParametersFormGroup.controls.filename.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.filename.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'filename')"></app-tooltip>
         </section>
@@ -112,10 +84,6 @@
           <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
             <input matInput formControlName="reference">
-            <button *ngIf="searchingParametersFormGroup.controls.reference.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.reference.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
         </section>
@@ -128,11 +96,6 @@
               <mat-option *ngFor="let type of fileCriteriaData.type" [value]="type">
                 {{type}}</mat-option>
             </mat-select>
-            <button *ngIf="searchingParametersFormGroup.controls.type.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.type.setValue(''); $event.stopPropagation()">
-              <mat-icon>close</mat-icon>
-            </button>
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'type')"></app-tooltip>
         </section>
@@ -142,12 +105,7 @@
             <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
               [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
               (dateChange)="handleDate($event, 'minDate')" />
-            <button *ngIf="searchingParametersFormGroup.controls.from.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.from.setValue(null); minDate = null">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-datepicker-toggle type="button" matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)"
               (monthSelected)="setCalendarDblClick(fromPicker)">
             </ngx-mat-datetime-picker>
@@ -168,12 +126,7 @@
             <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
               [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
               (dateChange)="handleDate($event, 'maxDate')" />
-            <button *ngIf="searchingParametersFormGroup.controls.to.value" mat-button type="button" matSuffix
-              mat-icon-button aria-label="Clear"
-              (click)="searchingParametersFormGroup.controls.to.setValue(null); maxDate = null">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-datepicker-toggle type="button" matSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
               (monthSelected)="setCalendarDblClick(toPicker)"></ngx-mat-datetime-picker>
             <mat-error class="error-message"

@@ -12,10 +12,6 @@
             <mat-form-field *ngIf="approveAction">
                 <mat-label>Approver Comments</mat-label>
                 <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
-                <button *ngIf="approverComments" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
-                    (click)="approverComments = ''">
-                    <mat-icon>close</mat-icon>
-                </button>
             </mat-form-field>
             <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
             <div *ngIf="approveAction">

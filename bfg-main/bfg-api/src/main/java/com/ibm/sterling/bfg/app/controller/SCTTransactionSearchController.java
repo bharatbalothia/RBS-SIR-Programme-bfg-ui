@@ -1,7 +1,6 @@
 package com.ibm.sterling.bfg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ibm.sterling.bfg.app.exception.file.FileTransactionNotFoundException;
 import com.ibm.sterling.bfg.app.model.file.Transaction;
 import com.ibm.sterling.bfg.app.model.file.TransactionSearchCriteria;
 import com.ibm.sterling.bfg.app.service.PropertyService;
@@ -35,12 +34,6 @@ public class SCTTransactionSearchController {
             throws JsonProcessingException {
         return searchService.getSCTTransactionList(
                 Optional.ofNullable(transactionSearchCriteria).orElse(new TransactionSearchCriteria()));
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Integer id)
-            throws JsonProcessingException {
-        return ok(searchService.getTransactionById(id).orElseThrow(FileTransactionNotFoundException::new));
     }
 
     @GetMapping("transaction-criteria-data")

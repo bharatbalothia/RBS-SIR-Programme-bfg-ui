@@ -266,10 +266,4 @@ export class TrustedCertificatePendingComponent implements OnInit {
 
   isClearActive = () =>
     this.certificateNameSearchingValue !== '' || this.thumbprintSearchingValue !== ''
-
-  clearField = (event, field) => {
-    this[field] = '';
-    this.getPendingChanges(0, this.pageSize);
-    event.stopPropagation();
-  }
 }

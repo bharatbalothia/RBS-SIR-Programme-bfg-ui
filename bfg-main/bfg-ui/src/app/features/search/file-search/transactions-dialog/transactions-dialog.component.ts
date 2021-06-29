@@ -11,6 +11,11 @@ import { DetailsDialogComponent } from 'src/app/shared/components/details-dialog
 import { DetailsDialogConfig } from 'src/app/shared/components/details-dialog/details-dialog-config.model';
 import { DocumentContent } from 'src/app/shared/models/file/document-content.model';
 import { Transaction } from 'src/app/shared/models/transaction/transaction.model';
+<<<<<<< HEAD
+=======
+import { TransactionService } from 'src/app/shared/models/transaction/transaction.service';
+import { TransactionsWithPagination } from 'src/app/shared/models/transaction/transactions-with-pagination.model';
+>>>>>>> develop
 import { getDirectionIcon, getTransactionDetailsTabs, getTransactionDocumentInfoTabs } from '../../transaction-search/transaction-search-display-names';
 import { BusinessProcessDialogComponent } from 'src/app/shared/components/business-process-dialog/business-process-dialog.component';
 import { getBusinessProcessDisplayName } from 'src/app/shared/models/business-process/business-process-display-names';
@@ -47,6 +52,7 @@ export class TransactionsDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private fileService: FileService,
+    private transactionService: TransactionService,
     private fileDialogService: FileDialogService,
     private dialog: MatDialog
   ) {
@@ -85,7 +91,7 @@ export class TransactionsDialogComponent implements OnInit {
   }
 
   openTransactionDetailsDialog = (fileId: number, id: number) => {
-    this.fileService.getTransactionById(fileId, id)
+    this.transactionService.getTransactionById(id)
       .pipe(data => this.setLoading(data))
       .subscribe((data: Transaction) => {
         this.isLoading = false;

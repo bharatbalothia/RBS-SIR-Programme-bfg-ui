@@ -1,5 +1,6 @@
 .sidenav-container {
   height: 100%;
+  display: flex;
 
   .app-title {
     display: flex;
@@ -110,7 +111,51 @@
 }
 
 .sidenav {
-  width: 230px;
+  width: 250px;
+  position: inherit;
+  overflow-x: hidden;
+
+  .resizable-right {
+    display: block;
+    width: 8px;
+    height: 8px;
+    line-height: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: 0 0;
+    position: absolute;
+    z-index: 1;
+    height: 100%;
+    right: 0;
+    top: 0;
+
+    .resizable-icon {
+      position: absolute;
+      box-sizing: border-box;
+      display: block;
+      border: 1px solid #ccc;
+      border-width: 0 1px;
+      top: 50%;
+      margin: -10px 0 0 2px;
+      height: 20px;
+      width: 4px;
+    }
+  }
+}
+
+.sidenav[ng-reflect-opened="false"] {
+  display: none;
+}
+
+.mat-drawer-opened {
+  display: block !important;
+}
+
+.mat-sidenav-content {
+  width: 100%;
+  margin-left: 0px !important;
 }
 
 .sidenav .mat-toolbar {

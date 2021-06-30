@@ -14,6 +14,9 @@ export class LayoutComponent implements OnInit {
 
   minWidthForWeb = 900;
 
+  rzMaxWidth = 300;
+  rzMinWidth = 10;
+
   isWeb$: Observable<boolean> = this.breakpointObserver.observe(`(min-width: ${this.minWidthForWeb}px)`)
     .pipe(
       map(result => result.matches),

@@ -2,15 +2,18 @@
     display: flex;
     margin: -24px -24px -24px -24px !important;
     padding: 24px 24px;
+    padding-bottom: 50px;
     cursor: move;
     word-break: break-all;
-
-    .dialog-title {
-        margin: 0 !important;
-    }
 
     .close-icon {
         margin-left: auto;
         cursor: pointer !important;
     }
+}
+
+.dialog-title {
+    position: absolute;
+    margin: 0 !important;
+    cursor: text;
 }

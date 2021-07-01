@@ -15,7 +15,7 @@ import { TransmitDialogComponent } from 'src/app/shared/components/transmit-dial
 import { ChangeControl } from 'src/app/shared/models/changeControl/change-control.model';
 import { CHANGE_OPERATION } from 'src/app/shared/models/changeControl/change-operation';
 import { EntitiesWithPagination } from 'src/app/shared/models/entity/entities-with-pagination.model';
-import { ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
+import { ENTITY_PERMISSIONS, ENTITY_SERVICE_TYPE } from 'src/app/shared/models/entity/entity-constants';
 import { Entity } from 'src/app/shared/models/entity/entity.model';
 import { EntityService } from 'src/app/shared/models/entity/entity.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
@@ -253,6 +253,8 @@ export class EntitySearchComponent implements OnInit {
       }
     }));
   }
+
+  shouldDisplayTransmit = () => this.authService.isEnoughPermissions([ENTITY_PERMISSIONS.TRANSMIT]);
 
   getCurrentRoute = () => this.router.url;
 

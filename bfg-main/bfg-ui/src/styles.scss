@@ -326,3 +326,9 @@ mat-form-field {
         padding-bottom: 0 !important;
     }
 }
+
+.ng-resizable-e {
+    right: 0px !important;
+    z-index: 2;
+    cursor: col-resize !important;
+}

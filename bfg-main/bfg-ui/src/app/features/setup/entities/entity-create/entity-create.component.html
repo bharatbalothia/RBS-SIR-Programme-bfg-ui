@@ -475,6 +475,12 @@
                                 {{element.isWindow ? scheduleType.WINDOW : scheduleType.DAILY}}
                             </mat-cell>
                         </ng-container>
+                        <ng-container matColumnDef="fileType">
+                            <mat-header-cell *matHeaderCellDef> FileType </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{element.fileType}}
+                            </mat-cell>
+                        </ng-container>
                         <ng-container matColumnDef="addSchedule">
                             <mat-footer-cell *matFooterCellDef [attr.colspan]="scheduleDisplayedColumns.length">
                                 <button mat-raised-button color="primary" (click)="openScheduleDialog()">

@@ -9,11 +9,6 @@
                         [value]="scheduleType[type] === scheduleType.WINDOW">{{scheduleType[type]}}
                     </mat-option>
                 </mat-select>
-                <button *ngIf="scheduleFormGroup.controls.isWindow.value" mat-button type="button" matSuffix
-                    mat-icon-button aria-label="Clear"
-                    (click)="scheduleFormGroup.controls.isWindow.setValue(''); $event.stopPropagation()">
-                    <mat-icon>close</mat-icon>
-                </button>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.isWindow">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('isWindow',validation.type)">
                         {{validation.message}}</mat-error>
@@ -75,11 +70,6 @@
                 <mat-select formControlName="fileType" required>
                     <mat-option *ngFor="let fileType of fileTypes" [value]="fileType">{{fileType}}</mat-option>
                 </mat-select>
-                <button *ngIf="scheduleFormGroup.controls.fileType.value" mat-button type="button" matSuffix
-                    mat-icon-button aria-label="Clear"
-                    (click)="scheduleFormGroup.controls.fileType.setValue(''); $event.stopPropagation()">
-                    <mat-icon>close</mat-icon>
-                </button>
                 <mat-error *ngFor="let validation of scheduleValidationMessages.fileType">
                     <mat-error class="error-message" *ngIf="ifFieldHasError('fileType',validation.type)">
                         {{validation.message}}</mat-error>

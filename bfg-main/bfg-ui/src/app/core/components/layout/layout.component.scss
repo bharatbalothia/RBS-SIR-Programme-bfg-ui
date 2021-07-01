@@ -111,6 +111,7 @@
 }
 
 .sidenav {
+  display: none;
   width: 250px;
   position: inherit;
   overflow-x: hidden;
@@ -143,10 +144,6 @@
       width: 4px;
     }
   }
-}
-
-.sidenav[ng-reflect-opened="false"] {
-  display: none;
 }
 
 .mat-drawer-opened {

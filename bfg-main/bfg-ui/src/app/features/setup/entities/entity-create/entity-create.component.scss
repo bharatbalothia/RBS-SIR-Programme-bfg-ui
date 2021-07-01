@@ -74,21 +74,16 @@
     .schedule-table {
         width: 50%;
 
-        .mat-row,
-        .mat-header-row {
-            border-width: 0;
-            border-bottom-width: 1px;
-            border-style: solid;
-            border-bottom-color: rgba(0, 0, 0, .12);
-            padding-right: 10px;
+        .mat-column-action {
+            max-width: 80px;
         }
 
-        .mat-header-cell,
-        .mat-cell {
-            border-width: none;
-            border-bottom-width: none;
-            border-style: none;
-            display: inline-flex;
+        .mat-column-scheduleType {
+            max-width: 15%;
+        }
+
+        .mat-column-fileType {
+            max-width: 10%;
         }
 
     }

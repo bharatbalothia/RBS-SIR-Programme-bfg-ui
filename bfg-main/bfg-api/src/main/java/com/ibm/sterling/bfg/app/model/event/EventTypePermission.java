@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 public enum EventTypePermission {
     ENTITY_APPROVE("ENTITY", "SFG_UI_SCT_APPROVE_ENTITY"),
     TRUSTED_CERT_APPROVE("TRUSTED_CERTIFICATE", "FB_UI_TRUSTED_CERTS_APPROVE"),
-    ENTITY_TRANSMIT("TRANSMIT", "SFG_SCT_ICFOutbound");
+    ENTITY_TRANSMIT("TRANSMIT", "SFG_UI_SCT_ENTITY_TRANSMIT");
 
     private String eventType;
     private String neededPermission;

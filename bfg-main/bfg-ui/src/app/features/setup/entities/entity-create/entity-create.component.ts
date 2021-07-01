@@ -56,7 +56,7 @@ export class EntityCreateComponent implements OnInit {
   summaryDisplayedColumns = ['field', 'value'];
   summaryPageDataSource;
 
-  scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType'];
+  scheduleDisplayedColumns = ['action', 'schedule', 'scheduleType', 'fileType'];
   schedulesDataSource;
   scheduleFileTypes: string[] = [];
 

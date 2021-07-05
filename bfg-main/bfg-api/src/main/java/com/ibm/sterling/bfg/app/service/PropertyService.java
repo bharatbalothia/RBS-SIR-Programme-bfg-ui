@@ -129,6 +129,24 @@ public class PropertyService {
                 .orElse("");
     }
 
+    public List<Map<String, String>> getLinkF5() throws JsonProcessingException {
+        String property = getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLinkF5())
+                .stream()
+                .findFirst()
+                .orElse("");
+        return Arrays.stream(property.split(";"))
+                .collect(Collectors.toList())
+                .stream()
+                .map(value -> {
+                    Map<String, String> linkMap = new HashMap<>();
+                    linkMap.putAll(Arrays.stream(value.split("&&"))
+                    .map(kv -> kv.split("=="))
+                    .collect(Collectors.toMap(a -> a[0], a -> a[1])));
+                    return linkMap;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<String> getUserAccountGroups() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getUseraccountGroupsKey());
     }

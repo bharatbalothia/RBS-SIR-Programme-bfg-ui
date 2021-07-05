@@ -36,4 +36,9 @@ public class VersionController {
         return ok(loginMap);
     }
 
+    @GetMapping("f5")
+    public ResponseEntity<?> getF5Link() throws JsonProcessingException {
+        return ok(propertyService.getLinkF5());
+    }
+
 }

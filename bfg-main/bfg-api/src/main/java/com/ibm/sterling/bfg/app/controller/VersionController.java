@@ -33,6 +33,11 @@ public class VersionController {
         } catch (JsonProcessingException e) {
             loginMap.put("loginText", "");
         }
+        try {
+            loginMap.put("sepaDashboardVisibility", propertyService.getSepaDashboardVisibility());
+        } catch (JsonProcessingException e) {
+            loginMap.put("sepaDashboardVisibility", "false");
+        }
         return ok(loginMap);
     }
 

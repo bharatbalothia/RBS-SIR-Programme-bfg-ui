@@ -129,7 +129,7 @@ public class PropertyService {
                 .orElse("");
     }
 
-    public List<Map<String, String>> getLinkF5() throws JsonProcessingException {
+    public List<Map<String, Object>> getLinkF5() throws JsonProcessingException {
         String property = getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLinkF5())
                 .stream()
                 .findFirst()
@@ -138,10 +138,16 @@ public class PropertyService {
                 .collect(Collectors.toList())
                 .stream()
                 .map(value -> {
-                    Map<String, String> linkMap = new HashMap<>();
+                    Map<String, Object> linkMap = new HashMap<>();
                     linkMap.putAll(Arrays.stream(value.split("&&"))
                     .map(kv -> kv.split("=="))
-                    .collect(Collectors.toMap(a -> a[0], a -> a[1])));
+                    .collect(Collectors.toMap(a -> a[0],
+                            a -> {
+                            if (a[1].equalsIgnoreCase("false")
+                                    || a[1].equalsIgnoreCase("true")) {
+                                return Boolean.valueOf(a[1]);
+                            } else return a[1];
+                    })));
                     return linkMap;
                 })
                 .collect(Collectors.toList());

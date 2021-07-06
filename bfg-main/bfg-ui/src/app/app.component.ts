@@ -14,6 +14,7 @@ export class AppComponent {
     private applicationDataService: ApplicationDataService
   ) {
     this.applicationDataService.getApplicationVersion();
+    this.applicationDataService.getF5Link();
 
     this.matIconRegistry.addSvgIcon(
       'cancel-red-button',

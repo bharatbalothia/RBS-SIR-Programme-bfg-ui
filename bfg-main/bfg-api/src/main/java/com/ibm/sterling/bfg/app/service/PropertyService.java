@@ -148,6 +148,30 @@ public class PropertyService {
                 .orElse(TOTAL_ROWS_FOR_EXPORT_TRX);
     }
 
+    public List<Map<String, Object>> getLinkF5() throws JsonProcessingException {
+        String property = getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLinkF5())
+                .stream()
+                .findFirst()
+                .orElse("");
+        return Arrays.stream(property.split(";"))
+                .collect(Collectors.toList())
+                .stream()
+                .map(value -> {
+                    Map<String, Object> linkMap = new HashMap<>();
+                    linkMap.putAll(Arrays.stream(value.split("&&"))
+                    .map(kv -> kv.split("=="))
+                    .collect(Collectors.toMap(a -> a[0],
+                            a -> {
+                            if (a[1].equalsIgnoreCase("false")
+                                    || a[1].equalsIgnoreCase("true")) {
+                                return Boolean.valueOf(a[1]);
+                            } else return a[1];
+                    })));
+                    return linkMap;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<String> getUserAccountGroups() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getUseraccountGroupsKey());
     }

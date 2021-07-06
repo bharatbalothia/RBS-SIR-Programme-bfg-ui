@@ -32,6 +32,7 @@ public class PropertySettings {
     private String trustedCertsImportSchedule;
     private String sepaDashboardTrxMaxValue;
     private String sepaDashboardFileMaxValue;
+    private String linkF5;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -231,5 +232,13 @@ public class PropertySettings {
 
     public void setSepaDashboardFileMaxValue(String sepaDashboardFileMaxValue) {
         this.sepaDashboardFileMaxValue = sepaDashboardFileMaxValue;
+    }
+
+    public String getLinkF5() {
+        return linkF5;
+    }
+
+    public void setLinkF5(String linkF5) {
+        this.linkF5 = linkF5;
     }
 }

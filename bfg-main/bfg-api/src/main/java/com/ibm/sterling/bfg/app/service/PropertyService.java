@@ -58,6 +58,9 @@ public class PropertyService {
     @Value("${api.password}")
     private String password;
 
+    private static final Integer TOTAL_ROWS_FOR_EXPORT_TRX = 100_000;
+    private static final Integer TOTAL_ROWS_FOR_EXPORT_FILE = 100_000;
+
     public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
         return getPropertyList(settings.getGplUrl()).stream()
@@ -127,6 +130,22 @@ public class PropertyService {
                 .stream()
                 .findFirst()
                 .orElse("");
+    }
+
+    public Integer getFileMaxValueForReport() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getSepaDashboardFileMaxValue())
+                .stream()
+                .findFirst()
+                .map(Integer::valueOf)
+                .orElse(TOTAL_ROWS_FOR_EXPORT_FILE);
+    }
+
+    public Integer getTrxMaxValueForReport() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getSepaDashboardTrxMaxValue())
+                .stream()
+                .findFirst()
+                .map(Integer::valueOf)
+                .orElse(TOTAL_ROWS_FOR_EXPORT_TRX);
     }
 
     public List<String> getUserAccountGroups() throws JsonProcessingException {

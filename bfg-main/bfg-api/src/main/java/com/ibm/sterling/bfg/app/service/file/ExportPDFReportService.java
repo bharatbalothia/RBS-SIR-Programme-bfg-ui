@@ -44,8 +44,8 @@ public class ExportPDFReportService {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 45));
         columns.add(new Column("File Name", 370));
-        columns.add(new Column("Type", 35));
-        columns.add(new Column("Transaction", 80));
+        columns.add(new Column("Type", 50));
+        columns.add(new Column("Transaction", 75));
         columns.add(new Column("Total Settlement Amount", 130));
         columns.add(new Column("Settlement Date", 85));
         columns.add(new Column("Direction", 55));

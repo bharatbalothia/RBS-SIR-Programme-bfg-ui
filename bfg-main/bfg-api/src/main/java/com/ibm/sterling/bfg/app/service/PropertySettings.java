@@ -30,6 +30,7 @@ public class PropertySettings {
     private String useraccountPermissionsKey;
     private String loginText;
     private String trustedCertsImportSchedule;
+    private String linkF5;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -213,5 +214,13 @@ public class PropertySettings {
 
     public void setTrustedCertsImportSchedule(String trustedCertsImportSchedule) {
         this.trustedCertsImportSchedule = trustedCertsImportSchedule;
+    }
+
+    public String getLinkF5() {
+        return linkF5;
+    }
+
+    public void setLinkF5(String linkF5) {
+        this.linkF5 = linkF5;
     }
 }

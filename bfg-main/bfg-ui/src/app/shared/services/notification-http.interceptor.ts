@@ -5,10 +5,14 @@ import { catchError } from 'rxjs/operators';
 import { getApiErrorMessage } from 'src/app/core/utils/error-template';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { isHtml, isJson } from 'src/app/shared/utils/utils';
+import { ApplicationDataService } from '../models/application-data/application-data.service';
 
 @Injectable()
 export class NotificationHttpInterceptor implements HttpInterceptor {
-  constructor(public notificationService: NotificationService) { }
+  constructor(
+    public notificationService: NotificationService,
+    private applicationDataService: ApplicationDataService
+  ) { }
 
   intercept(
     req: HttpRequest<any>,
@@ -43,13 +47,14 @@ export class NotificationHttpInterceptor implements HttpInterceptor {
 
   showHtmlError = (htmlError) => {
     const parsedError = new DOMParser().parseFromString(htmlError, 'text/html').getElementsByTagName("body")[0].firstChild.textContent;
-    const htmlContent = 'This is F5 related issue in testing environment. Please share the error details  to:' +
-      '</br><a href="mailto:Sriram.jayaraman@natwest.com">Sriram.jayaraman@natwest.com</a>' +
-      '</br><a href="mailto:Manoj.Bansal@natwest.com">Manoj.Bansal@natwest.com</a>' +
-      '</br><a href="mailto:Maryia.Sukhaparava@natwest.com">Maryia.Sukhaparava@natwest.com</a>' +
-      '</br><a href="mailto:arokia.williamvijay@rbs.co.uk">arokia.williamvijay@rbs.co.uk</a>'
-    this.notificationService.showErrorMessage({ code: null, message: parsedError, errors: [{ htmlContent }] }, true);
-
+    this.applicationDataService.f5Link.subscribe(data => {
+      let htmlContent = null;
+      if (data) {
+        htmlContent = 'This is F5 related issue in testing environment. Please share the error details  to:';
+        data.forEach(el => htmlContent += `</br><a href="${el.isMail ? 'mailto:' + el.link : el.link}">${el.link}</a>`);
+      }
+      this.notificationService.showErrorMessage({ code: null, message: parsedError, errors: htmlContent && [{ htmlContent }] }, true);
+    });
   }
 
 }

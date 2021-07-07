@@ -26,7 +26,7 @@ public class VersionController {
 
     @GetMapping
     public ResponseEntity<?> getApplicationVersion() {
-        Map<String, String> loginMap = new HashMap<>();
+        Map<String, Object> loginMap = new HashMap<>();
         loginMap.put("version", buildProperties.getVersion());
         try {
             loginMap.put("loginText", propertyService.getLoginText());
@@ -36,7 +36,7 @@ public class VersionController {
         try {
             loginMap.put("sepaDashboardVisibility", propertyService.getSepaDashboardVisibility());
         } catch (JsonProcessingException e) {
-            loginMap.put("sepaDashboardVisibility", "false");
+            loginMap.put("sepaDashboardVisibility", false);
         }
         return ok(loginMap);
     }

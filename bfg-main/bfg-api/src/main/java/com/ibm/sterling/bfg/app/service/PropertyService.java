@@ -129,11 +129,12 @@ public class PropertyService {
                 .orElse("");
     }
 
-    public String getSepaDashboardVisibility() throws JsonProcessingException {
+    public Boolean getSepaDashboardVisibility() throws JsonProcessingException {
         return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getSepaDashboardVisibility())
                 .stream()
                 .findFirst()
-                .orElse("");
+                .map(Boolean::valueOf)
+                .orElse(false);
     }
 
     public List<String> getUserAccountGroups() throws JsonProcessingException {

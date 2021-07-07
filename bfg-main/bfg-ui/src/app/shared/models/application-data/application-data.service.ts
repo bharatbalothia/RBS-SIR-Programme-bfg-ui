@@ -23,11 +23,8 @@ export class ApplicationDataService {
   getApplicationVersion() {
     this.http.get<ApplicationData>(this.apiUrl).subscribe(data => this.applicationData.next(data));
   }
-<<<<<<< HEAD
-=======
 
   getF5Link() {
     this.http.get<F5Link[]>(this.apiUrl + 'f5').subscribe(data => this.f5Link.next(data));
   }
->>>>>>> develop-SEPA
 }

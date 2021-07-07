@@ -11,7 +11,8 @@ export class ApplicationDataService {
 
   private apiUrl: string = environment.apiUrl + 'version/';
 
-  applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>({ version: '', loginText: '' });
+  applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>
+    ({ version: '', loginText: '', sepaDashboardVisibility: null });
 
   constructor(private http: HttpClient) {
   }

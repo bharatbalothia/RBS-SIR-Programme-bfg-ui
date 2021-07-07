@@ -3,6 +3,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MenuNode, MENU_DATA } from './menu-nodes';
 import { Router } from '@angular/router';
+import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 
 @Component({
@@ -16,12 +17,14 @@ export class MenuComponent implements OnInit {
   dataSource = new MatTreeNestedDataSource<MenuNode>();
 
   constructor(
-    private router: Router
+    private router: Router,
+    private applicationDataService: ApplicationDataService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
 
-    this.dataSource.data = MENU_DATA;
+    this.applicationDataService.applicationData.subscribe(data =>
+      this.dataSource.data = data.sepaDashboardVisibility ? MENU_DATA : MENU_DATA.filter(el => el.name !== 'SEPA Dashboard'));
   }
 
   ngOnInit(): void {

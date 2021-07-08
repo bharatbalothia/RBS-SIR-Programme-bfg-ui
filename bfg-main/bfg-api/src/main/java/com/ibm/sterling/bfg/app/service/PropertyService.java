@@ -129,6 +129,14 @@ public class PropertyService {
                 .orElse("");
     }
 
+    public Boolean getSepaDashboardVisibility() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getSepaDashboardVisibility())
+                .stream()
+                .findFirst()
+                .map(Boolean::valueOf)
+                .orElse(false);
+    }
+
     public List<Map<String, Object>> getLinkF5() throws JsonProcessingException {
         String property = getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getLinkF5())
                 .stream()

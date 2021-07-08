@@ -30,6 +30,7 @@ public class PropertySettings {
     private String useraccountPermissionsKey;
     private String loginText;
     private String trustedCertsImportSchedule;
+    private String sepaDashboardVisibility;
     private String linkF5;
 
     public String getReqTypePrefixKey() {
@@ -214,6 +215,14 @@ public class PropertySettings {
 
     public void setTrustedCertsImportSchedule(String trustedCertsImportSchedule) {
         this.trustedCertsImportSchedule = trustedCertsImportSchedule;
+    }
+
+    public String getSepaDashboardVisibility() {
+        return sepaDashboardVisibility;
+    }
+
+    public void setSepaDashboardVisibility(String sepaDashboardVisibility) {
+        this.sepaDashboardVisibility = sepaDashboardVisibility;
     }
 
     public String getLinkF5() {

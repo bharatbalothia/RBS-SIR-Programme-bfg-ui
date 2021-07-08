@@ -12,7 +12,8 @@ export class ApplicationDataService {
 
   private apiUrl: string = environment.apiUrl + 'version/';
 
-  applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>({ version: '', loginText: '' });
+  applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>
+    ({ version: '', loginText: '', sepaDashboardVisibility: null });
 
   f5Link: BehaviorSubject<F5Link[]> = new BehaviorSubject<F5Link[]>(null);
 

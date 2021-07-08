@@ -19,6 +19,7 @@ import { BusinessProcessDialogConfig } from 'src/app/shared/components/business-
 import { FileDialogService } from 'src/app/shared/models/file/file-dialog.service';
 import { REPORT_TYPE } from 'src/app/shared/constants/report-types';
 import { saveAs } from 'file-saver';
+import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 @Component({
   selector: 'app-transactions-dialog',
@@ -45,12 +46,15 @@ export class TransactionsDialogComponent implements OnInit {
   fileId: number;
   fileName: string;
 
+  sepaDashboardVisibility: boolean;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,
     private fileService: FileService,
     private transactionService: TransactionService,
     private fileDialogService: FileDialogService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private applicationDataService: ApplicationDataService
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
     this.displayName = this.data.displayName;
@@ -60,6 +64,7 @@ export class TransactionsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.getTransactions(this.pageIndex, this.pageSize);
+    this.applicationDataService.applicationData.subscribe(data => this.sepaDashboardVisibility = data.sepaDashboardVisibility);
   }
 
   getTransactions(pageIndex: number, pageSize: number) {

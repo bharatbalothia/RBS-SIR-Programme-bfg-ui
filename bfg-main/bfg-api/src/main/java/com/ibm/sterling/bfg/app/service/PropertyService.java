@@ -239,7 +239,8 @@ public class PropertyService {
                 .collect(Collectors.toList())));
         fileCriteriaData.put("type", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(typePropertyKey))
-                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                .map(property -> convertTypeProperty(property)))
+//                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
@@ -267,6 +268,14 @@ public class PropertyService {
                         )
                         .collect(Collectors.toList()));
         return fileCriteriaData;
+    }
+
+    private Map<String, List<Object>> convertTypeProperty(Map<String, String> property) {
+        Map<String, List<Object>> typeMap = new HashMap<>();
+        String propertyKey = property.get(PROPERTY_KEY);
+        String service = propertyKey.substring(propertyKey.lastIndexOf("."));
+        typeMap.put(service, Arrays.asList(property.get(PROPERTY_VALUE).split(",")));
+        return typeMap;
     }
 
     private List<Map<String, String>> getPropertiesByPartialKey(List<String> propertyKeys, String url) throws JsonProcessingException {

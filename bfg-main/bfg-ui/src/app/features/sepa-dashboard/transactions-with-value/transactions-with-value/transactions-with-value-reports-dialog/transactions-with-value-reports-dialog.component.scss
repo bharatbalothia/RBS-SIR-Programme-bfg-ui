@@ -3,12 +3,10 @@
 
     .header {
         display: flex;
-        margin: -24px -24px -14px -24px !important;
-        padding: 24px 24px;
-        word-break: break-all;
+        justify-content: space-between;
 
         .dialog-title {
-            margin: 0 !important;
+            margin: 0;
         }
 
         .close-icon {

@@ -13,7 +13,7 @@ export class ApplicationDataService {
   private apiUrl: string = environment.apiUrl + 'version/';
 
   applicationData: BehaviorSubject<ApplicationData> = new BehaviorSubject<ApplicationData>
-    ({ version: '', loginText: '', sepaDashboardVisibility: null });
+    ({ version: '', loginText: '', sepaDashboardVisibility: false });
 
   f5Link: BehaviorSubject<F5Link[]> = new BehaviorSubject<F5Link[]>(null);
 
@@ -22,6 +22,11 @@ export class ApplicationDataService {
 
   getApplicationVersion() {
     this.http.get<ApplicationData>(this.apiUrl).subscribe(data => this.applicationData.next(data));
+  }
+
+
+  isSepaDashboardVisible() {
+    return this.http.get<boolean>(this.apiUrl + 'sepa-visibility');
   }
 
   getF5Link() {

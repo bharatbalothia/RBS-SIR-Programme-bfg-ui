@@ -33,11 +33,6 @@ public class VersionController {
         } catch (JsonProcessingException e) {
             loginMap.put("loginText", "");
         }
-        try {
-            loginMap.put("sepaDashboardVisibility", propertyService.getSepaDashboardVisibility());
-        } catch (JsonProcessingException e) {
-            loginMap.put("sepaDashboardVisibility", false);
-        }
         return ok(loginMap);
     }
 
@@ -46,4 +41,12 @@ public class VersionController {
         return ok(propertyService.getLinkF5());
     }
 
+    @GetMapping("sepa-visibility")
+    public ResponseEntity<Boolean> isSepaDashboardVisible() {
+        try {
+            return ok(propertyService.getSepaDashboardVisibility());
+        } catch (JsonProcessingException e) {
+            return ok(false);
+        }
+    }
 }

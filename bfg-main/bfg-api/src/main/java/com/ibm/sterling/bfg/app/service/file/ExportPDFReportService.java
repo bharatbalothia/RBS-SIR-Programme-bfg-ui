@@ -34,7 +34,7 @@ public class ExportPDFReportService {
     private static final PDFont HEADER_TEXT_FONT = PDType1Font.HELVETICA_BOLD;
     private static final float FONT_SIZE = 10;
     private static final float ROW_HEIGHT = 15;
-    private static final float CELL_MARGIN = 5;
+    private static final float CELL_MARGIN = 3;
     private float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
     private float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
     private static final String DATE_FORMAT = "ddMMyy";
@@ -45,10 +45,10 @@ public class ExportPDFReportService {
         columns.add(new Column("SI.No", 45));
         columns.add(new Column("File Name", 370));
         columns.add(new Column("Type", 50));
-        columns.add(new Column("Transaction", 75));
+        columns.add(new Column("Transaction", 70));
         columns.add(new Column("Total Settlement Amount", 130));
-        columns.add(new Column("Settlement Date", 85));
-        columns.add(new Column("Direction", 55));
+        columns.add(new Column("Settlement Date", 83));
+        columns.add(new Column("Direction", 52));
         String[][] content = new String[files.size()][7];
         int index = 0;
         for(SEPAFile file : files) {

@@ -240,10 +240,11 @@ public class PropertyService {
         fileCriteriaData.put("type", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(typePropertyKey))
                 .map(property -> {
-                    Map<String, List<String>> typeMap = new HashMap<>();
+                    Map<String, Object> typeMap = new HashMap<>();
                     String propertyKey = property.get(PROPERTY_KEY);
                     String serviceType = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
-                    typeMap.put(serviceType, Arrays.asList(property.get(PROPERTY_VALUE).split(",")));
+                    typeMap.put("service", serviceType);
+                    typeMap.put("values", Arrays.asList(property.get(PROPERTY_VALUE).split(",")));
                     return typeMap;
                 })
                 .collect(Collectors.toList()));

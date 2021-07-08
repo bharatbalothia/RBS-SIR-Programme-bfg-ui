@@ -239,8 +239,13 @@ public class PropertyService {
                 .collect(Collectors.toList())));
         fileCriteriaData.put("type", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(typePropertyKey))
-                .map(property -> convertTypeProperty(property)))
-//                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                .map(property -> {
+                    Map<String, List<String>> typeMap = new HashMap<>();
+                    String propertyKey = property.get(PROPERTY_KEY);
+                    String serviceType = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
+                    typeMap.put(serviceType, Arrays.asList(property.get(PROPERTY_VALUE).split(",")));
+                    return typeMap;
+                })
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))

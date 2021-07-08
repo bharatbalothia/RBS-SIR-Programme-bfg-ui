@@ -278,6 +278,9 @@ mat-form-field {
 
 .mat-dialog-container {
     overflow: visible !important;
+    padding-top: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 
     .cdk-drag {
         height: -webkit-fill-available;
@@ -290,13 +293,24 @@ mat-form-field {
     }
 
     .mat-dialog-content {
+        margin: 0 !important;
         max-height: 75vh !important;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .mat-dialog-title {
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 24px;
     }
 
     .mat-dialog-actions {
         margin-top: auto;
         min-height: auto;
         padding-bottom: 15px;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
     }
 
     .mat-progress-bar {

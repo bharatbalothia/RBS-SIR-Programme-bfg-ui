@@ -90,8 +90,6 @@ public class SearchService {
     @Autowired
     private ExportPDFReportService exportPDFService;
 
-    private static final Integer TOTAL_ROWS_FOR_EXPORT = 100_000;
-	
 	private static final int RANGE = 999;
 
     public <T> Page<T> getFilesList(FileSearchCriteria fileSearchCriteria, Class<T> elementClass) throws JsonProcessingException {
@@ -367,7 +365,7 @@ public class SearchService {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
-        fileSearchCriteria.setSize(TOTAL_ROWS_FOR_EXPORT);
+        fileSearchCriteria.setSize(propertyService.getFileMaxValueForReport());
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
         Optional.ofNullable(files).orElseThrow(
                 () -> new FileNotFoundException("{\"message\": \"No files matched your search criteria\"}"));
@@ -397,11 +395,10 @@ public class SearchService {
 
     private List<Transaction> getTransactionsForReport(Integer fileId, Integer size) throws JsonProcessingException {
         SearchCriteria searchCriteria = new SearchCriteria();
-        searchCriteria.setSize(size);
+        searchCriteria.setSize(Integer.min(size, propertyService.getTrxMaxValueForReport()));
         List<Transaction> transactions = getListFromSBI(searchCriteria,
                 fileSearchUrl + "/" + fileId + "/transactions", Transaction.class);
-//        Optional.ofNullable(transactions).orElseThrow(
-//                () -> new Transac("{\"message\": \"No files matched your search criteria\"}"));
+        Optional.ofNullable(transactions).orElseThrow(FileTransactionNotFoundException::new);
         return transactions;
     }
 }

@@ -30,6 +30,8 @@ public class PropertySettings {
     private String useraccountPermissionsKey;
     private String loginText;
     private String trustedCertsImportSchedule;
+    private String sepaDashboardTrxMaxValue;
+    private String sepaDashboardFileMaxValue;
     private String sepaDashboardVisibility;
     private String linkF5;
 
@@ -215,6 +217,22 @@ public class PropertySettings {
 
     public void setTrustedCertsImportSchedule(String trustedCertsImportSchedule) {
         this.trustedCertsImportSchedule = trustedCertsImportSchedule;
+    }
+
+    public String getSepaDashboardTrxMaxValue() {
+        return sepaDashboardTrxMaxValue;
+    }
+
+    public void setSepaDashboardTrxMaxValue(String sepaDashboardTrxMaxValue) {
+        this.sepaDashboardTrxMaxValue = sepaDashboardTrxMaxValue;
+    }
+
+    public String getSepaDashboardFileMaxValue() {
+        return sepaDashboardFileMaxValue;
+    }
+
+    public void setSepaDashboardFileMaxValue(String sepaDashboardFileMaxValue) {
+        this.sepaDashboardFileMaxValue = sepaDashboardFileMaxValue;
     }
 
     public String getSepaDashboardVisibility() {

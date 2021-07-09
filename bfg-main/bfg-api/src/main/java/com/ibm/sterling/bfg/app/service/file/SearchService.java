@@ -270,7 +270,7 @@ public class SearchService {
         if (!workflowSteps.isEmpty()) {
             int iteration = 0;
             boolean isStatusSuccessful = true;
-            boolean isListFull = true;
+//            boolean isListFull = true;
             WorkflowStep firstWorkflowStep = workflowSteps.get(0);
             for (WorkflowStep workflowStep : workflowSteps) {
                 if (!firstWorkflowStep.getWfdId().equals(workflowStep.getWfdId()) ||

@@ -1,6 +1,6 @@
 export interface FileCriteriaData {
   fileStatus: FileStatus[];
-  type: string[];
+  types: Type[];
   entity: Entity[];
   service: string[];
   direction: string[];
@@ -19,4 +19,9 @@ interface FileStatus {
   label: string;
   title: string;
   status: number;
+}
+
+export interface Type {
+  service: string;
+  type: string;
 }

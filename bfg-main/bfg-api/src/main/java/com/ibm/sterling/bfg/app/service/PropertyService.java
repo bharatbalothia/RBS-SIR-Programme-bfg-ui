@@ -237,9 +237,22 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).equals(fileSearchPrefixKey + value))
                 .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
                 .collect(Collectors.toList())));
-        fileCriteriaData.put("type", propertyList.stream()
+        fileCriteriaData.put("types", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(typePropertyKey))
-                .flatMap(property -> Stream.of(property.get(PROPERTY_VALUE).split(",")))
+                .map(property -> {
+                    List<Map<String, Object>> types = new ArrayList<>();
+                    String propertyKey = property.get(PROPERTY_KEY);
+                    String serviceType = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
+                    Arrays.asList(property.get(PROPERTY_VALUE).split(","))
+                            .forEach(type -> {
+                                Map<String, Object> typeMap = new HashMap<>();
+                                typeMap.put("service", serviceType);
+                                typeMap.put("type", type);
+                                types.add(typeMap);
+                            });
+                    return types;
+                })
+                .flatMap(List::stream)
                 .collect(Collectors.toList()));
         fileCriteriaData.put("fileStatus", propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
@@ -267,6 +280,14 @@ public class PropertyService {
                         )
                         .collect(Collectors.toList()));
         return fileCriteriaData;
+    }
+
+    private Map<String, List<Object>> convertTypeProperty(Map<String, String> property) {
+        Map<String, List<Object>> typeMap = new HashMap<>();
+        String propertyKey = property.get(PROPERTY_KEY);
+        String service = propertyKey.substring(propertyKey.lastIndexOf("."));
+        typeMap.put(service, Arrays.asList(property.get(PROPERTY_VALUE).split(",")));
+        return typeMap;
     }
 
     private List<Map<String, String>> getPropertiesByPartialKey(List<String> propertyKeys, String url) throws JsonProcessingException {

@@ -46,4 +46,12 @@ public class VersionController {
         return ok(propertyService.getLinkF5());
     }
 
+    @GetMapping("sepa-visibility")
+    public ResponseEntity<Boolean> isSepaDashboardVisible() {
+        try {
+            return ok(propertyService.getSepaDashboardVisibility());
+        } catch (JsonProcessingException e) {
+            return ok(false);
+        }
+    }
 }

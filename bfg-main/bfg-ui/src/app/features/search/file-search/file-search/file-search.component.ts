@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileService } from 'src/app/shared/models/file/file.service';
-import { FileCriteriaData } from 'src/app/shared/models/file/file-criteria.model';
+import { FileCriteriaData, Type } from 'src/app/shared/models/file/file-criteria.model';
 import { getFileSearchDisplayName } from '../file-search-display-names';
 import { FilesWithPagination } from 'src/app/shared/models/file/files-with-pagination.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -39,6 +39,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
   initialFileCriteriaData: FileCriteriaData;
   fileCriteriaData: FileCriteriaData;
   filteredEntityList: Observable<{ entityName: string, entityId: number }[]>;
+  filteredTypeList: Observable<Type[]>;
   ALL = '';
 
   setCalendarDblClick = setCalendarDblClick;
@@ -115,7 +116,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       bpstate: [get(this.URLParams, 'bpstate', '')],
       filename: [get(this.URLParams, 'filename', '')],
       reference: [get(this.URLParams, 'reference', '')],
-      type: [get(this.URLParams, 'type', '')],
+      type: [''],
       from: [get(this.URLParams, 'from', this.defaultSelectedData.from)],
       to: [get(this.URLParams, 'to', this.defaultSelectedData.to)]
     });
@@ -137,6 +138,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.initialFileCriteriaData = this.fileCriteriaData = data;
         this.initFilteredEntityList();
+        this.initFilteredTypeList();
       },
         error => this.isLoading = false
       );
@@ -147,6 +149,14 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       .pipe(
         startWith(''),
         map(value => this.filterEntityList(value))
+      );
+  }
+
+  initFilteredTypeList() {
+    this.filteredTypeList = this.searchingParametersFormGroup.controls.type.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filterTypeList(value))
       );
   }
 
@@ -161,10 +171,12 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       fileStatus: this.initialFileCriteriaData.fileStatus.filter(fileStatus =>
         (service === this.ALL || fileStatus.service === service) &&
         (outbound === this.ALL || fileStatus.outbound === outbound)
-      )
+      ),
+      types: this.initialFileCriteriaData.types.filter(type => service === this.ALL || type.service === service)
     };
 
     this.initFilteredEntityList();
+    this.initFilteredTypeList();
     this.persistSelectedFileStatus();
   }
 
@@ -306,6 +318,40 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
     } else {
       return value ?
         this.fileCriteriaData.entity.filter(option => option.entityId === value) : this.fileCriteriaData.entity;
+    }
+  }
+
+  onTypeSelect = (event?: MatAutocompleteSelectedEvent) => {
+    const type = this.searchingParametersFormGroup.controls.type.value;
+    const service = this.searchingParametersFormGroup.controls.service.value;
+    const typeService = type === this.ALL ?
+      this.ALL :
+      this.fileCriteriaData.types.find(el => el.type === type).service;
+
+    // Filter file status when type service is not equal to service
+    if (service !== typeService) {
+      this.searchingParametersFormGroup.controls.service.setValue(typeService);
+      this.filterFileCriteriaData();
+    }
+  }
+
+  displayType(value?: string) {
+    if (value === null) {
+      this.searchingParametersFormGroup.controls.service.setValue(this.ALL);
+      this.onTypeSelect();
+    }
+
+    return value ? this.fileCriteriaData.types.find(type => type.type === value).type : 'ALL';
+  }
+
+  private filterTypeList(value: string) {
+    if (typeof value === 'string') {
+      return value ?
+        this.fileCriteriaData.types.filter(option => option.type.toLowerCase().includes(value.toLowerCase())) :
+        this.fileCriteriaData.types;
+    } else {
+      return value ?
+        this.fileCriteriaData.types.filter(option => option.type === value) : this.fileCriteriaData.types;
     }
   }
 }

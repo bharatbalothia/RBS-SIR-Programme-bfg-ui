@@ -119,15 +119,19 @@
           </mat-form-field>
           <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
         </section>
-        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.type">
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.types">
           <mat-form-field>
             <mat-label>{{getFileSearchDisplayName('type')}}
             </mat-label>
-            <mat-select formControlName="type">
+            <input type="text" aria-label="Type" matInput formControlName="type" [matAutocomplete]="autoCompleteType"
+              appAutocompleteEnforceSelection>
+            <mat-autocomplete autoActiveFirstOption #autoCompleteType="matAutocomplete"
+              [displayWith]="displayType.bind(this)" (optionSelected)="onTypeSelect($event)">
               <mat-option value="">ALL</mat-option>
-              <mat-option *ngFor="let type of fileCriteriaData.type" [value]="type">
-                {{type}}</mat-option>
-            </mat-select>
+              <mat-option *ngFor="let type of filteredTypeList | async" [value]="type.type">
+                {{type.type}}
+              </mat-option>
+            </mat-autocomplete>
             <button *ngIf="searchingParametersFormGroup.controls.type.value" mat-button type="button" matSuffix
               mat-icon-button aria-label="Clear"
               (click)="searchingParametersFormGroup.controls.type.setValue(''); $event.stopPropagation()">

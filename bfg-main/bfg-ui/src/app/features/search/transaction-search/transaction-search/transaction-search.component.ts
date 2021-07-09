@@ -89,7 +89,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       this.URLParams = { ...params };
       if (params.pFrom) {
         this.defaultSelectedData = {
-          pFrom: params.pFrom === 'none' ? null : moment(params.from),
+          pFrom: params.pFrom === 'none' ? null : moment(params.pFrom),
           pTo: null,
           to: null,
           from: null

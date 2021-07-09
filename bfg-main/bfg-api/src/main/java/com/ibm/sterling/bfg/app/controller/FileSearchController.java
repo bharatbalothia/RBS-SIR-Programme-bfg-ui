@@ -104,7 +104,7 @@ public class FileSearchController {
             @RequestParam String type) throws IOException {
         ReportType reportType = new ObjectMapper().convertValue(type, ReportType.class);
         ByteArrayInputStream in = fileSearchService.generateReportForSEPAFiles(from, to, reportType);
-        HttpHeaders headers = getHttpHeadersForReport(reportType, "SEPA_");
+        HttpHeaders headers = getHttpHeadersForReport(reportType, "SEPA_FILES_");
         return ResponseEntity
                 .ok()
                 .headers(headers)
@@ -130,7 +130,7 @@ public class FileSearchController {
             throws IOException {
         ReportType reportType = new ObjectMapper().convertValue(type, ReportType.class);
         ByteArrayInputStream in = fileSearchService.generateReportForTransactions(fileId, fileName, size, reportType);
-        HttpHeaders headers = getHttpHeadersForReport(reportType, "Transactions_for_file_" + fileId + "_");
+        HttpHeaders headers = getHttpHeadersForReport(reportType, "Transactions_for_" + fileId + "_");
         return ResponseEntity
                 .ok()
                 .headers(headers)

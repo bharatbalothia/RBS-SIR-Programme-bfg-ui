@@ -278,7 +278,7 @@ public class SearchService {
                     workflowStep.setInlineInvocation(true);
                 }
                 isStatusSuccessful = isStatusSuccessful & workflowStep.getExeState().equals("Success");
-                isListFull = isListFull & workflowStep.getStepId() == iteration++;
+//                isListFull = isListFull & workflowStep.getStepId() == iteration++;
             }
             if (isStatusSuccessful) {
                 wfPage.setState("");
@@ -287,9 +287,9 @@ public class SearchService {
                 wfPage.setState("Halted");
                 wfPage.setStatus("Error");
             }
-            if (!isListFull) {
-                wfPage.setFullTracking(false);
-            }
+//            if (!isListFull) {
+//                wfPage.setFullTracking(false);
+//            }
         }
         return wfPage;
     }

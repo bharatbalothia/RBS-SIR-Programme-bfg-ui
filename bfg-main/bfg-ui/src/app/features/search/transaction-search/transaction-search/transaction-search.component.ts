@@ -87,14 +87,14 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.URLParams = { ...params };
-      if (params.from) {
+      if (params.pFrom) {
         this.defaultSelectedData = {
-          pFrom: params.from === 'none' ? null : moment(params.from),
+          pFrom: params.pFrom === 'none' ? null : moment(params.pFrom),
           pTo: null,
           to: null,
           from: null
         };
-        delete this.URLParams.from;
+        delete this.URLParams.pFrom;
       }
       this.initializeSearchingParametersFormGroup();
       this.initTransactionCriteriaData();

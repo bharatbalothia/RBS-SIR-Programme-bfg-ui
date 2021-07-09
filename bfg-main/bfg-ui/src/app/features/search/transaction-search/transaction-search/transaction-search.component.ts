@@ -223,7 +223,7 @@ export class TransactionSearchComponent implements OnInit, AfterViewInit {
       ...!isEmpty(this.URLParams) && this.URLParams,
       pFrom: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.pFrom')),
       pTo: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.pTo')),
-      from: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')),
+      from: !this.URLParams['startDate'] ? this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.from')) : null,
       to: this.convertDateToFormat(get(this.searchingParametersFormGroup, 'value.to')),
       page: pageIndex.toString(),
       size: pageSize.toString(),

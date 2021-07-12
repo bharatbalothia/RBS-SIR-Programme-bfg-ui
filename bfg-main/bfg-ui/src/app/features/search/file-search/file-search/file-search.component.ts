@@ -284,6 +284,7 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
 
   onServiceSelect = (event) => {
     this.searchingParametersFormGroup.controls.entityId.setValue(this.ALL);
+    this.searchingParametersFormGroup.controls.type.setValue(this.ALL);
     this.filterFileCriteriaData();
   }
 

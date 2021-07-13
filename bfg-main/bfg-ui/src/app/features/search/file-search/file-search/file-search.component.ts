@@ -116,11 +116,10 @@ export class FileSearchComponent implements OnInit, AfterViewInit {
       bpstate: [get(this.URLParams, 'bpstate', '')],
       filename: [get(this.URLParams, 'filename', '')],
       reference: [get(this.URLParams, 'reference', '')],
-      type: [''],
+      type: [get(this.URLParams, 'type', '')],
       from: [get(this.URLParams, 'from', this.defaultSelectedData.from)],
       to: [get(this.URLParams, 'to', this.defaultSelectedData.to)]
     });
-
     this.initMinMaxDate();
   }
 

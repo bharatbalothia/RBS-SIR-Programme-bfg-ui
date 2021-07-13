@@ -196,15 +196,6 @@ export class EntityCreateComponent implements OnInit {
     this.summaryPageFormGroup = this.formBuilder.group({
       changerComments: [entity.changerComments, Validators.nullValidator]
     });
-    if (!this.editableEntity) {
-      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
-        this.isLoading = false;
-        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
-      }, error => {
-        this.isLoading = false;
-        this.errorMessage = getApiErrorMessage(error);
-      });
-    }
   }
 
   getEntityDefaultValue = (): Entity => ({
@@ -350,6 +341,7 @@ export class EntityCreateComponent implements OnInit {
             startWith(''),
             map(value => this._filterDirectParticipantList(value))
           );
+        this.getServiceName();
         break;
       case ENTITY_SERVICE_TYPE.GPL:
         this.entityPageFormGroup = this.formBuilder.group({
@@ -381,10 +373,22 @@ export class EntityCreateComponent implements OnInit {
         this.entityPageFormGroup.controls.routeInbound.valueChanges
           .subscribe((value: boolean) => this.onRouteInboundChanging(value));
         this.getGPLFormParams();
+        this.getServiceName();
         break;
     }
   }
 
+  getServiceName = () => {
+    if (!this.editableEntity) {
+      this.entityService.getSWIFTService().pipe(data => this.setLoading(data)).subscribe(data => {
+        this.isLoading = false;
+        this.SWIFTDetailsFormGroup.controls.serviceName.setValue(data);
+      }, error => {
+        this.isLoading = false;
+        this.errorMessage = getApiErrorMessage(error);
+      });
+    }
+  }
   getGPLFormParams = () => {
     this.entityService.getInboundRequestTypes().pipe(data => this.setLoading(data)).subscribe(data => {
       this.isLoading = false;

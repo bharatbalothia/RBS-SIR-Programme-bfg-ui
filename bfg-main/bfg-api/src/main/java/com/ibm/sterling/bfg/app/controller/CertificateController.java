@@ -39,7 +39,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/certificates")
-@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class CertificateController {
 
     @Autowired
@@ -179,6 +178,7 @@ public class CertificateController {
     }
 
     @GetMapping("/existence")
+    @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
     public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
         return ok(certificateService.existsByNameInDbAndBI(name));
     }

@@ -4,6 +4,7 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MenuNode, MENU_DATA } from './menu-nodes';
 import { Router } from '@angular/router';
 import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
+import { AuthService } from '../../auth/auth.service';
 
 
 @Component({
@@ -18,13 +19,15 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private applicationDataService: ApplicationDataService
+    private applicationDataService: ApplicationDataService,
+    private authService: AuthService,
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
 
     this.applicationDataService.applicationData.subscribe(data =>
-      this.dataSource.data = data.sepaDashboardVisibility ? MENU_DATA : MENU_DATA.filter(el => el.name !== 'SEPA Dashboard'));
+      this.dataSource.data = data.sepaDashboardVisibility ?
+        this.getMenuByPermissions() : this.getMenuByPermissions().filter(el => el.name !== 'SEPA Dashboard'));
   }
 
   ngOnInit(): void {
@@ -33,5 +36,16 @@ export class MenuComponent implements OnInit {
   }
 
   hasChild = (_: number, node: MenuNode) => !!node.children && node.children.length > 0;
+
+  getMenuByPermissions = () => MENU_DATA
+    .filter(el => {
+      if (this.hasChild(null, el)) {
+        el.children = el.children.filter(child => this.authService.isEnoughPermissions(child.permissions));
+        return el.children.length > 0;
+      }
+      else {
+        return el.route && this.authService.isEnoughPermissions(el.permissions);
+      }
+    })
 
 }

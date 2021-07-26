@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       () => {
         this.isLoading = false;
         if (document.referrer) {
-          window.location.href = document.referrer;
+          history.back();
         }
         else {
           this.router.navigate(['/']);

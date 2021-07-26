@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav ngResizable [rzMaxWidth]="rzMaxWidth" [rzMinWidth]="rzMinWidth" [rzHandles]="'e'" #drawer class="sidenav"
     fixedInViewport [attr.role]="(isWeb$ | async) ? 'navigation' : 'dialog'" [mode]="(isWeb$ | async) ? 'side' : 'over'"
-    [opened]="(isWeb$ | async) === true && isAuthenticated()">
+    [opened]="!shouldHideMenu && (isWeb$ | async) === true && isAuthenticated()">
     <mat-toolbar>Menu</mat-toolbar>
     <app-menu></app-menu>
     <div class="resizable-right">
@@ -11,7 +11,7 @@
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
-        *ngIf="!(isWeb$ | async) && isAuthenticated()">
+        *ngIf="!shouldHideMenu && !(isWeb$ | async) && isAuthenticated()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span class="app-title">

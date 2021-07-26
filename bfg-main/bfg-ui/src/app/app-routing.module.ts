@@ -4,9 +4,9 @@ import { PageNotFoundComponent } from './core/components/page-not-found/page-not
 import { ROUTING_PATHS } from './core/constants/routing-paths';
 import { LoginComponent } from './core/components/login/login.component';
 import { AuthGuardService } from './core/auth/auth-guard.service';
-import { PermissionsGuardService } from './core/guards/permissions-guard.service';
 import { ChildLayoutComponent } from './core/components/child-layout/child-layout.component';
 import { SEPADashboardGuardService } from './shared/models/sepa-dashboard/sepa-dashboard-guard.service';
+import { GlobalPermissionGuardService } from './core/guards/global-permission-guard.service';
 
 
 const routes: Routes = [
@@ -23,49 +23,47 @@ const routes: Routes = [
       },
       {
         path: ROUTING_PATHS.HOME,
-        canActivate: [PermissionsGuardService],
+        canActivate: [GlobalPermissionGuardService],
         loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
       },
       {
         path: ROUTING_PATHS.FILE_MONITOR,
-        canActivate: [PermissionsGuardService],
+        canActivate: [GlobalPermissionGuardService],
         loadChildren: () => import('./features/monitor/file-monitor/file-monitor.module').then(m => m.FileMonitorModule)
       },
       {
         path: ROUTING_PATHS.ERROR_MONITOR,
-        canActivate: [PermissionsGuardService],
+        canActivate: [GlobalPermissionGuardService],
         loadChildren: () => import('./features/monitor/error-monitor/error-monitor.module').then(m => m.ErrorMonitorModule)
       },
       {
         path: ROUTING_PATHS.FILE_SEARCH,
-        canActivate: [PermissionsGuardService],
+        canActivate: [GlobalPermissionGuardService],
         loadChildren: () => import('./features/search/file-search/file-search.module').then(m => m.FileSearchModule)
       },
       {
         path: ROUTING_PATHS.SCT_TRANSACTION_SEARCH,
-        canActivate: [PermissionsGuardService],
+        canActivate: [GlobalPermissionGuardService],
         loadChildren: () => import('./features/search/transaction-search/transaction-search.module').then(m => m.TransactionSearchModule)
       },
       {
         path: ROUTING_PATHS.ENTITIES,
-        canActivate: [PermissionsGuardService],
         loadChildren: () => import('./features/setup/entities/entities.module').then(m => m.EntitiesModule)
       },
       {
         path: ROUTING_PATHS.TRUSTED_CERTIFICATES,
-        canActivate: [PermissionsGuardService],
         loadChildren: () => import('./features/setup/trusted-certificates/trusted-certificates.module')
           .then(m => m.TrustedCertificatesModule)
       },
       {
         path: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE,
-        canActivate: [SEPADashboardGuardService],
+        canActivate: [SEPADashboardGuardService, GlobalPermissionGuardService],
         loadChildren: () => import('./features/sepa-dashboard/transactions-with-value/transactions-with-value.module')
           .then(m => m.TransactionsWithValueModule)
       },
       {
         path: ROUTING_PATHS.LIST_OF_FILES,
-        canActivate: [SEPADashboardGuardService],
+        canActivate: [SEPADashboardGuardService, GlobalPermissionGuardService],
         loadChildren: () => import('./features/sepa-dashboard/list-of-files/list-of-files.module')
           .then(m => m.ListOfFilesModule)
       },

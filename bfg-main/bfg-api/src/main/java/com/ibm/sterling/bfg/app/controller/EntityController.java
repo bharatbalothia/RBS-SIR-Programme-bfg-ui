@@ -28,7 +28,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/entities")
-@PreAuthorize("hasAuthority('SFG_UI_HOME')")
 public class EntityController {
 
     @Autowired
@@ -171,21 +170,25 @@ public class EntityController {
     }
 
     @GetMapping("/existence/entity-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ok(entityService.existsByServiceAndEntity(service, entity));
     }
 
     @GetMapping("/existence/mailbox")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<?> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
         return ok(entityService.existsByMailboxPathOut(mailboxPathOut));
     }
 
     @GetMapping("/existence/queue")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<?> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
         return ok(entityService.existsByMqQueueOut(mqQueueOut));
     }
 
     @GetMapping("/existence/route-attributes")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<?> getRequestType(@RequestParam String inboundRequestorDN,
                                             @RequestParam String inboundResponderDN,
                                             @RequestParam String inboundService,
@@ -203,31 +206,37 @@ public class EntityController {
     }
 
     @GetMapping("inbound-request-type")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Map<String, String>> getInboundRequestType() throws JsonProcessingException {
         return ok(propertyService.getInboundRequestType());
     }
 
     @GetMapping("inbound-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<String> getInboundService() throws JsonProcessingException {
         return ok(propertyService.getInboundService());
     }
 
     @GetMapping("swift-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
         return ok(propertyService.getSwiftService());
     }
 
     @GetMapping("participants")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
         return ok(entityService.findEntityNameForParticipants(id));
     }
 
     @GetMapping("file-type")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
         return ok(propertyService.getFileType());
     }
 
     @GetMapping("mq-details")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Map<String, List<String>>> getMqDetails() throws JsonProcessingException {
         return ok(propertyService.getMQDetails());
     }

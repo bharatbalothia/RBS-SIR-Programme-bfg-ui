@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
-import { AuthService } from '../../auth/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-layout',

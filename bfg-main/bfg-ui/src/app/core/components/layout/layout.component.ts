@@ -1,9 +1,9 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { AuthService } from '../../auth/auth.service';
 import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -23,16 +23,28 @@ export class LayoutComponent implements OnInit {
       shareReplay()
     );
 
+  shouldHideMenu = false;
+
   appVersion: string;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
     private authService: AuthService,
-    private applicationDataService: ApplicationDataService
-  ) { }
+    private applicationDataService: ApplicationDataService,
+  ) {
+
+  }
 
   ngOnInit(): void {
     this.applicationDataService.applicationData.subscribe(data => this.appVersion = data.version);
+    this.getHideMenuParam();
+  }
+
+  getHideMenuParam = () => {
+    const hideMenuParam = new URL(window.location.href).searchParams.get('hideMenu');
+    if (hideMenuParam) {
+      this.shouldHideMenu = hideMenuParam === 'false' ? false : true;
+    }
   }
 
   logout() {

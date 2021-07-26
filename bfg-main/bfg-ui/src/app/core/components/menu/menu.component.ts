@@ -26,26 +26,25 @@ export class MenuComponent implements OnInit {
     this.router.onSameUrlNavigation = 'reload';
 
     this.applicationDataService.applicationData.subscribe(data =>
-      this.dataSource.data = data.sepaDashboardVisibility ?
-        this.getMenuByPermissions() : this.getMenuByPermissions().filter(el => el.name !== 'SEPA Dashboard'));
+      this.authService.user.subscribe(user => {
+        if (user) {
+          this.dataSource.data = data.sepaDashboardVisibility ?
+            this.getMenuByPermissions() : this.getMenuByPermissions().filter(el => el.name !== 'SEPA Dashboard')
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
     this.treeControl.expand(this.dataSource.data
       .find(el => this.hasChild(null, el) && el.children.find(child => child.route === this.router.url.split('/')[1])));
+    this.authService.user.subscribe(el => console.log(el));
   }
 
   hasChild = (_: number, node: MenuNode) => !!node.children && node.children.length > 0;
 
   getMenuByPermissions = () => MENU_DATA
-    .filter(el => {
-      if (this.hasChild(null, el)) {
-        el.children = el.children.filter(child => this.authService.isEnoughPermissions(child.permissions));
-        return el.children.length > 0;
-      }
-      else {
-        return el.route && this.authService.isEnoughPermissions(el.permissions);
-      }
-    })
+    .filter(el => this.hasChild(null, el) ? el.children.filter(child => this.authService.isEnoughPermissions(child.permissions)).length > 0
+      : this.authService.isEnoughPermissions(el.permissions))
 
 }

@@ -4,7 +4,6 @@ import { PageNotFoundComponent } from './core/components/page-not-found/page-not
 import { ROUTING_PATHS } from './core/constants/routing-paths';
 import { LoginComponent } from './core/components/login/login.component';
 import { AuthGuardService } from './core/auth/auth-guard.service';
-import { PermissionsGuardService } from './core/guards/permissions-guard.service';
 import { ChildLayoutComponent } from './core/components/child-layout/child-layout.component';
 import { SEPADashboardGuardService } from './shared/models/sepa-dashboard/sepa-dashboard-guard.service';
 import { GlobalPermissionGuardService } from './core/guards/global-permission-guard.service';
@@ -58,13 +57,13 @@ const routes: Routes = [
       },
       {
         path: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE,
-        canActivate: [GlobalPermissionGuardService, SEPADashboardGuardService],
+        canActivate: [SEPADashboardGuardService, GlobalPermissionGuardService],
         loadChildren: () => import('./features/sepa-dashboard/transactions-with-value/transactions-with-value.module')
           .then(m => m.TransactionsWithValueModule)
       },
       {
         path: ROUTING_PATHS.LIST_OF_FILES,
-        canActivate: [GlobalPermissionGuardService, SEPADashboardGuardService],
+        canActivate: [SEPADashboardGuardService, GlobalPermissionGuardService],
         loadChildren: () => import('./features/sepa-dashboard/list-of-files/list-of-files.module')
           .then(m => m.ListOfFilesModule)
       },

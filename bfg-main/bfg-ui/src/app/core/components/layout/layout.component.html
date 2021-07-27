@@ -3,7 +3,7 @@
     fixedInViewport [attr.role]="(isWeb$ | async) ? 'navigation' : 'dialog'" [mode]="(isWeb$ | async) ? 'side' : 'over'"
     [opened]="!shouldHideMenu && (isWeb$ | async) === true && isAuthenticated()">
     <mat-toolbar>Menu</mat-toolbar>
-    <app-menu></app-menu>
+    <app-menu *ngIf="isAuthenticated()"></app-menu>
     <div class="resizable-right">
       <span class="resizable-icon"></span>
     </div>

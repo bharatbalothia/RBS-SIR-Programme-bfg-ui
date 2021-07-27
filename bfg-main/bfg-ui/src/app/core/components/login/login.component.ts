@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Credentials } from '../../auth/credentials.model';
 import { AuthService } from '../../auth/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { LOGIN_FORM_VALIDATION_MESSAGES } from './login-form-validation-messages';
 import { get } from 'lodash';
-import { ROUTING_PATHS } from '../../constants/routing-paths';
 import { ApplicationDataService } from 'src/app/shared/models/application-data/application-data.service';
 
 @Component({
@@ -26,35 +25,32 @@ export class LoginComponent implements OnInit {
   @ViewChild('form') loginForm: NgForm;
 
   appCopyrights: string;
+  returnUrl: string;
 
   constructor(
     private authService: AuthService,
+    private route: ActivatedRoute,
     private router: Router,
     private applicationDataService: ApplicationDataService
   ) { }
 
   ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
     this.applicationDataService.applicationData.subscribe(data => {
       this.appCopyrights = data.loginText;
     });
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/' + ROUTING_PATHS.EMPTY]);
-    }
   }
 
   isFormFieldHasError = (fieldKey: string, type: string) => get(this.loginForm, `controls.${fieldKey}.errors.${type}`, false);
 
   login() {
+    this.authService.logOutWithoutRedirect();
     this.isLoading = true;
     this.authService.logIn(this.credentials).subscribe(
       () => {
         this.isLoading = false;
-        if (document.referrer) {
-          history.back();
-        }
-        else {
-          this.router.navigate(['/']);
-        }
+        this.router.navigateByUrl(this.returnUrl);
       },
       (error) => {
         this.isLoading = false;

@@ -17,6 +17,8 @@ export class MenuComponent implements OnInit {
   treeControl = new NestedTreeControl<MenuNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<MenuNode>();
 
+  filteredMenuData: MenuNode[];
+
   constructor(
     private router: Router,
     private applicationDataService: ApplicationDataService,
@@ -25,26 +27,23 @@ export class MenuComponent implements OnInit {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
 
+    this.filteredMenuData = this.getMenuByPermissions(MENU_DATA);
+
     this.applicationDataService.applicationData.subscribe(data =>
-      this.authService.user.subscribe(user => {
-        if (user) {
-          this.dataSource.data = data.sepaDashboardVisibility ?
-            this.getMenuByPermissions() : this.getMenuByPermissions().filter(el => el.name !== 'SEPA Dashboard')
-        }
-      })
-    );
+      this.dataSource.data = data.sepaDashboardVisibility ?
+        this.filteredMenuData : this.filteredMenuData.filter(el => el.name !== 'SEPA Dashboard'));
   }
 
   ngOnInit(): void {
     this.treeControl.expand(this.dataSource.data
       .find(el => this.hasChild(null, el) && el.children.find(child => child.route === this.router.url.split('/')[1])));
-    this.authService.user.subscribe(el => console.log(el));
   }
 
   hasChild = (_: number, node: MenuNode) => !!node.children && node.children.length > 0;
 
-  getMenuByPermissions = () => MENU_DATA
-    .filter(el => this.hasChild(null, el) ? el.children.filter(child => this.authService.isEnoughPermissions(child.permissions)).length > 0
-      : this.authService.isEnoughPermissions(el.permissions))
+  getMenuByPermissions = (menuData: MenuNode[]) => menuData
+    .map(el => this.hasChild(null, el) ?
+      { ...el, children: el.children.filter(child => this.authService.isEnoughPermissions(child.permissions)) } : el)
+    .filter((el, i) => el.children && el.children.length > 0 ? el : el.route && this.authService.isEnoughPermissions(el.permissions))
 
 }

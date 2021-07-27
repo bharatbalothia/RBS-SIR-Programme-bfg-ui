@@ -57,8 +57,6 @@ const selectByDblClick = (calendarPicker: NgxMatDatetimePicker<any>) => {
     }, 0);
 };
 
-export const defineReferrer = (url) => !document.referrer && Object.defineProperty(document, 'referrer', { get: () => url });
-
 export const removeFirst = (array: any[], toRemove: any): void => {
     const index = array.indexOf(toRemove);
     if (index !== -1) {

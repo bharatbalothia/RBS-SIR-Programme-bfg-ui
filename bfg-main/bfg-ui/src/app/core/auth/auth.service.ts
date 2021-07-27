@@ -76,6 +76,11 @@ export class AuthService {
     this.router.navigate(['/' + ROUTING_PATHS.LOGIN]);
   }
 
+  logOutWithoutRedirect() {
+    this.user.next(null);
+    sessionStorage.removeItem(this.USER_STORAGE_NAME);
+  }
+
   public isAuthenticated(): boolean {
     this.autoLogIn();
     return !this.jwtHelper.isTokenExpired(get(this.user.value, 'accessToken'));

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, UrlTree } from '@angular/router';
+import { Router, CanActivate, ActivatedRouteSnapshot, UrlTree, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
 import { ROUTING_PATHS } from '../constants/routing-paths';
 import { take } from 'rxjs/operators';
-import { defineReferrer } from 'src/app/shared/utils/utils';
 
 
 @Injectable({
@@ -13,7 +12,7 @@ export class AuthGuardService implements CanActivate {
 
     constructor(public auth: AuthService, public router: Router) { }
 
-    canActivate(route: ActivatedRouteSnapshot): boolean | Promise<boolean | UrlTree> {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean | UrlTree> {
         if (this.auth.isAuthenticated()) {
             return true;
         } else {
@@ -24,13 +23,14 @@ export class AuthGuardService implements CanActivate {
                             resolve(true);
                         },
                         () => {
-                            defineReferrer(window.location.href);
-                            resolve(this.router.parseUrl('/' + ROUTING_PATHS.LOGIN));
+                            resolve(this.router.navigate(['/' + ROUTING_PATHS.LOGIN], { queryParams: { returnUrl: state.url } }));
+                            return false;
                         }
                     );
                 } else {
-                    defineReferrer(window.location.href);
-                    resolve(this.router.parseUrl('/' + ROUTING_PATHS.LOGIN));
+                    resolve(this.router.navigate(['/' + ROUTING_PATHS.LOGIN], { queryParams: { returnUrl: state.url } }));
+                    return false;
+
                 }
             });
 

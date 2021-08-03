@@ -23,6 +23,7 @@ public class JwtTokenGenerator {
         Claims claims = Jwts.claims().setSubject(userCredentials.getUsername());
         claims.put("permissions",
                 userCredentials.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        claims.put("aat", settings.getTimePicker());
         LocalDateTime currentTime = LocalDateTime.now();
         Date refreshExpirationTime = Date.from(currentTime
                 .plusMinutes(settings.getAccessTokenExpirationTime())

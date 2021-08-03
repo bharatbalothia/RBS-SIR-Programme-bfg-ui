@@ -14,7 +14,9 @@
     <authData id="tokenSecretAuthData"
               user="{aes}AAuJv4RXt1fUNhNPonX8+yC+tMvyWE5AplZHKYtiD1RwQw99Ul/Mlk/snNrj6ohJpI64t+ezALvuJPo4Jb1WFv8="
               password="{aes}APfU7FjRMPdVFEnECbCjVjOHXLsPjqwdOV4QRNPItaBrzo5BmeQ0si0XaiLZZfPQYw=="/>
-
+    <authData id="tokenExpiration"
+              user="{aes}AMaHwP9ZwVKjRkHXZ4V+JIIvzEHn2T1cTbwUBTrbJUTs"
+              password="{aes}AFu1nlYGW8ItozNu2GXe8JWmZypyrJ6zVKuNRwJJDPFQ"/>
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint" host="${default.host}" httpPort="${default.http.port}" httpsPort="9443"/>
 

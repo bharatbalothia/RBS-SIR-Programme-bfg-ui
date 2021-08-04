@@ -19,7 +19,7 @@ export class ListOfFilesComponent implements OnInit {
   isLoading = false;
 
   updateTime: string;
-  SEPATraffic: { key: string, value: string }[] = [];
+  SEPATraffic: { key: string, value: string }[];
 
   constructor(
     private statisticsService: StatisticsService,

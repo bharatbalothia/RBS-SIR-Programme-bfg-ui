@@ -78,7 +78,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
           password
         }).subscribe(
           () => {
-            this.notificationService.show('Session', 'Your session has been extended for 2 hours', 'success');
+            this.notificationService.show('Session', `Your session has been extended for ${this.authService.getTokenTimeLife()} minutes`, 'success');
             this.restartSessionTime();
           },
           (error) => this.openPasswordConfirmationDialog()

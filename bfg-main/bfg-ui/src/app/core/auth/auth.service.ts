@@ -147,4 +147,11 @@ export class AuthService {
     }
     return null;
   }
+
+  getTokenTimeLife(): number {
+    if (this.isAuthenticated()) {
+      return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).tet;
+    }
+    return null;
+  }
 }

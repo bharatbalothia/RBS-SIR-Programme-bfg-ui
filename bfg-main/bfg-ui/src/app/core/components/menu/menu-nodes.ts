@@ -65,8 +65,8 @@ export const MENU_DATA: MenuNode[] = [
     name: 'SEPA Dashboard',
     children: [
       {
-        name: 'Transactions with value',
-        route: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE,
+        name: 'Files with value',
+        route: ROUTING_PATHS.FILES_WITH_VALUE,
         permissions: [GLOBAL_PERMISSIONS.HOME]
       },
       {

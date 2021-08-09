@@ -21,6 +21,7 @@ public class MasterErrorController implements ErrorController {
         return "index.html";
     }
 
+    @Override
     public String getErrorPath() {
         return null;
     }

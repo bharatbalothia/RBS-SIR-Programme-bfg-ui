@@ -150,7 +150,7 @@ public class ImportedTrustedCertificateService {
             changeControlCert.setStatus(ACCEPTED);
             changeControlCert.setChanger(ACTION_BY);
             changeControlCert.setApprover(ACTION_BY);
-            changeControlCert.setApproverComments(COMMENT);
+            changeControlCert.setApproverComments(IMPORT_COMMENT);
             changeControlCert.setResultMeta1(trustedCertificate.getCertificateName());
             changeControlCert.setResultMeta2(trustedCertificate.getThumbprint());
             changeControlCert.setResultMeta3(trustedCertificate.getThumbprint256());

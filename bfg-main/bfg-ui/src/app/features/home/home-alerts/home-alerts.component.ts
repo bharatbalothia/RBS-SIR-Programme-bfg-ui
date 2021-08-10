@@ -45,7 +45,7 @@ export class HomeAlertsComponent implements OnInit {
   getAlerts = () => this.statisticsService.getAlerts().pipe(data => this.setLoading(data)).subscribe((data: Alerts) => {
     this.alerts = data;
     this.isLoading = false;
-    this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss');
+    this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY HH:mm:ss');
   },
     error => this.isLoading = false)
 

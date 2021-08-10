@@ -22,6 +22,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
@@ -82,6 +83,8 @@ public class ImportedTrustedCertificateService {
                 ))
                 .values());
 
+
+
         importedTrustedCertificateDetails
                 .stream()
                 .collect(Collectors.groupingBy(
@@ -109,6 +112,11 @@ public class ImportedTrustedCertificateService {
                         Collectors.toList()
                 ));
 
+        trustedCertificateService
+                .listAll()
+                .stream()
+                .filter()
+
         booleanMap.get(true)
                 .forEach(this::persistImportedCertificate);
         booleanMap.get(false)
@@ -126,6 +134,13 @@ public class ImportedTrustedCertificateService {
                                     ));
                         }
                 );
+    }
+
+    private Predicate<TrustedCertificate> isExistsInSBIList(List<ImportedTrustedCertificateDetails> listFromSBI) {
+        return cert -> {
+            listFromSBI.stream()
+                    .filter(certDetail -> certDetail.getThumbprint().equals(cert.getThumbprint()))
+        }
     }
 
     private void checkValidation(List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails,
@@ -175,6 +190,44 @@ public class ImportedTrustedCertificateService {
                                     e.getLocalizedMessage())));
         }
     }
+
+    private void deleteCertificateAfterDeletingInSBI(ImportedTrustedCertificateDetails trustedCertificateDetails) {
+        TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
+        trustedCertificate.setCertificateName(trustedCertificateDetails.getCertNameAndDate().getCertName());
+        trustedCertificate.setCertificate(trustedCertificateDetails.getCertificate());
+        try {
+            LOG.info("Trying to delete trusted certificate {} after deleting in SBI", trustedCertificate);
+            ChangeControlCert changeControlCert = new ChangeControlCert();
+            changeControlCert.setOperation(Operation.CREATE);
+            changeControlCert.setStatus(ACCEPTED);
+            changeControlCert.setChanger(ACTION_BY);
+            changeControlCert.setApprover(ACTION_BY);
+            changeControlCert.setApproverComments(IMPORT_COMMENT);
+            changeControlCert.setResultMeta1(trustedCertificate.getCertificateName());
+            changeControlCert.setResultMeta2(trustedCertificate.getThumbprint());
+            changeControlCert.setResultMeta3(trustedCertificate.getThumbprint256());
+            changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(trustedCertificate));
+            changeControlCert.getTrustedCertificateLog().setCertificate(null);
+            changeControlCert.getTrustedCertificateLog().setCertificateId(
+                    trustedCertificateService.save(trustedCertificate).getCertificateId());
+            LOG.info("Persisted trusted certificate {}", trustedCertificate);
+            changeControlCertService.save(changeControlCert);
+            LOG.info("Persisted CC {}", changeControlCert);
+            adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
+        } catch (RuntimeException e) {
+            LOG.info("Fail with importing {}", trustedCertificate);
+            adminAuditService.fireAdminAuditEvent(
+                    new AdminAuditEventRequest(
+                            ACTION_BY,
+                            ActionType.valueOf(Operation.CREATE.name()),
+                            EventType.valueOf(ChangeControlStatus.REJECTED.name()),
+                            Type.TRUSTED_CERTIFICATE,
+                            "n/a",
+                            actionValueFailed.apply(trustedCertificateDetails.getCertNameAndDate().getCertName(),
+                                    e.getLocalizedMessage())));
+        }
+    }
+
 
     private BiFunction<String, List<Map<String, List<String>>>, String> actionValueIgnored = (certName, certificateErrors) ->
             new Formatter().format(ACTION_VALUE_IGNORED,

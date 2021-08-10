@@ -112,10 +112,11 @@ public class ImportedTrustedCertificateService {
                         Collectors.toList()
                 ));
 
-        trustedCertificateService
+    List<TrustedCertificate> deletedCertsInSBI = trustedCertificateService
                 .listAll()
                 .stream()
-                .filter()
+                .filter(isExistsInSBIList(booleanMap.get(false)))
+                .collect(Collectors.toList());
 
         booleanMap.get(true)
                 .forEach(this::persistImportedCertificate);
@@ -137,10 +138,12 @@ public class ImportedTrustedCertificateService {
     }
 
     private Predicate<TrustedCertificate> isExistsInSBIList(List<ImportedTrustedCertificateDetails> listFromSBI) {
-        return cert -> {
+        return cert ->
             listFromSBI.stream()
-                    .filter(certDetail -> certDetail.getThumbprint().equals(cert.getThumbprint()))
-        }
+                    .anyMatch(certDetail ->
+                        !certDetail.getThumbprint().equals(cert.getThumbprint()) &
+                        !certDetail.getThumbprint256().equals(cert.getThumbprint256()));
+
     }
 
     private void checkValidation(List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails,

@@ -1,9 +1,11 @@
 package com.ibm.sterling.bfg.app.config;
 
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.websphere.security.auth.data.AuthData;
 import com.ibm.websphere.security.auth.data.AuthDataProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -17,18 +19,24 @@ import static com.ibm.websphere.crypto.PasswordUtil.passwordDecode;
 public class DynamicPropertiesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
     private static final Logger LOG = LogManager.getLogger(DynamicPropertiesListener.class);
 
+    @Autowired
+    private PropertyService propertyService;
+
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
         ConfigurableEnvironment environment = event.getEnvironment();
         try {
             AuthData jdbcAuthData = AuthDataProvider.getAuthData("jdbcAuthData");
             AuthData apiAuthData = AuthDataProvider.getAuthData("apiAuthData");
             AuthData tokenSecretAuthData = AuthDataProvider.getAuthData("tokenSecretAuthData");
+//            AuthData tokenExpiration = AuthDataProvider.getAuthData("tokenExpiration");
             Properties props = new Properties();
             props.put("spring.datasource.username", passwordDecode(jdbcAuthData.getUserName()));
             props.put("spring.datasource.password", passwordDecode(new String(jdbcAuthData.getPassword())));
             props.put("api.userName", passwordDecode(apiAuthData.getUserName()));
             props.put("api.password", passwordDecode(new String(apiAuthData.getPassword())));
             props.put("security.jwt.tokenSigningKey", passwordDecode(new String(tokenSecretAuthData.getPassword())));
+//            props.put("security.jwt.accessTokenExpirationTime", passwordDecode(tokenExpiration.getUserName()));
+//            props.put("security.jwt.timePicker", passwordDecode(new String(tokenExpiration.getPassword())));
             environment.getPropertySources().addLast(new PropertiesPropertySource("dynamicProperties", props));
         } catch (LoginException e) {
             LOG.error("LoginException in onApplicationEvent of DynamicPropertiesListener: {}", e.getMessage());

@@ -34,6 +34,8 @@ public class PropertySettings {
     private String sepaDashboardFileMaxValue;
     private String sepaDashboardVisibility;
     private String linkF5;
+    private String tokenExpirationTime;
+    private String timePicker;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -249,5 +251,21 @@ public class PropertySettings {
 
     public void setLinkF5(String linkF5) {
         this.linkF5 = linkF5;
+    }
+
+    public String getTokenExpirationTime() {
+        return tokenExpirationTime;
+    }
+
+    public void setTokenExpirationTime(String tokenExpirationTime) {
+        this.tokenExpirationTime = tokenExpirationTime;
+    }
+
+    public String getTimePicker() {
+        return timePicker;
+    }
+
+    public void setTimePicker(String timePicker) {
+        this.timePicker = timePicker;
     }
 }

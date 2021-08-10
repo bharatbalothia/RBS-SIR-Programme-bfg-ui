@@ -56,9 +56,9 @@ const routes: Routes = [
           .then(m => m.TrustedCertificatesModule)
       },
       {
-        path: ROUTING_PATHS.TRANSACTIONS_WITH_VALUE,
+        path: ROUTING_PATHS.FILES_WITH_VALUE,
         canActivate: [SEPADashboardGuardService, GlobalPermissionGuardService],
-        loadChildren: () => import('./features/sepa-dashboard/transactions-with-value/transactions-with-value.module')
+        loadChildren: () => import('./features/sepa-dashboard/files-with-value/files-with-value.module')
           .then(m => m.TransactionsWithValueModule)
       },
       {

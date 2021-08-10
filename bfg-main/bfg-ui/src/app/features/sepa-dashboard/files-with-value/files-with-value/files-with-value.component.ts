@@ -11,21 +11,21 @@ import { getSearchValidationMessage } from 'src/app/shared/models/search/validat
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { get } from 'lodash';
-import { getTransactionsWithValueDisplayName } from '../transactions-with-value-display-names';
+import { getFilesWithValueDisplayName } from '../files-with-value-display-names';
 import { MatDialog } from '@angular/material/dialog';
-import { TransactionsWithValueReportsDialogComponent } from './transactions-with-value-reports-dialog/transactions-with-value-reports-dialog.component';
+import { FilesWithValueReportsDialogComponent } from './files-with-value-reports-dialog/files-with-value-reports-dialog.component';
 
 @Component({
-  selector: 'app-transactions-with-value',
-  templateUrl: './transactions-with-value.component.html',
-  styleUrls: ['./transactions-with-value.component.scss']
+  selector: 'app-files-with-value',
+  templateUrl: './files-with-value.component.html',
+  styleUrls: ['./files-with-value.component.scss']
 })
-export class TransactionsWithValueComponent implements OnInit {
+export class FilesWithValueComponent implements OnInit {
 
   getDirectionIcon = getDirectionIcon;
   setCalendarDblClick = setCalendarDblClick;
   getSearchValidationMessage = getSearchValidationMessage;
-  getTransactionsWithValueDisplayName = getTransactionsWithValueDisplayName;
+  getTransactionsWithValueDisplayName = getFilesWithValueDisplayName;
 
   isLoading: boolean;
 
@@ -136,8 +136,17 @@ export class TransactionsWithValueComponent implements OnInit {
     this.getSEPAFileList(this.pageIndex, this.pageSize);
   }
 
-  openGenerateReportsDialog = () => this.dialog.open(TransactionsWithValueReportsDialogComponent, {
-    data: { title: 'Generate Excel/PDF Reports' },
-    width: '510px',
-  })
+  openGenerateReportsDialog = () => {
+
+    this.dialog.open(FilesWithValueReportsDialogComponent, {
+      data: {
+        title: 'Generate Excel/PDF Reports',
+        actionData: {
+          from: this.searchingParametersFormGroup.controls.from.value,
+          to: this.searchingParametersFormGroup.controls.to.value
+        }
+      },
+      width: '510px',
+    });
+  }
 }

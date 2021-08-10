@@ -5,23 +5,23 @@ import { DetailsDialogData } from 'src/app/shared/components/details-dialog/deta
 import { getSearchValidationMessage } from 'src/app/shared/models/search/validation-messages';
 import { SEPADashboardService } from 'src/app/shared/models/sepa-dashboard/sepa-dashboard.service';
 import { removeEmpties, setCalendarDblClick } from 'src/app/shared/utils/utils';
-import { getTransactionsWithValueDisplayName } from '../../transactions-with-value-display-names';
+import { getFilesWithValueDisplayName } from '../../files-with-value-display-names';
 import { saveAs } from 'file-saver';
 import { get } from 'lodash';
 import * as moment from 'moment';
 import { REPORT_TYPE } from 'src/app/shared/constants/report-types';
 
 @Component({
-  selector: 'app-transactions-with-value-reports-dialog',
-  templateUrl: './transactions-with-value-reports-dialog.component.html',
-  styleUrls: ['./transactions-with-value-reports-dialog.component.scss']
+  selector: 'app-files-with-value-reports-dialog',
+  templateUrl: './files-with-value-reports-dialog.component.html',
+  styleUrls: ['./files-with-value-reports-dialog.component.scss']
 })
-export class TransactionsWithValueReportsDialogComponent implements OnInit {
+export class FilesWithValueReportsDialogComponent implements OnInit {
 
   REPORT_TYPE = REPORT_TYPE;
   setCalendarDblClick = setCalendarDblClick;
   getSearchValidationMessage = getSearchValidationMessage;
-  getTransactionsWithValueDisplayName = getTransactionsWithValueDisplayName;
+  getTransactionsWithValueDisplayName = getFilesWithValueDisplayName;
 
   isLoading = false;
 
@@ -40,6 +40,16 @@ export class TransactionsWithValueReportsDialogComponent implements OnInit {
     private SEPADashboardService: SEPADashboardService
   ) {
     this.data.yesCaption = this.data.yesCaption || 'Close';
+
+    const dateFrom = get(this.data, 'actionData.from');
+    const dateTo = get(this.data, 'actionData.to');
+
+    if (dateFrom || dateTo) {
+      this.defaultSelectedData = {
+        from: dateFrom,
+        to: dateTo
+      };
+    }
   }
 
   ngOnInit(): void {

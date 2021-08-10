@@ -28,6 +28,6 @@ export const ROUTING_PATHS = {
   TRUSTED_CERTIFICATES: 'trusted-certificates',
 
   // SEPA Dashboard routes
-  TRANSACTIONS_WITH_VALUE: 'transactions-with-value',
+  FILES_WITH_VALUE: 'files-with-value',
   LIST_OF_FILES: 'list-of-files',
 };

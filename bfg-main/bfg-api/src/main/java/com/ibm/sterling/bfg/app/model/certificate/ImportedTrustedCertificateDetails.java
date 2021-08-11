@@ -57,4 +57,12 @@ public class ImportedTrustedCertificateDetails extends TrustedCertificateDetails
                 ", isLatest=" + isLatest() +
                 '}';
     }
+
+    @Override
+    public TrustedCertificate convertToTrustedCertificate() {
+        TrustedCertificate trustedCertificate = super.convertToTrustedCertificate();
+        trustedCertificate.setCertificateName(certNameAndDate.getCertName());
+        trustedCertificate.setCertificate(certificate);
+        return trustedCertificate;
+    }
 }

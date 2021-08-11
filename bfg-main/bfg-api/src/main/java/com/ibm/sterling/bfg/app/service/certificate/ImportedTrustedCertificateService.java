@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.audit.Type;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +45,9 @@ public class ImportedTrustedCertificateService {
 
     @Autowired
     private TrustedCertificateService trustedCertificateService;
+
+    @Autowired
+    private TrustedCertificateRepository trustedCertificateRepository;
 
     @Autowired
     private AdminAuditService adminAuditService;
@@ -112,14 +116,22 @@ public class ImportedTrustedCertificateService {
                         Collectors.toList()
                 ));
 
-    List<TrustedCertificate> deletedCertsInSBI = trustedCertificateService
+        List<TrustedCertificate> deletedCertsInSBI = trustedCertificateService
                 .listAll()
                 .stream()
-                .filter(isExistsInSBIList(booleanMap.get(false)))
+                .filter(isNotExistsInSBIList(booleanMap.get(false)))
                 .collect(Collectors.toList());
 
+        deletedCertsInSBI
+                .forEach(tc ->
+                        proceedImportedCertificate(
+                                tc, Operation.DELETE, String.format(DELETE_COMMENT, tc.getCertificateName())));
+
         booleanMap.get(true)
-                .forEach(this::persistImportedCertificate);
+                .stream()
+                .map(ImportedTrustedCertificateDetails::convertToTrustedCertificate)
+                .forEach(tc -> proceedImportedCertificate(tc, Operation.CREATE, IMPORT_COMMENT));
+
         booleanMap.get(false)
                 .forEach(value -> {
                             LOG.info("Ignore imported trusted certificate {}", value.getCertNameAndDate().getCertName());
@@ -137,12 +149,13 @@ public class ImportedTrustedCertificateService {
                 );
     }
 
-    private Predicate<TrustedCertificate> isExistsInSBIList(List<ImportedTrustedCertificateDetails> listFromSBI) {
+    private Predicate<TrustedCertificate> isNotExistsInSBIList(List<ImportedTrustedCertificateDetails> listFromSBI) {
         return cert ->
-            listFromSBI.stream()
-                    .anyMatch(certDetail ->
-                        !certDetail.getThumbprint().equals(cert.getThumbprint()) &
-                        !certDetail.getThumbprint256().equals(cert.getThumbprint256()));
+                listFromSBI.stream()
+                        .noneMatch(certDetail ->
+                                certDetail.getCertNameAndDate().getCertName().equals(cert.getCertificateName())
+                        )
+                ;
 
     }
 
@@ -157,28 +170,34 @@ public class ImportedTrustedCertificateService {
                         trustedCertificateDetailsService.addError(detail, errorKey, errorValue));
     }
 
-    private void persistImportedCertificate(ImportedTrustedCertificateDetails trustedCertificateDetails) {
-        TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
-        trustedCertificate.setCertificateName(trustedCertificateDetails.getCertNameAndDate().getCertName());
-        trustedCertificate.setCertificate(trustedCertificateDetails.getCertificate());
+    private void proceedImportedCertificate(TrustedCertificate trustedCertificate, Operation operation, String comment) {
         try {
-            LOG.info("Trying to save imported trusted certificate {} to change control", trustedCertificate);
+            LOG.info("Trying to {} trusted certificate {} ", operation, trustedCertificate);
+            LOG.info("Creating the change control");
             ChangeControlCert changeControlCert = new ChangeControlCert();
-            changeControlCert.setOperation(Operation.CREATE);
+            changeControlCert.setOperation(operation);
             changeControlCert.setStatus(ACCEPTED);
             changeControlCert.setChanger(ACTION_BY);
             changeControlCert.setApprover(ACTION_BY);
-            changeControlCert.setApproverComments(IMPORT_COMMENT);
+            changeControlCert.setApproverComments(comment);
             changeControlCert.setResultMeta1(trustedCertificate.getCertificateName());
             changeControlCert.setResultMeta2(trustedCertificate.getThumbprint());
             changeControlCert.setResultMeta3(trustedCertificate.getThumbprint256());
             changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(trustedCertificate));
             changeControlCert.getTrustedCertificateLog().setCertificate(null);
-            changeControlCert.getTrustedCertificateLog().setCertificateId(
-                    trustedCertificateService.save(trustedCertificate).getCertificateId());
-            LOG.info("Persisted trusted certificate {}", trustedCertificate);
-            changeControlCertService.save(changeControlCert);
-            LOG.info("Persisted CC {}", changeControlCert);
+            if (operation.equals(Operation.CREATE)) {
+                changeControlCert.getTrustedCertificateLog().setCertificateId(
+                        trustedCertificateService.save(trustedCertificate).getCertificateId());
+                LOG.info("Persisted trusted certificate {}", trustedCertificate);
+                changeControlCertService.save(changeControlCert);
+                LOG.info("Persisted CC {}", changeControlCert);
+            } else {
+                changeControlCert.getTrustedCertificateLog().setCertificateId(
+                        trustedCertificate.getCertificateId());
+                LOG.info("Deleted trusted certificate {}", trustedCertificate);
+                changeControlCertService.save(changeControlCert);
+                trustedCertificateRepository.delete(trustedCertificate);
+            }
             adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
         } catch (RuntimeException e) {
             LOG.info("Fail with importing {}", trustedCertificate);
@@ -189,48 +208,10 @@ public class ImportedTrustedCertificateService {
                             EventType.valueOf(ChangeControlStatus.REJECTED.name()),
                             Type.TRUSTED_CERTIFICATE,
                             "n/a",
-                            actionValueFailed.apply(trustedCertificateDetails.getCertNameAndDate().getCertName(),
+                            actionValueFailed.apply(trustedCertificate.getCertificateName(),
                                     e.getLocalizedMessage())));
         }
     }
-
-    private void deleteCertificateAfterDeletingInSBI(ImportedTrustedCertificateDetails trustedCertificateDetails) {
-        TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
-        trustedCertificate.setCertificateName(trustedCertificateDetails.getCertNameAndDate().getCertName());
-        trustedCertificate.setCertificate(trustedCertificateDetails.getCertificate());
-        try {
-            LOG.info("Trying to delete trusted certificate {} after deleting in SBI", trustedCertificate);
-            ChangeControlCert changeControlCert = new ChangeControlCert();
-            changeControlCert.setOperation(Operation.CREATE);
-            changeControlCert.setStatus(ACCEPTED);
-            changeControlCert.setChanger(ACTION_BY);
-            changeControlCert.setApprover(ACTION_BY);
-            changeControlCert.setApproverComments(IMPORT_COMMENT);
-            changeControlCert.setResultMeta1(trustedCertificate.getCertificateName());
-            changeControlCert.setResultMeta2(trustedCertificate.getThumbprint());
-            changeControlCert.setResultMeta3(trustedCertificate.getThumbprint256());
-            changeControlCert.setTrustedCertificateLog(new TrustedCertificateLog(trustedCertificate));
-            changeControlCert.getTrustedCertificateLog().setCertificate(null);
-            changeControlCert.getTrustedCertificateLog().setCertificateId(
-                    trustedCertificateService.save(trustedCertificate).getCertificateId());
-            LOG.info("Persisted trusted certificate {}", trustedCertificate);
-            changeControlCertService.save(changeControlCert);
-            LOG.info("Persisted CC {}", changeControlCert);
-            adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));
-        } catch (RuntimeException e) {
-            LOG.info("Fail with importing {}", trustedCertificate);
-            adminAuditService.fireAdminAuditEvent(
-                    new AdminAuditEventRequest(
-                            ACTION_BY,
-                            ActionType.valueOf(Operation.CREATE.name()),
-                            EventType.valueOf(ChangeControlStatus.REJECTED.name()),
-                            Type.TRUSTED_CERTIFICATE,
-                            "n/a",
-                            actionValueFailed.apply(trustedCertificateDetails.getCertNameAndDate().getCertName(),
-                                    e.getLocalizedMessage())));
-        }
-    }
-
 
     private BiFunction<String, List<Map<String, List<String>>>, String> actionValueIgnored = (certName, certificateErrors) ->
             new Formatter().format(ACTION_VALUE_IGNORED,

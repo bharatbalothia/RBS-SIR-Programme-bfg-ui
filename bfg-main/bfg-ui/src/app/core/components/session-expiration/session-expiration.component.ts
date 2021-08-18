@@ -12,7 +12,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 })
 export class SessionExpirationComponent implements OnInit, OnDestroy {
 
-  @Input() startTimer?= true;
+  @Input() startTimer ?= true;
 
   private sessionTimerSubscription: Subscription;
 
@@ -68,7 +68,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
       width: '400px',
       disableClose: true,
       data: {
-        title: 'Your session will expire in 10 minutes',
+        title: `Your session will expire in ${this.authService.getAlertsAtMins()} minutes`,
         subTitle: 'Please enter your password to extend it'
       }
     }).afterClosed().subscribe(password => {

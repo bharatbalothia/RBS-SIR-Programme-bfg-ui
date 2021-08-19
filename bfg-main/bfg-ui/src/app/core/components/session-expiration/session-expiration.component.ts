@@ -31,16 +31,12 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
 
   startSessionTime() {
     const alertAtSec = this.authService.getAlertsAtMins() * 60;
+
     if (alertAtSec) {
       this.sessionTimer.startTimer();
       this.sessionTimerSubscription = this.sessionTimer.remainSeconds$.subscribe(t => {
         if (t === alertAtSec) {
           this.openPasswordConfirmationDialog();
-        }
-        if (t === 0) {
-          this.stopSessionTime();
-          this.passwordConfirmationDialog.closeAll();
-          this.authService.logOut();
         }
       });
     }
@@ -53,14 +49,16 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
 
   stopSessionTime() {
     this.sessionTimer.stopTimer();
+
     if (this.sessionTimerSubscription) {
       this.sessionTimerSubscription.unsubscribe();
     }
   }
 
   ngOnDestroy() {
-    this.passwordConfirmationDialog.closeAll();
     this.stopSessionTime();
+    this.passwordConfirmationDialog.closeAll();
+    this.authService.logOut();
   }
 
   openPasswordConfirmationDialog() {

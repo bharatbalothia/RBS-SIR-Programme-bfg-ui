@@ -21,10 +21,9 @@ export class SessionTimerService {
     this.count = Math.round(moment.duration(moment(expirationDate).diff(moment())).asSeconds());
 
     this.timer = setInterval(() => {
-      if (this.count > 0) {
-        this.count--;
-        this.remainSeconds.next(this.count);
-      }}, 1000);
+      this.count--;
+      this.remainSeconds.next(this.count);
+    }, 1000);
   }
 
   stopTimer() {

@@ -11,8 +11,9 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
   template: ''
 })
 export class SessionExpirationComponent implements OnInit, OnDestroy {
-  @Input() startTimer ?= true;
-  @Input() alertAtMins ?= 10;
+
+  @Input() startTimer?= true;
+
   private sessionTimerSubscription: Subscription;
 
   constructor(
@@ -29,18 +30,20 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
   }
 
   startSessionTime() {
-    const alertAtSec = this.alertAtMins * 60;
-    this.sessionTimer.startTimer();
-    this.sessionTimerSubscription = this.sessionTimer.remainSeconds$.subscribe(t => {
-      if (t === alertAtSec) {
-        this.openPasswordConfirmationDialog();
-      }
-      if (t === 0) {
-        this.stopSessionTime();
-        this.passwordConfirmationDialog.closeAll();
-        this.authService.logOut();
-      }
-    });
+    const alertAtSec = this.authService.getAlertsAtMins() * 60;
+    if (alertAtSec) {
+      this.sessionTimer.startTimer();
+      this.sessionTimerSubscription = this.sessionTimer.remainSeconds$.subscribe(t => {
+        if (t === alertAtSec) {
+          this.openPasswordConfirmationDialog();
+        }
+        if (t === 0) {
+          this.stopSessionTime();
+          this.passwordConfirmationDialog.closeAll();
+          this.authService.logOut();
+        }
+      });
+    }
   }
 
   restartSessionTime() {
@@ -75,7 +78,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
           password
         }).subscribe(
           () => {
-            this.notificationService.show('Session', 'Your session has been extended for 2 hours', 'success');
+            this.notificationService.show('Session', `Your session has been extended for ${this.authService.getTokenTimeLife()} minutes`, 'success');
             this.restartSessionTime();
           },
           (error) => this.openPasswordConfirmationDialog()

@@ -9,6 +9,7 @@ public class JwtSettings {
 
     private Integer accessTokenExpirationTime;
     private String tokenSigningKey;
+    private Integer timePicker;
 
     public Integer getAccessTokenExpirationTime() {
         return accessTokenExpirationTime;
@@ -16,6 +17,10 @@ public class JwtSettings {
 
     public String getTokenSigningKey() {
         return tokenSigningKey;
+    }
+
+    public Integer getTimePicker() {
+        return timePicker;
     }
 
     public void setAccessTokenExpirationTime(Integer accessTokenExpirationTime) {
@@ -26,4 +31,7 @@ public class JwtSettings {
         this.tokenSigningKey = tokenSigningKey;
     }
 
+    public void setTimePicker(Integer timePicker) {
+        this.timePicker = timePicker;
+    }
 }

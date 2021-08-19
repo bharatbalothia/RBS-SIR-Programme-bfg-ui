@@ -116,4 +116,15 @@ public class AdminAuditEventRequest {
         this.actionValue = actionValue;
     }
 
+    @Override
+    public String toString() {
+        return "AdminAuditEventRequest{" +
+                "actionBy='" + actionBy + '\'' +
+                ", actionType='" + actionType + '\'' +
+                ", eventType='" + eventType + '\'' +
+                ", type='" + type + '\'' +
+                ", changeID='" + changeID + '\'' +
+                ", actionValue='" + actionValue + '\'' +
+                '}';
+    }
 }

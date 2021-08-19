@@ -140,4 +140,18 @@ export class AuthService {
     }
     return credentials;
   }
+
+  getAlertsAtMins(): number {
+    if (this.isAuthenticated()) {
+      return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).aat;
+    }
+    return null;
+  }
+
+  getTokenTimeLife(): number {
+    if (this.isAuthenticated()) {
+      return this.jwtHelper.decodeToken(get(this.user.value, 'accessToken')).tet;
+    }
+    return null;
+  }
 }

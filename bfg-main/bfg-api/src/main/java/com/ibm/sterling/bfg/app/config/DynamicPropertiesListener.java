@@ -1,9 +1,11 @@
 package com.ibm.sterling.bfg.app.config;
 
+import com.ibm.sterling.bfg.app.service.PropertyService;
 import com.ibm.websphere.security.auth.data.AuthData;
 import com.ibm.websphere.security.auth.data.AuthDataProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -16,6 +18,9 @@ import static com.ibm.websphere.crypto.PasswordUtil.passwordDecode;
 
 public class DynamicPropertiesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
     private static final Logger LOG = LogManager.getLogger(DynamicPropertiesListener.class);
+
+    @Autowired
+    private PropertyService propertyService;
 
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
         ConfigurableEnvironment environment = event.getEnvironment();

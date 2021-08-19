@@ -39,7 +39,7 @@ export class ListOfFilesComponent implements OnInit {
     this.statisticsService.getSEPATraffic().pipe(data => this.setLoading(data)).subscribe((data: SEPATraffic) => {
       this.isLoading = false;
       this.SEPATraffic = getMappedObjectArray(data).sort(this.compareByKey);
-      this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss');
+      this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY HH:mm:ss');
     }, () => this.isLoading = false)
 
   compareByKey = (a, b) => {

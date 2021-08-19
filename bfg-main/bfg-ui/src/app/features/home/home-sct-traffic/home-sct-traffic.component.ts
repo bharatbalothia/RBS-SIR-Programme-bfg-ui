@@ -41,7 +41,7 @@ export class HomeSCTTrafficComponent implements OnInit {
       (data: SCTTraffic) => {
         this.isLoading = false;
         this.SCTTraffic = data;
-        this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY hh:mm:ss');
+        this.updateTime = moment().tz('Europe/London').format('DD/MM/YYYY HH:mm:ss');
       },
       error => this.isLoading = false)
 

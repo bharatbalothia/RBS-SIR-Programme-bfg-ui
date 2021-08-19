@@ -1,15 +1,15 @@
 package com.ibm.sterling.bfg.app.service.entity;
 
-import com.ibm.sterling.bfg.app.model.audit.ActionType;
+import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.audit.EventType;
-import com.ibm.sterling.bfg.app.model.audit.Type;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
 import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -162,5 +162,15 @@ class EntityServiceImplTest {
                 any(AdminAuditEventRequest.class));
         service.cancelPendingEntity(pendingChangeControl);
         verify(changeControlService, times(1)).deleteChangeControl(pendingChangeControl);
+    }
+
+
+    @AfterEach
+    public void teardown() {
+        entity = null;
+        entities = null;;
+        pendingChangeControl = null;
+        acceptedChangeControl = null;
+        entityAuditEvent = null;
     }
 }

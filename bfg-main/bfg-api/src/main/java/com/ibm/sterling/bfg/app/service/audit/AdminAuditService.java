@@ -21,10 +21,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AdminAuditService {
@@ -82,7 +79,7 @@ public class AdminAuditService {
                     new TypeReference<List<AuditEvent>>() {
                     });
         } catch (JsonProcessingException e) {
-            return null;
+            return Collections.emptyList();
         }
     }
 

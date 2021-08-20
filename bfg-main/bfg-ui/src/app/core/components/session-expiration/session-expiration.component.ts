@@ -35,6 +35,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
     if (alertAtSec) {
       this.sessionTimer.startTimer();
       this.sessionTimerSubscription = this.sessionTimer.remainSeconds$.subscribe(t => {
+        console.log('Current: ', t);
         if (t === alertAtSec) {
           this.openPasswordConfirmationDialog();
         }

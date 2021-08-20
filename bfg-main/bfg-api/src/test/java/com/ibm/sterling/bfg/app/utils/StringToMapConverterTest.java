@@ -23,8 +23,13 @@ class StringToMapConverterTest {
     }
 
     @Test
-    void convertToDatabaseColumn() {
+    void convertToDatabaseColumn_ShouldReturnString() {
         assertEquals(field, converter.convertToDatabaseColumn(attribute));
+    }
+
+    @Test
+    void convertToDatabaseColumn_ShouldReturnEmptyString() {
+        assertEquals("", converter.convertToDatabaseColumn(null));
     }
 
     @Test

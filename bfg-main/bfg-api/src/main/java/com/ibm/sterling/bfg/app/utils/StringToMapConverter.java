@@ -20,6 +20,7 @@ public class StringToMapConverter implements AttributeConverter<Map<String, List
 
     @Override
     public String convertToDatabaseColumn(Map<String, List<String>> attribute) {
+        LOGGER.info("Convert map {} to string", attribute);
         return Optional.ofNullable(attribute).map(map -> {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
@@ -33,6 +34,7 @@ public class StringToMapConverter implements AttributeConverter<Map<String, List
 
     @Override
     public Map<String, List<String>> convertToEntityAttribute(String dbData) {
+        LOGGER.info("Convert string {} to map", dbData);
         return Optional.ofNullable(dbData).map(data -> {
                     Map<String, List<String>> map = new HashMap<>();
                     try {

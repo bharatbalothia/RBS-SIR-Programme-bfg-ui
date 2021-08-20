@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class StringToScheduleListConverterTest {
     private StringToScheduleListConverter converter;
@@ -37,5 +38,10 @@ class StringToScheduleListConverterTest {
     void convertToEntityAttribute_ShouldReturnListOfSchedules() {
         assertEquals(scheduleList.toString(),
                 converter.convertToEntityAttribute(schedules).toString());
+    }
+
+    @Test
+    void convertToEntityAttribute_ShouldReturnNull() {
+        assertEquals(new ArrayList<Schedule>(), converter.convertToEntityAttribute(null));
     }
 }

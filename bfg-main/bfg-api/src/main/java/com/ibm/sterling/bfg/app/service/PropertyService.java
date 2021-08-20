@@ -110,21 +110,21 @@ public class PropertyService {
                 .orElse("");
     }
 
-    public Integer getTimePicker() throws JsonProcessingException {
-        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
-                .stream()
-                .findFirst()
-                .map(Integer::valueOf)
-                .orElse(10);
-    }
+//    public Integer getTimePicker() throws JsonProcessingException {
+//        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
+//                .stream()
+//                .findFirst()
+//                .map(Integer::valueOf)
+//                .orElse(10);
+//    }
 
-    public Integer getTokenExpirationTime() throws JsonProcessingException {
-        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
-                .stream()
-                .findFirst()
-                .map(Integer::valueOf)
-                .orElse(120);
-    }
+//    public Integer getTokenExpirationTime() throws JsonProcessingException {
+//        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
+//                .stream()
+//                .findFirst()
+//                .map(Integer::valueOf)
+//                .orElse(120);
+//    }
 
     public String getTrustedCertsImportSchedule() {
         try {

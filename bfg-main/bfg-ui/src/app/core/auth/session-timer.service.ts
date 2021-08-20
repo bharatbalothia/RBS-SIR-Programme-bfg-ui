@@ -22,6 +22,7 @@ export class SessionTimerService {
 
     this.timer = setInterval(() => {
       this.count--;
+      console.log('EXP: ', Math.round(moment.duration(moment(expirationDate).diff(moment())).asSeconds()));
       this.remainSeconds.next(this.count);
     }, 1000);
   }

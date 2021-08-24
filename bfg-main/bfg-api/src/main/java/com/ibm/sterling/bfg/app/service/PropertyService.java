@@ -52,6 +52,9 @@ public class PropertyService {
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Value("${api.userName}")
     private String userName;
 
@@ -509,7 +512,7 @@ public class PropertyService {
     }
 
     private List<Map<String, String>> getPropertyList(String propertyUrl) throws JsonProcessingException {
-        ResponseEntity<String> responseEntity = new RestTemplate().exchange(
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
                 propertyUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),

@@ -18,10 +18,6 @@ class PropertySettingsTest {
     @Autowired
     private PropertySettings propertySettings;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void getReqTypePrefixKey_ShouldReturnValue() {
         assertEquals("gpl.ui.rtm.", propertySettings.getReqTypePrefixKey());

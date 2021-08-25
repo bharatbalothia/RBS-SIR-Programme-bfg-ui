@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { SessionTimerService } from '../../auth/session-timer.service';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordConfirmationDialogComponent } from 'src/app/shared/components/password-confirmation-dialog/password-confirmation-dialog.component';
 import { AuthService } from '../../auth/auth.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { User } from '../../auth/user.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-session-expiration',
@@ -12,54 +13,74 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 })
 export class SessionExpirationComponent implements OnInit, OnDestroy {
 
-  @Input() startTimer ?= true;
-
-  private sessionTimerSubscription: Subscription;
+  private reloginTimeout;
+  private logoutTimeout;
+  private userSubscription: Subscription;
 
   constructor(
-    private sessionTimer: SessionTimerService,
     private passwordConfirmationDialog: MatDialog,
     private authService: AuthService,
     private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
-    if (!this.sessionTimerSubscription && this.startTimer) {
-      this.startSessionTime();
-    }
+    this.userSubscription = this.authService.user.subscribe(user => {
+      if (user) {
+        this.startSessionTime(user);
+      } else {
+        this.clearTimeouts();
+      }
+    });
   }
 
-  startSessionTime() {
+  startSessionTime(user: User) {
     const alertAtSec = this.authService.getAlertsAtMins() * 60;
+    const accessToken = user.accessToken || null;
+    const expirationDate = new JwtHelperService().getTokenExpirationDate(accessToken);
 
-    if (alertAtSec) {
-      this.sessionTimer.startTimer();
-      this.sessionTimerSubscription = this.sessionTimer.remainSeconds$.subscribe(t => {
-        console.log('Current: ', t);
-        if (t === alertAtSec) {
-          this.openPasswordConfirmationDialog();
-        }
-      });
-    }
-  }
+    const timeout = expirationDate.getTime() - Date.now() - (alertAtSec * 1000);
 
-  restartSessionTime() {
-    this.stopSessionTime();
-    this.startSessionTime();
+    console.log('--- STARTED ---');
+
+    console.log('EXP DATE: ', expirationDate);
+
+    console.log('POPUP DATE: ', Math.round(timeout / 1000), Math.round(timeout / 1000 / 60), new Date(Date.now() + timeout));
+
+    this.clearTimeouts();
+
+    this.reloginTimeout = setTimeout(
+      () => {
+        console.log('LEFT (sec): ', (expirationDate.getTime() - Date.now()) / 1000);
+        console.log('EXP DATE: ', expirationDate);
+        this.openPasswordConfirmationDialog();
+      }, timeout
+    );
+
+    this.logoutTimeout = setTimeout(
+      () => {
+        console.log('LOGOUT: ');
+        this.stopSessionTime();
+      }, expirationDate.getTime() - Date.now()
+    );
   }
 
   stopSessionTime() {
-    this.sessionTimer.stopTimer();
-
-    if (this.sessionTimerSubscription) {
-      this.sessionTimerSubscription.unsubscribe();
-    }
+    console.log('stop session time');
+    this.clearTimeouts();
+    this.passwordConfirmationDialog.closeAll();
+    this.authService.logOut();
   }
 
   ngOnDestroy() {
-    this.stopSessionTime();
+    console.log('destroy');
+    this.clearTimeouts();
     this.passwordConfirmationDialog.closeAll();
-    this.authService.logOut();
+    this.userSubscription.unsubscribe();
+  }
+
+  clearTimeouts() {
+    clearTimeout(this.reloginTimeout);
+    clearTimeout(this.logoutTimeout);
   }
 
   openPasswordConfirmationDialog() {
@@ -78,7 +99,6 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
         }).subscribe(
           () => {
             this.notificationService.show('Session', `Your session has been extended for ${this.authService.getTokenTimeLife()} minutes`, 'success');
-            this.restartSessionTime();
           },
           (error) => this.openPasswordConfirmationDialog()
         );

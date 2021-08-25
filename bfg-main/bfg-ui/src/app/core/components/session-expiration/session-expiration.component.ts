@@ -5,6 +5,7 @@ import { AuthService } from '../../auth/auth.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from '../../auth/user.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-session-expiration',
@@ -14,6 +15,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
 
   private reloginTimeout;
   private logoutTimeout;
+  private userSubscription: Subscription;
 
   constructor(
     private passwordConfirmationDialog: MatDialog,
@@ -22,7 +24,7 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.authService.user.subscribe(user => {
+    this.userSubscription = this.authService.user.subscribe(user => {
       if (user) {
         this.startSessionTime(user);
       } else {
@@ -44,24 +46,22 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
 
     console.log('POPUP DATE: ', Math.round(timeout / 1000), Math.round(timeout / 1000 / 60), new Date(Date.now() + timeout));
 
-    if (!this.reloginTimeout) {
-      this.reloginTimeout = setTimeout(
-        () => {
-          console.log('LEFT: ', Math.round(timeout / 1000), Math.round(timeout / 1000 / 60), new Date(Date.now() + timeout));
-          console.log('EXP DATE: ', expirationDate);
-          this.openPasswordConfirmationDialog();
-        }, timeout
-      );
-    }
+    this.clearTimeouts();
 
-    if (!this.logoutTimeout) {
-      this.logoutTimeout = setTimeout(
-        () => {
-          console.log('LOGOUT: ');
-          this.stopSessionTime();
-        }, expirationDate.getTime() - Date.now()
-      );
-    }
+    this.reloginTimeout = setTimeout(
+      () => {
+        console.log('LEFT (sec): ', (expirationDate.getTime() - Date.now()) / 1000);
+        console.log('EXP DATE: ', expirationDate);
+        this.openPasswordConfirmationDialog();
+      }, timeout
+    );
+
+    this.logoutTimeout = setTimeout(
+      () => {
+        console.log('LOGOUT: ');
+        this.stopSessionTime();
+      }, expirationDate.getTime() - Date.now()
+    );
   }
 
   stopSessionTime() {
@@ -72,7 +72,10 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('destroy');
     this.clearTimeouts();
+    this.passwordConfirmationDialog.closeAll();
+    this.userSubscription.unsubscribe();
   }
 
   clearTimeouts() {

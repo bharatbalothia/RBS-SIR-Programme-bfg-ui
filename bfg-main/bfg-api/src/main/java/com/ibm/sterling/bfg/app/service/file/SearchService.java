@@ -268,28 +268,21 @@ public class SearchService {
         Page<WorkflowStep> workflows = ListToPageConverter.convertListToPage(workflowSteps, of(page, size));
         WFPage<WorkflowStep> wfPage = new WFPage<>(workflows.getContent(), workflows.getPageable(), workflows.getTotalElements());
         if (!workflowSteps.isEmpty()) {
-            int iteration = 0;
-            boolean isStatusSuccessful = true;
-//            boolean isListFull = true;
+            boolean isStatusError = false;
             WorkflowStep firstWorkflowStep = workflowSteps.get(0);
             for (WorkflowStep workflowStep : workflowSteps) {
                 if (!firstWorkflowStep.getWfdId().equals(workflowStep.getWfdId()) ||
                         !firstWorkflowStep.getWfdVersion().equals(workflowStep.getWfdVersion())) {
                     workflowStep.setInlineInvocation(true);
                 }
-                isStatusSuccessful = isStatusSuccessful & workflowStep.getExeState().equals("Success");
-//                isListFull = isListFull & workflowStep.getStepId() == iteration++;
+
+                if (workflowStep.getExeState().contains("Error")) isStatusError = true;
             }
-            if (isStatusSuccessful) {
-                wfPage.setState("");
-                wfPage.setStatus("Success");
-            } else {
-                wfPage.setState("Halted");
+            if (isStatusError) {
                 wfPage.setStatus("Error");
+            } else {
+                wfPage.setStatus("Success");
             }
-//            if (!isListFull) {
-//                wfPage.setFullTracking(false);
-//            }
         }
         return wfPage;
     }

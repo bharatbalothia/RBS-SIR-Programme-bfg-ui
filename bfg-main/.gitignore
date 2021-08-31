@@ -1,7 +1,15 @@
 /.apt_generated/
 /.apt_generated_tests/
 /.settings/
-/target/
+/target/build/
+/target/classes/
+/target/generated-sources/
+/target/generated-test-sources/
+/target/liberty/
+/target/maven-archiver/
+/target/maven-status/
+/target/test-classes/
+/target/tmp/
 /.idea/
 .classpath
 .project

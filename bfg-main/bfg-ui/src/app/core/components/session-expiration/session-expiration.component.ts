@@ -37,42 +37,30 @@ export class SessionExpirationComponent implements OnInit, OnDestroy {
     const alertAtSec = this.authService.getAlertsAtMins() * 60;
     const accessToken = user.accessToken || null;
     const expirationDate = new JwtHelperService().getTokenExpirationDate(accessToken);
-
     const timeout = expirationDate.getTime() - Date.now() - (alertAtSec * 1000);
-
-    console.log('--- STARTED ---');
-
-    console.log('EXP DATE: ', expirationDate);
-
-    console.log('POPUP DATE: ', Math.round(timeout / 1000), Math.round(timeout / 1000 / 60), new Date(Date.now() + timeout));
 
     this.clearTimeouts();
 
     this.reloginTimeout = setTimeout(
       () => {
-        console.log('LEFT (sec): ', (expirationDate.getTime() - Date.now()) / 1000);
-        console.log('EXP DATE: ', expirationDate);
         this.openPasswordConfirmationDialog();
       }, timeout
     );
 
     this.logoutTimeout = setTimeout(
       () => {
-        console.log('LOGOUT: ');
         this.stopSessionTime();
       }, expirationDate.getTime() - Date.now()
     );
   }
 
   stopSessionTime() {
-    console.log('stop session time');
     this.clearTimeouts();
     this.passwordConfirmationDialog.closeAll();
     this.authService.logOut();
   }
 
   ngOnDestroy() {
-    console.log('destroy');
     this.clearTimeouts();
     this.passwordConfirmationDialog.closeAll();
     this.userSubscription.unsubscribe();

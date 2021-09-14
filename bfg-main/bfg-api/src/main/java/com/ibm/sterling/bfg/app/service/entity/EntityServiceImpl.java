@@ -100,16 +100,16 @@ public class EntityServiceImpl implements EntityService {
                 .orElseThrow(() -> new EntityNotFoundException("There is no such entity by id " + id));
     }
 
-    @Override
-    @Transactional
-    public Entity save(Entity entity) {
-        LOG.info("Trying to save entity {}", entity);
-        ChangeControl changeControl = new ChangeControl();
-        entity.setChangeID(changeControl.getChangeID());
-        Entity savedEntity = entityRepository.save(entity);
-        LOG.info("Saved entity {}", savedEntity);
-        return entity;
-    }
+//    @Override
+//    @Transactional
+//    public Entity save(Entity entity) {
+//        LOG.info("Trying to save entity {}", entity);
+//        ChangeControl changeControl = new ChangeControl();
+//        entity.setChangeID(changeControl.getChangeID());
+//        Entity savedEntity = entityRepository.save(entity);
+//        LOG.info("Saved entity {}", savedEntity);
+//        return entity;
+//    }
 
     @Transactional
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {

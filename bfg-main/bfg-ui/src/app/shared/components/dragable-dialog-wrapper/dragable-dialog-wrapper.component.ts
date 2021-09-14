@@ -11,7 +11,7 @@ import { AngularResizableDirective } from 'angular2-draggable';
 export class DragableDialogWrapperComponent implements OnInit {
 
   resizableMinWidth = '400px';
-  resizableMinHeight = '200px';
+  resizableMinHeight = '250px';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsDialogData,

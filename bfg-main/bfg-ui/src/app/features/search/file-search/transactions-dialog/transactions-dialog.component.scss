@@ -5,6 +5,10 @@
     margin: 3px !important;
 }
 
+.mat-dialog-content {
+    max-height: 80vh !important;
+}
+
 .mat-table {
     width: 100%;
     min-width: 650px;

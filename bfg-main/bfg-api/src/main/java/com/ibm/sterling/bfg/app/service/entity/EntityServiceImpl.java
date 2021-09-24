@@ -287,11 +287,21 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private Specification<Entity> getExistingEntitySpecificationByService(String service) {
-        return Specification
+        Specification<Entity> specification = Specification
                 .where(
-                        GenericSpecification.<Entity>filter("service", Optional.ofNullable(service).orElse("")))
-                .and(
                         GenericSpecification.filter("deleted", "false"));
+        if (service.equals("")) {
+            return specification
+                    .and(Specification
+                            .where(
+                                    GenericSpecification.<Entity>filter("service", SCT.name())
+                            .or(
+                                    GenericSpecification.filter("service", GPL.name()))));
+        } else {
+            return specification
+                    .and(
+                            GenericSpecification.<Entity>filter("service", service));
+        }
     }
 
     private List<Entity> getEntitiesAsc(Specification<Entity> specification) {

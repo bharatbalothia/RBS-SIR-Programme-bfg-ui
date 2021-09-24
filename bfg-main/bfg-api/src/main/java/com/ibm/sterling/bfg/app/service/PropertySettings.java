@@ -12,13 +12,13 @@ public class PropertySettings {
     private String swiftServiceKey;
     private String fileTypeKey;
     private String mqPrefixKey;
-    private String gplUrl;
+//    private String gplUrl;
     private String bfgUiUrl;
     private String caCertUrl;
     private String sysCertUrl;
     private String certIdKey;
     private String fileSearchPrefixKey;
-    private String fileUrl;
+//    private String fileUrl;
     private String fileStatusPrefixKey;
     private String transactionStatusPrefixKey;
     private String[] fileSearchPostfixKey;
@@ -65,9 +65,9 @@ public class PropertySettings {
         return mqPrefixKey;
     }
 
-    public String getGplUrl() {
-        return gplUrl;
-    }
+//    public String getGplUrl() {
+//        return gplUrl;
+//    }
 
     public String getBfgUiUrl() {
         return bfgUiUrl;
@@ -89,9 +89,9 @@ public class PropertySettings {
         return fileSearchPrefixKey;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
-    }
+//    public String getFileUrl() {
+//        return fileUrl;
+//    }
 
     public String getFileStatusPrefixKey() {
         return fileStatusPrefixKey;
@@ -108,10 +108,10 @@ public class PropertySettings {
     public void setMqPrefixKey(String mqPrefixKey) {
         this.mqPrefixKey = mqPrefixKey;
     }
-
-    public void setGplUrl(String gplUrl) {
-        this.gplUrl = gplUrl;
-    }
+//
+//    public void setGplUrl(String gplUrl) {
+//        this.gplUrl = gplUrl;
+//    }
 
     public void setBfgUiUrl(String bfgUiUrl) {
         this.bfgUiUrl = bfgUiUrl;
@@ -133,9 +133,9 @@ public class PropertySettings {
         this.fileSearchPrefixKey = fileSearchPrefixKey;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
+//    public void setFileUrl(String fileUrl) {
+//        this.fileUrl = fileUrl;
+//    }
 
     public void setFileStatusPrefixKey(String fileStatusPrefixKey) {
         this.fileStatusPrefixKey = fileStatusPrefixKey;

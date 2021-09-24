@@ -63,7 +63,7 @@ public class PropertyService {
 
     public Map<String, String> getInboundRequestType() throws JsonProcessingException {
         String reqTypePrefixKey = settings.getReqTypePrefixKey();
-        return getPropertyList(settings.getGplUrl()).stream()
+        return getPropertyList(settings.getBfgUiUrl()).stream()
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(reqTypePrefixKey))
                 .flatMap(property -> {
                             String propertyKey = property.get(PROPERTY_KEY);
@@ -81,7 +81,7 @@ public class PropertyService {
                 .map(type -> reqTypePrefixKey + type)
                 .collect(Collectors.toList());
         try {
-            return getPropertiesByPartialKey(typeKeys, settings.getGplUrl()).stream()
+            return getPropertiesByPartialKey(typeKeys, settings.getBfgUiUrl()).stream()
                     .map(property -> {
                                 String propertyKey = property.get(PROPERTY_KEY);
                                 return property.get(PROPERTY_VALUE) +
@@ -247,7 +247,7 @@ public class PropertyService {
         propertyKeys.addAll(Arrays.stream(fileSearchPostfixKey)
                 .map(value -> fileSearchPrefixKey + value)
                 .collect(Collectors.toList()));
-        List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getFileUrl());
+        List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getBfgUiUrl());
 
         Arrays.stream(fileSearchPostfixKey).forEach(value -> fileCriteriaData.put(value, propertyList.stream()
                 .filter(property -> property.get(PROPERTY_KEY).equals(fileSearchPrefixKey + value))
@@ -354,7 +354,7 @@ public class PropertyService {
         propertyKeys.add(directionPropertyKey);
         propertyKeys.add(typePropertyKey);
         propertyKeys.add(statusPropertyKey);
-        List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getFileUrl());
+        List<Map<String, String>> propertyList = getPropertiesByPartialKey(propertyKeys, settings.getBfgUiUrl());
 
         transactionCriteriaData.put("type", propertyList.stream()
                 .filter(property ->
@@ -439,8 +439,8 @@ public class PropertyService {
 
     public String getStatusLabel(String statusPrefixKey, String service, String direction, Integer status) {
         try {
-            return getPropertyList(settings.getFileUrl() + "?" + PROPERTY_KEY + "=" +
-                    service + statusPrefixKey + ("outbound".equals(direction) ? "outbound" : "inbound") + "." + Math.abs(status)
+            return getPropertyList(settings.getBfgUiUrl() + "?" + PROPERTY_KEY + "=" +
+                    service.toLowerCase() + statusPrefixKey + ("outbound".equals(direction) ? "outbound" : "inbound") + "." + Math.abs(status)
             ).stream()
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
                     .collect(Collectors.joining(", "));
@@ -456,7 +456,7 @@ public class PropertyService {
         List<String> errorKeys = Arrays.stream(settings.getFileErrorPostfixKey())
                 .map(value -> errorCode + "." + value)
                 .collect(Collectors.toList());
-        errorDetails.putAll(getPropertiesByPartialKey(errorKeys, settings.getFileUrl()).stream()
+        errorDetails.putAll(getPropertiesByPartialKey(errorKeys, settings.getFileErrorUrl()).stream()
                 .flatMap(property -> {
                             String propertyKey = property.get(PROPERTY_KEY);
                             return Collections.singletonMap(

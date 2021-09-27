@@ -201,8 +201,9 @@ public class EntityServiceImpl implements EntityService {
                             "You cannot approve the change to this entity, because the entity does not have " +
                             "a valid direct participant");
             }
-            String indirectEntitiesReferredToParticularEntity = entityRepository.findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
-                    entity.getEntity(), INDIRECT.name(), false)
+            String indirectEntitiesReferredToParticularEntity = entityRepository.
+                    findByServiceAndDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
+                    SCT.name(), entity.getEntity(), INDIRECT.name(), false)
                     .stream()
                     .map(Entity::getEntity)
                     .collect(Collectors.joining(", "));
@@ -339,7 +340,8 @@ public class EntityServiceImpl implements EntityService {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, " +
                         "inboundRequestType - {}, entityId - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType, entityId);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
+        List<Entity> entities = entityRepository.
+                findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
                 inboundRequestorDN, inboundResponderDN, inboundService, false, entityId);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),

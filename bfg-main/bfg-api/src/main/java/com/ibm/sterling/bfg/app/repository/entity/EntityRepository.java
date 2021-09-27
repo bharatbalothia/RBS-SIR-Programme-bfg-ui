@@ -43,6 +43,6 @@ public interface EntityRepository extends JpaRepository<Entity, Integer>, JpaSpe
     List<Entity> findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
             String inboundRequestorDN, String inboundResponderDN, String inboundService, Boolean deleted, Integer entityId);
 
-    List<Entity> findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
-            String directParticipant,String entityParticipantType, Boolean deleted);
+    List<Entity> findByServiceAndDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
+            String service, String directParticipant,String entityParticipantType, Boolean deleted);
 }

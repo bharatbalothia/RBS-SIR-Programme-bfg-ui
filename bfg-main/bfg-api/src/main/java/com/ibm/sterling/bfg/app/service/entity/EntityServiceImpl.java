@@ -201,8 +201,9 @@ public class EntityServiceImpl implements EntityService {
                             "You cannot approve the change to this entity, because the entity does not have " +
                             "a valid direct participant");
             }
-            String indirectEntitiesReferredToParticularEntity = entityRepository.findByDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
-                    entity.getEntity(), INDIRECT.name(), false)
+            String indirectEntitiesReferredToParticularEntity = entityRepository.
+                    findByServiceAndDirectParticipantAndEntityParticipantTypeAndDeletedOrderByEntityAsc(
+                    SCT.name(), entity.getEntity(), INDIRECT.name(), false)
                     .stream()
                     .map(Entity::getEntity)
                     .collect(Collectors.joining(", "));
@@ -287,11 +288,21 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private Specification<Entity> getExistingEntitySpecificationByService(String service) {
-        return Specification
+        Specification<Entity> specification = Specification
                 .where(
-                        GenericSpecification.<Entity>filter("service", Optional.ofNullable(service).orElse("")))
-                .and(
                         GenericSpecification.filter("deleted", "false"));
+        if (service.equals("")) {
+            return specification
+                    .and(Specification
+                            .where(
+                                    GenericSpecification.<Entity>filter("service", SCT.name())
+                            .or(
+                                    GenericSpecification.filter("service", GPL.name()))));
+        } else {
+            return specification
+                    .and(
+                            GenericSpecification.<Entity>filter("service", service));
+        }
     }
 
     private List<Entity> getEntitiesAsc(Specification<Entity> specification) {
@@ -329,7 +340,8 @@ public class EntityServiceImpl implements EntityService {
         LOG.info("Routing rule attributes: inboundRequestorDN - {}, inboundResponderDN - {}, inboundService - {}, " +
                         "inboundRequestType - {}, entityId - {}",
                 inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType, entityId);
-        List<Entity> entities = entityRepository.findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
+        List<Entity> entities = entityRepository.
+                findByInboundRequestorDNAndInboundResponderDNAndInboundServiceAndDeletedAllIgnoreCaseAndEntityIdNot(
                 inboundRequestorDN, inboundResponderDN, inboundService, false, entityId);
         return entities.stream()
                 .filter(entity -> !Collections.disjoint(entity.getInboundRequestType(),

@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
-@include mat-core();
+@include mat.core();
 
 $deep-purple: (50: #ede7f6,
     100: #d1c4e9,
@@ -32,15 +33,15 @@ $deep-purple: (50: #ede7f6,
         A700: $light-primary-text,
     ));
 
-$primary: mat-palette($deep-purple);
-$accent: mat-palette($deep-purple, A200, A100, A400);
-$warn: mat-palette($mat-red);
-$theme: mat-light-theme((color: (primary: $primary,
+$primary: mat.define-palette($deep-purple);
+$accent: mat.define-palette($deep-purple, A200, A100, A400);
+$warn: mat.define-palette(mat.$red-palette);
+$theme: mat.define-light-theme((color: (primary: $primary,
             accent: $accent,
             warn: $warn,
         )));
 
-@include angular-material-theme($theme);
+@include mat.all-component-themes($theme);
 
 html,
 body {

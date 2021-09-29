@@ -8,14 +8,14 @@
 #break if fail
 set -e
 #set log filename
-log=ibm_deploy_BFGU_v1.0-0.log
+log=ibm_deploy_BFGUI_v1.0-0.log
 echo "START Deploying...SIR BFG v1.0-0 Bundle" >>$log
 # append date to log file
 date >> $log
 
 #set vars
 BUNDLE_TYPE="IBM"
-BUNDLE_TAG="SIR_BFG_v1.0-0"
+BUNDLE_TAG="SIR_BFGUI_v1.0-0"
 CMD_IP=import.sh
 BACKUP_ID="bak_BFGUI_100"
 FULL_DEPLOY="Y"
@@ -110,7 +110,7 @@ then
 	echo "*** Copying sfgerror.properties to the database ***"
 	echo "*** Copying sfgerror.properties to the database ***" >>$log
 
-	base64 ${SIINSTALLPATH}/sfgerror.properties >> ${BUNDLE_SET}/sbi/properties/filesystem/sfgerror.properties.json
+	base64 ${SIINSTALLPATH}/properties/sfgerror.properties >> ${BUNDLE_SET}/sbi/properties/filesystem/sfgerror.properties.json
 	sed -i '1s/^/{\n"description": "sfgerror.properties",\n"propertyFileContent": "/' ${BUNDLE_SET}/sbi/properties/filesystem/sfgerror.properties.json
 	sed -i '$ a\",\n"propertyFilePrefix": "sfgerror"\n}' ${BUNDLE_SET}/sbi/properties/filesystem/sfgerror.properties.json
 	curl --insecure -u ${PARAM_SBIADMINUSER}:${PARAM_SBIADMINPASS} -i -H 'Accept:application/json' -H 'Content-Type:application/json' -d @${BUNDLE_SET}/sbi/properties/filesystem/sfgerror.properties.json -X POST https://localhost:7075/B2BAPIs/svc/propertyfiles/
@@ -155,8 +155,22 @@ if [[ "$FULL_DEPLOY" -eq "Y" ]]
 then
 	echo "*** Adding JDBC settings for REST service ***"
 	echo "*** Adding JDBC settings for REST service ***" >>$log
-	cp ${SIINSTALLPATH}/properties/jdbc_customers.properties.in ${SIINSTALLPATH}/properties/jdbc_customers.properties.in.${BACKUP_ID}
-	cat ${BUNDLE_SET}/sbi/properties/filesystem/jdbc_customer.properties.in >> ${SIINSTALLPATH}/properties/jdbc_customers.properties.in
+	cp ${SIINSTALLPATH}/properties/jdbc_customer.properties.in ${SIINSTALLPATH}/properties/jdbc_customer.properties.in.${BACKUP_ID}
+	cat ${BUNDLE_SET}/sbi/properties/filesystem/jdbc_customer.properties.in >> ${SIINSTALLPATH}/properties/jdbc_customer.properties.in
+	
+	#copy in the settings for an existing pool so SBI will start - environment-config will update this later
+	JDBC_URL=$((grep "^BFG_DYNAMIC.url" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_CATALOG=$((grep "^BFG_DYNAMIC.catalog" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_SCHEMA=$((grep "^BFG_DYNAMIC.schema" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_USER=$((grep "^BFG_DYNAMIC.user" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_PASS=$((grep "^BFG_DYNAMIC.password" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+
+	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.url=.*|BFG_DYNAMIC_REST.url=JDBC_URL|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.catalog=.*|BFG_DYNAMIC_REST.catalog=JDBC_CATALOG|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.schema=.*|BFG_DYNAMIC_REST.schema=JDBC_SCHEMA|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.user=.*|BFG_DYNAMIC_REST.user=JDBC_USER|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.password=.*|BFG_DYNAMIC_REST.password=JDBC_PASSWORD|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	
 fi
 
 #************************************** 
@@ -173,7 +187,7 @@ then
 	
 	#append the settings to existing files
 	cat ${BUNDLE_SET}/sbi/properties/filesystem/sandbox.cfg >> ${SIINSTALLPATH}/properties/sandbox.cfg
-	cp ${BUNDLE_SET}/sbi/properties/filesystem/pages.properties_customer_ext >> ${SIINSTALLPATH}/properties/pages.properties_customer_ext 
+	cat ${BUNDLE_SET}/sbi/properties/filesystem/pages.properties_customer_ext >> ${SIINSTALLPATH}/properties/pages.properties_customer_ext 
 	
 	#comment out filegateway_eventlinks.FB_SFG_BUNDLE_LINK
 	sed -i "s/^\(filegateway_eventlinks.FB_SFG_BUNDLE_LINK\)/#\1/g" ${SIINSTALLPATH}/properties/gpl.properties

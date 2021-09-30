@@ -8,6 +8,7 @@ import com.ibm.sterling.bfg.app.model.audit.Type;
 import com.ibm.sterling.bfg.app.model.certificate.*;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
 import com.ibm.sterling.bfg.app.repository.certificate.TrustedCertificateRepository;
 import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
+import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
 import static com.ibm.sterling.bfg.app.service.certificate.ImportCertificatesConstants.*;
 
 @Service
@@ -36,6 +38,9 @@ public class ImportedTrustedCertificateService {
 
     @Autowired
     private ChangeControlCertService changeControlCertService;
+
+    @Autowired
+    private ChangeControlCertRepository changeControlCertRepository;
 
     @Autowired
     private TrustedCertificateDetailsService trustedCertificateDetailsService;
@@ -188,7 +193,7 @@ public class ImportedTrustedCertificateService {
             if (operation.equals(Operation.CREATE)) {
                 changeControlCert.getTrustedCertificateLog().setCertificateId(
                         trustedCertificateService.save(trustedCertificate).getCertificateId());
-                LOG.info("Persisted trusted certificate {}", trustedCertificate);
+                LOG.info("Persist trusted certificate {}", trustedCertificate);
                 changeControlCertService.save(changeControlCert);
                 LOG.info("Persisted CC {}", changeControlCert);
             } else {
@@ -196,6 +201,16 @@ public class ImportedTrustedCertificateService {
                         trustedCertificate.getCertificateId());
                 LOG.info("Deleted trusted certificate {}", trustedCertificate);
                 changeControlCertService.save(changeControlCert);
+                LOG.info("Checking pending change for trusted certificate {}", trustedCertificate);
+                if (changeControlCertRepository.existsByResultMeta1AndStatus(
+                        trustedCertificate.getCertificateName(), PENDING)) {
+
+                    ChangeControlCert pendingChangeControl = changeControlCertRepository
+                            .findByResultMeta1AndStatus(trustedCertificate.getCertificateName(), PENDING);
+                    LOG.info("Found pending change {}, proceed deletion", pendingChangeControl.getChangeID());
+                    pendingChangeControl.setChanger(ACTION_BY);
+                    trustedCertificateService.cancelPendingCertificate(pendingChangeControl);
+                }
                 trustedCertificateRepository.delete(trustedCertificate);
             }
             adminAuditService.fireAdminAuditEvent(new AdminAuditEventRequest(changeControlCert, changeControlCert.getApprover()));

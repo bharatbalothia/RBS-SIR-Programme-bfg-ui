@@ -17,6 +17,8 @@ public interface ChangeControlCertRepository extends JpaRepository<ChangeControl
     @Transactional(readOnly = true)
     List<ChangeControlCert> findAll(Specification<ChangeControlCert> specification);
 
+    ChangeControlCert findByResultMeta1AndStatus(String resultMeta1, ChangeControlStatus changeControlStatus);
+
     boolean existsByResultMeta1AndStatus(String resultMeta1, ChangeControlStatus changeControlStatus);
 
     boolean existsByResultMeta2AndStatus(String resultMeta2, ChangeControlStatus changeControlStatus);

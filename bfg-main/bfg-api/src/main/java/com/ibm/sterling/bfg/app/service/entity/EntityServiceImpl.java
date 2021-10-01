@@ -291,7 +291,7 @@ public class EntityServiceImpl implements EntityService {
         Specification<Entity> specification = Specification
                 .where(
                         GenericSpecification.filter("deleted", "false"));
-        if (service.equals("")) {
+        if (service == null || service.equals("")) {
             return specification
                     .and(Specification
                             .where(

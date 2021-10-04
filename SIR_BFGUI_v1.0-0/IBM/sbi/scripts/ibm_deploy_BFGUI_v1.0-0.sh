@@ -131,12 +131,12 @@ cp ${SIINSTALLPATH}/properties/gpl.properties ${SIINSTALLPATH}/properties/gpl.pr
 while read F ; do
         pKey=$(echo $F | cut -d= -f1)
         if ! [[ $pKey =~ ^# ]] && [[ $pKey =~ [:alnum:] ]]; then
-                if grep -R "^[#]*\s*${pKey}=.*" ${SIINSTALLPATH}/properties/sct.properties > /dev/null; then
+                if grep -R "^[^#]*\s*${pKey}=.*" ${SIINSTALLPATH}/properties/sct.properties > /dev/null; then
                         echo "Commenting out ${pKey} in sct.properties"
                         sed -i "/^${pKey}=/a #Moved ${pKey} to bfgui.properties" ${SIINSTALLPATH}/properties/sct.properties
                         sed -i "s/^\(${pKey}=\)/#\1/g" ${SIINSTALLPATH}/properties/sct.properties
                 fi
-                if grep -R "^[#]*\s*${pKey}=.*" ${SIINSTALLPATH}/properties/gpl.properties > /dev/null; then
+                if grep -R "^[^#]*\s*${pKey}=.*" ${SIINSTALLPATH}/properties/gpl.properties > /dev/null; then
                         echo "Commenting out ${pKey} in gpl.properties"
                         sed -i "/^${pKey}=/a #Moved ${pKey} to bfgui.properties" ${SIINSTALLPATH}/properties/gpl.properties
                         sed -i "s/^\(${pKey}=\)/#\1/g" ${SIINSTALLPATH}/properties/gpl.properties
@@ -165,11 +165,11 @@ then
 	JDBC_USER=$((grep "^BFG_DYNAMIC.user" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
 	JDBC_PASS=$((grep "^BFG_DYNAMIC.password" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
 
-	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.url=.*|BFG_DYNAMIC_REST.url=JDBC_URL|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
-	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.catalog=.*|BFG_DYNAMIC_REST.catalog=JDBC_CATALOG|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
-	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.schema=.*|BFG_DYNAMIC_REST.schema=JDBC_SCHEMA|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
-	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.user=.*|BFG_DYNAMIC_REST.user=JDBC_USER|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
-	sed -i "s|^[#]*\s*BFG_DYNAMIC_REST.password=.*|BFG_DYNAMIC_REST.password=JDBC_PASSWORD|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.url=.*|BFG_DYNAMIC_REST.url=JDBC_URL|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.catalog=.*|BFG_DYNAMIC_REST.catalog=JDBC_CATALOG|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.schema=.*|BFG_DYNAMIC_REST.schema=JDBC_SCHEMA|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.user=.*|BFG_DYNAMIC_REST.user=JDBC_USER|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
+	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.password=.*|BFG_DYNAMIC_REST.password=JDBC_PASSWORD|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
 	
 fi
 

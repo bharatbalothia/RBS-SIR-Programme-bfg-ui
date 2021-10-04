@@ -1,6 +1,7 @@
 package com.ibm.sterling.bfg.app.service.certificate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.sterling.bfg.app.exception.certificate.CertificateIntegrationException;
 import com.ibm.sterling.bfg.app.model.audit.ActionType;
 import com.ibm.sterling.bfg.app.model.audit.AdminAuditEventRequest;
 import com.ibm.sterling.bfg.app.model.audit.EventType;
@@ -58,100 +59,104 @@ public class ImportedTrustedCertificateService {
     private AdminAuditService adminAuditService;
 
     @PostConstruct
-    public void importCertificatesFromB2B() throws JsonProcessingException {
+    public void importCertificatesFromB2B() throws CertificateIntegrationException, JsonProcessingException {
         LOG.info("Import the certs from B2B");
-        List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails = new ArrayList<>(certificateIntegrationService.getCertificates()
-                .stream()
-                .collect(Collectors.toMap(
-                        IntegratedCertificateData::getCertNameAndDate,
-                        integratedCertificateData -> {
-                            try {
-                                return integratedCertificateData.convertToX509Certificate();
-                            } catch (CertificateException e) {
-                                return null;
+        try {
+            List<ImportedTrustedCertificateDetails> importedTrustedCertificateDetails =
+                    new ArrayList<>(certificateIntegrationService.getCertificates()
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    IntegratedCertificateData::getCertNameAndDate,
+                                    integratedCertificateData -> {
+                                        try {
+                                            return integratedCertificateData.convertToX509Certificate();
+                                        } catch (CertificateException e) {
+                                            return null;
+                                        }
+                                    }))
+                            .entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    entry -> entry.getKey().getCertName(),
+                                    entry -> {
+                                        try {
+                                            ImportedTrustedCertificateDetails trustedCertificateDetails =
+                                                    new ImportedTrustedCertificateDetails(trustedCertificateDetailsService
+                                                            .getTrustedCertificateDetails(entry.getValue(), true));
+                                            trustedCertificateDetails.setCertNameAndDate(entry.getKey());
+                                            trustedCertificateDetails.setCertificate(entry.getValue());
+                                            trustedCertificateDetailsService.checkCertNameUniquenessLocally(
+                                                    trustedCertificateDetails, entry.getKey().getCertName());
+                                            return trustedCertificateDetails;
+                                        } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
+                                            return null;
+                                        }
+                                    }
+                            ))
+                            .values());
+
+
+            importedTrustedCertificateDetails
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            TrustedCertificateDetails::getThumbprint,
+                            Collectors.toList()
+                    ))
+                    .values()
+                    .forEach(value ->
+                            checkValidation(value, "thumbprint", "SHA-1 Thumbprint is not unique"));
+
+            importedTrustedCertificateDetails
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            TrustedCertificateDetails::getThumbprint256,
+                            Collectors.toList()
+                    ))
+                    .values()
+                    .forEach(value ->
+                            checkValidation(value, "thumbprint256", "SHA-2 Thumbprint is not unique"));
+
+            Map<Boolean, List<ImportedTrustedCertificateDetails>> booleanMap = importedTrustedCertificateDetails
+                    .stream()
+                    .collect(Collectors.partitioningBy(
+                            TrustedCertificateDetails::isValid,
+                            Collectors.toList()
+                    ));
+
+            List<TrustedCertificate> deletedCertsInSBI = trustedCertificateService
+                    .listAll()
+                    .stream()
+                    .filter(isNotExistsInSBIList(booleanMap.get(false)))
+                    .collect(Collectors.toList());
+
+            deletedCertsInSBI
+                    .forEach(tc ->
+                            proceedImportedCertificate(
+                                    tc, Operation.DELETE, String.format(DELETE_COMMENT, tc.getCertificateName())));
+
+            booleanMap.get(true)
+                    .stream()
+                    .map(ImportedTrustedCertificateDetails::convertToTrustedCertificate)
+                    .forEach(tc -> proceedImportedCertificate(tc, Operation.CREATE, IMPORT_COMMENT));
+
+            booleanMap.get(false)
+                    .forEach(value -> {
+                                LOG.info("Ignore imported trusted certificate {}", value.getCertNameAndDate().getCertName());
+                                adminAuditService.fireAdminAuditEvent(
+                                        new AdminAuditEventRequest(
+                                                ACTION_BY,
+                                                ActionType.valueOf(Operation.CREATE.name()),
+                                                EventType.valueOf(ChangeControlStatus.REJECTED.name()),
+                                                Type.TRUSTED_CERTIFICATE,
+                                                "n/a",
+                                                actionValueIgnored.apply(value.getCertNameAndDate().getCertName(),
+                                                        value.getCertificateErrors())
+                                        ));
                             }
-                        }))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        entry -> entry.getKey().getCertName(),
-                        entry -> {
-                            try {
-                                ImportedTrustedCertificateDetails trustedCertificateDetails =
-                                        new ImportedTrustedCertificateDetails(trustedCertificateDetailsService
-                                                .getTrustedCertificateDetails(entry.getValue(), true));
-                                trustedCertificateDetails.setCertNameAndDate(entry.getKey());
-                                trustedCertificateDetails.setCertificate(entry.getValue());
-                                trustedCertificateDetailsService.checkCertNameUniquenessLocally(
-                                        trustedCertificateDetails, entry.getKey().getCertName());
-                                return trustedCertificateDetails;
-                            } catch (NoSuchAlgorithmException | CertificateEncodingException | InvalidNameException | JsonProcessingException e) {
-                                return null;
-                            }
-                        }
-                ))
-                .values());
-
-
-
-        importedTrustedCertificateDetails
-                .stream()
-                .collect(Collectors.groupingBy(
-                        TrustedCertificateDetails::getThumbprint,
-                        Collectors.toList()
-                ))
-                .values()
-                .forEach(value ->
-                        checkValidation(value, "thumbprint", "SHA-1 Thumbprint is not unique"));
-
-        importedTrustedCertificateDetails
-                .stream()
-                .collect(Collectors.groupingBy(
-                        TrustedCertificateDetails::getThumbprint256,
-                        Collectors.toList()
-                ))
-                .values()
-                .forEach(value ->
-                        checkValidation(value, "thumbprint256", "SHA-2 Thumbprint is not unique"));
-
-        Map<Boolean, List<ImportedTrustedCertificateDetails>> booleanMap = importedTrustedCertificateDetails
-                .stream()
-                .collect(Collectors.partitioningBy(
-                        TrustedCertificateDetails::isValid,
-                        Collectors.toList()
-                ));
-
-        List<TrustedCertificate> deletedCertsInSBI = trustedCertificateService
-                .listAll()
-                .stream()
-                .filter(isNotExistsInSBIList(booleanMap.get(false)))
-                .collect(Collectors.toList());
-
-        deletedCertsInSBI
-                .forEach(tc ->
-                        proceedImportedCertificate(
-                                tc, Operation.DELETE, String.format(DELETE_COMMENT, tc.getCertificateName())));
-
-        booleanMap.get(true)
-                .stream()
-                .map(ImportedTrustedCertificateDetails::convertToTrustedCertificate)
-                .forEach(tc -> proceedImportedCertificate(tc, Operation.CREATE, IMPORT_COMMENT));
-
-        booleanMap.get(false)
-                .forEach(value -> {
-                            LOG.info("Ignore imported trusted certificate {}", value.getCertNameAndDate().getCertName());
-                            adminAuditService.fireAdminAuditEvent(
-                                    new AdminAuditEventRequest(
-                                            ACTION_BY,
-                                            ActionType.valueOf(Operation.CREATE.name()),
-                                            EventType.valueOf(ChangeControlStatus.REJECTED.name()),
-                                            Type.TRUSTED_CERTIFICATE,
-                                            "n/a",
-                                            actionValueIgnored.apply(value.getCertNameAndDate().getCertName(),
-                                                    value.getCertificateErrors())
-                                    ));
-                        }
-                );
+                    );
+        } catch (CertificateIntegrationException ex) {
+            LOG.error("Caught CertificateIntegrationException - {}", ex.getErrorMessage());
+        }
     }
 
     private Predicate<TrustedCertificate> isNotExistsInSBIList(List<ImportedTrustedCertificateDetails> listFromSBI) {

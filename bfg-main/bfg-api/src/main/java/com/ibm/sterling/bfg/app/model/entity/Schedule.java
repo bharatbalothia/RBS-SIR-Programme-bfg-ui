@@ -91,7 +91,7 @@ public class Schedule implements Serializable {
     @PrePersist
     @PreUpdate
     public void init() {
-        nextRun = TimeUtil.convertTimeToLocalDateTime(timeStart);
+        nextRun = TimeUtil.convertTimeToLocalDateTimeForSchedule(timeStart);
         LOG.debug("Setting transaction next runtime to : {}", nextRun);
     }
 

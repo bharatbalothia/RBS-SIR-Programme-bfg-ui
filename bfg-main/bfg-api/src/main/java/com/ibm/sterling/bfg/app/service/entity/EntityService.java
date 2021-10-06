@@ -22,7 +22,7 @@ public interface EntityService extends FieldValueExists {
 
     String findNameById(int id);
 
-    Entity save(Entity entity);
+//    Entity save(Entity entity);
 
     Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status) throws Exception;
 

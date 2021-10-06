@@ -1,27 +1,30 @@
 package com.ibm.sterling.bfg.app.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
-import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.*;
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
 
 public class TimeUtil {
-    public static final String DEFAULT_DATE_FORMAT = "dd'/'MM'/'yyyy HH':'mm':'ss";
+    public static final String    DEFAULT_DATE_FORMAT = "dd'/'MM'/'yyyy HH':'mm':'ss";
+    private static final Logger LOG = LogManager.getLogger(TimeUtil.class);
 
     public static Integer convertTimeToMinutes(String time) {
+        LOG.info("Convert {} to minutes count", time);
         if (time == null) return 0;
         return LocalTime.parse(formatToHHmm(time)).get(MINUTE_OF_DAY);
     }
 
     private static String formatToHHmm(String time) {
+        LOG.info("Convert {} to HH:mm format", time);
         if (time == null) return null;
         String[] array = time.split(":", 2);
         int hour = Integer.parseInt(array[0]);
@@ -31,34 +34,14 @@ public class TimeUtil {
     }
 
     public static String convertMinutesToTime(Integer minutes) {
+        LOG.info("Convert count {} minutes to HH:mm format of time", minutes);
         Duration duration = Duration.ofMinutes(minutes);
         return String.format("%02d:%02d", duration.toHours(),
                 duration.toMinutes() - TimeUnit.HOURS.toMinutes(duration.toHours()));
     }
 
-    public static Date convertTimeToDate(String time) {
-        if (time == null) return null;
-        StringTokenizer tokenizer = new StringTokenizer(time, ":");
-        int hrs = Integer.parseInt(tokenizer.nextToken());
-        int mins = Integer.parseInt(tokenizer.nextToken());
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, hrs);
-        cal.set(Calendar.MINUTE, mins);
-
-        Date scheduleDate = cal.getTime();
-        Date nowDate = new Date();
-
-        if (nowDate.compareTo(scheduleDate)>=0){
-            cal.roll(Calendar.DAY_OF_MONTH, true);
-            return cal.getTime();
-        }
-        else {
-            return scheduleDate;
-        }
-    }
-
-    public static LocalDateTime convertTimeToLocalDateTime(String time) {
+    public static LocalDateTime convertTimeToLocalDateTimeForSchedule(String time) {
+        LOG.info("Convert time {} to LocalDateTime", time);
         if (time == null) return null;
         String[] array = time.split(":", 2);
         int hour = Integer.parseInt(array[0]);
@@ -72,15 +55,18 @@ public class TimeUtil {
     }
 
     public static String formatLocalDateTimeToString(LocalDateTime date) {
+        LOG.info("Convert LocalDateTime {} to {} format", date, DEFAULT_DATE_FORMAT);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
         return date.format(formatter);
     }
 
     public static LocalDateTime formatStringToLocalDateTime(String date) {
+        LOG.info("Convert date {} to LocalDateTime", date);
         return LocalDateTime.parse(date);
     }
 
     public static boolean isStringDateBefore(String from, String to) {
+        LOG.info("Check is {} before {}", from, to);
         try {
             if (checkStringEmptyOrNull(from) || checkStringEmptyOrNull(to)) return true;
             LocalDateTime dateFrom = LocalDateTime.parse(from);

@@ -15,6 +15,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleService {
+
     private static final Logger LOG = LogManager.getLogger(ScheduleService.class);
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -22,6 +23,7 @@ public class ScheduleService {
     private EntityService entityService;
 
     public List<Schedule> findActualSchedulesByEntityId(Integer id) {
+        LOG.info("List of schedules for entity with id {}", id);
         Entity entity = entityService.findById(id).orElse(null);
         return Optional.ofNullable(entity).map(entity1 -> entity.getSchedules()).orElse(null);
     }

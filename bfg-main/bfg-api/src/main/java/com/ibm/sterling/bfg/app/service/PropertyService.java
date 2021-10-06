@@ -39,6 +39,7 @@ import static com.ibm.sterling.bfg.app.utils.RestTemplatesConstants.*;
 public class PropertyService {
 
     private static final Logger LOGGER = LogManager.getLogger(PropertyService.class);
+    public static final String CRON_FOR_SCHEDULING_THE_TRUSTED_CERTS = "0 0 10-18/2 * * MON-FRI";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -131,9 +132,10 @@ public class PropertyService {
             return getPropertyList(getUrl.apply(settings.getBfgUiUrl(), settings.getTrustedCertsImportSchedule())).stream()
                     .map(property -> property.get(PROPERTY_VALUE))
                     .findFirst()
-                    .orElse("0 0 10-18/2 * * MON-FRI");
-        } catch (JsonProcessingException e) {
-            return "0 0 10-18/2 * * MON-FRI";
+                    .orElse(CRON_FOR_SCHEDULING_THE_TRUSTED_CERTS);
+        } catch (Exception e) {
+            LOGGER.error("Failure to connect to property service, provide default cron value for scheduling");
+            return CRON_FOR_SCHEDULING_THE_TRUSTED_CERTS;
         }
     }
 

@@ -22,7 +22,6 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
 
     @Override
     public String convertToDatabaseColumn(List<Schedule> list) {
-        LOGGER.info("Convert list of schedules {} to string", list);
         return Optional.ofNullable(list).map(schedules -> {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
@@ -36,7 +35,6 @@ public class StringToScheduleListConverter implements AttributeConverter<List<Sc
 
     @Override
     public List<Schedule> convertToEntityAttribute(String schedules) {
-        LOGGER.info("Convert string of schedules {} to list of schedules", schedules);
         return Optional.ofNullable(schedules).map(schedulesStr -> {
                     List<Schedule> schedulesList = new ArrayList<>();
                     try {

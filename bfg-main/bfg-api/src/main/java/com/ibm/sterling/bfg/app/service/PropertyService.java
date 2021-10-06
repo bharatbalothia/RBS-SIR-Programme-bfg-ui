@@ -53,9 +53,6 @@ public class PropertyService {
     @Autowired
     private APIDetailsHandler apiDetailsHandler;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     @Value("${api.userName}")
     private String userName;
 
@@ -114,21 +111,21 @@ public class PropertyService {
                 .orElse("");
     }
 
-//    public Integer getTimePicker() throws JsonProcessingException {
-//        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
-//                .stream()
-//                .findFirst()
-//                .map(Integer::valueOf)
-//                .orElse(10);
-//    }
+    public Integer getTimePicker() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
+                .stream()
+                .findFirst()
+                .map(Integer::valueOf)
+                .orElse(10);
+    }
 
-//    public Integer getTokenExpirationTime() throws JsonProcessingException {
-//        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
-//                .stream()
-//                .findFirst()
-//                .map(Integer::valueOf)
-//                .orElse(120);
-//    }
+    public Integer getTokenExpirationTime() throws JsonProcessingException {
+        return getListFromPropertyValueByPropertyKey(settings.getBfgUiUrl(), settings.getTimePicker())
+                .stream()
+                .findFirst()
+                .map(Integer::valueOf)
+                .orElse(120);
+    }
 
     public String getTrustedCertsImportSchedule() {
         try {
@@ -514,7 +511,7 @@ public class PropertyService {
     }
 
     private List<Map<String, String>> getPropertyList(String propertyUrl) throws JsonProcessingException {
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
+        ResponseEntity<String> responseEntity = new RestTemplate().exchange(
                 propertyUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),

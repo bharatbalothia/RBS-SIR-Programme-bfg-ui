@@ -4,14 +4,6 @@ public class DetailFormat {
     private String code;
     private String display;
 
-    public DetailFormat() {
-    }
-
-    public DetailFormat(String code, String display) {
-        this.code = code;
-        this.display = display;
-    }
-
     public String getCode() {
         return code;
     }

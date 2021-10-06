@@ -261,7 +261,7 @@ public class EntityLog {
         this.irishStep2 = entity.getIrishStep2();
         this.schedules = entity.getSchedules();
         this.schedules.forEach(
-                schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTimeForSchedule(schedule.getTimeStart())));
+                schedule -> schedule.setNextRun(TimeUtil.convertTimeToLocalDateTime(schedule.getTimeStart())));
     }
 
     public String getEntityLogId() {

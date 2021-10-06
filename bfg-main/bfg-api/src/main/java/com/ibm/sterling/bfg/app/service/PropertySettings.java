@@ -34,6 +34,8 @@ public class PropertySettings {
     private String sepaDashboardFileMaxValue;
     private String sepaDashboardVisibility;
     private String linkF5;
+    private String tokenExpirationTime;
+    private String timePicker;
 
     public String getReqTypePrefixKey() {
         return reqTypePrefixKey;
@@ -43,8 +45,16 @@ public class PropertySettings {
         return inboundServiceKey;
     }
 
+    public void setInboundServiceKey(String inboundServiceKey) {
+        this.inboundServiceKey = inboundServiceKey;
+    }
+
     public String getSwiftServiceKey() {
         return swiftServiceKey;
+    }
+
+    public void setSwiftServiceKey(String swiftServiceKey) {
+        this.swiftServiceKey = swiftServiceKey;
     }
 
     public String getFileTypeKey() {
@@ -87,72 +97,8 @@ public class PropertySettings {
         return fileStatusPrefixKey;
     }
 
-    public String[] getFileSearchPostfixKey() {
-        return fileSearchPostfixKey;
-    }
-
-    public String getFileErrorUrl() {
-        return fileErrorUrl;
-    }
-
-    public String[] getFileErrorPostfixKey() {
-        return fileErrorPostfixKey;
-    }
-
-    public String getTransactionStatusPrefixKey() {
-        return transactionStatusPrefixKey;
-    }
-
-    public String getTransactionDirectionPrefixKey() {
-        return transactionDirectionPrefixKey;
-    }
-
-    public String getTransactionTypeKey() {
-        return transactionTypeKey;
-    }
-
-    public String getUseraccountGroupsKey() {
-        return useraccountGroupsKey;
-    }
-
-    public String getUseraccountPermissionsKey() {
-        return useraccountPermissionsKey;
-    }
-
-    public String getLoginText() {
-        return loginText;
-    }
-
-    public String getTrustedCertsImportSchedule() {
-        return trustedCertsImportSchedule;
-    }
-
-    public String getSepaDashboardTrxMaxValue() {
-        return sepaDashboardTrxMaxValue;
-    }
-
-    public String getSepaDashboardFileMaxValue() {
-        return sepaDashboardFileMaxValue;
-    }
-
-    public String getSepaDashboardVisibility() {
-        return sepaDashboardVisibility;
-    }
-
-    public String getLinkF5() {
-        return linkF5;
-    }
-
     public void setReqTypePrefixKey(String reqTypePrefixKey) {
         this.reqTypePrefixKey = reqTypePrefixKey;
-    }
-
-    public void setInboundServiceKey(String inboundServiceKey) {
-        this.inboundServiceKey = inboundServiceKey;
-    }
-
-    public void setSwiftServiceKey(String swiftServiceKey) {
-        this.swiftServiceKey = swiftServiceKey;
     }
 
     public void setFileTypeKey(String fileTypeKey) {
@@ -195,59 +141,131 @@ public class PropertySettings {
         this.fileStatusPrefixKey = fileStatusPrefixKey;
     }
 
-    public void setTransactionStatusPrefixKey(String transactionStatusPrefixKey) {
-        this.transactionStatusPrefixKey = transactionStatusPrefixKey;
+    public String[] getFileSearchPostfixKey() {
+        return fileSearchPostfixKey;
     }
 
     public void setFileSearchPostfixKey(String[] fileSearchPostfixKey) {
         this.fileSearchPostfixKey = fileSearchPostfixKey;
     }
 
+    public String getFileErrorUrl() {
+        return fileErrorUrl;
+    }
+
     public void setFileErrorUrl(String fileErrorUrl) {
         this.fileErrorUrl = fileErrorUrl;
+    }
+
+    public String[] getFileErrorPostfixKey() {
+        return fileErrorPostfixKey;
     }
 
     public void setFileErrorPostfixKey(String[] fileErrorPostfixKey) {
         this.fileErrorPostfixKey = fileErrorPostfixKey;
     }
 
+    public String getTransactionStatusPrefixKey() {
+        return transactionStatusPrefixKey;
+    }
+
+    public void setTransactionStatusPrefixKey(String transactionStatusPrefixKey) {
+        this.transactionStatusPrefixKey = transactionStatusPrefixKey;
+    }
+
+    public String getTransactionDirectionPrefixKey() {
+        return transactionDirectionPrefixKey;
+    }
+
     public void setTransactionDirectionPrefixKey(String transactionDirectionPrefixKey) {
         this.transactionDirectionPrefixKey = transactionDirectionPrefixKey;
+    }
+
+    public String getTransactionTypeKey() {
+        return transactionTypeKey;
     }
 
     public void setTransactionTypeKey(String transactionTypeKey) {
         this.transactionTypeKey = transactionTypeKey;
     }
 
+    public String getUseraccountGroupsKey() {
+        return useraccountGroupsKey;
+    }
+
     public void setUseraccountGroupsKey(String useraccountGroupsKey) {
         this.useraccountGroupsKey = useraccountGroupsKey;
+    }
+
+    public String getUseraccountPermissionsKey() {
+        return useraccountPermissionsKey;
     }
 
     public void setUseraccountPermissionsKey(String useraccountPermissionsKey) {
         this.useraccountPermissionsKey = useraccountPermissionsKey;
     }
 
+    public String getLoginText() {
+        return loginText;
+    }
+
     public void setLoginText(String loginText) {
         this.loginText = loginText;
+    }
+
+    public String getTrustedCertsImportSchedule() {
+        return trustedCertsImportSchedule;
     }
 
     public void setTrustedCertsImportSchedule(String trustedCertsImportSchedule) {
         this.trustedCertsImportSchedule = trustedCertsImportSchedule;
     }
 
+    public String getSepaDashboardTrxMaxValue() {
+        return sepaDashboardTrxMaxValue;
+    }
+
     public void setSepaDashboardTrxMaxValue(String sepaDashboardTrxMaxValue) {
         this.sepaDashboardTrxMaxValue = sepaDashboardTrxMaxValue;
+    }
+
+    public String getSepaDashboardFileMaxValue() {
+        return sepaDashboardFileMaxValue;
     }
 
     public void setSepaDashboardFileMaxValue(String sepaDashboardFileMaxValue) {
         this.sepaDashboardFileMaxValue = sepaDashboardFileMaxValue;
     }
 
+    public String getSepaDashboardVisibility() {
+        return sepaDashboardVisibility;
+    }
+
     public void setSepaDashboardVisibility(String sepaDashboardVisibility) {
         this.sepaDashboardVisibility = sepaDashboardVisibility;
     }
 
+    public String getLinkF5() {
+        return linkF5;
+    }
+
     public void setLinkF5(String linkF5) {
         this.linkF5 = linkF5;
+    }
+
+    public String getTokenExpirationTime() {
+        return tokenExpirationTime;
+    }
+
+    public void setTokenExpirationTime(String tokenExpirationTime) {
+        this.tokenExpirationTime = tokenExpirationTime;
+    }
+
+    public String getTimePicker() {
+        return timePicker;
+    }
+
+    public void setTimePicker(String timePicker) {
+        this.timePicker = timePicker;
     }
 }

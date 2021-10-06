@@ -35,40 +35,37 @@ public class ChangeControlService {
     @Autowired
     private EntityValidationComponent entityValidation;
 
-//    public List<ChangeControl> listAll() {
-//        return changeControlRepository.findAll();
-//    }
+    public List<ChangeControl> listAll() {
+        return changeControlRepository.findAll();
+    }
 
     public Optional<ChangeControl> findById(String id) {
-        LOGGER.info("Find change control by id {}", id);
+        LOGGER.info("change control by id {}", id);
         return changeControlRepository.findById(id);
     }
 
-//    public Optional<ChangeControl> findPendingChangeById(String id) {
-//        LOGGER.info("pending change control by id {}", id);
-//        return changeControlRepository.findByChangeIDAndStatus(id, ChangeControlStatus.PENDING);
-//    }
+    public Optional<ChangeControl> findPendingChangeById(String id) {
+        LOGGER.info("pending change control by id {}", id);
+        return changeControlRepository.findByChangeIDAndStatus(id, ChangeControlStatus.PENDING);
+    }
 
     @Transactional
     public ChangeControl save(ChangeControl changeControl) {
-        LOGGER.info("Persist {}", changeControl);
         return changeControlRepository.save(changeControl);
     }
 
-//    @Transactional
-//    public ChangeControl updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
-//        ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
-//                .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
-//        controlFromBD.setStatus(status);
-//        changeControlRepository.save(controlFromBD);
-//        return controlFromBD;
-//    }
+    @Transactional
+    public ChangeControl updateStatus(String changeControlId, ChangeControlStatus status) throws Exception {
+        ChangeControl controlFromBD = changeControlRepository.findById(changeControlId)
+                .orElseThrow(() -> new Exception("ChangeControl (id = " + changeControlId + ") not found"));
+        controlFromBD.setStatus(status);
+        changeControlRepository.save(controlFromBD);
+        return controlFromBD;
+    }
 
     @Transactional
     public void setApproveInfo(ChangeControl changeControl, String user,
                                String comments, ChangeControlStatus status) {
-        LOGGER.info("Set approve information - approve user : {}, comments : {}, status : {} for {}",
-                user, comments, status, changeControl);
         changeControl.setApprover(user);
         changeControl.setApproverComments(comments);
         changeControl.setStatus(status);
@@ -78,13 +75,10 @@ public class ChangeControlService {
     public List<ChangeControl> findPendingChangeControlsAsc(String entity, String service, String swiftDN) {
         List<ChangeControl> pendingChangeControlList = findPendingChangeControls(entity, service, swiftDN);
         Collections.sort(pendingChangeControlList);
-        LOGGER.info("Sort change control list by ResultMeta1 {}", entity);
         return pendingChangeControlList;
     }
 
     public List<ChangeControl> findPendingChangeControls(String entity, String service, String swiftDN) {
-        LOGGER.info("Search pending change control by entity: {}, service: {}, swiftDN: {}",
-                entity, service, swiftDN);
         Specification<ChangeControl> specification = Specification
                 .where(
                         GenericSpecification.<ChangeControl>filter("resultMeta1", entity))

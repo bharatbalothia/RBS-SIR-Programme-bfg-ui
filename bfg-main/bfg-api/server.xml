@@ -21,6 +21,8 @@
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint" host="${default.host}" httpPort="${default.http.port}" httpsPort="9443"/>
 
+    <logging logDirectory="${com.ibm.ws.logging.log.directory}"/>
+
     <!-- Automatically expand WAR files and EAR files -->
     <applicationManager autoExpand="true"/>
 

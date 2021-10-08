@@ -31,6 +31,7 @@ import java.util.*;
 public class CertificateExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LogManager.getLogger(CertificateExceptionHandler.class);
     private static final String CONTACT_MESSAGE = "Please contact application support.";
+    public static final String CERTIFICATE_EXCEPTION = "Handled Certificate exception: {} - {}";
 
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
@@ -42,19 +43,22 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
     private ExceptionDetailsHandler exceptionDetailsHandler;
 
     @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+    public ResponseEntity<Object> handleRestTemplateException(HttpStatusCodeException ex) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(CertificateNotFoundException.class)
-    public ResponseEntity handleEntityApprovalException(CertificateNotFoundException ex) {
+    public ResponseEntity<Object> handleEntityApprovalException(CertificateNotFoundException ex) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(CertificateErrorCode.CertificateNotFoundException);
         Optional.ofNullable(ex.getMessage()).ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
     @ExceptionHandler(CertificateApprovalException.class)
-    public ResponseEntity handleCertificateApprovalException(CertificateApprovalException ex) {
+    public ResponseEntity<Object> handleCertificateApprovalException(CertificateApprovalException ex) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(CertificateErrorCode.CertificateApprovalException);
         error.setMessage(ex.getApprovalErrorMessage() + " - " +
                 Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "errorDescription"))
@@ -67,28 +71,32 @@ public class CertificateExceptionHandler extends ResponseEntityExceptionHandler 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleMethodArgumentNotValid(ex, CertificateErrorCode.class);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleConstraintViolation(ex, CertificateErrorCode.class);
     }
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleMissingServletRequestParameter(ex, CertificateErrorCode.class);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleMethodArgumentTypeMismatch(ex, CertificateErrorCode.class);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        LOG.info("Certificate exception: " + ex.getMessage());
+        LOG.info(CERTIFICATE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleAll(ex, CertificateErrorCode.class);
     }
 

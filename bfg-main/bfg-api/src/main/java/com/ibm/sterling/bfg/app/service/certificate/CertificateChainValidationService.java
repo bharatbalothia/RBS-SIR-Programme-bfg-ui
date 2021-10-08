@@ -3,6 +3,8 @@ package com.ibm.sterling.bfg.app.service.certificate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import java.util.*;
 
 @Service
 public class CertificateChainValidationService {
+    private static final Logger LOG = LogManager.getLogger(CertificateChainValidationService.class);
 
     @Value("${certificate.chain.url}")
     private String certificateChainUrl;
@@ -22,10 +25,12 @@ public class CertificateChainValidationService {
     private ObjectMapper objectMapper;
 
     public List<Map<String, String>> getCertificateChain(String issuerDN) throws JsonProcessingException {
+        LOG.info("Trying to receive the chain for {}", issuerDN);
         ResponseEntity<String> response;
         try {
             response = new RestTemplate().getForEntity(certificateChainUrl + "?issuerdn=" + issuerDN, String.class);
         } catch (HttpStatusCodeException e) {
+            LOG.error("Failure on getting the chain");
             String message = e.getMessage();
             return Collections.singletonList(Collections.singletonMap("error", Optional.ofNullable(message)
                     .map(errMessage -> errMessage.substring(message.indexOf("[") + 1, message.indexOf("]")))

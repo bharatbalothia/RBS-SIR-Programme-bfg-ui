@@ -29,6 +29,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -89,6 +92,9 @@ public class SearchService {
 
     @Autowired
     private ExportPDFReportService exportPDFService;
+
+    @Autowired
+    private Validator validator;
 
 	private static final int RANGE = 999;
 
@@ -224,7 +230,7 @@ public class SearchService {
         if (documents.size() == 1) {
             document = documents.get(0);
             document.setDocumentPayload(getDocumentPayload(documentId).get("document"));
-        } else throw new DocumentContentNotFoundException();
+        } else throw new DocumentContentNotFoundException("Document content is not found");
         return document;
     }
 
@@ -358,6 +364,10 @@ public class SearchService {
         FileSearchCriteria fileSearchCriteria = new FileSearchCriteria();
         Optional.ofNullable(from).ifPresent(fileSearchCriteria::setFrom);
         Optional.ofNullable(to).ifPresent(fileSearchCriteria::setTo);
+        Set<ConstraintViolation<FileSearchCriteria>> violations = validator.validate(fileSearchCriteria);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         fileSearchCriteria.setSize(propertyService.getFileMaxValueForReport());
         List<SEPAFile> files = getListFromSBI(fileSearchCriteria, fileSearchUrl, SEPAFile.class);
         Optional.ofNullable(files).orElseThrow(

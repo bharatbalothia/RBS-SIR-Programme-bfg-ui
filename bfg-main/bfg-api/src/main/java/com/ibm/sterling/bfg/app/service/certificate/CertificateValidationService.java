@@ -37,6 +37,7 @@ public class CertificateValidationService {
     private ObjectMapper objectMapper;
 
     public Map<String, Object> getCertificateChain(String certificateContent) throws JsonProcessingException {
+        LOG.info("Trying to receive the chain for {}", certificateContent);
         String certificateValidationResponse;
         try {
             certificateValidationResponse = new RestTemplate().postForObject(

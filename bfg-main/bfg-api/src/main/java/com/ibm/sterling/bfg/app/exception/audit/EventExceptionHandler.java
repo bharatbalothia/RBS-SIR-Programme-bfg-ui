@@ -3,7 +3,6 @@ package com.ibm.sterling.bfg.app.exception.audit;
 import com.ibm.sterling.bfg.app.controller.AuditEventController;
 import com.ibm.sterling.bfg.app.exception.ErrorMessageHandler;
 import com.ibm.sterling.bfg.app.exception.ExceptionDetailsHandler;
-import com.ibm.sterling.bfg.app.exception.entity.TransmittalException;
 import com.ibm.sterling.bfg.app.model.exception.EntityErrorCode;
 import com.ibm.sterling.bfg.app.model.exception.ErrorMessage;
 import com.ibm.sterling.bfg.app.model.exception.EventErrorCode;
@@ -25,6 +24,7 @@ import java.util.Optional;
 public class EventExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LogManager.getLogger(EventExceptionHandler.class);
+    public static final String EVENT_EXCEPTION = "Handled Event exception: {} - {}";
 
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
@@ -33,12 +33,14 @@ public class EventExceptionHandler extends ResponseEntityExceptionHandler {
     private ExceptionDetailsHandler exceptionDetailsHandler;
 
     @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+    public ResponseEntity<Object> handleRestTemplateException(HttpStatusCodeException ex) {
+        LOG.info(EVENT_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(InvalidUserForEventLogAccessException.class)
-    public ResponseEntity handleInvalidUserForEventLogAccessExceptionException(InvalidUserForEventLogAccessException ex) {
+    public ResponseEntity<Object> handleInvalidUserForEventLogAccessExceptionException(InvalidUserForEventLogAccessException ex) {
+        LOG.info(EVENT_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 EventErrorCode.InvalidUserForEventLogAccessException);
         Optional.ofNullable(ex.getMessage()).ifPresent(errorMessage::setMessage);
@@ -47,7 +49,7 @@ public class EventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        LOG.info("Event exception: " + ex.getMessage());
+        LOG.info(EVENT_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleAll(ex, EntityErrorCode.class);
     }
 

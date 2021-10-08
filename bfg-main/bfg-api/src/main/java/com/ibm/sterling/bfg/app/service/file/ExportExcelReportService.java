@@ -26,7 +26,7 @@ public class ExportExcelReportService {
     private static final String TRX_SHEET_NAME = "Transactions for %s";
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
-        LOGGER.info("Generate an excel report");
+        LOGGER.info("Generate an excel report of files");
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet(SEPA_SHEET_NAME);
             sheet.createFreezePane(0, 1);
@@ -85,7 +85,7 @@ public class ExportExcelReportService {
     }
 
     public ByteArrayInputStream generateExcelReportForTransactions(List<Transaction> transactions, String fileName) throws IOException {
-        LOGGER.info("Generate an excel report");
+        LOGGER.info("Generate an excel report  of transactions for {}", fileName);
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Transactions for " + fileName);
             sheet.createFreezePane(0, 1);

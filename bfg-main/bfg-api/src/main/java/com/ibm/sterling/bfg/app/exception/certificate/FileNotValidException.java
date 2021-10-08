@@ -5,4 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "File is not valid")
 public class FileNotValidException extends RuntimeException {
+    public FileNotValidException() {
+    }
+
+    public FileNotValidException(String message) {
+        super(message);
+    }
 }

@@ -25,7 +25,7 @@ public class ExceptionDetailsHandler {
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
 
-    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+    public ResponseEntity<Object> handleRestTemplateException(HttpStatusCodeException ex) {
         String message = ex.getMessage();
         return ResponseEntity.status(ex.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)

@@ -42,4 +42,12 @@ public class Transmittal {
         this.fileType = fileType;
     }
 
+    @Override
+    public String toString() {
+        return "Transmittal{" +
+                "username='" + username + '\'' +
+                ", entityID=" + entityID +
+                ", fileType='" + fileType + '\'' +
+                '}';
+    }
 }

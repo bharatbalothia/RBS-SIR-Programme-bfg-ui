@@ -5,4 +5,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY, reason = "Status is PENDING")
 public class StatusPendingException extends RuntimeException {
+
+    public StatusPendingException() {
+    }
+
+    public StatusPendingException(String message) {
+        super(message);
+    }
 }

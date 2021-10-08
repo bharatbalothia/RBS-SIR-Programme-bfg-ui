@@ -12,6 +12,8 @@ import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleBfgUiRestRespons
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleRequest;
 import com.ibm.sterling.bfg.app.model.entity.SWIFTNetRoutingRuleServiceResponse;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -30,11 +32,13 @@ import static com.ibm.sterling.bfg.app.model.changecontrol.Operation.*;
 
 @Service
 public class SWIFTNetRoutingRuleService {
+    private static final Logger LOG = LogManager.getLogger(SWIFTNetRoutingRuleService.class);
 
     private static final String CREATION_APPROVAL_ERROR = "The Entity is not approved. Error creating routing rules";
     private static final String DELETING_APPROVAL_ERROR = "The Entity is not approved. Error deleting routing rules";
     private static final String RULE_EXISTS_ERROR = "A route already exists with this name";
     private static final String NO_RULES_FOUND_WARNING = "No previously created rules were found";
+    private static final String GET_RULES_ERROR = "Failure to get RR from SBI";
 
     @Value("${routingRule.url}")
     private String routingRuleViewUrl;
@@ -62,6 +66,7 @@ public class SWIFTNetRoutingRuleService {
 
     public SWIFTNetRoutingRuleServiceResponse executeRoutingRuleOperation(Operation operation, Entity entity, String changer)
             throws JsonProcessingException {
+        LOG.info("Trying to {} RR for Entity {}", operation, entity.getEntity());
         List<String> routingRulesByEntityName = Optional.ofNullable(getRoutingRulesByEntityName(entity.getEntity())).orElseGet(ArrayList::new);
         if (entity.getRouteInbound()) {
             if (CREATE.equals(operation)) {
@@ -107,6 +112,7 @@ public class SWIFTNetRoutingRuleService {
                     String.class
             );
         } catch (HttpStatusCodeException e) {
+            LOG.error("Failure on creating the RR in SBI");
             throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(), CREATION_APPROVAL_ERROR);
         }
         JsonNode root = objectMapper.readTree(Objects.requireNonNull(routingRuleResponse));
@@ -129,18 +135,24 @@ public class SWIFTNetRoutingRuleService {
     }
 
     private List<String> getRoutingRulesByEntityName(String entityName) throws JsonProcessingException {
-        ResponseEntity<String> response = new RestTemplate().exchange(
-                routingRuleViewUrl + "?entity-name=" + entityName,
-                HttpMethod.GET,
-                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
-                String.class);
-        JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
-        return objectMapper.convertValue(root, new TypeReference<List<String>>() {
-        });
+        try {
+            ResponseEntity<String> response = new RestTemplate().exchange(
+                    routingRuleViewUrl + "?entity-name=" + entityName,
+                    HttpMethod.GET,
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                    String.class);
+            JsonNode root = objectMapper.readTree(Objects.requireNonNull(response.getBody()));
+            return objectMapper.convertValue(root, new TypeReference<List<String>>() {
+            });
+        } catch (HttpStatusCodeException e) {
+            LOG.error("Failure on getting the RR for Entity {} from SBI", entityName);
+            throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(),
+                    GET_RULES_ERROR);
+        }
     }
 
     private void deleteRoutingRules(List<String> routingRulesByEntityName) {
-        HttpEntity httpEntity = new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password));
+        HttpEntity<String> httpEntity = new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password));
         routingRulesByEntityName.forEach(routingRule -> {
             try {
                 new RestTemplate().exchange(
@@ -150,7 +162,9 @@ public class SWIFTNetRoutingRuleService {
                         String.class
                 );
             } catch (HttpStatusCodeException e) {
-                throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(), DELETING_APPROVAL_ERROR);
+                LOG.error("Failure on deleting the RR in SBI");
+                throw new SWIFTNetRoutingRuleException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode(),
+                        DELETING_APPROVAL_ERROR);
             }
         });
     }

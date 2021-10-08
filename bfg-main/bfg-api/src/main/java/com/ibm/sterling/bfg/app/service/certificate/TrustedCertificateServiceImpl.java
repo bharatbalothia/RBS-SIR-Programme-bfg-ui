@@ -26,14 +26,17 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.naming.InvalidNameException;
 import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.ACCEPTED;
 import static com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus.PENDING;
@@ -147,7 +150,7 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
         TrustedCertificateDetails trustedCertificateDetails =
                 trustedCertificateDetailsService.getTrustedCertificateDetails(x509Certificate, true);
         if (!trustedCertificateDetails.isValid())
-            throw new CertificateNotValidException();
+            throw new CertificateNotValidException("Trusted certificate " + certificateName + " is not valid");
         TrustedCertificate trustedCertificate = trustedCertificateDetails.convertToTrustedCertificate();
         trustedCertificate.setCertificateName(certificateName);
         trustedCertificate.setChangerComments(comment);
@@ -182,13 +185,14 @@ public class TrustedCertificateServiceImpl implements TrustedCertificateService 
                                                                 String approverComments, ChangeControlStatus status)
             throws JsonProcessingException, CertificateEncodingException {
         if (!PENDING.equals(changeControlCert.getStatus())) {
-            throw new StatusNotPendingException();
+            throw new StatusNotPendingException("Status of CC " + changeControlCert.getChangeID() +
+                    " is not pending");
         }
         TrustedCertificate cert = new TrustedCertificate();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControlCert.getChanger()))
-                throw new InvalidUserForApprovalException();
+                throw new InvalidUserForApprovalException(userName + " is invalid for APPROVAL");
             cert = approveCertificate(changeControlCert);
         }
         changeControlCertService.setApproveInfo(changeControlCert, userName, approverComments, status);

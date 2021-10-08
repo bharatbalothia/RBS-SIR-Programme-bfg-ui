@@ -6,6 +6,8 @@ import com.ibm.sterling.bfg.app.model.report.Column;
 import com.ibm.sterling.bfg.app.model.report.Table;
 import com.ibm.sterling.bfg.app.model.report.TableBuilder;
 import com.ibm.sterling.bfg.app.service.report.ConverterToPDF;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -21,6 +23,8 @@ import java.util.Optional;
 
 @Service
 public class ExportPDFReportService {
+    private static final Logger LOGGER = LogManager.getLogger(ExportPDFReportService.class);
+
     @Autowired
     private ConverterToPDF converterToPDF;
 
@@ -41,6 +45,7 @@ public class ExportPDFReportService {
     private static final int NAME_LENGTH = 50;
 
     public ByteArrayInputStream generatePDFReport(List<SEPAFile> files) throws IOException {
+        LOGGER.info("Generate a PDF report of files");
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 45));
         columns.add(new Column("File Name", 370));
@@ -87,6 +92,7 @@ public class ExportPDFReportService {
     }
 
     public ByteArrayInputStream generatePDFReportForTransactions(List<Transaction> transactions, String fileName, Integer fileId) throws IOException {
+        LOGGER.info("Generate a PDF report of transactions for {}", fileName);
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("SI.No", 60));
         columns.add(new Column("Transaction ID", 370));

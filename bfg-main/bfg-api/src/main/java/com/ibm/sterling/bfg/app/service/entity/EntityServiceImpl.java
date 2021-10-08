@@ -134,13 +134,14 @@ public class EntityServiceImpl implements EntityService {
     public Entity getEntityAfterApprove(ChangeControl changeControl, String approverComments, ChangeControlStatus status)
             throws JsonProcessingException {
         if (!PENDING.equals(changeControl.getStatus())) {
-            throw new StatusNotPendingException();
+            throw new StatusNotPendingException("Status of CC " + changeControl.getChangeID() +
+                    " is not pending");
         }
         Entity entity = new Entity();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         if (ACCEPTED.equals(status)) {
             if (userName.equals(changeControl.getChanger()))
-                throw new InvalidUserForApprovalException();
+                throw new InvalidUserForApprovalException(userName + " is invalid for APPROVAL");
             entity = approveEntity(changeControl);
         }
         changeControlService.setApproveInfo(changeControl, userName, approverComments, status);
@@ -149,7 +150,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     private Entity approveEntity(ChangeControl changeControl) throws JsonProcessingException {
-        LOG.info("Approve the Entity " + changeControl.getOperation() + " action");
+        LOG.info("Approve the Entity {} action", changeControl.getOperation());
         Entity entity = changeControl.convertEntityLogToEntity();
         Operation operation = changeControl.getOperation();
         checkParticipantOnApproval(entity, operation);

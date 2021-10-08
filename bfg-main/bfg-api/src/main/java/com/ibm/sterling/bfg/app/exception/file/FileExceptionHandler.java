@@ -31,6 +31,7 @@ import java.util.*;
 public class FileExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LogManager.getLogger(FileExceptionHandler.class);
+    public static final String FILE_EXCEPTION = "Handled File exception: {} - {}";
 
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
@@ -42,12 +43,14 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     private ExceptionDetailsHandler exceptionDetailsHandler;
 
     @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+    public ResponseEntity<Object> handleRestTemplateException(HttpStatusCodeException ex) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(DocumentContentNotFoundException.class)
-    public ResponseEntity handleDocumentContentNotFoundException(DocumentContentNotFoundException ex) {
+    public ResponseEntity<Object> handleDocumentContentNotFoundException(DocumentContentNotFoundException ex) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(FileErrorCode.DocumentContentNotFoundException);
         Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "errorDescription"))
                 .ifPresent(error::setMessage);
@@ -55,7 +58,8 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FileTransactionNotFoundException.class)
-    public ResponseEntity handleFileTransactionNotFoundException(FileTransactionNotFoundException ex) {
+    public ResponseEntity<Object> handleFileTransactionNotFoundException(FileTransactionNotFoundException ex) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(FileErrorCode.FileTransactionNotFoundException);
         Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "message"))
                 .ifPresent(error::setMessage);
@@ -63,7 +67,8 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FileNotFoundException.class)
-    public ResponseEntity handleFileNotFoundException(FileNotFoundException ex) {
+    public ResponseEntity<Object> handleFileNotFoundException(FileNotFoundException ex) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(FileErrorCode.FileNotFoundException);
         Optional.ofNullable(apiDetailsHandler.extractErrorMessage(ex.getMessage(), "message"))
                 .ifPresent(error::setMessage);
@@ -73,17 +78,19 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleMethodArgumentNotValid(ex, FileErrorCode.class);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleMethodArgumentTypeMismatch(ex, FileErrorCode.class);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        LOG.info("File exception: " + ex.getMessage());
+        LOG.info(FILE_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleAll(ex, FileErrorCode.class);
     }
 

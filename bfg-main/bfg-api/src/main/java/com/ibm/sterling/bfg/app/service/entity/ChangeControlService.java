@@ -2,10 +2,9 @@ package com.ibm.sterling.bfg.app.service.entity;
 
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusNotPendingException;
 import com.ibm.sterling.bfg.app.exception.changecontrol.StatusPendingException;
-import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
-import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.model.entity.ChangeControl;
 import com.ibm.sterling.bfg.app.model.entity.Entity;
 import com.ibm.sterling.bfg.app.model.entity.EntityLog;
 import com.ibm.sterling.bfg.app.model.validation.EntityValidationComponent;
@@ -121,13 +120,15 @@ public class ChangeControlService {
     public void checkStatusOfChangeControl(ChangeControl changeControl) {
         LOGGER.info("Checking status of change control {}", changeControl);
         if (!PENDING.equals(changeControl.getStatus())) {
-            throw new StatusNotPendingException();
+            throw new StatusNotPendingException("Status of change control " + changeControl.getChangeID() +
+                    " is not pending");
         }
     }
 
     public void checkOnPendingState(String entityName, String service) {
         LOGGER.info("Checking if entity {} in a pending state", entityName);
         if (changeControlRepository.existsByResultMeta1AndResultMeta2AndStatus(entityName, service, PENDING))
-            throw new StatusPendingException();
+            throw new StatusPendingException("Entity " + entityName +
+                    " in pending state");
     }
 }

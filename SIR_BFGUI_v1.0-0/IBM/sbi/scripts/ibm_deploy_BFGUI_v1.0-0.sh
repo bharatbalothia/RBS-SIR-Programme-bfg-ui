@@ -159,11 +159,11 @@ then
 	cat ${BUNDLE_SET}/sbi/properties/filesystem/jdbc_customer.properties.in >> ${SIINSTALLPATH}/properties/jdbc_customer.properties.in
 	
 	#copy in the settings for an existing pool so SBI will start - environment-config will update this later
-	JDBC_URL=$((grep "^BFG_DYNAMIC.url" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
-	JDBC_CATALOG=$((grep "^BFG_DYNAMIC.catalog" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
-	JDBC_SCHEMA=$((grep "^BFG_DYNAMIC.schema" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
-	JDBC_USER=$((grep "^BFG_DYNAMIC.user" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
-	JDBC_PASS=$((grep "^BFG_DYNAMIC.password" | cut -d= -f2) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_URL=$((grep "^BFG_DYNAMIC.url" | cut -d= -f2-) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_CATALOG=$((grep "^BFG_DYNAMIC.catalog" | cut -d= -f2-) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_SCHEMA=$((grep "^BFG_DYNAMIC.schema" | cut -d= -f2-) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_USER=$((grep "^BFG_DYNAMIC.user" | cut -d= -f2-) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
+	JDBC_PASS=$((grep "^BFG_DYNAMIC.password" | cut -d= -f2-) <${SIINSTALLPATH}/properties/jdbc_customer.properties)
 
 	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.url=.*|BFG_DYNAMIC_REST.url=${JDBC_URL}|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
 	sed -i "s|^[^#]*\s*BFG_DYNAMIC_REST.catalog=.*|BFG_DYNAMIC_REST.catalog=${JDBC_CATALOG}|" $SIINSTALLPATH/properties/jdbc_customer.properties.in
@@ -190,7 +190,8 @@ then
 	cat ${BUNDLE_SET}/sbi/properties/filesystem/pages.properties_customer_ext >> ${SIINSTALLPATH}/properties/pages.properties_customer_ext 
 	
 	#comment out filegateway_eventlinks.FB_SFG_BUNDLE_LINK
-	sed -i "s/^\(filegateway_eventlinks.FB_SFG_BUNDLE_LINK\)/#\1/g" ${SIINSTALLPATH}/properties/gpl.properties
+	sed -i "s/^\(filegateway_eventlinks.FB_SFG_BUNDLE_LINK\)/#\1/g" ${SIINSTALLPATH}/properties/customer_overrides.properties.in
+	
 	#insert the new setting after the commented out setting
 	awk -v file2="${BUNDLE_SET}/sbi/properties/filesystem/customer_overrides.properties.in" '{ print }found { next }/#filegateway_eventlinks.FB_SFG_BUNDLE_LINK=/ { system("cat " file2); found=1 }' ${SIINSTALLPATH}/properties/customer_overrides.properties.in > ${SIINSTALLPATH}/properties/customer_overrides.properties.tmp_BFGUI_100
 	mv ${SIINSTALLPATH}/properties/customer_overrides.properties.tmp_BFGUI_100 ${SIINSTALLPATH}/properties/customer_overrides.properties.in

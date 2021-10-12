@@ -7,11 +7,12 @@ import com.ibm.sterling.bfg.app.service.entity.EntityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
 
 public class DetailsValidator extends GenericValidator implements ConstraintValidator<DetailsValid, Entity> {
 
@@ -43,7 +44,7 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
                 DetailsField.ENTITY_PARTICIPANT_TYPE,
                 entityParticipantType,
                 constraintValidatorContext,
-                StringUtils::isEmpty,
+                ObjectUtils::isEmpty,
                 fieldName -> fieldName + " cannot be blank"
         );
         if (isEntityParticipantTypeNotNull) {
@@ -53,7 +54,7 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
                         DetailsField.DIRECT_PARTICIPANT,
                         entity.getDirectParticipant(),
                         constraintValidatorContext,
-                        StringUtils::isEmpty,
+                        ObjectUtils::isEmpty,
                         emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, INDIRECT_PARTICIPANT_TYPE)
                 )
                         & isValidField(
@@ -87,7 +88,7 @@ public class DetailsValidator extends GenericValidator implements ConstraintVali
                             }
                         },
                         constraintValidatorContext,
-                        StringUtils::isEmpty,
+                        ObjectUtils::isEmpty,
                         emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, DIRECT_PARTICIPANT_TYPE)
                 ) & isValidFieldGroup(
                         new HashMap<Field, Integer>() {

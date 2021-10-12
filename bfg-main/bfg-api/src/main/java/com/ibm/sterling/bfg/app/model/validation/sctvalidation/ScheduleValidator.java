@@ -5,7 +5,7 @@ import com.ibm.sterling.bfg.app.model.validation.Field;
 import com.ibm.sterling.bfg.app.model.validation.GenericValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -27,7 +27,7 @@ public class ScheduleValidator extends GenericValidator implements ConstraintVal
                 ScheduleField.ISWINDOW,
                 isWindow,
                 constraintValidatorContext,
-                StringUtils::isEmpty,
+                ObjectUtils::isEmpty,
                 fieldName -> fieldName + " cannot be blank"
         );
         if (isWindowNotNull) {
@@ -41,7 +41,7 @@ public class ScheduleValidator extends GenericValidator implements ConstraintVal
                             }
                         },
                         constraintValidatorContext,
-                        StringUtils::isEmpty,
+                        ObjectUtils::isEmpty,
                         emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, WINDOW)
                 );
             }
@@ -49,7 +49,7 @@ public class ScheduleValidator extends GenericValidator implements ConstraintVal
                     ScheduleField.TIMESTART,
                     schedule.getTimeStart(),
                     constraintValidatorContext,
-                    StringUtils::isEmpty,
+                    ObjectUtils::isEmpty,
                     emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, DAILY)
             );
         }

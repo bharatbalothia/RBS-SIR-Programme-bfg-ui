@@ -21,7 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -86,8 +86,8 @@ public class SWIFTNetRoutingRuleService {
             List<Map<String, String>> warnings = null;
             if (routingRulesByEntityName.isEmpty()) {
                 Boolean routeInboundOfOldEntity = entityService.findById(entity.getEntityId())
-                        .map(record -> !StringUtils.isEmpty(record.getInboundRequestorDN()) &&
-                                !StringUtils.isEmpty(record.getInboundResponderDN()))
+                        .map(record -> !ObjectUtils.isEmpty(record.getInboundRequestorDN()) &&
+                                !ObjectUtils.isEmpty(record.getInboundResponderDN()))
                         .orElse(false);
                 if (routeInboundOfOldEntity) {
                     warnings = Collections.singletonList(Collections.singletonMap(operation.name(), NO_RULES_FOUND_WARNING));

@@ -8,6 +8,13 @@ public class IntegratedCertNameAndDate {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy hh.mm a")
     private LocalDateTime creationOrUpdateTime;
 
+    public IntegratedCertNameAndDate() {
+    }
+
+    public IntegratedCertNameAndDate(String certificateName, LocalDateTime localDateTime) {
+
+    }
+
     public String getCertName() {
         return certName;
     }

@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -89,8 +89,8 @@ public class EntityController {
                     record.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
                     );
-                    if (StringUtils.isEmpty(record.getInboundRequestorDN()) ||
-                            StringUtils.isEmpty(record.getInboundResponderDN()))
+                    if (ObjectUtils.isEmpty(record.getInboundRequestorDN()) ||
+                            ObjectUtils.isEmpty(record.getInboundResponderDN()))
                         record.setRouteInbound(Boolean.FALSE);
                     return ok(record);
                 }).orElseThrow(EntityNotFoundException::new);

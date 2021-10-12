@@ -5,4 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.FORBIDDEN, reason = "Invalid user for approval")
 public class InvalidUserForApprovalException extends RuntimeException {
+    public InvalidUserForApprovalException() {
+    }
+
+    public InvalidUserForApprovalException(String message) {
+        super(message);
+    }
 }

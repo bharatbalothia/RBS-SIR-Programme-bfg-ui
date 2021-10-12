@@ -1,5 +1,8 @@
 package com.ibm.sterling.bfg.app.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,10 +13,12 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
-import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.*;
+import static com.ibm.sterling.bfg.app.utils.FieldCheckUtil.checkStringEmptyOrNull;
 import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
 
 public class TimeUtil {
+
+    private static final Logger LOG = LogManager.getLogger(TimeUtil.class);
     public static final String DEFAULT_DATE_FORMAT = "dd'/'MM'/'yyyy HH':'mm':'ss";
 
     public static Integer convertTimeToMinutes(String time) {
@@ -81,6 +86,7 @@ public class TimeUtil {
     }
 
     public static boolean isStringDateBefore(String from, String to) {
+        LOG.info("Check is {} before {}", from, to);
         try {
             if (checkStringEmptyOrNull(from) || checkStringEmptyOrNull(to)) return true;
             LocalDateTime dateFrom = LocalDateTime.parse(from);

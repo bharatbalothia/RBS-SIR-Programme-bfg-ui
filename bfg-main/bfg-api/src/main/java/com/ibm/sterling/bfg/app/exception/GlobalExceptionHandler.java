@@ -21,6 +21,7 @@ import java.util.Objects;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LogManager.getLogger(GlobalExceptionHandler.class);
+    public static final String GLOBAL_EXCEPTION = "Handled Global exception: {} - {}";
 
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
@@ -30,13 +31,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        LOG.info("Global exception: " + ex.getMessage());
+        LOG.info(GLOBAL_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleAll(ex, GlobalErrorCode.class);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
                                                                          HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LOG.info(GLOBAL_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage errorMessage = errorMessageHandler.getErrorMessage(
                 GlobalErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION,
                 Collections.singletonList(

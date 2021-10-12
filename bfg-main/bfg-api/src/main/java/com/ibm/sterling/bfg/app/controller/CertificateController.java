@@ -94,7 +94,7 @@ public class CertificateController {
         try (InputStream inputStream = file.getInputStream()) {
             x509Certificate = (X509Certificate) factory.generateCertificate(inputStream);
         } catch (CertificateException e) {
-            throw new FileNotValidException();
+            throw new FileNotValidException("Not valid format of file");
         }
         return x509Certificate;
     }

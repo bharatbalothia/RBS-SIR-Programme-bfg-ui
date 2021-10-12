@@ -22,6 +22,7 @@ public class ScheduleService {
     private EntityService entityService;
 
     public List<Schedule> findActualSchedulesByEntityId(Integer id) {
+        LOG.info("Try to get schedules for Entity {}", id);
         Entity entity = entityService.findById(id).orElse(null);
         return Optional.ofNullable(entity).map(entity1 -> entity.getSchedules()).orElse(null);
     }

@@ -128,13 +128,14 @@ public class ChangeControlCertService {
     private void checkStatusOfChangeControl(ChangeControlCert changeControlCert) {
         LOGGER.info("Checking status of change control {}", changeControlCert);
         if (!PENDING.equals(changeControlCert.getStatus())) {
-            throw new StatusNotPendingException();
+            throw new StatusNotPendingException("Status of change control " + changeControlCert.getChangeID() +
+                    " is not pending");
         }
     }
 
     public void checkOnPendingState(String certName) {
         LOGGER.info("Checking if trusted certificate {} in a pending state", certName);
         if (changeControlCertRepository.existsByResultMeta1AndStatus(certName, PENDING))
-            throw new StatusPendingException();
+            throw new StatusPendingException("Trusted certificate " + certName + " is in pending state");
     }
 }

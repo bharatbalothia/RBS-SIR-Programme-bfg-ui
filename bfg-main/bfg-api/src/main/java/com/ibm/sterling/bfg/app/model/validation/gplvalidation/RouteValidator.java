@@ -6,7 +6,7 @@ import com.ibm.sterling.bfg.app.model.validation.GenericValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.ConstraintValidatorContext;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class RouteValidator extends GenericValidator {
                 RouteField.ROUTE_INBOUND,
                 isRouteInbound,
                 constraintValidatorContext,
-                StringUtils::isEmpty,
+                ObjectUtils::isEmpty,
                 fieldName -> fieldName + " has to be present"
         );
         if (isRouteInboundNotNull) {
@@ -44,7 +44,7 @@ public class RouteValidator extends GenericValidator {
                             }
                         },
                         constraintValidatorContext,
-                        StringUtils::isEmpty,
+                        ObjectUtils::isEmpty,
                         emptyFieldTemplateOnSwitchValue(EMPTY_STRING_FIELD_FORMAT, String.valueOf(entity.getRouteInbound()))
                 )
                         & isValidField(

@@ -104,7 +104,7 @@ public class IntegratedCertificateData {
         try (InputStream inputStream = new ByteArrayInputStream(decodedBytes)) {
             x509Certificate = (X509Certificate) factory.generateCertificate(inputStream);
         } catch (CertificateException | IOException e) {
-            throw new FileNotValidException();
+            throw new FileNotValidException("Fail to convert file to X.509");
         }
         return x509Certificate;
     }

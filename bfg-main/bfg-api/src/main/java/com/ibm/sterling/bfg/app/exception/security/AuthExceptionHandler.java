@@ -23,6 +23,7 @@ import java.util.Optional;
 public class AuthExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LogManager.getLogger(AuthExceptionHandler.class);
+    public static final String AUTHENTICATION_EXCEPTION = "Handled Authentication exception: {} - {}";
 
     @Autowired
     private ErrorMessageHandler errorMessageHandler;
@@ -31,12 +32,14 @@ public class AuthExceptionHandler extends ResponseEntityExceptionHandler {
     private ExceptionDetailsHandler exceptionDetailsHandler;
 
     @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity handleRestTemplateException(HttpStatusCodeException ex) {
+    public ResponseEntity<Object> handleRestTemplateException(HttpStatusCodeException ex) {
+        LOG.info(AUTHENTICATION_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleRestTemplateException(ex);
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity handleAuthenticationFailedException(AuthenticationFailedException ex) {
+    public ResponseEntity<Object> handleAuthenticationFailedException(AuthenticationFailedException ex) {
+        LOG.info(AUTHENTICATION_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         ErrorMessage error = errorMessageHandler.getErrorMessage(AuthErrorCode.BadCredentialsException);
         Optional.ofNullable(ex.getMessage()).ifPresent(error::setMessage);
         return new ResponseEntity<>(error, error.getHttpStatus());
@@ -44,7 +47,7 @@ public class AuthExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleAll(Throwable ex) {
-        LOG.info("Authentication exception: " + ex.getMessage());
+        LOG.info(AUTHENTICATION_EXCEPTION, ex.getClass().getSimpleName(), ex.getMessage());
         return exceptionDetailsHandler.handleAll(ex, AuthErrorCode.class);
     }
 

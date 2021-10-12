@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -469,7 +469,7 @@ public class PropertyService {
                 ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         return Optional.ofNullable(objectMapper.convertValue(errorDetails, ErrorDetail.class))
                 .flatMap(details -> {
-                    if (StringUtils.isEmpty(details.getName()) && StringUtils.isEmpty(details.getDescription())) {
+                    if (ObjectUtils.isEmpty(details.getName()) && ObjectUtils.isEmpty(details.getDescription())) {
                         return Optional.empty();
                     }
                     return Optional.of(details);

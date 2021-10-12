@@ -71,7 +71,7 @@ public class APIDetailsHandler {
 
     public void checkPermissionForUpdateChangeControl(String changer) {
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(changer))
-            throw new InvalidUserForUpdateChangeControlException();
+            throw new InvalidUserForUpdateChangeControlException(changer + " is invalid for changing CC");
     }
 
 }

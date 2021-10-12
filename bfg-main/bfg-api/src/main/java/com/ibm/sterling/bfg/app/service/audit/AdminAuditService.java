@@ -9,6 +9,8 @@ import com.ibm.sterling.bfg.app.model.event.AuditEvent;
 import com.ibm.sterling.bfg.app.model.event.AuditEventCriteria;
 import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
 import com.ibm.sterling.bfg.app.service.PropertyService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,10 +26,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class AdminAuditService {
+    private static final Logger LOG = LogManager.getLogger(AdminAuditService.class);
 
     @Value("${adminAudit.url}")
     private String adminAuditUrl;
@@ -51,6 +53,8 @@ public class AdminAuditService {
     private PropertyService propertyService;
 
     public void fireAdminAuditEvent(AdminAuditEventRequest adminAuditEventRequest) {
+        LOG.info("Trying to fire the admin audit event {}",
+                adminAuditEventRequest);
         try {
             new RestTemplate().postForObject(
                     adminAuditUrl,
@@ -58,11 +62,13 @@ public class AdminAuditService {
                     String.class
             );
         } catch (HttpStatusCodeException e) {
+            LOG.error("Failure on creating the event");
             throw new InvalidEventException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode());
         }
     }
 
     public List<AuditEvent> getAuditEvents(AuditEventCriteria auditEventCriteria) {
+        LOG.info("Trying to receive the admin audit events");
         if (auditEventCriteria.getEventType() == null) {
             auditEventCriteria.setEventType(propertyService.getEventTypesForUser());
         }
@@ -72,16 +78,23 @@ public class AdminAuditService {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(newsUrl)
                 .queryParams(auditCriteriaMultiValueMap);
-        ResponseEntity<String> response = new RestTemplate().exchange(
-                uriBuilder.build().toString(),
-                HttpMethod.GET,
-                new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
-                String.class);
+        ResponseEntity<String> response;
+        try {
+            response = new RestTemplate().exchange(
+                    uriBuilder.build().toString(),
+                    HttpMethod.GET,
+                    new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
+                    String.class);
+        } catch (HttpStatusCodeException e) {
+            LOG.error("Failure on getting the events");
+            throw new InvalidEventException(apiDetailsHandler.processErrorMessage(e), e.getStatusCode());
+        }
         try {
             return objectMapper.convertValue(objectMapper.readTree(Objects.requireNonNull(response.getBody())),
                     new TypeReference<List<AuditEvent>>() {
                     });
         } catch (JsonProcessingException e) {
+            LOG.info("Failure on parsing the response from rest service");
             return null;
         }
     }

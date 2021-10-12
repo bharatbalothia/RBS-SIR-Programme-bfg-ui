@@ -38,7 +38,7 @@ public class ChangeControlCert implements ObjectTypeConstants, Comparable<Change
     @Column(name = "OPERATION")
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Operation operation; //change operation - CREATE,UPDATE,DELETE
+    private Operation operation; //change operation - CREATE,DELETE
 
     @Column(name = "STATUS")
     @NotNull

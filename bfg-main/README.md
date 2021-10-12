@@ -37,5 +37,5 @@ http://localhost:9080/bfgui/test
 
 
 ## API Docs
-
+Swagger is disabled
 http://localhost:9080/bfgui/swagger-ui.html 

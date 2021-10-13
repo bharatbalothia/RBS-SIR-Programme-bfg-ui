@@ -1,0 +1,30 @@
+<app-dragable-dialog-wrapper>
+    <mat-dialog-content>
+        <mat-tab-group>
+            <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
+                <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [beforeTab]="getBeforeTab(tab)">
+                </app-tab-content>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <div class="approve-actions">
+            <mat-form-field *ngIf="approveAction">
+                <mat-label>Approver Comments</mat-label>
+                <textarea matInput type="text" [(ngModel)]="approverComments"></textarea>
+                <button *ngIf="approverComments" mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                    (click)="approverComments = ''">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+            <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+            <div *ngIf="approveAction">
+                <button *ngIf="approveAction" mat-raised-button color="warn"
+                    (click)="approvingAction(changeStatus.REJECTED)" [disabled]="hasErrors">Reject</button>
+                <button mat-raised-button color='primary' (click)="approvingAction(changeStatus.ACCEPTED)"
+                    [disabled]="shouldDisableApprove || hasErrors">Accept</button>
+            </div>
+        </div>
+    </mat-dialog-actions>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+</app-dragable-dialog-wrapper>

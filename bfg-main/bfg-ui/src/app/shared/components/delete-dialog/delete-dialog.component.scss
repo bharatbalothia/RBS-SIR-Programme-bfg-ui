@@ -1,0 +1,47 @@
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+    min-width: 0 !important;
+    padding: 0 10px !important;
+    margin: 3px !important;
+}
+
+.mat-dialog-content {
+    max-height: 75vh !important;
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.form-field-section {
+    display: flex;
+    width: 100%;
+}
+
+.mat-table {
+
+    .section-title {
+        justify-content: center;
+    }
+
+    .mat-header-row[hidden] {
+        display: none !important;
+    }
+
+    .mat-cell {
+        word-break: break-all;
+        padding-right: 10px;
+    }
+}
+
+.delete-actions {
+
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.close-button {
+    float: right;
+    margin-left: auto;
+}

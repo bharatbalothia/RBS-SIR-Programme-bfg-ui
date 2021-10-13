@@ -1,0 +1,89 @@
+.trusted-certificate-create-card {
+    margin: 15px 15px 15px 15px;
+
+    .top-error-message {
+        margin-left: 24px;
+    }
+
+    .mat-form-field {
+        width: 100%;
+
+        .error-message {
+            white-space: pre-wrap;
+        }
+    }
+
+    .form-field-section {
+        display: flex;
+    }
+
+    .ts-item-section {
+        display: -ms-grid;
+        display: grid;
+        grid-template-columns: 150px auto;
+        -ms-grid-columns: 150px auto;
+
+        .ts-item-section-title {
+            -ms-grid-column: 1;
+        }
+
+        .ts-item-section-value {
+            -ms-grid-column: 2;
+
+            .section-info {
+                display: grid;
+                display: -ms-grid;
+                grid-template-columns: 130px auto;
+                -ms-grid-columns: 130px auto;
+
+                .section-label {
+                    -ms-grid-column: 1;
+                    margin: 0 !important;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+
+                .section-value {
+                    -ms-grid-column: 2;
+                    padding-left: 15px;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -ms-flex-pack: center;
+                    -ms-flex-align: center;
+                    justify-content: center;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+
+    .summary-table {
+
+        .mat-cell,
+        .mat-header-cell {
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+
+        .mat-column-field,
+        .mat-column-sub-field {
+            flex: 0 0 10%;
+            min-width: 120px;
+        }
+
+        .mat-column-value {
+            min-width: 150px;
+        }
+    }
+
+    .stepper-actions {
+        margin-top: 15px;
+
+        .action-button {
+            margin-right: 15px;
+        }
+    }
+}

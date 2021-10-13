@@ -1,9 +1,158 @@
 .sidenav-container {
   height: 100%;
+  display: flex;
+
+  .app-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    align-items: center;
+
+    .title-logo {
+      left: 15px;
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .version-label {
+      display: flex;
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      height: 65px;
+      font-size: 26px;
+      align-self: center;
+      justify-content: center;
+      align-items: center;
+
+      .app-version {
+        font-size: 14px;
+        margin-left: 10px;
+        height: 22px;
+      }
+
+    }
+
+    .user-logout {
+      display: flex;
+      line-height: initial;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 17px;
+      word-break: break-all;
+      white-space: normal;
+      padding-left: 5px;
+
+      .logout-button {
+        margin-left: 10px;
+        line-height: 30px;
+        width: 70px;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    }
+
+  }
+
+  @media only screen and (max-width: 900px) {
+    .app-title {
+      justify-content: unset;
+
+      .title-logo {
+        display: none;
+      }
+
+      .clipped-title-logo {
+        display: block;
+        height: 40px !important;
+        margin-right: 10px;
+      }
+
+      .version-label {
+        position: static !important;
+        font-size: 19px !important;
+      }
+
+      .user-logout {
+        font-size: 16px !important;
+        margin-left: auto;
+        max-width: unset;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .user-logout {
+    max-width: 250px;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .user-logout {
+    max-width: 290px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .user-logout {
+    max-width: 400px;
+  }
+}
+
+@media only screen and (min-width: 1500px) {
+  .user-logout {
+    max-width: 600px;
+  }
 }
 
 .sidenav {
-  width: 230px;
+  display: none;
+  width: 250px;
+  position: inherit;
+  overflow-x: hidden;
+
+  .resizable-right {
+    display: block;
+    width: 8px;
+    height: 8px;
+    line-height: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: 0 0;
+    position: absolute;
+    z-index: 1;
+    height: 100%;
+    right: 0;
+    top: 0;
+
+    .resizable-icon {
+      position: absolute;
+      box-sizing: border-box;
+      display: block;
+      border: 1px solid #ccc;
+      border-width: 0 1px;
+      top: 50%;
+      margin: -10px 0 0 2px;
+      height: 20px;
+      width: 4px;
+    }
+  }
+}
+
+.mat-drawer-opened {
+  display: block !important;
+}
+
+.mat-sidenav-content {
+  width: 100%;
+  margin-left: 0px !important;
 }
 
 .sidenav .mat-toolbar {
@@ -12,6 +161,8 @@
 
 .mat-toolbar.mat-primary {
   position: sticky;
+  height: 64px;
   top: 0;
   z-index: 1;
+
 }

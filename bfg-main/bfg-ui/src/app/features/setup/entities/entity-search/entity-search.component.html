@@ -1,0 +1,174 @@
+<mat-card class="search-entities-card">
+    <mat-card-header>
+        <mat-card-title>Entities</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <app-autorefresh-data [getData]="getEntityList.bind(this, this.pageIndex, this.pageSize)">
+        </app-autorefresh-data>
+        <div class="search-by-content">
+            <form (ngSubmit)="getEntityList(0, pageSize)">
+                <h3 class="search-by-label">Search by</h3>
+
+                <div class="search-field">
+                    <mat-form-field class="search-by-field">
+                        <mat-label>Search by service</mat-label>
+                        <mat-select [(ngModel)]="serviceSearchingValue" name="serviceSearchingValue">
+                            <mat-option value="">ALL</mat-option>
+                            <mat-option value="GPL">GPL</mat-option>
+                            <mat-option value="SCT">SCT</mat-option>
+                        </mat-select>
+                        <button *ngIf="serviceSearchingValue" mat-button type="button" matSuffix mat-icon-button
+                            aria-label="Clear" (click)="clearField($event,'serviceSearchingValue')">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div class="search-field">
+                    <mat-form-field class="search-by-field">
+                        <mat-label>Search by entity name</mat-label>
+                        <input matInput [(ngModel)]="entityNameSearchingValue" name="entityNameSearchingValue">
+                        <button *ngIf="entityNameSearchingValue" mat-button type="button" matSuffix mat-icon-button
+                            aria-label="Clear" (click)="clearField($event,'entityNameSearchingValue')">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div class="search-field">
+                    <mat-form-field class="search-by-field">
+                        <mat-label>Search by DN</mat-label>
+                        <input matInput [(ngModel)]="DNSearchingValue" name="DNSearchingValue">
+                        <button *ngIf="DNSearchingValue" mat-button type="button" matSuffix mat-icon-button
+                            aria-label="Clear" (click)="clearField($event,'DNSearchingValue')">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <button color="primary" type="submit" class="search-button" mat-raised-button>Search</button>
+                <button color="warn" class="clear-button" mat-raised-button [disabled]="!isClearActive()"
+                    (click)="clearParams()">Clear</button>
+            </form>
+        </div>
+        <div class="table-container">
+            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1"
+                [getRows]="getEntityList.bind(this)" [min]="1" [max]="entities && entities.totalPages"
+                [length]="entities.totalElements" [(pageIndex)]="entities.pageable.pageNumber"
+                [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+            </app-table-paginator>
+            <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <a mat-button class="action-button" *ngIf="element.changeID"
+                            (click)="openApprovingDialog(element)">
+                            <div class="action-icon">
+                                <mat-icon>format_list_numbered</mat-icon> Version manager
+                            </div>
+                        </a>
+                        <a mat-button
+                            *ngIf="!element.entityLog && (element.service === SERVICE_TYPE.SCT || element.service === SERVICE_TYPE.GPL)"
+                            class="action-button"
+                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.CLONE, element.entityId]"
+                            [state]="{ pageIndex: pageIndex,
+                                pageSize: pageSize,
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue }" alt="Clone" title="Clone">
+                            <div class="action-icon">
+                                <mat-icon>add</mat-icon>clone
+                            </div>
+                        </a>
+                        <a mat-button
+                            *ngIf="element.changeID && element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+                            class="action-button"
+                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
+                            [state]="{ 
+                                pageIndex: pageIndex, 
+                                pageSize: pageSize, 
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue,
+                                DNSearchingValue: DNSearchingValue
+                            }" alt="Edit" title="Edit">
+                            <div class="action-icon">
+                                <mat-icon>edit</mat-icon>edit
+                            </div>
+                        </a>
+                        <a mat-button
+                            *ngIf="!element.entityLog && (element.service === SERVICE_TYPE.SCT || element.service === SERVICE_TYPE.GPL)"
+                            class="action-button"
+                            [routerLink]="['/' + ROUTING_PATHS.ENTITIES + '/' + ROUTING_PATHS.EDIT, element.entityId]"
+                            [state]="{ pageIndex: pageIndex,
+                                pageSize: pageSize,
+                                previousURL: getCurrentRoute(),
+                                serviceSearchingValue: serviceSearchingValue,
+                                entityNameSearchingValue: entityNameSearchingValue }" alt="Edit" title="Edit">
+                            <div class="action-icon">
+                                <mat-icon>edit</mat-icon>edit
+                            </div>
+                        </a>
+                        <a mat-button *ngIf="!element.entityLog" class="action-button" alt="Delete" title="Delete"
+                            (click)="deleteEntity(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
+                        </a>
+                        <a mat-button *ngIf="element.changeID && isTheSameUser(element.changer)" class="action-button"
+                            alt="Delete" title="Delete" (click)="deletePendingChange(element)">
+                            <div class="action-icon">
+                                <mat-icon>clear</mat-icon>delete
+                            </div>
+                        </a>
+                        <a mat-button class="action-button"
+                            *ngIf="shouldDisplayTransmit() && !element.entityLog && element.service === SERVICE_TYPE.SCT"
+                            (click)="transmitEntity(element)" alt="Transmit" title="Transmit">
+                            <div class="action-icon">
+                                <mat-icon>explicit</mat-icon>transmit
+                            </div>
+                        </a>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="entity">openEntityDetailsDialog
+                    <mat-header-cell *matHeaderCellDef> Entity </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <a mat-button (click)="openDetailsDialog(element)"
+                            [disabled]="element.entityLog && !element.entityLog.entityId">
+                            {{element.entity || element.resultMeta1}}
+                        </a>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="service">
+                    <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <div class="mat-cell-value">
+                            {{element.service || element.resultMeta2}}
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="noData">
+                    <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                        <div class="mat-cell-value">
+                            No records found.
+                        </div>
+                    </mat-footer-cell>
+                </ng-container>
+                <mat-footer-row *matFooterRowDef="['noData']"
+                    [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+                </mat-footer-row>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <app-table-paginator class="paginator" *ngIf="entities" [value]="pageIndex + 1"
+                [getRows]="getEntityList.bind(this)" [min]="1" [max]="entities && entities.totalPages"
+                [length]="entities.totalElements" [(pageIndex)]="entities.pageable.pageNumber"
+                [pageSize]="entities.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+            </app-table-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading || isLoadingDetails"></mat-progress-bar>

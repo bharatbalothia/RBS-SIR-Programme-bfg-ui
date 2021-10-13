@@ -1,0 +1,27 @@
+<app-dragable-dialog-wrapper>
+    <mat-dialog-content>
+        <mat-tab-group>
+            <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
+                <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)"></app-tab-content>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <div class="delete-actions">
+            <div class="form-field-section" *ngIf="!shouldHideComments">
+                <mat-form-field>
+                    <mat-label>Changer Comments</mat-label>
+                    <textarea matInput type="text" [(ngModel)]="changerComments"></textarea>
+                    <button *ngIf="changerComments" mat-button type="button" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="changerComments = ''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <app-tooltip *ngIf="tooltip" [tip]="tooltip"></app-tooltip>
+            </div>
+            <button class="close-button" mat-raised-button [mat-dialog-close]="true">{{data.yesCaption}}</button>
+            <button mat-raised-button color='primary' [disabled]="hasErrors" (click)="deletingAction()">Delete</button>
+        </div>
+    </mat-dialog-actions>
+    <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+</app-dragable-dialog-wrapper>

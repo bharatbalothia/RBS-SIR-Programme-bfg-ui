@@ -1,0 +1,40 @@
+.no-data {
+    padding-top: 10px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+
+    .no-data-icon {
+        width: auto;
+        padding-right: 5px;
+    }
+}
+
+.values-table {
+    .mat-column-fieldName {
+        flex: 0 0 30% !important;
+        width: 30% !important;
+        word-break: normal !important;
+        hyphens: none !important;
+        padding-right: 10px;
+    }
+
+    .section-title {
+        justify-content: center;
+    }
+
+    .mat-header-row[hidden] {
+        display: none !important;
+    }
+
+    .mat-row[xml] {
+        align-items: start;
+    }
+}
+
+.object-table {
+    .mat-column-fieldName,
+    .mat-column-subFieldName {
+      flex: 0 0 20%;
+    }
+}

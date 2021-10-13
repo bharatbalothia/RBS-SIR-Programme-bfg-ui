@@ -2,11 +2,46 @@
 
   margin: 15px 15px 15px 15px;
 
-  table {
-    width: 100%;
-  }
+  .card-content {
+    min-height: 150px;
 
-    .mat-spinner {
-        margin: auto;
+    .search-by-content {
+
+      .search-field {
+        display: inline-flex;
+      }
+
+      .search-by-label {
+        margin-bottom: 0px;
+      }
+
+      .search-by-field {
+        margin-right: 15px;
+        width: 240px;
+      }
+
+      .search-button {
+        margin-right: 10px;
+      }
+
     }
+
+    .table-container {
+
+      .mat-table {
+
+        .mat-column-action {
+          min-width: 270px;
+        }
+
+        .mat-column-entity {
+          min-width: 200px;
+        }
+
+        .mat-column-service {
+          min-width: 50px;
+        }
+      }
+    }
+  }
 }

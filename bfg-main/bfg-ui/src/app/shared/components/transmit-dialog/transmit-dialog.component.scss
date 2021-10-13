@@ -1,0 +1,39 @@
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+    min-width: 0 !important;
+    padding: 0 10px !important;
+    margin: 3px !important;
+}
+
+.radio-group-section {
+    margin-top: 10px;
+    height: 30px;
+
+    .radio-group-label,
+    .mat-radio-button {
+        padding-right: 10px;
+    }
+
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.mat-dialog-actions {
+
+    display: block;
+
+    .transmit-actions {
+        padding-bottom: 10px;
+
+        .mat-button-base {
+            margin-left: 0px !important;
+            margin-right: 8px;
+        }
+    }
+
+    .close-button {
+        float: right;
+    }
+}

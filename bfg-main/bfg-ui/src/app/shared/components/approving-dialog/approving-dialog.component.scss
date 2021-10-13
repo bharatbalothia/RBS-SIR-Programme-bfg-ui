@@ -1,0 +1,32 @@
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+    min-width: 0 !important;
+    padding: 0 10px !important;
+    margin: 3px !important;
+}
+
+.mat-dialog-content {
+    max-height: 75vh !important;
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.approve-actions {
+
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+
+    .mat-button-base {
+        margin-right: 8px;
+        float: right;
+        margin-left: auto;
+    }
+}
+
+.close-button {
+    float: right;
+    margin-left: auto;
+}

@@ -1,0 +1,43 @@
+.dialog-header {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding-top: 24px;
+    padding-bottom: 10px;
+}
+
+.header {
+    display: flex;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    cursor: move;
+    word-break: break-all;
+
+    .close-icon {
+        margin-left: auto;
+        cursor: pointer !important;
+        margin-top: 28px;
+        margin-right: 24px;
+    }
+}
+
+.dialog-title {
+    margin: 0 !important;
+    cursor: text;
+    margin-left: 24px !important;
+    margin-top: 24px;
+    margin-right: 58px !important;
+    word-break: break-all;
+    z-index: 1;
+}
+
+.mat-dialog-title {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+}

@@ -1,0 +1,16 @@
+<button mat-raised-button class="overlay-button" (click)="isOpen = !isOpen" type="button" cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin">
+  {{buttonName}}
+</button>
+
+<!-- This template displays the overlay content and is connected to the button -->
+<ng-template cdkConnectedOverlay #overlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpen"
+  (backdropClick)="backdropClick()" [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayPositions]="positions">
+  <div class="overlay-container">
+    <app-display-table-cell [value]="overlayData"></app-display-table-cell>
+    <button class="insert-button" mat-mini-fab color="primary" aria-label="Insert" (click)="insertValue()"
+      matTooltip="Copy & Paste" matTooltipPosition="above" aria-tooltip="Copy & Paste">
+      <mat-icon>save_alt</mat-icon>
+    </button>
+  </div>
+</ng-template>

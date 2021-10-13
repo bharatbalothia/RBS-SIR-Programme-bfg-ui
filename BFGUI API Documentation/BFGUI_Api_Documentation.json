@@ -1,0 +1,5405 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "BFGUI Api Documentation",
+    "version": "v0.39.3"
+  },
+  "servers": [
+    {
+      "url": "https://bfgui-dev.webdev.banksvcs.net/bfgui",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "audit-event-controller",
+      "description": "Audit Event Controller"
+    },
+    {
+      "name": "auth-controller",
+      "description": "Auth Controller"
+    },
+    {
+      "name": "certificate-controller",
+      "description": "Certificate Controller"
+    },
+    {
+      "name": "entity-controller",
+      "description": "Entity Controller"
+    },
+    {
+      "name": "file-search-controller",
+      "description": "File Search Controller"
+    },
+    {
+      "name": "sct-transaction-search-controller",
+      "description": "SCT Transaction Search Controller"
+    },
+    {
+      "name": "statistics-controller",
+      "description": "Statistics Controller"
+    },
+    {
+      "name": "version-controller",
+      "description": "Version Controller"
+    },
+    {
+      "name": "workflow-controller",
+      "description": "Workflow Controller"
+    }
+  ],
+  "paths": {
+    "/api/entities/{id}": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getEntityById",
+        "description": "Returns entity data by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "updateEntity",
+        "description": "Updates entity by id.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entity"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "deleteEntity",
+        "description": "Deletes entity by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "changerComments",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/pending/{id}": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getPendingEntityById",
+        "description": "Returns pending change control of entity by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "updatePendingEntity",
+        "description": "Updates pending change of entity.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entity"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControl"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "deletePendingEntity",
+        "description": "Deletes pending change of entity by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/pending/{id}": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "getChangeControlCertificate",
+        "description": "Returns pending change control of trusted certificate by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlCert"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "updatePendingCertificate",
+        "description": "Updates pending change of trusted certificate",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "deletePendingCertificates",
+        "description": "Deletes pending change of trusted certificate by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlCert"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "post": {
+        "tags": [
+          "sct-transaction-search-controller"
+        ],
+        "operationId": "getSCTTransactions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionSearchCriteria"
+              }
+            }
+          }
+        },
+        "description": "Returns the page with SCT Transactions filtered by search fields",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTransaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "post": {
+        "tags": [
+          "audit-event-controller"
+        ],
+        "operationId": "getAuditEvents",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditEventCriteria"
+              }
+            }
+          }
+        },
+        "description": "Returns the admin audit events to populate the event logs on the Home page.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files": {
+      "post": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getFiles",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileSearchCriteria"
+              }
+            }
+          }
+        },
+        "description": "Returns the page with Files filtered by search fields",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageFile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/sepa": {
+      "post": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getSEPAFiles",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileSearchCriteria"
+              }
+            }
+          }
+        },
+        "description": "Returns the page with SEPA Files filtered by search fields",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageSEPAFile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getEntities",
+        "description": "Returns the page with persisted and pending entities filtered by partition matched name and thumbprint.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "entity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "swiftDN",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageEntityType"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "createEntity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entity"
+              }
+            }
+          },
+          "required": true
+        },
+        "description": "Creates new entity and returns data of created entity.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/transmit": {
+      "post": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "transmit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transmittal"
+              }
+            }
+          },
+          "required": true
+        },
+        "description": "Runs transmit action of entity.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/pending": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getPendingEntities",
+        "description": "Returns the page with pending entities filtered by partition matched name and thumbprint.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "entity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "swiftDN",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageChangeControl"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "postPendingEntities",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "description": "Approves or rejects entity pending change.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "getCertificates",
+        "description": "Returns the page with persisted and pending trusted certificates filtered by partition matched name and thumbprint.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "certName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "thumbprint",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageCertType"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "createTrustedCertificate",
+        "description": "Creates new trusted certificate and returns data of created trusted certificate.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "comments",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/upload": {
+      "post": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "uploadFile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns trusted certificate data with validation of uploaded certificate file.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificateDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/pending": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "getPendingCertificates",
+        "description": "Returns the page with pending trusted certificates filtered by partition matched name and thumbprint.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "certName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "thumbprint",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageChangeControlCert"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "postPendingCertificates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "description": "Approves or rejects trusted certificate",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/auth/sso": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "signInSso",
+        "description": "Returns JWT token, authenticates the user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginSsoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/auth/signin": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "signIn",
+        "description": "Returns JWT, authenticates the user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/auth/reauth": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "continueSession",
+        "description": "Returns JWT token to continue session.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/workflow/{id}/steps": {
+      "get": {
+        "tags": [
+          "workflow-controller"
+        ],
+        "operationId": "getWorkflowSteps",
+        "description": "Returns the page with Workflow steps by workflow ID",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageWorkflowStep"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/workflow/wfcId/{wfcId}": {
+      "get": {
+        "tags": [
+          "workflow-controller"
+        ],
+        "operationId": "getWfIdAndVersion",
+        "description": "Returns Workflow ID with Version by Business Process name",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "wfcId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/workflow/document-content": {
+      "get": {
+        "tags": [
+          "workflow-controller"
+        ],
+        "operationId": "getDocumentContent",
+        "description": "Returns Document Content of some workflow step by document id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/workflow/bp-header": {
+      "get": {
+        "tags": [
+          "workflow-controller"
+        ],
+        "operationId": "getBPHeader",
+        "description": "Returns Business Process header by Workflow Id and Version",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "wfdVersion",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "wfdID",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/workflow/bp-details": {
+      "get": {
+        "tags": [
+          "workflow-controller"
+        ],
+        "operationId": "getBPDetails",
+        "description": "Returns Business Process details by Business Process header bpRef param.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "identifier",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BPDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/version": {
+      "get": {
+        "tags": [
+          "version-controller"
+        ],
+        "operationId": "getApplicationVersion",
+        "description": "Returns version of BFGUI Application, SEPA visibility property param and login description info",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/version/sepa-visibility": {
+      "get": {
+        "tags": [
+          "version-controller"
+        ],
+        "operationId": "isSepaDashboardVisible",
+        "description": "Returns SEPA visibility property param",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/version/f5": {
+      "get": {
+        "tags": [
+          "version-controller"
+        ],
+        "operationId": "getF5Link",
+        "description": "Returns List of contacts for sharing details of F5 issue.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/transactions/{id}": {
+      "get": {
+        "tags": [
+          "sct-transaction-search-controller"
+        ],
+        "operationId": "getTransactionById",
+        "description": "Returns SCT Transaction data by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/transactions/transaction-criteria-data": {
+      "get": {
+        "tags": [
+          "sct-transaction-search-controller"
+        ],
+        "operationId": "getTransactionCriteriaData",
+        "description": "Returns SCT transaction criteria data for searching sct transactions.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/statistics/system-errors": {
+      "get": {
+        "tags": [
+          "statistics-controller"
+        ],
+        "operationId": "getSystemErrorsStatistics",
+        "description": "Returns number of System Errors on the Home page.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticalData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/statistics/sepa-traffic": {
+      "get": {
+        "tags": [
+          "statistics-controller"
+        ],
+        "operationId": "getSepaTrafficSummary",
+        "description": "Returns SEPA Traffic with list of files for the past 1 hour.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/statistics/sct-traffic": {
+      "get": {
+        "tags": [
+          "statistics-controller"
+        ],
+        "operationId": "getSCTTrafficSummary",
+        "description": "Returns SCT Traffic for the Home page.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/statistics/sct-alerts": {
+      "get": {
+        "tags": [
+          "statistics-controller"
+        ],
+        "operationId": "getSCTAlerts",
+        "description": "Returns SCT Alerts info for the Home page.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/news/event-criteria-data": {
+      "get": {
+        "tags": [
+          "audit-event-controller"
+        ],
+        "operationId": "getEventCriteriaData",
+        "description": "Returns the admin audit events criteria data to filter the event logs on the Home page.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/{id}": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getFileById",
+        "description": "Returns File info by File ID",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/File"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/{fileId}/transactions": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getTransactionsForFiles",
+        "description": "Returns the page with SCT Transaction by File ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTransaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/{fileId}/transactions/export-report": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "exportTransactionsReport",
+        "description": "Returns PDF/EXCEL reports of Transactions selected with datetime period.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fileName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100000
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/sepa/export-report": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "exportFilesReport",
+        "description": "Returns PDF/EXCEL reports of files selected with datetime period.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/file-monitor": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getFileMonitor",
+        "description": "Returns List of Files with last 10 files",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/File"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/file-criteria-data": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getFileCriteriaData",
+        "description": "Returns File criteria data for searching files.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "outbound",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/error/{errorCode}": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getErrorDetailsByCode",
+        "description": "Returns File Error info by error code",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "errorCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/files/document-content": {
+      "get": {
+        "tags": [
+          "file-search-controller"
+        ],
+        "operationId": "getDocumentContent_1",
+        "description": "Returns Document Content of some file by filename",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/swift-service": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getSwiftService",
+        "description": "Return swift service of entity.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/participants": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getParticipants",
+        "description": "Returns list of entity participants by entity id.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/mq-details": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getMqDetails",
+        "description": "Return map of entity mq-details.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/inbound-service": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getInboundService",
+        "description": "Return inbound service of entity.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/inbound-request-type": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getInboundRequestType",
+        "description": "Return map of entity inbound request types.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/file-type": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getFileType",
+        "description": "Return list of file type strings for entity schedules.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/existence/route-attributes": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getRequestType",
+        "description": "Checks if entity route attributes exist.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "inboundRequestorDN",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "inboundResponderDN",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "inboundService",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "inboundRequestType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/existence/queue": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "isExistingMqQueueOut",
+        "description": "Checks if entity mqQueueOut exist.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "mqQueueOut",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/existence/mailbox": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "isExistingMailboxPathOut",
+        "description": "Checks if entity mailboxPathOut exist.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "mailboxPathOut",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/existence/entity-service": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "isExistingEntity",
+        "description": "Checks if entity name exists with selected service.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/entities/changeControl/{id}": {
+      "get": {
+        "tags": [
+          "entity-controller"
+        ],
+        "operationId": "getChangeControlById",
+        "description": "Returns JWT token to continue session.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControl"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/{id}": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "getCertificateById",
+        "description": "Returns trusted certificate data by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "deleteTrustedCertificate",
+        "description": "Deletes trusted certificate by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "changerComments",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/validate/{id}": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "validateCertificateById",
+        "description": "Returns trusted certificate validation data by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificateDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/validate/pending/{id}": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "validatePendingCertificateById",
+        "description": "Returns pending change of trusted certificate validation data by ID.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedCertificateDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/certificates/existence": {
+      "get": {
+        "tags": [
+          "certificate-controller"
+        ],
+        "operationId": "isExistingCertificateName",
+        "description": "Checks if trusted certificate name exists.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVVNFUjIiLCJwZXJtaXNzaW9ucyI6WyJTRkdfU0NUX0lDRk91dGJvdW5kIiwiU0ZHX1VJX1NDVF9FTlRJVFlfVFJBTlNNSVQiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfU0NUIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ORVciLCJTRkdfVUlfSE9NRSIsIlNGR19VSV9TQ1RfQVBQUk9WRV9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9FRElUX0VOVElUWV9TQ1QiLCJTRkdfVUlfU0NUX0RFTEVURV9FTlRJVFlfR1BMIiwiRkJfVUlfVFJVU1RFRF9DRVJUU19ERUxFVEUiLCJTRkdfVUlfU0NUX0NSRUFURV9FTlRJVFlfU0NUIiwiU0ZHX1VJX1NDVF9FTlRJVFkiLCJGQl9VSV9UUlVTVEVEX0NFUlRTX0FQUFJPVkUiLCJTRkdfVUlfU0NUX0FQUFJPVkVfRU5USVRZX1NDVCIsIlNGR19VSV9TQ1RfRURJVF9FTlRJVFlfR1BMIiwiU0ZHX1VJX1NDVF9DUkVBVEVfRU5USVRZX0dQTCIsIkZCX1VJX1RSVVNURURfQ0VSVFMiXSwiYWF0IjoxMCwidGV0IjoxMjAsImlhdCI6MTYzMzk1NjI5NiwiZXhwIjoxNjMzOTYzNDk2fQ.4vJ6iy7P5WD_mIsRHb3a66UOJOGVzZ-FzMnFxCwf8qxO3kHLJwvK3JC9U3k9ab-HNTMI7-31qx6t4ckGSFQBVQ"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Entity": {
+        "required": [
+          "compression",
+          "deliveryNotification",
+          "endOfDay",
+          "entity",
+          "mailboxPathIn",
+          "mailboxPathOut",
+          "maxBulksPerFile",
+          "maxTransfersPerBulk",
+          "nonRepudiation",
+          "pauseInbound",
+          "pauseOutbound",
+          "requestorDN",
+          "responderDN",
+          "service",
+          "serviceName",
+          "startOfDay",
+          "trace"
+        ],
+        "type": "object",
+        "properties": {
+          "entityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "requestorDN": {
+            "pattern": "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
+            "type": "string"
+          },
+          "responderDN": {
+            "pattern": "^(?:(?:(?:(?:cn|ou)=[^,]+,?)+),[\\s]*)*(?:o=[a-z]{6}[0-9a-z]{2}){1},[\\s]*o=swift$|",
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "requestType": {
+            "type": "string"
+          },
+          "trace": {
+            "type": "boolean"
+          },
+          "deliveryNotification": {
+            "type": "boolean"
+          },
+          "deliveryNotifDN": {
+            "type": "string"
+          },
+          "deliveryNotifRT": {
+            "type": "string"
+          },
+          "requestRef": {
+            "type": "string"
+          },
+          "fileDesc": {
+            "type": "string"
+          },
+          "fileInfo": {
+            "type": "string"
+          },
+          "transferDesc": {
+            "type": "string"
+          },
+          "transferInfo": {
+            "type": "string"
+          },
+          "compression": {
+            "type": "boolean"
+          },
+          "mailboxPathIn": {
+            "type": "string"
+          },
+          "mailboxPathOut": {
+            "type": "string"
+          },
+          "mqQueueIn": {
+            "type": "string"
+          },
+          "mqQueueOut": {
+            "type": "string"
+          },
+          "entityParticipantType": {
+            "type": "string"
+          },
+          "directParticipant": {
+            "type": "string"
+          },
+          "maxTransfersPerBulk": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxBulksPerFile": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startOfDay": {
+            "pattern": "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            "type": "string"
+          },
+          "endOfDay": {
+            "pattern": "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            "type": "string"
+          },
+          "cdNode": {
+            "type": "string"
+          },
+          "idfWTOMsgId": {
+            "type": "string"
+          },
+          "cdfWTOMsgId": {
+            "type": "string"
+          },
+          "sdfWTOMsgId": {
+            "type": "string"
+          },
+          "rsfWTOMsgId": {
+            "type": "string"
+          },
+          "dnfWTOMsgId": {
+            "type": "string"
+          },
+          "dvfWTOMsgId": {
+            "type": "string"
+          },
+          "msrWTOMsgId": {
+            "type": "string"
+          },
+          "psrWTOMsgId": {
+            "type": "string"
+          },
+          "drrWTOMsgId": {
+            "type": "string"
+          },
+          "rtfWTOMsgId": {
+            "type": "string"
+          },
+          "mbpWTOMsgId": {
+            "type": "string"
+          },
+          "mqHost": {
+            "type": "string"
+          },
+          "mqPort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mqQManager": {
+            "type": "string"
+          },
+          "mqChannel": {
+            "type": "string"
+          },
+          "mqQueueName": {
+            "type": "string"
+          },
+          "mqQueueBinding": {
+            "type": "string"
+          },
+          "mqQueueContext": {
+            "type": "string"
+          },
+          "mqDebug": {
+            "type": "string"
+          },
+          "mqSSLOptions": {
+            "type": "string"
+          },
+          "mqSSLCiphers": {
+            "type": "string"
+          },
+          "mqSSLKeyCert": {
+            "type": "string"
+          },
+          "mqSSLCaCert": {
+            "type": "string"
+          },
+          "mqHeader": {
+            "type": "string"
+          },
+          "mqSessionTimeout": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "routeOutbound": {
+            "type": "boolean"
+          },
+          "routingRules": {
+            "$ref": "#/components/schemas/SWIFTNetRoutingRuleServiceResponse"
+          },
+          "routeInbound": {
+            "type": "boolean"
+          },
+          "inboundRequestorDN": {
+            "type": "string"
+          },
+          "inboundResponderDN": {
+            "type": "string"
+          },
+          "inboundService": {
+            "type": "string"
+          },
+          "inboundRequestType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonRepudiation": {
+            "type": "boolean"
+          },
+          "pauseInbound": {
+            "type": "boolean"
+          },
+          "pauseOutbound": {
+            "type": "boolean"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "changeID": {
+            "type": "string"
+          },
+          "changerComments": {
+            "type": "string"
+          },
+          "irishStep2": {
+            "type": "boolean"
+          },
+          "e2eSigning": {
+            "type": "string"
+          },
+          "schedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Schedule"
+            }
+          },
+          "snF": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SWIFTNetRoutingRuleBfgUiRestResponse": {
+        "type": "object",
+        "properties": {
+          "routingRuleName": {
+            "type": "string"
+          },
+          "updateAction": {
+            "type": "string"
+          },
+          "failCause": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SWIFTNetRoutingRuleServiceResponse": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SWIFTNetRoutingRuleBfgUiRestResponse"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Schedule": {
+        "required": [
+          "active",
+          "fileType"
+        ],
+        "type": "object",
+        "properties": {
+          "scheduleId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "entity": {
+            "$ref": "#/components/schemas/Entity"
+          },
+          "isWindow": {
+            "type": "boolean"
+          },
+          "timeStart": {
+            "pattern": "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            "type": "string"
+          },
+          "windowEnd": {
+            "pattern": "^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])",
+            "type": "string"
+          },
+          "windowInterval": {
+            "pattern": "^\\d+$",
+            "type": "string"
+          },
+          "transThreshold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "nextRun": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastRun": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fileType": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeControl": {
+        "required": [
+          "changeID",
+          "changer",
+          "operation",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "changeID": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "CREATE",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "REJECTED",
+              "ACCEPTED",
+              "FAILED",
+              "UNKNOWN"
+            ]
+          },
+          "changer": {
+            "type": "string"
+          },
+          "dateChanged": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approver": {
+            "type": "string"
+          },
+          "dateApproved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changerComments": {
+            "type": "string"
+          },
+          "approverComments": {
+            "type": "string"
+          },
+          "resultMeta1": {
+            "type": "string"
+          },
+          "resultMeta2": {
+            "type": "string"
+          },
+          "resultMeta3": {
+            "type": "string"
+          },
+          "entityLog": {
+            "$ref": "#/components/schemas/EntityLog"
+          },
+          "objectType": {
+            "type": "string"
+          },
+          "pending": {
+            "type": "boolean"
+          },
+          "statusText": {
+            "type": "string"
+          }
+        }
+      },
+      "EntityLog": {
+        "required": [
+          "compression",
+          "deliveryNotification",
+          "endOfDay",
+          "entity",
+          "mailboxPathIn",
+          "mailboxPathOut",
+          "maxBulksPerFile",
+          "maxTransfersPerBulk",
+          "nonRepudiation",
+          "pauseInbound",
+          "pauseOutbound",
+          "service",
+          "snF",
+          "startOfDay",
+          "trace"
+        ],
+        "type": "object",
+        "properties": {
+          "entityLogId": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "mailboxPathOut": {
+            "type": "string"
+          },
+          "mqQueueOut": {
+            "type": "string"
+          },
+          "routeInbound": {
+            "type": "boolean"
+          },
+          "routeOutbound": {
+            "type": "boolean"
+          },
+          "inboundDir": {
+            "type": "boolean"
+          },
+          "inboundRoutingRule": {
+            "type": "boolean"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "requestorDN": {
+            "type": "string"
+          },
+          "responderDN": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "requestType": {
+            "type": "string"
+          },
+          "snF": {
+            "type": "boolean"
+          },
+          "trace": {
+            "type": "boolean"
+          },
+          "deliveryNotification": {
+            "type": "boolean"
+          },
+          "deliveryNotifDN": {
+            "type": "string"
+          },
+          "deliveryNotifRT": {
+            "type": "string"
+          },
+          "requestRef": {
+            "type": "string"
+          },
+          "fileDesc": {
+            "type": "string"
+          },
+          "fileInfo": {
+            "type": "string"
+          },
+          "transferDesc": {
+            "type": "string"
+          },
+          "transferInfo": {
+            "type": "string"
+          },
+          "compression": {
+            "type": "boolean"
+          },
+          "mailboxPathIn": {
+            "type": "string"
+          },
+          "mqQueueIn": {
+            "type": "string"
+          },
+          "entityParticipantType": {
+            "type": "string"
+          },
+          "directParticipant": {
+            "type": "string"
+          },
+          "maxTransfersPerBulk": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxBulksPerFile": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startOfDay": {
+            "type": "string"
+          },
+          "endOfDay": {
+            "type": "string"
+          },
+          "cdNode": {
+            "type": "string"
+          },
+          "idfWTOMsgId": {
+            "type": "string"
+          },
+          "cdfWTOMsgId": {
+            "type": "string"
+          },
+          "sdfWTOMsgId": {
+            "type": "string"
+          },
+          "rsfWTOMsgId": {
+            "type": "string"
+          },
+          "dnfWTOMsgId": {
+            "type": "string"
+          },
+          "dvfWTOMsgId": {
+            "type": "string"
+          },
+          "msrWTOMsgId": {
+            "type": "string"
+          },
+          "psrWTOMsgId": {
+            "type": "string"
+          },
+          "drrWTOMsgId": {
+            "type": "string"
+          },
+          "rtfWTOMsgId": {
+            "type": "string"
+          },
+          "mbpWTOMsgId": {
+            "type": "string"
+          },
+          "mqHost": {
+            "type": "string"
+          },
+          "mqPort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mqQManager": {
+            "type": "string"
+          },
+          "mqChannel": {
+            "type": "string"
+          },
+          "mqQueueName": {
+            "type": "string"
+          },
+          "mqQueueBinding": {
+            "type": "string"
+          },
+          "mqQueueContext": {
+            "type": "string"
+          },
+          "mqDebug": {
+            "type": "string"
+          },
+          "mqSSLOptions": {
+            "type": "string"
+          },
+          "mqSSLCiphers": {
+            "type": "string"
+          },
+          "mqSSLKeyCert": {
+            "type": "string"
+          },
+          "mqSSLCaCert": {
+            "type": "string"
+          },
+          "mqHeader": {
+            "type": "string"
+          },
+          "mqSessionTimeout": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inboundRequestorDN": {
+            "type": "string"
+          },
+          "inboundResponderDN": {
+            "type": "string"
+          },
+          "inboundService": {
+            "type": "string"
+          },
+          "nonRepudiation": {
+            "type": "boolean"
+          },
+          "pauseInbound": {
+            "type": "boolean"
+          },
+          "pauseOutbound": {
+            "type": "boolean"
+          },
+          "e2eSigning": {
+            "type": "string"
+          },
+          "inboundRequestType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "irishStep2": {
+            "type": "boolean"
+          },
+          "schedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Schedule"
+            }
+          }
+        }
+      },
+      "TrustedCertificate": {
+        "required": [
+          "certificateName"
+        ],
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "string"
+          },
+          "certificateName": {
+            "pattern": "^[0-9a-zA-Z_\\-:.]+$",
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "thumbprint": {
+            "type": "string"
+          },
+          "thumbprint256": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "subject": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "authChainReport": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "changerComments": {
+            "type": "string"
+          },
+          "changeID": {
+            "type": "string"
+          }
+        }
+      },
+      "TransactionSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "wfid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "start": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "entity": {
+            "type": "string"
+          },
+          "paymentbic": {
+            "type": "string"
+          },
+          "transactionid": {
+            "type": "string"
+          },
+          "payaway": {
+            "type": "boolean"
+          },
+          "rows": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "is-error": {
+            "type": "boolean"
+          },
+          "exclude-archive": {
+            "type": "boolean"
+          },
+          "settlement-from": {
+            "type": "string"
+          },
+          "settlement-to": {
+            "type": "string"
+          },
+          "ptimestamp-from": {
+            "type": "string"
+          },
+          "ptimestamp-to": {
+            "type": "string"
+          },
+          "has-message-id": {
+            "type": "boolean"
+          },
+          "transaction-type": {
+            "type": "string",
+            "enum": [
+              "transaction",
+              "payaway"
+            ]
+          }
+        }
+      },
+      "PageTransaction": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Sort": {
+        "type": "object",
+        "properties": {
+          "unsorted": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "transactionID": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "settleDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "settleAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "workflowID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "fileID": {
+            "type": "string"
+          },
+          "docID": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "payaway": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditEventCriteria": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "rejected",
+              "requested",
+              "request-edited",
+              "request-cancelled"
+            ]
+          },
+          "event-type": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "object-acted-on": {
+            "type": "string"
+          },
+          "action-type": {
+            "type": "string",
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ]
+          }
+        }
+      },
+      "AuditEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "actionType": {
+            "type": "string"
+          },
+          "eventContext": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "objectActedOn": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string"
+          }
+        }
+      },
+      "FileSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "wfid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "start": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "messageid": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "entityid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "override": {
+            "type": "boolean"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "rows": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "is-error": {
+            "type": "boolean"
+          },
+          "exclude-archive": {
+            "type": "boolean"
+          },
+          "bp-state": {
+            "type": "string"
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "docID": {
+            "type": "string"
+          },
+          "transactionTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "settleAmountTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "messageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "workflowID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PageFile": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageSEPAFile": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SEPAFile"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SEPAFile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "docID": {
+            "type": "string"
+          },
+          "transactionTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "settleAmountTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "messageID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Transmittal": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "readOnly": true
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "entityID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fileType": {
+            "type": "string"
+          }
+        }
+      },
+      "TrustedCertificateDetails": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string"
+          },
+          "thumbprint": {
+            "type": "string"
+          },
+          "thumbprint256": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "subject": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "authChainReport": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "certificateErrors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "certificateWarnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "LoginSsoRequest": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "nodeName": {
+            "type": "string"
+          },
+          "dlssoToken": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "PageWorkflowStep": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStep"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WorkflowStep": {
+        "type": "object",
+        "properties": {
+          "stepId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "exeState": {
+            "type": "string"
+          },
+          "advStatus": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nodeExecuted": {
+            "type": "string"
+          },
+          "statusRpt": {
+            "type": "string"
+          },
+          "docId": {
+            "type": "string"
+          },
+          "wfcId": {
+            "type": "string"
+          },
+          "wfdId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wfdVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inlineInvocation": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "workflowId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "documentName": {
+            "type": "string"
+          },
+          "storageType": {
+            "type": "string"
+          },
+          "documentId": {
+            "type": "string"
+          },
+          "documentPayload": {
+            "type": "string"
+          }
+        }
+      },
+      "BPDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "startMode": {
+            "type": "string"
+          },
+          "documentTracking": {
+            "type": "string"
+          },
+          "queue": {
+            "type": "string"
+          },
+          "recoveryLevel": {
+            "type": "string"
+          },
+          "softstopRecoveryLevel": {
+            "type": "string"
+          },
+          "lifespanDays": {
+            "type": "string"
+          },
+          "lifespanHours": {
+            "type": "string"
+          },
+          "lifespanType": {
+            "type": "string"
+          },
+          "removalMethod": {
+            "type": "string"
+          },
+          "eventReportingLevel": {
+            "type": "string"
+          },
+          "wfdVersion": {
+            "type": "string"
+          },
+          "onfaultProcessing": {
+            "type": "string"
+          },
+          "enableTransaction": {
+            "type": "string"
+          },
+          "persistenceLevel": {
+            "type": "string"
+          },
+          "documentStorage": {
+            "type": "string"
+          },
+          "expedite": {
+            "type": "string"
+          },
+          "deadlineHours": {
+            "type": "string"
+          },
+          "deadlineMinutes": {
+            "type": "string"
+          },
+          "firstNotificationHours": {
+            "type": "string"
+          },
+          "firstNotificationMinutes": {
+            "type": "string"
+          },
+          "secondNotificationHours": {
+            "type": "string"
+          },
+          "secondNotificationMinutes": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "node": {
+            "type": "string"
+          },
+          "nodePreference": {
+            "type": "string"
+          },
+          "businessProcess": {
+            "type": "string"
+          }
+        }
+      },
+      "StatisticalData": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "EntityType": {
+        "type": "object"
+      },
+      "PageEntityType": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageChangeControl": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeControl"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CertType": {
+        "type": "object"
+      },
+      "PageCertType": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertType"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ChangeControlCert": {
+        "required": [
+          "changeID",
+          "changer",
+          "operation",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "changeID": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "CREATE",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "REJECTED",
+              "ACCEPTED",
+              "FAILED",
+              "UNKNOWN"
+            ]
+          },
+          "changer": {
+            "type": "string"
+          },
+          "dateChanged": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approver": {
+            "type": "string"
+          },
+          "dateApproved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changerComments": {
+            "type": "string"
+          },
+          "approverComments": {
+            "type": "string"
+          },
+          "resultMeta1": {
+            "type": "string"
+          },
+          "resultMeta2": {
+            "type": "string"
+          },
+          "resultMeta3": {
+            "type": "string"
+          },
+          "trustedCertificateLog": {
+            "$ref": "#/components/schemas/TrustedCertificateLog"
+          },
+          "objectType": {
+            "type": "string"
+          },
+          "pending": {
+            "type": "boolean"
+          },
+          "statusText": {
+            "type": "string"
+          }
+        }
+      },
+      "PageChangeControlCert": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeControlCert"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TrustedCertificateLog": {
+        "type": "object",
+        "properties": {
+          "certificateLogId": {
+            "type": "string"
+          },
+          "certificateId": {
+            "type": "string"
+          },
+          "certificateName": {
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "thumbprint": {
+            "type": "string"
+          },
+          "thumbprint256": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "subject": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "authChainReport": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "controlCert": {
+            "$ref": "#/components/schemas/ChangeControlCert"
+          }
+        }
+      }
+    }
+  }
+}

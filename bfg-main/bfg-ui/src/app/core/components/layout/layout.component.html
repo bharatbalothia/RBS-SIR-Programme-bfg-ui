@@ -1,19 +1,36 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+  <mat-sidenav ngResizable [rzMaxWidth]="rzMaxWidth" [rzMinWidth]="rzMinWidth" [rzHandles]="'e'" #drawer class="sidenav"
+    fixedInViewport [attr.role]="(isWeb$ | async) ? 'navigation' : 'dialog'" [mode]="(isWeb$ | async) ? 'side' : 'over'"
+    [opened]="!shouldHideMenu && (isWeb$ | async) === true && isAuthenticated()">
     <mat-toolbar>Menu</mat-toolbar>
-    <app-menu></app-menu>
+    <app-menu *ngIf="isAuthenticated()"></app-menu>
+    <div class="resizable-right">
+      <span class="resizable-icon"></span>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
+        *ngIf="!shouldHideMenu && !(isWeb$ | async) && isAuthenticated()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>BFG UI</span>
+      <span class="app-title">
+        <img class="title-logo" src="assets/logos/natwest-logo.png" alt="NatWest Logo image">
+        <img class="clipped-title-logo" hidden src="assets/logos/natwest-logo-clipped.png" alt="NatWest Logo image">
+        <div class="version-label">
+          BFG UI
+          <div class='app-version' *ngIf="appVersion">v{{appVersion}}</div>
+        </div>
+        <div class="user-logout">
+          <span class="user-name">{{getUserName()}}</span>
+          <button *ngIf="isAuthenticated()" mat-raised-button class="logout-button" (click)="logout()">logout</button>
+        </div>
+
+      </span>
     </mat-toolbar>
-    <main role="main">
+    <main role="main" class="main">
       <router-outlet></router-outlet>
     </main>
   </mat-sidenav-content>
+  <app-session-expiration *ngIf="isAuthenticated()"></app-session-expiration>
 </mat-sidenav-container>

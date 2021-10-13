@@ -1,0 +1,10 @@
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary="body">
+    <div class="dialog-header">
+        <h2 class="dialog-title" mat-dialog-title>{{data.title}}</h2>
+        <div class="header" cdkDragHandle>
+            <mat-icon class="close-icon" mat-dialog-close>close</mat-icon>
+        </div>
+    </div>
+
+    <ng-content></ng-content>
+</div>

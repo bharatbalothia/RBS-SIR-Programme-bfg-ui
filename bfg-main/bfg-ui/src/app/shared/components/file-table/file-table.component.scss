@@ -1,0 +1,47 @@
+.total-items {
+    margin: 0 !important;
+}
+
+.table-container {
+
+    .mat-table {
+
+        .mat-column-service {
+            min-width: 45px;
+        }
+
+        .mat-column-error {
+            min-width: 60px;
+        }
+
+        .mat-column-type {
+            min-width: 60px;
+        }
+
+        .mat-column-status {
+            min-width: 60px;
+        }
+
+        .mat-column-WFID,
+        .mat-column-id {
+            min-width: 80px;
+        }
+
+        .mat-column-transactions {
+            min-width: 75px;
+        }
+
+        .mat-column-filename {
+            min-width: 300px;
+        }
+
+        .mat-column-timestamp {
+            min-width: 140px;
+        }
+
+        .mat-column-reference {
+            min-width: 200px;
+        }
+
+    }
+}

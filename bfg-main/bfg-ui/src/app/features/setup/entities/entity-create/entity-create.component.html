@@ -1,52 +1,81 @@
 <mat-card class="entity-create-card">
     <mat-card-header>
-        <mat-card-title>Create Entity</mat-card-title>
+        <mat-card-title>{{editableEntity ? (isCloneAction ? 'Clone entity' : 'Edit ' + editableEntity.entity + '
+            entity') : 'Create Entity'}}
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
-        <mat-error class="top-error-message" *ngIf="errorMessage">{{errorMessage.message}} ({{errorMessage.code}})
-        </mat-error>
         <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="getSummaryFieldsSource()">
             <mat-step [stepControl]="entityTypeFormGroup">
                 <form [formGroup]="entityTypeFormGroup">
                     <ng-template matStepLabel>Choose entity type</ng-template>
-                    <mat-form-field>
-                        <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
-                        <mat-select formControlName="service" required>
-                            <mat-option value="GPL">GPL</mat-option>
-                            <mat-option value="SCT">SCT</mat-option>
-                        </mat-select>
-                        <mat-error *ngFor="let validation of validationMessages.service">
-                            <mat-error class="error-message"
-                                *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('service')">
-                            {{getErrorByField('service')}}
-                        </mat-error>
-                    </mat-form-field>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['service'] || 'service'}}</mat-label>
+                            <mat-select formControlName="service" (selectionChange)="onServiceSelect($event.value)"
+                                required [appDisableControl]="isEditing() && isChangeControlNotCreateStatus()">
+                                <mat-option *ngFor="let service of getEntityServicesArray()" [value]="service">
+                                    {{service}}
+                                </mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(entityTypeFormGroup.controls.service)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityTypeFormGroup.controls.service.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.service">
+                                <mat-error class="error-message"
+                                    *ngIf="entityTypeFormGroup.get('service').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('service')">
+                                {{getErrorByField('service')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('service', 'entity')"></app-tooltip>
+                    </section>
                     <div class='stepper-actions'>
-                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" (click)="tryToProceed()">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
                     </div>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="entityPageFormGroup">
+            <mat-step *ngIf="entityPageFormGroup" [stepControl]="entityPageFormGroup">
                 <form [formGroup]="entityPageFormGroup">
                     <ng-template matStepLabel>Complete entity page</ng-template>
-                    <mat-form-field>
-                        <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
-                        <input matInput formControlName="entity" required>
-                        <mat-error *ngFor="let validation of validationMessages.entity">
-                            <mat-error class="error-message"
-                                *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('entity')">
-                            {{getErrorByField('entity')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <section class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['routeInbound'] || 'routeInbound'}}:*</label>
+
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('entity')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['entity'] || 'entity'}}</mat-label>
+                            <input matInput formControlName="entity" required appInputUppercase
+                                [maxlength]="getMaxLengthForEntityField()">
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.entity)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.entity.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.entity">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('entity').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('entity')">
+                                {{getErrorByField('entity')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.entity" [key]="'entity'"
+                            (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('entity')" [tip]="getTooltip('entity', 'entity')">
+                        </app-tooltip>
+                    </section>
+                    <section *ngIf="entityPageFormGroup.get('routeInbound')" class='radio-group-section'>
+                        <label class='radio-group-label'>{{entityDisplayNames['routeInbound'] ||
+                            'routeInbound'}}:*</label>
                         <mat-radio-group formControlName='routeInbound'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -54,12 +83,18 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('routeInbound')">
                             {{getErrorByField('routeInbound')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('routeInbound', 'entity')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundRequestorDN')">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['inboundRequestorDN'] || 'inboundRequestorDN'}}</mat-label>
                             <input matInput formControlName="inboundRequestorDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.inboundRequestorDN">
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.inboundRequestorDN)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.inboundRequestorDN.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="entityPageFormGroup.get('inboundRequestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -68,77 +103,728 @@
                                 {{getErrorByField('inboundRequestorDN')}}
                             </mat-error>
                         </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestorDN"
+                            [key]="'inboundRequestorDN'" (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip [tip]="getTooltip('inboundRequestorDN', 'entity')"></app-tooltip>
                     </section>
-                    <mat-form-field>
-                        <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
-                        <input matInput formControlName="inboundResponderDN" appInputLowercase required>
-                        <mat-error *ngFor="let validation of validationMessages.inboundResponderDN">
-                            <mat-error class="error-message"
-                                *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
-                            {{getErrorByField('inboundResponderDN')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>{{entityDisplayNames['inboundService'] || 'inboundService'}}</mat-label>
-                        <input matInput formControlName="inboundService" required>
-                        <mat-error *ngFor="let validation of validationMessages.inboundService">
-                            <mat-error class="error-message"
-                                *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)">
-                                {{validation.message}}</mat-error>
-                        </mat-error>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
-                            {{getErrorByField('inboundService')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
-                        <mat-select formControlName="inboundRequestType" multiple>
-                            <mat-select-trigger>
-                                <mat-chip-list>
-                                    <mat-chip
-                                        *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
-                                        [removable]="true" (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
-                                        {{ inboundRequestType }}
-                                        <mat-icon matChipRemove>cancel</mat-icon>
-                                    </mat-chip>
-                                </mat-chip-list>
-                            </mat-select-trigger>
-                            <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
-                                [value]="inboundRequestType">{{inboundRequestType}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
-                            {{getErrorByField('inboundRequestType')}}
-                        </mat-error>
-                    </mat-form-field>
-                    <section class='radio-group-section'>
-                        <label class='radio-group-label'>{{entityDisplayNames['inboundDir'] || 'inboundDir'}}:*</label>
-                        <mat-radio-group formControlName='inboundDir'>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundResponderDN')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['inboundResponderDN'] || 'inboundResponderDN'}}</mat-label>
+                            <input matInput formControlName="inboundResponderDN" appInputLowercase required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.inboundResponderDN)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.inboundResponderDN.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundResponderDN">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundResponderDN').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundResponderDN')">
+                                {{getErrorByField('inboundResponderDN')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundResponderDN"
+                            [key]="'inboundResponderDN'" (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundResponderDN')"
+                            [tip]="getTooltip('inboundResponderDN', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('inboundService')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['inboundService'] || 'inboundService'}}</mat-label>
+                            <input matInput formControlName="inboundService" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.inboundService)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.inboundService.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundService">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundService').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundService')">
+                                {{getErrorByField('inboundService')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="shouldShowRoutingAttributesOverlay()"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundService"
+                            [key]="'inboundService'" (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundService')"
+                            [tip]="getTooltip('inboundService', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section mat-select-field"
+                        *ngIf="entityPageFormGroup.get('inboundRequestType')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['inboundRequestType'] || 'inboundRequestType'}}</mat-label>
+                            <mat-select formControlName="inboundRequestType" multiple
+                                [required]="get(requiredFields,'inboundRequestType')">
+                                <mat-select-trigger>
+                                    <mat-chip-list>
+                                        <mat-chip
+                                            *ngFor="let inboundRequestType of entityPageFormGroup.get('inboundRequestType').value"
+                                            [removable]="true"
+                                            (removed)="onInboundRequestTypeRemoved(inboundRequestType)">
+                                            {{ inboundRequestType.value }}
+                                            <mat-icon matChipRemove>cancel</mat-icon>
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </mat-select-trigger>
+                                <mat-option *ngFor="let inboundRequestType of inboundRequestTypeList"
+                                    [value]="inboundRequestType">{{inboundRequestType.value}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngFor="let validation of entityValidationMessages.inboundRequestType">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('inboundRequestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('inboundRequestType')">
+                                {{getErrorByField('inboundRequestType')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-value-button"
+                            *ngIf="shouldShowRoutingAttributesOverlay() && (get(editableEntity, 'inboundRequestType') || []).length !== 0"
+                            buttonName="Source Value" [overlayData]="editableEntity.inboundRequestType"
+                            [key]="'inboundRequestType'" (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('inboundRequestType')"
+                            [tip]="getTooltip('inboundRequestType', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('maxBulksPerFile')">
+                            <mat-label>{{entityDisplayNames['maxBulksPerFile'] || 'maxBulksPerFile'}}</mat-label>
+                            <input matInput type="number" min="0" formControlName="maxBulksPerFile" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.maxBulksPerFile)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.maxBulksPerFile.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.maxBulksPerFile">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('maxBulksPerFile').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('maxBulksPerFile')">
+                                {{getErrorByField('maxBulksPerFile')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('maxBulksPerFile')"
+                            [tip]="getTooltip('maxBulksPerFile', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')">
+                            <mat-label>{{entityDisplayNames['maxTransfersPerBulk'] || 'maxTransfersPerBulk'}}
+                            </mat-label>
+                            <input matInput type="number" min="0" formControlName="maxTransfersPerBulk" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.maxTransfersPerBulk)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.maxTransfersPerBulk.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.maxTransfersPerBulk">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('maxTransfersPerBulk').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('maxTransfersPerBulk')">
+                                {{getErrorByField('maxTransfersPerBulk')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('maxTransfersPerBulk')"
+                            [tip]="getTooltip('maxTransfersPerBulk', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('startOfDay')">
+                            <mat-label>{{entityDisplayNames['startOfDay'] || 'startOfDay'}}</mat-label>
+                            <input matInput type="time" formControlName="startOfDay" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.startOfDay)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.startOfDay.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.startOfDay">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('startOfDay').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('startOfDay')">
+                                {{getErrorByField('startOfDay')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('startOfDay')"
+                            [tip]="getTooltip('startOfDay', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('endOfDay')">
+                            <mat-label>{{entityDisplayNames['endOfDay'] || 'endOfDay'}}</mat-label>
+                            <input matInput type="time" formControlName="endOfDay" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.endOfDay)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.endOfDay.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.endOfDay">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('endOfDay').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('endOfDay')">
+                                {{getErrorByField('endOfDay')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('endOfDay')"
+                            [tip]="getTooltip('endOfDay', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('mailboxPathIn')">
+                            <mat-label>{{entityDisplayNames['mailboxPathIn'] || 'mailboxPathIn'}}</mat-label>
+                            <input matInput formControlName="mailboxPathIn" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.mailboxPathIn)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.mailboxPathIn.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathIn">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('mailboxPathIn').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mailboxPathIn')">
+                                {{getErrorByField('mailboxPathIn')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathIn')"
+                            [tip]="getTooltip('mailboxPathIn', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mailboxPathOut')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mailboxPathOut'] || 'mailboxPathOut'}}</mat-label>
+                            <input matInput formControlName="mailboxPathOut" required>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.mailboxPathOut)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.mailboxPathOut.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mailboxPathOut">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('mailboxPathOut').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mailboxPathOut')">
+                                {{getErrorByField('mailboxPathOut')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.mailboxPathOut"
+                            [key]="'mailboxPathOut'" (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mailboxPathOut')"
+                            [tip]="getTooltip('mailboxPathOut', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('mqQueueIn')">
+                            <mat-label>{{entityDisplayNames['mqQueueIn'] || 'mqQueueIn'}}</mat-label>
+                            <input matInput formControlName="mqQueueIn">
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.mqQueueIn)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.mqQueueIn.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQueueIn')">
+                                {{getErrorByField('mqQueueIn')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueIn')"
+                            [tip]="getTooltip('mqQueueIn', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('mqQueueOut')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqQueueOut'] || 'mqQueueOut'}}</mat-label>
+                            <input matInput formControlName="mqQueueOut">
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.mqQueueOut)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.mqQueueOut.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQueueOut">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('mqQueueOut').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQueueOut')">
+                                {{getErrorByField('mqQueueOut')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-overlay-info class="source-info" *ngIf="isCloneAction && editableEntity"
+                            buttonName="Source Value" [overlayData]="editableEntity.mailboxPathOut" [key]="'mqQueueOut'"
+                            (insert)="insert($event)">
+                        </app-overlay-info>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('mqQueueOut')"
+                            [tip]="getTooltip('mqQueueOut', 'entity')"></app-tooltip>
+                    </section>
+                    <section class='radio-group-section' *ngIf="entityPageFormGroup.get('compression')">
+                        <label class='radio-group-label'>{{entityDisplayNames['compression'] || 'compression'}}:</label>
+                        <mat-radio-group formControlName='compression'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
                         </mat-radio-group>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundDir')">
-                            {{getErrorByField('inboundDir')}}
+                        <mat-error class="error-message" *ngIf="getErrorByField('compression')">
+                            {{getErrorByField('compression')}}
                         </mat-error>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('compression')"
+                            [tip]="getTooltip('compression', 'entity')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['inboundRoutingRule'] || 'inboundRoutingRule'}}:*</label>
-                        <mat-radio-group formControlName='inboundRoutingRule'>
-                            <mat-radio-button [value]="true">Yes</mat-radio-button>
-                            <mat-radio-button [value]="false">No</mat-radio-button>
-                        </mat-radio-group>
-                        <mat-error class="error-message" *ngIf="getErrorByField('inboundRoutingRule')">
-                            {{getErrorByField('inboundRoutingRule')}}
-                        </mat-error>
+                    <section class="form-field-section">
+                        <mat-form-field *ngIf="entityPageFormGroup.get('entityParticipantType')">
+                            <mat-label>{{entityDisplayNames['entityParticipantType'] || 'entityParticipantType'}}
+                            </mat-label>
+                            <mat-select formControlName="entityParticipantType"
+                                (selectionChange)="onParticipantTypeSelect($event.value)">
+                                <mat-option value='INDIRECT'>INDIRECT</mat-option>
+                                <mat-option value='DIRECT'>DIRECT</mat-option>
+                            </mat-select>
+                            <mat-error class="error-message" *ngIf="getErrorByField('entityParticipantType')">
+                                {{getErrorByField('entityParticipantType')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip *ngIf="entityPageFormGroup.get('entityParticipantType')"
+                            [tip]="getTooltip('entityParticipantType', 'entity')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section" *ngIf="entityPageFormGroup.get('entityParticipantType')">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['directParticipant'] || 'directParticipant'}}</mat-label>
+                            <input type="text" matInput formControlName="directParticipant" required
+                                [matAutocomplete]="directParticipantAutocomplete" appAutocompleteEnforceSelection>
+                            <mat-autocomplete #directParticipantAutocomplete="matAutocomplete" autoActiveFirstOption>
+                                <mat-option *ngFor="let option of filteredParticipantList | async" [value]="option">
+                                    {{option}}
+                                </mat-option>
+                            </mat-autocomplete>
+                            <button *ngIf="shouldDisplayRemoveOption(entityPageFormGroup.controls.directParticipant)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="entityPageFormGroup.controls.directParticipant.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.directParticipant">
+                                <mat-error class="error-message"
+                                    *ngIf="entityPageFormGroup.get('directParticipant').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('directParticipant')">
+                                {{getErrorByField('directParticipant')}}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-tooltip *ngIf="entityPageFormGroup.get('directParticipant')"
+                            [tip]="getTooltip('directParticipant', 'entity')"></app-tooltip>
+                    </section>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button class="action-button"
+                            (click)="validateRouteAttributes()">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step *ngIf="schedulesFormGroup" [stepControl]="schedulesFormGroup">
+                <form [formGroup]="schedulesFormGroup">
+                    <ng-template matStepLabel>Complete Schedule details</ng-template>
+                    <mat-table [dataSource]="schedulesDataSource" class="schedule-table">
+                        <ng-container matColumnDef="action">
+                            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                            <mat-cell *matCellDef="let element; let i = index">
+                                <button mat-icon-button (click)="openScheduleDialog({ schedule: element, index: i })">
+                                    <mat-icon inline>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button *ngIf="!element.entityLog" (click)="deleteSchedule(element, i)">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="schedule">
+                            <mat-header-cell *matHeaderCellDef> Schedule </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <app-display-table-cell [value]="getFormattedSchedule(element)">
+                                </app-display-table-cell>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="scheduleType">
+                            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{element.isWindow ? scheduleType.WINDOW : scheduleType.DAILY}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="fileType">
+                            <mat-header-cell *matHeaderCellDef> FileType </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{element.fileType}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="addSchedule">
+                            <mat-footer-cell *matFooterCellDef [attr.colspan]="scheduleDisplayedColumns.length">
+                                <button mat-raised-button color="primary" (click)="openScheduleDialog()">
+                                    <mat-icon>add</mat-icon> Create a new schedule
+                                </button>
+                            </mat-footer-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="scheduleDisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: scheduleDisplayedColumns;"></mat-row>
+                        <mat-footer-row *matFooterRowDef="['addSchedule']">
+                        </mat-footer-row>
+                    </mat-table>
+                    <div class='stepper-actions'>
+                        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+                        <button mat-raised-button matStepperNext class="action-button">Next</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
+                            Cancel</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step *ngIf="mqDetailsFormGroup" [stepControl]="mqDetailsFormGroup">
+                <form [formGroup]="mqDetailsFormGroup">
+                    <ng-template matStepLabel>MQ Details</ng-template>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqHost'] || 'mqHost'}}</mat-label>
+                            <input matInput formControlName="mqHost" [required]="get(requiredFields,'mqHost')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqHost)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqHost.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqHost">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqHost').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqHost')">
+                                {{getErrorByField('mqHost')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqHost', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqPort'] || 'mqPort'}}</mat-label>
+                            <input matInput type="number" min="0" formControlName="mqPort"
+                                [required]="get(requiredFields,'mqPort')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqPort)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqPort.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqPort">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqPort').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqPort')">
+                                {{getErrorByField('mqPort')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqPort', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqQManager'] || 'mqQManager'}}</mat-label>
+                            <input matInput formControlName="mqQManager" [required]="get(requiredFields,'mqQManager')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqQManager)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqQManager.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQManager">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqQManager').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQManager')">
+                                {{getErrorByField('mqQManager')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqQManager', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqChannel'] || 'mqChannel'}}</mat-label>
+                            <input matInput formControlName="mqChannel" [required]="get(requiredFields,'mqChannel')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqChannel)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqChannel.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqChannel">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqChannel').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqChannel')">
+                                {{getErrorByField('mqChannel')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqChannel', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqQueueName'] || 'mqQueueName'}}</mat-label>
+                            <input matInput formControlName="mqQueueName"
+                                [required]="get(requiredFields,'mqQueueName')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqQueueName)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqQueueName.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQueueName">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqQueueName').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQueueName')">
+                                {{getErrorByField('mqQueueName')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqQueueName', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqQueueBinding'] || 'mqQueueBinding'}}
+                            </mat-label>
+                            <mat-select formControlName="mqQueueBinding"
+                                [required]="get(requiredFields,'mqQueueBinding')">
+                                <mat-option *ngFor="let mqQueueBinding of mqDetails.QueueBinding"
+                                    [value]="mqQueueBinding">
+                                    {{mqQueueBinding}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqQueueBinding)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqQueueBinding.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQueueBinding">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqQueueBinding').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQueueBinding')">
+                                {{getErrorByField('mqQueueBinding')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqQueueBinding', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqQueueContext'] || 'mqQueueContext'}}
+                            </mat-label>
+                            <mat-select formControlName="mqQueueContext"
+                                [required]="get(requiredFields,'mqQueueContext')">
+                                <mat-option *ngFor="let mqQueueContext of mqDetails.QueueContext"
+                                    [value]="mqQueueContext">
+                                    {{mqQueueContext}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqQueueContext)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqQueueContext.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqQueueContext">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqQueueContext').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqQueueContext')">
+                                {{getErrorByField('mqQueueContext')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqQueueContext', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqDebug'] || 'mqDebug'}}
+                            </mat-label>
+                            <mat-select formControlName="mqDebug" [required]="get(requiredFields,'mqDebug')">
+                                <mat-option *ngFor="let mqDebug of mqDetails.Debug" [value]="mqDebug.toUpperCase()">
+                                    {{mqDebug}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqDebug)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqDebug.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqDebug">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqDebug').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqDebug')">
+                                {{getErrorByField('mqDebug')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqDebug', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqSSLOptions'] || 'mqSSLOptions'}}
+                            </mat-label>
+                            <mat-select formControlName="mqSSLOptions" [required]="get(requiredFields,'mqSSLOptions')">
+                                <mat-option *ngFor="let mqSSLOptions of mqDetails.SSLOptions" [value]="mqSSLOptions">
+                                    {{mqSSLOptions}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqSSLOptions)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqSSLOptions.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqSSLOptions">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqSSLOptions').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqSSLOptions')">
+                                {{getErrorByField('mqSSLOptions')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqSSLOptions', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqSSLCiphers'] || 'mqSSLCiphers'}}
+                            </mat-label>
+                            <mat-select formControlName="mqSSLCiphers" [required]="get(requiredFields,'mqSSLCiphers')">
+                                <mat-option *ngFor="let mqSSLCiphers of mqDetails.SSLCiphers" [value]="mqSSLCiphers">
+                                    {{mqSSLCiphers}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqSSLCiphers)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqSSLCiphers.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCiphers">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqSSLCiphers').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCiphers')">
+                                {{getErrorByField('mqSSLCiphers')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqSSLCiphers', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqSSLKeyCert'] || 'mqSSLKeyCert'}}
+                            </mat-label>
+                            <mat-select formControlName="mqSSLKeyCert" [required]="get(requiredFields,'mqSSLKeyCert')">
+                                <mat-option *ngFor="let mqSSLKeyCert of mqDetails.SystemDigitalCertificates"
+                                    [value]="mqSSLKeyCert">
+                                    {{mqSSLKeyCert}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqSSLKeyCert)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqSSLKeyCert.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqSSLKeyCert">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqSSLKeyCert').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqSSLKeyCert')">
+                                {{getErrorByField('mqSSLKeyCert')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqSSLKeyCert', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqSSLCaCert'] || 'mqSSLCaCert'}}
+                            </mat-label>
+                            <mat-select formControlName="mqSSLCaCert" [required]="get(requiredFields,'mqSSLCaCert')">
+                                <mat-option *ngFor="let mqSSLCaCert of mqDetails.CaDigitalCertificates"
+                                    [value]="mqSSLCaCert">
+                                    {{mqSSLCaCert}}</mat-option>
+                            </mat-select>
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqSSLCaCert)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqSSLCaCert.setValue(''); $event.stopPropagation()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqSSLCaCert">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqSSLCaCert').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqSSLCaCert')">
+                                {{getErrorByField('mqSSLCaCert')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqSSLCaCert', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqHeader'] || 'mqHeader'}}</mat-label>
+                            <input matInput formControlName="mqHeader" [required]="get(requiredFields,'mqHeader')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqHeader)" mat-button
+                                type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqHeader.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqHeader">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqHeader').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqHeader')">
+                                {{getErrorByField('mqHeader')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqHeader', 'mqdetails')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['mqSessionTimeout'] || 'mqSessionTimeout'}}</mat-label>
+                            <input matInput formControlName="mqSessionTimeout" type="number" min="0"
+                                [required]="get(requiredFields,'mqSessionTimeout')">
+                            <button *ngIf="shouldDisplayRemoveOption(mqDetailsFormGroup.controls.mqSessionTimeout)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="mqDetailsFormGroup.controls.mqSessionTimeout.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.mqSessionTimeout">
+                                <mat-error class="error-message"
+                                    *ngIf="mqDetailsFormGroup.get('mqSessionTimeout').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('mqSessionTimeout')">
+                                {{getErrorByField('mqSessionTimeout')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('mqSessionTimeout', 'mqdetails')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>
@@ -146,11 +832,17 @@
             <mat-step [stepControl]="SWIFTDetailsFormGroup">
                 <form [formGroup]="SWIFTDetailsFormGroup">
                     <ng-template matStepLabel>Complete SWIFT details</ng-template>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestorDN'] || 'requestorDN'}}</mat-label>
-                            <input matInput formControlName="requestorDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.requestorDN">
+                            <input matInput formControlName="requestorDN" appInputLowercase
+                                [required]="get(requiredFields,'requestorDN')">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.requestorDN)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.requestorDN.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.requestorDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('requestorDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -159,12 +851,19 @@
                                 {{getErrorByField('requestorDN')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('requestorDN', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['responderDN'] || 'responderDN'}}</mat-label>
-                            <input matInput formControlName="responderDN" appInputLowercase required>
-                            <mat-error *ngFor="let validation of validationMessages.responderDN">
+                            <input matInput formControlName="responderDN" appInputLowercase
+                                [required]="get(requiredFields,'responderDN')">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.responderDN)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.responderDN.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.responderDN">
                                 <mat-error class="error-message"
                                     *ngIf="SWIFTDetailsFormGroup.get('responderDN').hasError(validation.type)">
                                     {{validation.message}}</mat-error>
@@ -173,15 +872,49 @@
                                 {{getErrorByField('responderDN')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('responderDN', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
+                        <mat-form-field>
+                            <mat-label>{{entityDisplayNames['serviceName'] || 'service'}}</mat-label>
+                            <input matInput formControlName="serviceName"
+                                [required]="get(requiredFields,'serviceName')">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.serviceName)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.serviceName.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.serviceName">
+                                <mat-error class="error-message"
+                                    *ngIf="SWIFTDetailsFormGroup.get('serviceName').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
+                            <mat-error class="error-message" *ngIf="getErrorByField('serviceName')">
+                                {{getErrorByField('serviceName')}}
+                            </mat-error>
+                        </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('service', 'swift')"></app-tooltip>
+                    </section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestType'] || 'requestType'}}</mat-label>
-                            <input matInput formControlName="requestType">
+                            <input matInput formControlName="requestType"
+                                [required]="get(requiredFields,'requestType')">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.requestType)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.requestType.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngFor="let validation of entityValidationMessages.requestType">
+                                <mat-error class="error-message"
+                                    *ngIf="SWIFTDetailsFormGroup.get('requestType').hasError(validation.type)">
+                                    {{validation.message}}</mat-error>
+                            </mat-error>
                             <mat-error class="error-message" *ngIf="getErrorByField('requestType')">
                                 {{getErrorByField('requestType')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('requestType', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['trace'] || 'trace'}}:</label>
@@ -192,6 +925,7 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('trace')">
                             {{getErrorByField('trace')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('trace', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
                         <label class='radio-group-label'>{{entityDisplayNames['snF'] || 'snF'}}:</label>
@@ -202,10 +936,11 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('snF')">
                             {{getErrorByField('snF')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('snF', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['deliveryNotification'] || 'deliveryNotification'}}:</label>
+                        <label class='radio-group-label'>{{entityDisplayNames['deliveryNotification'] ||
+                            'deliveryNotification'}}:</label>
                         <mat-radio-group formControlName='deliveryNotification'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -213,10 +948,11 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotification')">
                             {{getErrorByField('deliveryNotification')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('deliveryNotification', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
-                        <label
-                            class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] || 'nonRepudiation'}}:</label>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('nonRepudiation')">
+                        <label class='radio-group-label'>{{entityDisplayNames['nonRepudiation'] ||
+                            'nonRepudiation'}}:</label>
                         <mat-radio-group formControlName='nonRepudiation'>
                             <mat-radio-button [value]="true">Yes</mat-radio-button>
                             <mat-radio-button [value]="false">No</mat-radio-button>
@@ -224,8 +960,9 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('nonRepudiation')">
                             {{getErrorByField('nonRepudiation')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('nonRepudiation', 'swift')"></app-tooltip>
                     </section>
-                    <section class='radio-group-section'>
+                    <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('e2eSigning')">
                         <label class='radio-group-label'>{{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
                         <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>
@@ -234,74 +971,117 @@
                         <mat-error class="error-message" *ngIf="getErrorByField('e2eSigning')">
                             {{getErrorByField('e2eSigning')}}
                         </mat-error>
+                        <app-tooltip [tip]="getTooltip('e2eSigning', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['deliveryNotifDN'] || 'deliveryNotifDN'}}</mat-label>
                             <input matInput formControlName="deliveryNotifDN">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.deliveryNotifDN)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.deliveryNotifDN.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotifDN')">
                                 {{getErrorByField('deliveryNotifDN')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('deliveryNotifDN', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['deliveryNotifRT'] || 'deliveryNotifRT'}}</mat-label>
                             <input matInput formControlName="deliveryNotifRT">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.deliveryNotifRT)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.deliveryNotifRT.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('deliveryNotifRT')">
                                 {{getErrorByField('deliveryNotifRT')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('deliveryNotifRT', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['requestRef'] || 'requestRef'}}</mat-label>
                             <input matInput formControlName="requestRef">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.requestRef)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.requestRef.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('requestRef')">
                                 {{getErrorByField('requestRef')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('requestRef', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['fileInfo'] || 'fileInfo'}}</mat-label>
                             <input matInput formControlName="fileInfo">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.fileInfo)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.fileInfo.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('fileInfo')">
                                 {{getErrorByField('fileInfo')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('fileInfo', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['fileDesc'] || 'fileDesc'}}</mat-label>
                             <input matInput formControlName="fileDesc">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.fileDesc)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.fileDesc.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('fileDesc')">
                                 {{getErrorByField('fileDesc')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('fileDesc', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['transferInfo'] || 'transferInfo'}}</mat-label>
                             <input matInput formControlName="transferInfo">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.transferInfo)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.transferInfo.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('transferInfo')">
                                 {{getErrorByField('transferInfo')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('transferInfo', 'swift')"></app-tooltip>
                     </section>
-                    <section>
+                    <section class="form-field-section">
                         <mat-form-field>
                             <mat-label>{{entityDisplayNames['transferDesc'] || 'transferDesc'}}</mat-label>
                             <input matInput formControlName="transferDesc">
+                            <button *ngIf="shouldDisplayRemoveOption(SWIFTDetailsFormGroup.controls.transferDesc)"
+                                mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="SWIFTDetailsFormGroup.controls.transferDesc.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <mat-error class="error-message" *ngIf="getErrorByField('transferDesc')">
                                 {{getErrorByField('transferDesc')}}
                             </mat-error>
                         </mat-form-field>
+                        <app-tooltip [tip]="getTooltip('transferDesc', 'swift')"></app-tooltip>
                     </section>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button matStepperNext class="action-button">Next</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>
@@ -309,50 +1089,52 @@
             <mat-step [stepControl]="summaryPageFormGroup">
                 <form [formGroup]="summaryPageFormGroup">
                     <ng-template matStepLabel>Summary page</ng-template>
-                    <mat-table [dataSource]="summaryPageDataSource">
+                    <mat-table [dataSource]="summaryPageDataSource" class="summary-table">
                         <ng-container matColumnDef="field">
                             <mat-header-cell *matHeaderCellDef> Field </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{entityDisplayNames[element.field] || element.field}} </mat-cell>
+                            <mat-cell *matCellDef="let element"> {{entityDisplayNames[element.field] || element.field}}
+                            </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="value">
                             <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.value}}
-                            </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="error">
-                            <mat-header-cell *matHeaderCellDef> Error </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-error class='error-table-cell'>{{element.error}}</mat-error>
+                                <app-display-table-cell class='value-table-cell' [value]="element.value">
+                                </app-display-table-cell>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="changerComment">
                             <mat-footer-cell *matFooterCellDef colspan="2">
-                                <mat-form-field>
+                                <mat-form-field class="changer-comments">
                                     <mat-label>{{entityDisplayNames['changerComments'] || 'changerComments'}}
                                     </mat-label>
                                     <textarea matInput formControlName="changerComments"></textarea>
+                                    <button
+                                        *ngIf="shouldDisplayRemoveOption(summaryPageFormGroup.controls.changerComments)"
+                                        mat-button type="button" matSuffix mat-icon-button aria-label="Clear"
+                                        (click)="summaryPageFormGroup.controls.changerComments.setValue('')">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
                                     <mat-error class="error-message" *ngIf="getErrorByField('changerComments')">
                                         {{getErrorByField('changerComments')}}
                                     </mat-error>
                                 </mat-form-field>
+                                <app-tooltip [tip]="getTooltip('changerComments', 'confirm')"></app-tooltip>
                             </mat-footer-cell>
                         </ng-container>
                         <mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: summaryDisplayedColumns;"></mat-row>
-                        <mat-footer-row *matFooterRowDef="['changerComment']; sticky: true"></mat-footer-row>
+                        <mat-footer-row *matFooterRowDef="['changerComment']"></mat-footer-row>
                     </mat-table>
                     <div class='stepper-actions'>
                         <button mat-raised-button matStepperPrevious class="action-button">Back</button>
                         <button mat-raised-button class="action-button" color='primary'
-                            (click)="createEntity()">Create</button>
-                        <button mat-raised-button class="action-button" color='warn' (click)="cancelCreationEntity()">
+                            (click)="sendEntity(!isCloneAction && isEditing())">Save</button>
+                        <button mat-raised-button class="action-button" color='warn' (click)="cancelEntity()">
                             Cancel</button>
                     </div>
                 </form>
             </mat-step>
         </mat-horizontal-stepper>
     </mat-card-content>
-    <mat-card-footer>
-        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-    </mat-card-footer>
 </mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

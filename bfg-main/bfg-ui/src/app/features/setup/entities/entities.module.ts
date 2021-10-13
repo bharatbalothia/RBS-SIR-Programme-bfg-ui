@@ -4,7 +4,8 @@ import { EntityHomeComponent } from './entity-home/entity-home.component';
 import { EntitiesRoutingModule } from './entities-routing.module';
 import { EntityCreateComponent } from './entity-create/entity-create.component';
 import { EntityPendingComponent } from './entity-pending/entity-pending.component';
-import { EntityApprovingDialogComponent } from './entity-approving-dialog/entity-approving-dialog.component';
+import { EntitySearchComponent } from './entity-search/entity-search.component';
+import { EntityScheduleDialogComponent } from './entity-create/entity-schedule-dialog/entity-schedule-dialog.component';
 
 
 
@@ -13,7 +14,8 @@ import { EntityApprovingDialogComponent } from './entity-approving-dialog/entity
     EntityHomeComponent,
     EntityCreateComponent,
     EntityPendingComponent,
-    EntityApprovingDialogComponent
+    EntitySearchComponent,
+    EntityScheduleDialogComponent,
   ],
   imports: [
     SharedModule,

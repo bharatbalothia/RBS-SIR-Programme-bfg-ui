@@ -1,0 +1,13 @@
+<mat-card class="error-monitor-card">
+    <mat-card-header>
+        <mat-card-title>Error monitor
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <app-autorefresh-data [getData]="getFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+        <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
+        </app-file-table>
+    </mat-card-content>
+</mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

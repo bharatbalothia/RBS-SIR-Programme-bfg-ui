@@ -1,4 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
+@use '~@angular/material' as mat;
+@import '~@angular/material/theming';
+@include mat.core();
+
+$deep-purple: (50: #ede7f6,
+    100: #d1c4e9,
+    200: #b39ddb,
+    300: #9575cd,
+    400: #7e57c2,
+    500: #5a287d,
+    600: #5e35b1,
+    700: #512da8,
+    800: #4527a0,
+    900: #311b92,
+    A100: #b388ff,
+    A200: #7c4dff,
+    A400: #651fff,
+    A700: #6200ea,
+    contrast: (50: $dark-primary-text,
+        100: $dark-primary-text,
+        200: $dark-primary-text,
+        300: $light-primary-text,
+        400: $light-primary-text,
+        500: $light-primary-text,
+        600: $light-primary-text,
+        700: $light-primary-text,
+        800: $light-primary-text,
+        900: $light-primary-text,
+        A100: $dark-primary-text,
+        A200: $light-primary-text,
+        A400: $light-primary-text,
+        A700: $light-primary-text,
+    ));
+
+$primary: mat.define-palette($deep-purple);
+$accent: mat.define-palette($deep-purple, A200, A100, A400);
+$warn: mat.define-palette(mat.$red-palette);
+$theme: mat.define-light-theme((color: (primary: $primary,
+            accent: $accent,
+            warn: $warn,
+        )));
+
+@include mat.all-component-themes($theme);
 
 html,
 body {
@@ -8,6 +51,29 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+mat-icon {
+    font-family: 'Material Icons' !important;
+    /* Support for IE */
+    font-feature-settings: 'liga';
+}
+
+.mat-footer-row[hidden] {
+    display: none !important;
+}
+
+.mat-stepper-horizontal {
+    .mat-step-label {
+        white-space: normal;
+    }
+}
+
+.mat-button-base {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
 }
 
 mat-form-field {
@@ -39,4 +105,250 @@ mat-form-field {
             position: static;
         }
     }
+
+    .mat-select {
+        display: flex;
+
+        .mat-select-trigger {
+            width: 100%;
+        }
+    }
+}
+
+.main {
+    .mat-card:not(.login-card) {
+        margin: 15px;
+        position: absolute;
+        bottom: 0;
+        top: 64px;
+        overflow: auto;
+        left: 0px;
+        right: 0px;
+
+        .mat-horizontal-content-container {
+            overflow: visible !important;
+        }
+
+        .table-container {
+            width: 100%;
+        }
+
+        .mat-table {
+            display: inline-block;
+            margin-right: 15px;
+            width: 100%;
+
+            .mat-row,
+            .mat-header-row {
+                display: inline-flex;
+                min-width: 100%;
+            }
+
+            .mat-header-cell,
+            .mat-cell {
+                padding-right: 10px;
+            }
+
+        }
+
+    }
+}
+
+.mat-table {
+
+    .mat-row,
+    .mat-header-row,
+    .mat-cell,
+    .mat-footer-row,
+    .mat-footer-cell {
+        min-height: 40px !important;
+    }
+
+    .mat-header-cell,
+    .mat-cell,
+    .mat-footer-cell {
+        padding-right: 10px !important;
+    }
+
+    .mat-cell:empty {
+        display: block;
+    }
+
+    .mat-header-cell,
+    .mat-cell,
+    .mat-cell>.mat-button {
+        word-break: break-word;
+        white-space: normal;
+        line-height: normal;
+        text-align: left;
+        min-width: 10px;
+
+        .mat-cell-value {
+            width: 100%;
+        }
+    }
+
+    .mat-cell>.mat-button {
+        padding: 0;
+    }
+
+    .action-button {
+        width: auto;
+        margin-right: 10px;
+        word-break: normal;
+
+        .action-icon {
+            display: flex;
+
+            .mat-icon {
+                font-size: 17px;
+                width: 20px;
+                height: 0px;
+            }
+        }
+    }
+}
+
+.paginator {
+    width: 100%;
+
+    .mat-paginator {
+        background-color: unset;
+    }
+}
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+
+    /* IE10+ CSS styles go here */
+    .mat-header-row,
+    .mat-row {
+        -ms-flex-align: stretch;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+}
+
+.mat-slide-toggle-thumb-container {
+    z-index: 0 !important;
+}
+
+.mat-horizontal-content-container {
+    overflow: initial !important;
+}
+
+.mat-select-panel,
+.mat-autocomplete-panel {
+    max-height: 400px !important;
+
+    .mat-option {
+        font-size: inherit;
+        height: 2em !important;
+    }
+}
+
+// Override default toast css rules
+.toast-container .ngx-toastr {
+    width: 350px; // set width of toast
+    word-wrap: break-word;
+
+    .toast-title {
+        letter-spacing: 0.3px; // set space between letters in the title
+    }
+
+    ul li {
+        margin-left: -10px; // set negative indent for list
+    }
+}
+
+.validity-flag {
+    display: flex;
+    align-items: center;
+    -ms-flex-direction: row;
+    flex-direction: row;
+
+    span {
+        width: 100%;
+        margin-left: 5px;
+    }
+}
+
+.table-container {
+    display: table; // Used for correct displaying pagination and table scrolling
+}
+
+.mat-dialog-container {
+    overflow: visible !important;
+    padding-top: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+
+    .cdk-drag {
+        height: -webkit-fill-available;
+        height: stretch;
+        height: -moz-available;
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .mat-dialog-content {
+        margin: 0 !important;
+        max-height: 85vh !important;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .mat-dialog-title {
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 24px;
+    }
+
+    .mat-dialog-subtitle {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .mat-dialog-actions {
+        margin-top: auto;
+        min-height: auto;
+        padding-bottom: 15px;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .mat-progress-bar {
+        position: absolute;
+        bottom: 5px;
+        right: 0px;
+    }
+
+    .ng-resizable-diagonal {
+        border-bottom: 12px solid #5a287d;
+    }
+}
+
+.mat-paginator-range-label {
+    margin: 0 !important;
+}
+
+.progress-bar {
+    position: absolute !important;
+    bottom: 5px;
+}
+
+.filter-by-field {
+    margin-right: 15px;
+
+    .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+    }
+}
+
+.ng-resizable-e {
+    right: 0px !important;
+    z-index: 2;
+    cursor: col-resize !important;
 }

@@ -1,0 +1,35 @@
+.home-content {
+    display: flex;
+    overflow: hidden;
+    padding-bottom: 2px;
+    padding-left: 15px;
+
+    .home-statistics {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 384px;
+    }
+
+    .home-events {
+        display: flex;
+    }
+
+}
+
+@media (max-width: 1380px) {
+
+    .home-content {
+        flex-wrap: wrap;
+
+        .home-statistics {
+            flex-direction: unset;
+            flex-wrap: wrap;
+            order: 1;
+        }
+
+        .home-events {
+            order: 2;
+
+        }
+    }
+}

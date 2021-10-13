@@ -1,0 +1,123 @@
+<mat-card class="trusted-certificate-pending-card">
+  <mat-card-header>
+    <mat-card-title>Trusted Certificate pending changes</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <app-autorefresh-data [getData]="getPendingChanges.bind(this, this.pageIndex, this.pageSize)">
+    </app-autorefresh-data>
+    <div class="search-by-content">
+      <form (ngSubmit)="getPendingChanges(0, pageSize)">
+        <h3 class="search-by-label">Search by</h3>
+
+        <div class="search-field">
+          <mat-form-field class="search-by-field">
+            <mat-label>Search by Certificate Name</mat-label>
+            <input matInput [(ngModel)]="certificateNameSearchingValue" name="certificateNameSearchingValue">
+            <button *ngIf="certificateNameSearchingValue" mat-button type="button" matSuffix mat-icon-button
+              aria-label="Clear" (click)="clearField($event,'certificateNameSearchingValue')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'by-cert-name')" position="below"></app-tooltip>
+        </div>
+
+        <div class="search-field">
+          <mat-form-field class="search-by-field">
+            <mat-label>Search by SHA Thumbprint</mat-label>
+            <input matInput [(ngModel)]="thumbprintSearchingValue" name="thumbprintSearchingValue">
+            <button *ngIf="thumbprintSearchingValue" mat-button type="button" matSuffix mat-icon-button
+              aria-label="Clear" (click)="clearField($event,'thumbprintSearchingValue')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'by-thumbprint')" position="below"></app-tooltip>
+        </div>
+
+        <button color="primary" type="submit" class="search-button" mat-raised-button>Search</button>
+        <button color="warn" mat-raised-button [disabled]="!isClearActive()" (click)="clearParams()">Clear</button>
+      </form>
+    </div>
+
+    <div class="table-container">
+      <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
+        [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
+        [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"
+        [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <a mat-button class="action-button" (click)="openApprovingDialog(element)">
+              <div class="action-icon">
+                <mat-icon inline>format_list_numbered</mat-icon> Version manager
+              </div>
+            </a>
+            <a mat-button *ngIf="element.operation !== CHANGE_OPERATION.DELETE && isTheSameUser(element.changer)"
+              class="action-button"
+              [routerLink]="['/' + ROUTING_PATHS.TRUSTED_CERTIFICATES + '/' + ROUTING_PATHS.PENDING + '/' + ROUTING_PATHS.EDIT, element.changeID]"
+              [state]="{ pageIndex: pageIndex, pageSize: pageSize, previousURL: getCurrentRoute()}" alt="Edit"
+              title="Edit">
+              <div class="action-icon">
+                <mat-icon inline>edit</mat-icon>edit
+              </div>
+            </a>
+            <a mat-button *ngIf="isTheSameUser(element.changer)" class="action-button" alt="Delete" title="Delete"
+              (click)="deletePendingChange(element)">
+              <div class="action-icon">
+                <mat-icon>clear</mat-icon>delete
+              </div>
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <a mat-button (click)="openTrustedCertificateDetailsDialog(element.trustedCertificateLog)"
+              [disabled]="!element.trustedCertificateLog.certificateId">
+              {{element.resultMeta1}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="thumbprint">
+          <mat-header-cell *matHeaderCellDef> SHA-1 Thumbprint </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">
+              {{element.resultMeta2}}
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="thumbprint256">
+          <mat-header-cell *matHeaderCellDef> SHA-2 Thumbprint </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div class="mat-cell-value">
+              {{element.resultMeta3}}
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="noData">
+          <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+            <div class="mat-cell-value">
+              No records found.
+            </div>
+          </mat-footer-cell>
+        </ng-container>
+        <mat-footer-row *matFooterRowDef="['noData']"
+          [hidden]="isLoading || (dataSource && dataSource.data.length > 0)">
+        </mat-footer-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <app-table-paginator class="paginator" *ngIf="changeControls" [value]="pageIndex + 1"
+        [getRows]="getPendingChanges.bind(this)" [min]="1" [max]="changeControls && changeControls.totalPages"
+        [length]="changeControls.totalElements" [(pageIndex)]="changeControls.pageable.pageNumber"
+        [pageSize]="changeControls.pageable.pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+      </app-table-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading || isLoadingDetails"></mat-progress-bar>

@@ -1,0 +1,62 @@
+.search-trusted-certificate-card {
+
+    margin: 15px 15px 15px 15px;
+
+    .card-content {
+        min-height: 150px;
+
+        .search-by-content {
+
+            .search-field {
+                display: inline-flex;
+                margin-right: 20px;
+            }
+
+            .search-by-label {
+                margin-bottom: 0px;
+            }
+
+            .search-by-field {
+                margin-right: 15px;
+                width: 240px;
+            }
+
+            .search-button {
+                margin-right: 10px;
+            }
+
+        }
+
+        .table-container {
+
+            .mat-table {
+
+                .mat-column-action {
+                    min-width: 260px;
+                }
+
+                .mat-column-name {
+                    min-width: 250px;
+                }
+
+                .mat-column-thumbprint {
+                    min-width: 250px;
+                }
+
+                .mat-column-thumbprint256 {
+                    min-width: 300px;
+                }
+
+            }
+        }
+
+        .mat-spinner {
+            height: 100px;
+            width: 100px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+        }
+    }
+
+}

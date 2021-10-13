@@ -3,10 +3,11 @@
     <parent>
         <groupId>com.ibm.sterling</groupId>
         <artifactId>bfg</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>bfg-api</artifactId>
     <packaging>war</packaging>
+    <version>${revision}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +22,10 @@
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -42,30 +47,96 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.18.Final</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.oracle.ojdbc</groupId>
             <artifactId>ojdbc8</artifactId>
             <scope>runtime</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-core</artifactId>-->
+<!--            <version>2.13.0</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.2</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.websphere.appserver.api</groupId>
+            <artifactId>com.ibm.websphere.appserver.api.authData</artifactId>
+            <version>1.0.46</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.23</version>
+        </dependency>
+
+
     </dependencies>
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>local</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <active.profile>dev</active.profile>
+                <active.profile>local</active.profile>
                 <server.host>localhost</server.host>
                 <server.port>9080</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
             </properties>
         </profile>
         <profile>
@@ -74,6 +145,43 @@
                 <active.profile>test</active.profile>
                 <server.host>*</server.host>
                 <server.port>25001</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <active.profile>dev</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>fte</id>
+            <properties>
+                <active.profile>fte</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>poc</id>
+            <properties>
+                <active.profile>poc</active.profile>
+                <server.host>*</server.host>
+                <server.port>13357</server.port>
+                <liberty.runtime.version>20.0.0.5</liberty.runtime.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev-fyre</id>
+            <properties>
+                <active.profile>dev-fyre</active.profile>
+                <server.host>*</server.host>
+                <server.port>12001</server.port>
+                <liberty.runtime.version>20.0.0.10</liberty.runtime.version>
             </properties>
         </profile>
     </profiles>
@@ -82,6 +190,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -89,6 +205,7 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.2.1</version>
                 <configuration>
+                    <libertyRuntimeVersion>${liberty.runtime.version}</libertyRuntimeVersion>
                     <serverXmlFile>${project.basedir}/server.xml</serverXmlFile>
                     <bootstrapPropertiesFile>${project.basedir}/target/classes/bootstrap.properties</bootstrapPropertiesFile>
                 </configuration>
@@ -140,6 +257,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
             </plugin>
         </plugins>
         <resources>

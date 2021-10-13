@@ -1,27 +1,37 @@
 package com.ibm.sterling.bfg.app.controller;
 
-import com.ibm.sterling.bfg.app.change.model.ChangeControl;
-import com.ibm.sterling.bfg.app.change.model.ChangeControlStatus;
-import com.ibm.sterling.bfg.app.change.service.ChangeControlService;
-import com.ibm.sterling.bfg.app.config.ErrorConfig;
-import com.ibm.sterling.bfg.app.exception.EntityNotFoundException;
-import com.ibm.sterling.bfg.app.model.Entity;
-import com.ibm.sterling.bfg.app.service.EntityService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.sterling.bfg.app.exception.entity.ChangeControlNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.EntityNotFoundException;
+import com.ibm.sterling.bfg.app.exception.entity.FieldsValidationException;
+import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
+import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
+import com.ibm.sterling.bfg.app.model.entity.*;
+import com.ibm.sterling.bfg.app.service.APIDetailsHandler;
+import com.ibm.sterling.bfg.app.service.PropertyService;
+import com.ibm.sterling.bfg.app.service.entity.ChangeControlService;
+import com.ibm.sterling.bfg.app.service.entity.EntityService;
+import com.ibm.sterling.bfg.app.service.entity.TransmittalService;
+import com.ibm.sterling.bfg.app.utils.ListToPageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
+
 import java.util.*;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("api/entities")
 public class EntityController {
 
     @Autowired
-    private ErrorConfig errorConfig;
+    private PropertyService propertyService;
 
     @Autowired
     private EntityService entityService;
@@ -29,80 +39,211 @@ public class EntityController {
     @Autowired
     private ChangeControlService changeControlService;
 
-    @CrossOrigin
+    @Autowired
+    private TransmittalService transmittalService;
+
+    @Autowired
+    private APIDetailsHandler apiDetailsHandler;
+
     @GetMapping
-    public Page<Entity> getEntities(@RequestParam(value = "service", required = false) String serviceName,
-                                    @RequestParam(value = "entity", required = false) String entityName,
-                                    Pageable pageable) {
-        return Optional.ofNullable(serviceName)
-                .map(service -> entityService.findEntitiesByService(service, pageable))
-                .orElse(
-                        Optional.ofNullable(entityName)
-                                .map(entity -> entityService.findEntitiesByEntity(entity, pageable))
-                                .orElse(entityService.findEntities(pageable))
-                );
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public Page<EntityType> getEntities(@RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                        @RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                        @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN,
+                                        @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                        @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
+        return entityService.findEntities(PageRequest.of(page, size), entityName, serviceName, swiftDN);
     }
 
-    @CrossOrigin
     @GetMapping("pending")
-    public ResponseEntity<List<ChangeControl>> getPendingEntities() {
-        List<ChangeControl> list = changeControlService.findAllPending();
-        return ResponseEntity.ok()
-                .body(list);
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public Page<ChangeControl> getPendingEntities(@RequestParam(value = "entity", defaultValue = "", required = false) String entityName,
+                                                  @RequestParam(value = "service", defaultValue = "", required = false) String serviceName,
+                                                  @RequestParam(value = "swiftDN", defaultValue = "", required = false) String swiftDN,
+                                                  @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                                  @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
+        return ListToPageConverter.convertListToPage(
+                new ArrayList<>(changeControlService.findPendingChangeControlsAsc(entityName, serviceName, swiftDN)),
+                PageRequest.of(page, size)
+        );
     }
 
-    @CrossOrigin
     @PostMapping("pending")
-    public ResponseEntity<Entity> PendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
-        ChangeControlStatus status = ChangeControlStatus.valueOf((String) approve.get("status"));
-        String changeId = (String) approve.get("changeID");
-        return Optional.ofNullable(
-                entityService.getEntityAfterApprove(
-                        changeId,
-                        (String) approve.get("approverComments"),
-                        status))
-                .map(record -> ResponseEntity.ok()
-                        .body(record))
+    @PreAuthorize("@entityPermissionEvaluator.checkApprovePermission(#approve)")
+    public ResponseEntity<Entity> postPendingEntities(@RequestBody Map<String, Object> approve) throws Exception {
+        ChangeControl changeControl = changeControlService.findById(String.valueOf(approve.get("changeID")))
+                .orElseThrow(ChangeControlNotFoundException::new);
+        return Optional.ofNullable(entityService.getEntityAfterApprove(
+                changeControl,
+                Objects.toString(approve.get("approverComments"), null),
+                ChangeControlStatus.valueOf(String.valueOf(approve.get("status"))))
+        ).map(ResponseEntity::ok)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<Entity> getEntityById(@PathVariable(name = "id") int id) {
-        return entityService.findById(id)
-                .map(record -> ResponseEntity.ok()
-                        .body(record))
-                .orElseThrow(EntityNotFoundException::new);
-    }
-
-    @CrossOrigin
-    @PostMapping
-    public ResponseEntity<Entity> createEntity(@Valid @RequestBody Entity entity) {
-        return ResponseEntity.ok(entityService.saveEntityToChangeControl(entity));
-    }
-
-    @CrossOrigin
-    @PutMapping("/{id}")
-    public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
-        return entityService.findById(id)
-                .map(record -> ResponseEntity.ok().body(entityService.save(entity)))
-                .orElseThrow(EntityNotFoundException::new);
-    }
-
-    @CrossOrigin
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEntity(@PathVariable int id) {
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
         return entityService.findById(id)
                 .map(record -> {
-                    entityService.deleteById(id);
-                    return ResponseEntity.ok().build();
+                    record.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
+                    );
+                    if (ObjectUtils.isEmpty(record.getInboundRequestorDN()) ||
+                            ObjectUtils.isEmpty(record.getInboundResponderDN()))
+                        record.setRouteInbound(Boolean.FALSE);
+                    return ok(record);
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
-    @CrossOrigin
-    @GetMapping("/existence")
-    public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
-        return ResponseEntity.ok(entityService.existsByServiceAndEntity(service, entity));
+    @GetMapping("pending/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<Entity> getPendingEntityById(@PathVariable String id) {
+        return changeControlService.findById(id)
+                .map(record -> {
+                    changeControlService.checkStatusOfChangeControl(record);
+                    Entity entity = record.convertEntityLogToEntity();
+                    entity.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
+                    );
+                    return ok(entity);
+                }).orElseThrow(ChangeControlNotFoundException::new);
     }
 
+    @GetMapping("changeControl/{id}")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<ChangeControl> getChangeControlById(@PathVariable String id) {
+        return changeControlService.findById(id)
+                .map(changeControl -> {
+                    changeControlService.checkStatusOfChangeControl(changeControl);
+                    EntityLog entityLog = changeControl.getEntityLog();
+                    entityLog.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(entityLog.getInboundRequestType()));
+                    changeControl.setEntityLog(entityLog);
+                    return ok(changeControl);
+                }).orElseThrow(ChangeControlNotFoundException::new);
+    }
+
+    @PostMapping
+    @PreAuthorize("@entityPermissionEvaluator.checkCreatePermission(#entity)")
+    public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
+        return ok(entityService.saveEntityToChangeControl(entity, Operation.CREATE));
+    }
+
+    @PutMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPendingEntityChangePermission(#id, #entity.getService())")
+    public ResponseEntity<ChangeControl> updatePendingEntity(@RequestBody Entity entity, @PathVariable String id) {
+        ChangeControl changeControl = changeControlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
+        entityService.updatePendingEntity(changeControl, entity);
+        return ok(changeControl);
+    }
+
+    @DeleteMapping("pending/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkDeletePendingEntityChangePermission(#id)")
+    public ResponseEntity<?> deletePendingEntity(@PathVariable String id) {
+        ChangeControl changeControl = changeControlService.findById(id)
+                .orElseThrow(ChangeControlNotFoundException::new);
+        apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
+        entityService.cancelPendingEntity(changeControl);
+        return new ResponseEntity<>(id, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkEditPermission(#id)")
+    public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
+        return entityService.findById(id)
+                .map(record -> {
+                    entity.setEntity(record.getEntity());
+                    entity.setService(record.getService());
+                    return ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE));
+                }).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@entityPermissionEvaluator.checkDeletePermission(#id)")
+    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
+        Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
+        Optional.ofNullable(changerComments).ifPresent(entity::setChangerComments);
+        return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
+    }
+
+    @GetMapping("/existence/entity-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
+        return ok(entityService.existsByServiceAndEntity(service, entity));
+    }
+
+    @GetMapping("/existence/mailbox")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<?> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
+        return ok(entityService.existsByMailboxPathOut(mailboxPathOut));
+    }
+
+    @GetMapping("/existence/queue")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<?> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
+        return ok(entityService.existsByMqQueueOut(mqQueueOut));
+    }
+
+    @GetMapping("/existence/route-attributes")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<?> getRequestType(@RequestParam String inboundRequestorDN,
+                                            @RequestParam String inboundResponderDN,
+                                            @RequestParam String inboundService,
+                                            @RequestParam List<String> inboundRequestType) {
+        Optional.ofNullable(entityService.getEntityWithAttributesOfRoutingRules(
+                inboundRequestorDN, inboundResponderDN, inboundService, inboundRequestType))
+                .ifPresent(entity -> {
+                    throw new FieldsValidationException(
+                            "routingRules",
+                            "Entity properties should be unique for requester DN, responder DN, service, and request types. " +
+                                    "These match the entity " + entity.getEntity() + ". Please correct the properties and try again, or cancel"
+                    );
+                });
+        return ok(Boolean.FALSE);
+    }
+
+    @GetMapping("inbound-request-type")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<Map<String, String>> getInboundRequestType() throws JsonProcessingException {
+        return ok(propertyService.getInboundRequestType());
+    }
+
+    @GetMapping("inbound-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<String> getInboundService() throws JsonProcessingException {
+        return ok(propertyService.getInboundService());
+    }
+
+    @GetMapping("swift-service")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<String> getSwiftService() throws JsonProcessingException {
+        return ok(propertyService.getSwiftService());
+    }
+
+    @GetMapping("participants")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<List<String>> getParticipants(@RequestParam(required = false) Integer id) {
+        return ok(entityService.findEntityNameForParticipants(id));
+    }
+
+    @GetMapping("file-type")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<List<String>> getFileType() throws JsonProcessingException {
+        return ok(propertyService.getFileType());
+    }
+
+    @GetMapping("mq-details")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
+    public ResponseEntity<Map<String, List<String>>> getMqDetails() throws JsonProcessingException {
+        return ok(propertyService.getMQDetails());
+    }
+
+    @PostMapping("transmit")
+    @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY_TRANSMIT')")
+    public ResponseEntity<Map<String, Object>> transmit(@RequestBody Transmittal transmittal) throws JsonProcessingException {
+        return ok(transmittalService.transmit(transmittal));
+    }
 }

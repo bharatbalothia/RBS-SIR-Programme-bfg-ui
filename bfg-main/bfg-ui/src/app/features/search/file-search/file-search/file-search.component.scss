@@ -1,0 +1,84 @@
+.file-search-card {
+
+    .top-error-message {
+        margin-left: 24px;
+    }
+
+    .form-field-section {
+        width: 50%;
+    }
+
+    .mat-form-field {
+        width: 100%;
+
+        .error-message {
+            white-space: pre-wrap;
+        }
+    }
+
+
+    .form-field-section {
+        display: flex;
+    }
+
+    .ts-item-section {
+        display: -ms-grid;
+        display: grid;
+        grid-template-columns: 150px auto;
+        -ms-grid-columns: 150px auto;
+
+        .ts-item-section-title {
+            -ms-grid-column: 1;
+        }
+
+        .ts-item-section-value {
+            -ms-grid-column: 2;
+
+            .section-info {
+                display: grid;
+                display: -ms-grid;
+                grid-template-columns: 130px auto;
+                -ms-grid-columns: 130px auto;
+
+                .section-label {
+                    -ms-grid-column: 1;
+                    margin: 0 !important;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -ms-flex-pack: center;
+                    -ms-flex-align: end;
+                    justify-content: center;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+
+                .section-value {
+                    -ms-grid-column: 2;
+                    padding-left: 15px;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -ms-flex-pack: center;
+                    -ms-flex-align: center;
+                    justify-content: center;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+
+    .stepper-actions {
+        margin-top: 15px;
+
+        .action-button {
+            margin-right: 15px;
+        }
+    }
+
+    @media (max-width: 1360px) {
+
+        .form-field-section {
+            width: 100%;
+        }
+    }
+}

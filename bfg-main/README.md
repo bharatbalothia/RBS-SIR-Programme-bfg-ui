@@ -17,10 +17,25 @@ Run `mvn liberty:start`
 Run `mvn liberty:deploy`
 
 
+OR 
+
+Navigate to bfg-api folder.
+
+Run `.\build_and_deploy.bat`
+
+## Build for RBS POC
+
+Navigate to bfg-ui folder and run `mvn clean install -Ppoc` to build UI module. Repeat the same in bfg-api folder.
+
 ## Testing
 
 Open this links to see that application is up and running
 
-http://localhost:9080/index.html
+http://localhost:9080/bfgui/index.html
 
-http://localhost:9080/test
+http://localhost:9080/bfgui/test
+
+
+## API Docs
+Swagger is disabled
+http://localhost:9080/bfgui/swagger-ui.html 

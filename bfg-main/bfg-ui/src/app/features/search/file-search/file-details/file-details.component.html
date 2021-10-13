@@ -1,0 +1,17 @@
+<mat-card class="file-details-card">
+    <mat-card-header>
+        <mat-card-title>File {{fileId}}
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+        <mat-tab-group *ngIf="tabs" class="file-details-tabs">
+            <mat-tab *ngFor="let tab of tabs" [label]="tab.tabTitle">
+                <app-tab-content [tab]="tab" [displayName]="displayName.bind(this)" [actions]="actions">
+                </app-tab-content>
+            </mat-tab>
+        </mat-tab-group>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </mat-card-content>
+    <mat-card-footer>
+    </mat-card-footer>
+</mat-card>

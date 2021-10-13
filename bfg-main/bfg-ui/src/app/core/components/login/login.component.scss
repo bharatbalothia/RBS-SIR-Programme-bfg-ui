@@ -1,0 +1,27 @@
+.login-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 64px);
+    background-color: #e0e0e0;
+
+    .login-card {
+        width: 300px;
+        height: fit-content;
+
+        .mat-form-field {
+            width: 100%;
+        }
+
+        .login-button {
+            width: 100%;
+        }
+
+        .copyright-info {
+            font-size: 11px;
+            line-height: normal;
+            padding: 0px 16px 0px 16px;
+            text-align: center;
+        }
+    }
+}

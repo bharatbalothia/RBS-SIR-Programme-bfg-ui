@@ -1,0 +1,67 @@
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+    min-width: 0 !important;
+    padding: 0 10px !important;
+    margin: 3px !important;
+}
+
+.mat-dialog-content {
+    max-height: 80vh !important;
+}
+
+.mat-table {
+    width: 100%;
+    min-width: 650px;
+
+    .mat-header-cell,
+    .mat-cell,
+    .mat-footer-cell {
+        padding-right: 5px !important;
+    }
+
+    .mat-column-id,
+    .mat-column-workflowID {
+        flex: 0 0 11% !important;
+        width: 11% !important;
+    }
+
+    .mat-column-status {
+        flex: 0 0 9% !important;
+        width: 9% !important;
+    }
+
+    .mat-column-settleAmount {
+        flex: 0 0 13% !important;
+        width: 13% !important;
+    }
+
+    .mat-column-type {
+        flex: 0 0 14% !important;
+        width: 14% !important;
+    }
+
+    .mat-column-transactionID {
+        flex: 0 0 16% !important;
+        width: 16% !important;
+    }
+
+    .mat-column-settleDate {
+        flex: 0 0 20% !important;
+        width: 20% !important;
+    }
+
+}
+
+.mat-dialog-actions {
+
+    justify-content: flex-end;
+
+    .action-button:not(.mat-button-disabled) {
+        background-color: green;
+        color: #fff;
+    }
+}
+
+.mat-progress-bar {
+    margin-top: 5px;
+}

@@ -1,0 +1,215 @@
+<mat-card class="file-search-card">
+  <mat-card-header>
+    <mat-card-title>File Search Monitor
+    </mat-card-title>
+  </mat-card-header>
+  <mat-horizontal-stepper #stepper [linear]="isLinear" (selectionChange)="onStepChange($event)">
+    <mat-step [stepControl]="searchingParametersFormGroup">
+      <form [formGroup]="searchingParametersFormGroup">
+        <ng-template matStepLabel>Search parameters</ng-template>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.entity">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('entity')}}
+            </mat-label>
+            <input type="text" aria-label="Entity" matInput formControlName="entityId"
+              [matAutocomplete]="autoCompleteEntity" appAutocompleteEnforceSelection>
+            <mat-autocomplete autoActiveFirstOption #autoCompleteEntity="matAutocomplete"
+              [displayWith]="displayEntity.bind(this)" (optionSelected)="onEntitySelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let entity of filteredEntityList | async" [value]="entity.entityId">
+                {{entity.entityName}}
+              </mat-option>
+            </mat-autocomplete>
+            <button *ngIf="searchingParametersFormGroup.controls.entityId.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.entityId.setValue('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'entity')"></app-tooltip>
+        </section>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.service">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('service')}}
+            </mat-label>
+            <mat-select formControlName="service" (selectionChange)="onServiceSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let service of fileCriteriaData.service" [value]="service">
+                {{service}}</mat-option>
+            </mat-select>
+            <button *ngIf="searchingParametersFormGroup.controls.service.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.service.setValue(''); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'service')"></app-tooltip>
+        </section>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.direction">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('direction')}}
+            </mat-label>
+            <mat-select formControlName="direction" (selectionChange)="onDirectionSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let direction of fileCriteriaData.direction" [value]="direction">
+                {{direction}}</mat-option>
+            </mat-select>
+            <button *ngIf="searchingParametersFormGroup.controls.direction.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.direction.setValue(''); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'direction')"></app-tooltip>
+        </section>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.fileStatus">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('fileStatus')}}
+            </mat-label>
+            <mat-select formControlName="fileStatus">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let fileStatus of fileCriteriaData.fileStatus" [value]="fileStatus">
+                {{fileStatus.label}}</mat-option>
+            </mat-select>
+            <button *ngIf="searchingParametersFormGroup.controls.fileStatus.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.fileStatus.setValue(''); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'file-status')"></app-tooltip>
+        </section>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.bpstate">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('bpstate')}}
+            </mat-label>
+            <mat-select formControlName="bpstate">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let bpstate of fileCriteriaData.bpstate" [value]="bpstate">
+                <mat-icon [svgIcon]="FILE_STATUS_ICON[bpstate | uppercase]"></mat-icon>
+                {{bpstate}}
+              </mat-option>
+            </mat-select>
+            <button *ngIf="searchingParametersFormGroup.controls.bpstate.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.bpstate.setValue(''); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'bp-state')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('filename')}}</mat-label>
+            <input matInput formControlName="filename">
+            <button *ngIf="searchingParametersFormGroup.controls.filename.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.filename.setValue('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'filename')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('reference')}}</mat-label>
+            <input matInput formControlName="reference">
+            <button *ngIf="searchingParametersFormGroup.controls.reference.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear" (click)="searchingParametersFormGroup.controls.reference.setValue('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'reference')"></app-tooltip>
+        </section>
+        <section class="form-field-section" *ngIf="fileCriteriaData && fileCriteriaData.types">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('type')}}
+            </mat-label>
+            <input type="text" aria-label="Type" matInput formControlName="type" [matAutocomplete]="autoCompleteType"
+              appAutocompleteEnforceSelection>
+            <mat-autocomplete autoActiveFirstOption #autoCompleteType="matAutocomplete"
+              [displayWith]="displayType.bind(this)" (optionSelected)="onTypeSelect($event)">
+              <mat-option value="">ALL</mat-option>
+              <mat-option *ngFor="let type of filteredTypeList | async" [value]="type.type">
+                {{type.type}}
+              </mat-option>
+            </mat-autocomplete>
+            <button *ngIf="searchingParametersFormGroup.controls.type.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.type.setValue(''); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'type')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('from')}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="fromPicker" placeholder="Choose a date"
+              [formControl]="searchingParametersFormGroup.controls['from']" [max]="maxDate"
+              (dateChange)="handleDate($event, 'minDate')" />
+            <button *ngIf="searchingParametersFormGroup.controls.from.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.from.setValue(null); minDate = null">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-datepicker-toggle type="button" matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #fromPicker (opened)="setCalendarDblClick(fromPicker)"
+              (monthSelected)="setCalendarDblClick(fromPicker)">
+            </ngx-mat-datetime-picker>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerMax">
+              {{getSearchValidationMessage('minDateMoreThanMaxDate')}}
+            </mat-error>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['from'].errors?.matDatetimePickerParse">
+              {{getSearchValidationMessage('incorrect')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'from')"></app-tooltip>
+        </section>
+        <section class="form-field-section">
+          <mat-form-field>
+            <mat-label>{{getFileSearchDisplayName('to')}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="toPicker" placeholder="Choose a date"
+              [formControl]="searchingParametersFormGroup.controls['to']" [min]="minDate"
+              (dateChange)="handleDate($event, 'maxDate')" />
+            <button *ngIf="searchingParametersFormGroup.controls.to.value" mat-button type="button" matSuffix
+              mat-icon-button aria-label="Clear"
+              (click)="searchingParametersFormGroup.controls.to.setValue(null); maxDate = null">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-datepicker-toggle type="button" matSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #toPicker (opened)="setCalendarDblClick(toPicker)"
+              (monthSelected)="setCalendarDblClick(toPicker)"></ngx-mat-datetime-picker>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerMin">
+              {{getSearchValidationMessage('maxDateLessThanMinDate')}}
+            </mat-error>
+            <mat-error class="error-message"
+              *ngIf="searchingParametersFormGroup.controls['to'].errors?.matDatetimePickerParse">
+              {{getSearchValidationMessage('incorrect')}}
+            </mat-error>
+          </mat-form-field>
+          <app-tooltip [tip]="getTooltip('search', 'to')"></app-tooltip>
+        </section>
+        <div class='stepper-actions'>
+          <button mat-raised-button class="action-button" (click)="onNext()"
+            [disabled]="!searchingParametersFormGroup.valid">Next</button>
+          <button mat-raised-button class="action-button" color='warn' (click)="resetSearchParameters()">
+            Reset</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Search results</ng-template>
+      <app-autorefresh-data [shouldAutoRefresh]="false"
+        [getData]="getFileList.bind(this, this.pageIndex, this.pageSize)"></app-autorefresh-data>
+      <app-file-table [(isLoading)]="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize"
+        [getFileList]="getFileList.bind(this)" [dataSource]="dataSource" [files]="files">
+      </app-file-table>
+      <div class='stepper-actions'>
+        <button mat-raised-button matStepperPrevious class="action-button">Back</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-card>
+<mat-progress-bar mode="buffer" class="progress-bar" *ngIf="isLoading"></mat-progress-bar>

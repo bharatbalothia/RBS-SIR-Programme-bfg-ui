@@ -2,7 +2,30 @@
     margin: 15px 15px 15px 15px;
 
     .top-error-message {
-        padding-left: 24px;
+        margin-left: 24px;
+    }
+
+    .source-button {
+        padding: 0px;
+        height: 40px;
+        width: 100px;
+    }
+
+    .form-field-section {
+        width: 50%;
+
+        .source-info {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    }
+
+    .mat-select-field {
+
+        .source-value-button {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
     }
 
     .mat-form-field {
@@ -14,6 +37,8 @@
     }
 
     .radio-group-section {
+        display: flex;
+        align-items: center;
 
         padding-top: 10px;
         padding-bottom: 10px;
@@ -29,21 +54,58 @@
 
     }
 
+    .form-field-section {
+
+        display: flex;
+
+    }
+
     .mat-cell {
 
         word-break: break-word;
+        white-space: pre-line;
 
         .error-table-cell {
             white-space: pre-line;
         }
     }
 
+    .summary-table,
+    .schedule-table {
+        width: 50%;
+
+        .mat-column-action {
+            max-width: 80px;
+        }
+
+        .mat-column-scheduleType {
+            max-width: 15%;
+        }
+
+        .mat-column-fileType {
+            max-width: 10%;
+        }
+
+    }
+
+    .changer-comments {
+        width: 100%;
+    }
 
     .stepper-actions {
         margin-top: 15px;
 
         .action-button {
             margin-right: 15px;
+        }
+    }
+
+    @media (max-width: 1360px) {
+
+        .summary-table,
+        .schedule-table,
+        .form-field-section {
+            width: 100%;
         }
     }
 }

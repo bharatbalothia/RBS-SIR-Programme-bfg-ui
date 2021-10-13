@@ -1,0 +1,32 @@
+.page-select {
+    display: flex;
+    font-size: 12px;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    min-width: 650px;
+
+    .left-content {
+        margin-left: 15px;
+
+        .current-page {
+            color: rgba(0, 0, 0, 0.54);
+        }
+    }
+
+    .right-content {
+        display: flex;
+        align-items: baseline;
+        margin-left: auto;
+        margin-right: 8px;
+
+        .go-to-button {
+            margin: 0 4px;
+            color: rgba(0, 0, 0, 0.54);
+        }
+
+        .page-select-field {
+            width: 50px;
+        }
+    }
+}

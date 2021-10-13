@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "BFGUI Api Documentation",
-    "version": "v0.39.3"
+    "version": "v1.0.0"
   },
   "servers": [
     {

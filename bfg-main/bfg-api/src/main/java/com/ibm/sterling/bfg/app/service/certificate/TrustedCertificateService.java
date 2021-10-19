@@ -11,7 +11,6 @@ import com.ibm.sterling.bfg.app.model.validation.FieldValueExists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import javax.naming.InvalidNameException;
-import javax.security.cert.CertificateEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -23,7 +22,7 @@ public interface TrustedCertificateService extends FieldValueExists {
     TrustedCertificate getTrustedCertificateById(String id);
 
     TrustedCertificate convertX509CertificateToTrustedCertificate(X509Certificate x509Certificate, String certName, String comment)
-            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException, CertificateEncodingException;
+            throws CertificateException, InvalidNameException, NoSuchAlgorithmException, JsonProcessingException;
 
     TrustedCertificate saveCertificateToChangeControl(TrustedCertificate cert, Operation operation) throws CertificateException;
 

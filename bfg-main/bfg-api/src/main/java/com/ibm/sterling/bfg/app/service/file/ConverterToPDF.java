@@ -1,4 +1,4 @@
-package com.ibm.sterling.bfg.app.service.report;
+package com.ibm.sterling.bfg.app.service.file;
 
 import com.ibm.sterling.bfg.app.model.report.Column;
 import com.ibm.sterling.bfg.app.model.report.Table;
@@ -10,7 +10,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Component;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,8 +35,8 @@ public class ConverterToPDF {
     }
 
     private void drawTableInPDF(PDDocument document, Table table) throws IOException {
-        Integer rowsPerPage = new Double(Math.floor(table.getHeight() / table.getRowHeight())).intValue() - 1;
-        Integer pageCount = new Double(Math.ceil(table.getRowNumber() / rowsPerPage)).intValue() + 1;
+        Integer rowsPerPage = Double.valueOf(Math.floor(table.getHeight() / table.getRowHeight())).intValue() - 1;
+        Integer pageCount = Double.valueOf(Math.ceil(table.getRowNumber() / rowsPerPage)).intValue() + 1;
 
         for (int pageNumber = 0; pageNumber < pageCount; pageNumber ++) {
             PDPage page = new PDPage();
@@ -71,7 +70,7 @@ public class ConverterToPDF {
         float nextTextY = tableTopY - (table.getRowHeight() / 2)
                 - ((table.getTextFont().getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * table.getFontSize()) / 4);
 
-        writeTableHeaders(table.getColumns(), contentStream, nextTextX, nextTextY, table);
+        writeTableHeaders(table.getColumns(), contentStream, nextTextX, nextTextY);
         nextTextY -= table.getRowHeight();
         nextTextX = table.getLeftMargin() + table.getCellMargin();
 
@@ -93,7 +92,7 @@ public class ConverterToPDF {
     }
 
     private void writeTableHeaders(List<Column> columns, PDPageContentStream contentStream, float nextTextX,
-                                   float nextTextY, Table table) throws IOException {
+                                   float nextTextY) throws IOException {
         for(Column column : columns) {
             contentStream.beginText();
             contentStream.newLineAtOffset(nextTextX, nextTextY);

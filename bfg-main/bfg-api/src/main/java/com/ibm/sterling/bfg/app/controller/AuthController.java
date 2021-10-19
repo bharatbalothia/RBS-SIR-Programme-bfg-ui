@@ -20,6 +20,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("api/auth")
 public class AuthController {
 
+    public static final String ACCESS_TOKEN = "accessToken";
     @Autowired
     private CredentialsService credentialsService;
 
@@ -27,20 +28,20 @@ public class AuthController {
     private JwtTokenGenerator jwtTokenFactory;
 
     @PostMapping("/signin")
-    public ResponseEntity signIn(@RequestBody LoginRequest credentials) throws JsonProcessingException {
-        return ok(Collections.singletonMap("accessToken",
+    public ResponseEntity<Object> signIn(@RequestBody LoginRequest credentials) throws JsonProcessingException {
+        return ok(Collections.singletonMap(ACCESS_TOKEN,
                 jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
     }
 
     @PostMapping("/sso")
-    public ResponseEntity signInSso(@RequestBody LoginSsoRequest credentials) throws JsonProcessingException {
-        return ok(Collections.singletonMap("accessToken",
+    public ResponseEntity<Object> signInSso(@RequestBody LoginSsoRequest credentials) throws JsonProcessingException {
+        return ok(Collections.singletonMap(ACCESS_TOKEN,
                 jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
     }
 
     @PostMapping("/reauth")
-    public ResponseEntity continueSession(@RequestBody LoginRequest credentials) throws JsonProcessingException {
-        return ok(Collections.singletonMap("accessToken",
+    public ResponseEntity<Object> continueSession(@RequestBody LoginRequest credentials) throws JsonProcessingException {
+        return ok(Collections.singletonMap(ACCESS_TOKEN,
                 jwtTokenFactory.createAccessJwtToken(credentialsService.getSBIAuthResponse(credentials))));
     }
 }

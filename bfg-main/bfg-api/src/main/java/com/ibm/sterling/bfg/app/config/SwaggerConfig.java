@@ -1,10 +1,10 @@
 package com.ibm.sterling.bfg.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -15,12 +15,21 @@ import springfox.documentation.spi.service.OperationBuilderPlugin;
 import springfox.documentation.spi.service.contexts.OperationContext;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Configuration
-//@EnableSwagger2
+@ConditionalOnExpression(value = "${use.swagger}")
+@EnableSwagger2
 public class SwaggerConfig {
+
+    public static final String AUTHORIZATION = "Authorization";
+    @Autowired
+    private BuildProperties buildProperties;
 
     @Bean
     public Docket api() {
@@ -35,7 +44,7 @@ public class SwaggerConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("Authorization", "Authorization", "header");
+        return new ApiKey(AUTHORIZATION, AUTHORIZATION, "header");
     }
 
     private SecurityContext securityContext() {
@@ -49,14 +58,14 @@ public class SwaggerConfig {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+        return Collections.singletonList(new SecurityReference(AUTHORIZATION, authorizationScopes));
     }
 
     private ApiInfo apiDetails() {
         return new ApiInfoBuilder()
                 .title("BFG UI")
-                .description("UI used by the business")
-                .version("1.0")
+                .description("SBI User Interface from Natwest and IBM")
+                .version(buildProperties.getVersion())
                 .build();
     }
 
@@ -65,7 +74,6 @@ public class SwaggerConfig {
         return new TranslationOperationBuilderPlugin();
     }
 
-    @Order(Ordered.LOWEST_PRECEDENCE)
     public static class TranslationOperationBuilderPlugin implements OperationBuilderPlugin {
 
         @Autowired

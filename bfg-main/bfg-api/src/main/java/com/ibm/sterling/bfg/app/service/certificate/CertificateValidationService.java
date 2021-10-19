@@ -56,7 +56,8 @@ public class CertificateValidationService {
                             return new ObjectMapper().readValue(errorMap, new TypeReference<Map<String, Object>>() {
                             });
                         } catch (JsonProcessingException ex) {
-                            LOG.error("JsonProcessingException in getCertificateChain of CertificateValidationService: " + ex.getMessage());
+                            LOG.error("JsonProcessingException in getCertificateChain of CertificateValidationService: {}",
+                                    ex.getMessage());
                         }
                         return Collections.singletonMap("errorMessage", (Object) errorMap);
                     })

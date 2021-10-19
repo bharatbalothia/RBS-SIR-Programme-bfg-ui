@@ -23,7 +23,6 @@ public class ExportExcelReportService {
     private static final String[] SEPA_COLUMNS = {"SI.No", "File Name", "Type", "Transaction", "Total\n Settlement\n Amount", "Settlement\n Date", "Direction"};
     private static final String SEPA_SHEET_NAME = "SEPA Files";
     private static final String[] TRX_COLUMNS = {"SI.No", "Transaction ID", "Type", "Settlement\n Amount", "Settlement\n Date"};
-    private static final String TRX_SHEET_NAME = "Transactions for %s";
 
     public ByteArrayInputStream generateExcelReport(List<SEPAFile> files) throws IOException {
         LOGGER.info("Generate an excel report of files");

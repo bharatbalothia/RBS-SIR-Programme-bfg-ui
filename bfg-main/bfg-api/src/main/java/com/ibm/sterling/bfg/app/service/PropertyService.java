@@ -40,6 +40,11 @@ public class PropertyService {
 
     private static final Logger LOGGER = LogManager.getLogger(PropertyService.class);
     public static final String CRON_FOR_SCHEDULING_THE_TRUSTED_CERTS = "0 0 10-18/2 * * MON-FRI";
+    public static final String OUTBOUND = "outbound";
+    public static final String INBOUND = "inbound";
+    public static final String STATUS = "status";
+    public static final String TITLE = "title";
+    public static final String SERVICE = "service";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -227,7 +232,7 @@ public class PropertyService {
         String typePropertyKey = fileSearchPrefixKey + "types." + Optional.ofNullable(service).orElse("");
         String statusPropertyKey = Optional.ofNullable(service).map(String::toLowerCase).orElse("") +
                 settings.getFileStatusPrefixKey() +
-                Optional.ofNullable(outbound).map(bound -> bound ? "outbound" : "inbound").orElse("");
+                Optional.ofNullable(outbound).map(bound -> bound ? OUTBOUND : INBOUND).orElse("");
 
         List<String> propertyKeys = new ArrayList<>(Arrays.asList(typePropertyKey, statusPropertyKey));
         propertyKeys.addAll(Arrays.stream(fileSearchPostfixKey)
@@ -248,7 +253,7 @@ public class PropertyService {
                     Arrays.asList(property.get(PROPERTY_VALUE).split(","))
                             .forEach(type -> {
                                 Map<String, Object> typeMap = new HashMap<>();
-                                typeMap.put("service", serviceType);
+                                typeMap.put(SERVICE, serviceType);
                                 typeMap.put("type", type);
                                 types.add(typeMap);
                             });
@@ -260,13 +265,13 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).contains(statusPropertyKey))
                 .map(map -> getStatusLabelData(map, true))
                 .sorted(Comparator
-                        .comparing(getValueForComparingByKey("title"),
+                        .comparing(getValueForComparingByKey(TITLE),
                                 Comparator.naturalOrder())
-                        .thenComparing(getValueForComparingByKey("service"),
+                        .thenComparing(getValueForComparingByKey(SERVICE),
                                 Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
-                        .thenComparing(getValueForComparingByKey("status"),
+                        .thenComparing(getValueForComparingByKey(STATUS),
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
         fileCriteriaData.put("entity",
@@ -276,7 +281,7 @@ public class PropertyService {
                                     Map<String, Object> entityMap = new HashMap<>();
                                     entityMap.put("entityId", entity.getEntityId());
                                     entityMap.put("entityName", entity.getEntity() + "(" + entity.getService() + ")");
-                                    entityMap.put("service", entity.getService());
+                                    entityMap.put(SERVICE, entity.getService());
                                     return entityMap;
                                 }
                         )
@@ -292,7 +297,8 @@ public class PropertyService {
         return typeMap;
     }
 
-    private List<Map<String, String>> getPropertiesByPartialKey(List<String> propertyKeys, String url) throws JsonProcessingException {
+    private List<Map<String, String>> getPropertiesByPartialKey(List<String> propertyKeys, String url)
+            throws JsonProcessingException {
         Function<String, String> queryStringToGetDataByPartialKey = attributeValue ->
                 "con(" + PROPERTY_KEY + "," + attributeValue + ")";
         String multipleQuery = propertyKeys.stream()
@@ -353,11 +359,11 @@ public class PropertyService {
                 .filter(property -> property.get(PROPERTY_KEY).startsWith(statusPropertyKey))
                 .map(map -> getStatusLabelData(map, false))
                 .sorted(Comparator
-                        .comparing(getValueForComparingByKey("title"),
+                        .comparing(getValueForComparingByKey(TITLE),
                                 Comparator.naturalOrder())
                         .thenComparing(getOutboundForComparing(),
                                 Comparator.naturalOrder())
-                        .thenComparing(getValueForComparingByKey("status"),
+                        .thenComparing(getValueForComparingByKey(STATUS),
                                 Comparator.comparingInt(Integer::parseInt)))
                 .collect(Collectors.toList()));
 
@@ -377,7 +383,7 @@ public class PropertyService {
 
     private Function<Map<String, Object>, String> getOutboundForComparing() {
         return map ->
-                Optional.ofNullable(map.get("outbound"))
+                Optional.ofNullable(map.get(OUTBOUND))
                         .map(bound -> (boolean) bound ? "Outbound" : "Inbound")
                         .orElse("");
     }
@@ -389,15 +395,15 @@ public class PropertyService {
     private Map<String, Object> getStatusLabelData(Map<String, String> property, boolean isFile) {
         Map<String, Object> statusMap = new HashMap<>();
         String propertyKey = property.get(PROPERTY_KEY);
-        statusMap.put("service", propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
+        statusMap.put(SERVICE, propertyKey.substring(0, propertyKey.indexOf(".")).toUpperCase());
         int indexOfLastDotInKey = propertyKey.lastIndexOf(".");
-        statusMap.put("outbound", "outbound".equals(propertyKey.substring(
+        statusMap.put(OUTBOUND, OUTBOUND.equals(propertyKey.substring(
                 propertyKey.lastIndexOf(".", indexOfLastDotInKey - 1) + 1,
                 indexOfLastDotInKey)));
         String noStatusLabel = property.get(PROPERTY_VALUE);
-        statusMap.put("title", noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
+        statusMap.put(TITLE, noStatusLabel.replaceAll("\\s*\\(.*\\)", ""));
         String status = propertyKey.substring(propertyKey.lastIndexOf(".") + 1);
-        statusMap.put("status", status);
+        statusMap.put(STATUS, status);
         if (isFile) {
             statusMap.put("label", "[" + status + "] " + noStatusLabel);
         } else {
@@ -426,7 +432,7 @@ public class PropertyService {
     public String getStatusLabel(String statusPrefixKey, String service, String direction, Integer status) {
         try {
             return getPropertyList(settings.getBfgUiUrl() + "?" + PROPERTY_KEY + "=" +
-                    service.toLowerCase() + statusPrefixKey + ("outbound".equals(direction) ? "outbound" : "inbound") + "." + Math.abs(status)
+                    service.toLowerCase() + statusPrefixKey + (OUTBOUND.equals(direction) ? OUTBOUND : INBOUND) + "." + Math.abs(status)
             ).stream()
                     .map(property -> status + " [" + property.get(PROPERTY_VALUE) + "]")
                     .collect(Collectors.joining(", "));

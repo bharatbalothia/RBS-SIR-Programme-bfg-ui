@@ -50,5 +50,4 @@ public class WorkflowController {
             throws JsonProcessingException {
         return ok(searchService.getDocumentById(documentId.isEmpty() ? null : documentId));
     }
-
 }

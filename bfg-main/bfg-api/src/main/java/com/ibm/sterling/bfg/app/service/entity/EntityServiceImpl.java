@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -45,6 +46,8 @@ import static com.ibm.sterling.bfg.app.model.entity.EntityService.SCT;
 public class EntityServiceImpl implements EntityService {
 
     private static final Logger LOG = LogManager.getLogger(EntityServiceImpl.class);
+    public static final String ENTITY = "entity";
+    public static final String SERVICE = "service";
 
     @Autowired
     private EntityRepository entityRepository;
@@ -111,7 +114,7 @@ public class EntityServiceImpl implements EntityService {
         return entity;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Entity saveEntityToChangeControl(Entity entity, Operation operation) {
         changeControlService.checkOnPendingState(entity.getEntity(), entity.getService());
         if (!operation.equals(Operation.DELETE)) {
@@ -243,7 +246,7 @@ public class EntityServiceImpl implements EntityService {
         List<EntityType> entityResults = new ArrayList<>();
         Specification<Entity> specification = getExistingEntitySpecificationByService(service)
                 .and(
-                        GenericSpecification.filter("entity", entity))
+                        GenericSpecification.filter(ENTITY, entity))
                 .and(
                         GenericSpecification.filter("swiftDN", swiftDN)
                 );
@@ -278,7 +281,7 @@ public class EntityServiceImpl implements EntityService {
             Map<String, String> entityServiceMap = new ObjectMapper().convertValue(value, new TypeReference<Map<String, String>>() {
             });
             return entityRepository.existsByEntityAndServiceAndDeletedAndEntityIdNot(
-                    entityServiceMap.get("entity"), entityServiceMap.get("service"), false, entityId);
+                    entityServiceMap.get(ENTITY), entityServiceMap.get(SERVICE), false, entityId);
         }
         return false;
     }
@@ -296,18 +299,18 @@ public class EntityServiceImpl implements EntityService {
             return specification
                     .and(Specification
                             .where(
-                                    GenericSpecification.<Entity>filter("service", SCT.name())
+                                    GenericSpecification.<Entity>filter(SERVICE, SCT.name())
                             .or(
-                                    GenericSpecification.filter("service", GPL.name()))));
+                                    GenericSpecification.filter(SERVICE, GPL.name()))));
         } else {
             return specification
                     .and(
-                            GenericSpecification.<Entity>filter("service", service));
+                            GenericSpecification.<Entity>filter(SERVICE, service));
         }
     }
 
     private List<Entity> getEntitiesAsc(Specification<Entity> specification) {
-        return entityRepository.findAll(specification, Sort.by(Sort.Order.asc("entity").ignoreCase()));
+        return entityRepository.findAll(specification, Sort.by(Sort.Order.asc(ENTITY).ignoreCase()));
     }
 
     @Override

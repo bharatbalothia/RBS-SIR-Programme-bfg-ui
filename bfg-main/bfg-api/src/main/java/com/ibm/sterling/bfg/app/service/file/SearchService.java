@@ -42,6 +42,7 @@ import static org.springframework.data.domain.PageRequest.of;
 @Service
 public class SearchService {
 
+    public static final String DOCUMENT = "document";
     @Value("${file.search.url}")
     private String fileSearchUrl;
 
@@ -184,14 +185,14 @@ public class SearchService {
                     new HttpEntity<>(apiDetailsHandler.getHttpHeaders(userName, password)),
                     String.class);
         } catch (HttpStatusCodeException e) {
-            return Collections.singletonMap("document", null);
+            return Collections.singletonMap(DOCUMENT, null);
         }
         JsonNode jsonNode = objectMapper.readTree(Objects.requireNonNull(response.getBody())).get("response");
-        return Collections.singletonMap("document", jsonNode.asText());
+        return Collections.singletonMap(DOCUMENT, jsonNode.asText());
     }
 
     public Map<String, String> getDocumentPayloadByMessageId(Integer messageId) {
-        Map<String, String> emptyMap = Collections.singletonMap("document", null);
+        Map<String, String> emptyMap = Collections.singletonMap(DOCUMENT, null);
         return Optional.ofNullable(messageId).map(id -> {
             ResponseEntity<String> response;
             try {
@@ -229,7 +230,7 @@ public class SearchService {
         Document document;
         if (documents.size() == 1) {
             document = documents.get(0);
-            document.setDocumentPayload(getDocumentPayload(documentId).get("document"));
+            document.setDocumentPayload(getDocumentPayload(documentId).get(DOCUMENT));
         } else throw new DocumentContentNotFoundException("Document content is not found");
         return document;
     }

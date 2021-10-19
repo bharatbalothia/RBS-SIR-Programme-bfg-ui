@@ -85,14 +85,14 @@ public class EntityController {
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
         return entityService.findById(id)
-                .map(record -> {
-                    record.setInboundRequestType(
-                            propertyService.getRestoredInboundRequestType(record.getInboundRequestType())
+                .map(entity -> {
+                    entity.setInboundRequestType(
+                            propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
                     );
-                    if (ObjectUtils.isEmpty(record.getInboundRequestorDN()) ||
-                            ObjectUtils.isEmpty(record.getInboundResponderDN()))
-                        record.setRouteInbound(Boolean.FALSE);
-                    return ok(record);
+                    if (ObjectUtils.isEmpty(entity.getInboundRequestorDN()) ||
+                            ObjectUtils.isEmpty(entity.getInboundResponderDN()))
+                        entity.setRouteInbound(Boolean.FALSE);
+                    return ok(entity);
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
@@ -100,9 +100,9 @@ public class EntityController {
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
     public ResponseEntity<Entity> getPendingEntityById(@PathVariable String id) {
         return changeControlService.findById(id)
-                .map(record -> {
-                    changeControlService.checkStatusOfChangeControl(record);
-                    Entity entity = record.convertEntityLogToEntity();
+                .map(cc -> {
+                    changeControlService.checkStatusOfChangeControl(cc);
+                    Entity entity = cc.convertEntityLogToEntity();
                     entity.setInboundRequestType(
                             propertyService.getRestoredInboundRequestType(entity.getInboundRequestType())
                     );
@@ -142,7 +142,7 @@ public class EntityController {
 
     @DeleteMapping("pending/{id}")
     @PreAuthorize("@entityPermissionEvaluator.checkDeletePendingEntityChangePermission(#id)")
-    public ResponseEntity<?> deletePendingEntity(@PathVariable String id) {
+    public ResponseEntity<String> deletePendingEntity(@PathVariable String id) {
         ChangeControl changeControl = changeControlService.findById(id)
                 .orElseThrow(ChangeControlNotFoundException::new);
         apiDetailsHandler.checkPermissionForUpdateChangeControl(changeControl.getChanger());
@@ -154,16 +154,16 @@ public class EntityController {
     @PreAuthorize("@entityPermissionEvaluator.checkEditPermission(#id)")
     public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity, @PathVariable int id) {
         return entityService.findById(id)
-                .map(record -> {
-                    entity.setEntity(record.getEntity());
-                    entity.setService(record.getService());
+                .map(entityFromBD -> {
+                    entity.setEntity(entityFromBD.getEntity());
+                    entity.setService(entityFromBD.getService());
                     return ok(entityService.saveEntityToChangeControl(entity, Operation.UPDATE));
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@entityPermissionEvaluator.checkDeletePermission(#id)")
-    public ResponseEntity<?> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
+    public ResponseEntity<Entity> deleteEntity(@PathVariable int id, @RequestParam(required = false) String changerComments) {
         Entity entity = entityService.findById(id).orElseThrow(EntityNotFoundException::new);
         Optional.ofNullable(changerComments).ifPresent(entity::setChangerComments);
         return ok(entityService.saveEntityToChangeControl(entity, Operation.DELETE));
@@ -171,25 +171,25 @@ public class EntityController {
 
     @GetMapping("/existence/entity-service")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<?> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
+    public ResponseEntity<Boolean> isExistingEntity(@RequestParam String service, @RequestParam String entity) {
         return ok(entityService.existsByServiceAndEntity(service, entity));
     }
 
     @GetMapping("/existence/mailbox")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<?> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
+    public ResponseEntity<Boolean> isExistingMailboxPathOut(@RequestParam String mailboxPathOut) {
         return ok(entityService.existsByMailboxPathOut(mailboxPathOut));
     }
 
     @GetMapping("/existence/queue")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<?> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
+    public ResponseEntity<Boolean> isExistingMqQueueOut(@RequestParam String mqQueueOut) {
         return ok(entityService.existsByMqQueueOut(mqQueueOut));
     }
 
     @GetMapping("/existence/route-attributes")
     @PreAuthorize("hasAuthority('SFG_UI_SCT_ENTITY')")
-    public ResponseEntity<?> getRequestType(@RequestParam String inboundRequestorDN,
+    public ResponseEntity<Boolean> getRequestType(@RequestParam String inboundRequestorDN,
                                             @RequestParam String inboundResponderDN,
                                             @RequestParam String inboundService,
                                             @RequestParam List<String> inboundRequestType) {

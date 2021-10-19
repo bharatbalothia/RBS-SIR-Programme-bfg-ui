@@ -3,7 +3,10 @@ package com.ibm.sterling.bfg.app.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.sterling.bfg.app.exception.certificate.CertificateNotFoundException;
 import com.ibm.sterling.bfg.app.exception.certificate.FileNotValidException;
-import com.ibm.sterling.bfg.app.model.certificate.*;
+import com.ibm.sterling.bfg.app.model.certificate.CertType;
+import com.ibm.sterling.bfg.app.model.certificate.ChangeControlCert;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificate;
+import com.ibm.sterling.bfg.app.model.certificate.TrustedCertificateDetails;
 import com.ibm.sterling.bfg.app.model.changecontrol.ChangeControlStatus;
 import com.ibm.sterling.bfg.app.model.changecontrol.Operation;
 import com.ibm.sterling.bfg.app.repository.certificate.ChangeControlCertRepository;
@@ -22,10 +25,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.naming.InvalidNameException;
-import javax.security.cert.CertificateEncodingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -83,7 +86,7 @@ public class CertificateController {
     public ResponseEntity<TrustedCertificate> createTrustedCertificate(@RequestParam("file") MultipartFile file,
                                                                        @RequestParam String name,
                                                                        @RequestParam String comments)
-            throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException, CertificateEncodingException {
+            throws CertificateException, IOException, InvalidNameException, NoSuchAlgorithmException {
         return ok(certificateService.saveCertificateToChangeControl(
                 certificateService.convertX509CertificateToTrustedCertificate(getX509Certificate(file), name, comments), CREATE));
     }
@@ -101,7 +104,8 @@ public class CertificateController {
 
     @PostMapping("pending")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_APPROVE')")
-    public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve) throws Exception {
+    public ResponseEntity<TrustedCertificate> postPendingCertificates(@RequestBody Map<String, Object> approve)
+            throws CertificateNotFoundException, JsonProcessingException, CertificateEncodingException {
         ChangeControlCert changeControlCert = changeControlCertService.getChangeControlCertById(String.valueOf(approve.get("changeID")));
         return Optional.ofNullable(certificateService.getTrustedCertificateAfterApprove(
                 changeControlCert,
@@ -170,7 +174,7 @@ public class CertificateController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS_DELETE')")
-    public ResponseEntity<?> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
+    public ResponseEntity<Object> deleteTrustedCertificate(@PathVariable String id, @RequestParam(required = false) String changerComments)
             throws CertificateException {
         TrustedCertificate cert = certificateService.getTrustedCertificateById(id);
         Optional.ofNullable(changerComments).ifPresent(cert::setChangerComments);
@@ -179,7 +183,7 @@ public class CertificateController {
 
     @GetMapping("/existence")
     @PreAuthorize("hasAuthority('FB_UI_TRUSTED_CERTS')")
-    public ResponseEntity<?> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
+    public ResponseEntity<String> isExistingCertificateName(@RequestParam String name) throws JsonProcessingException {
         return ok(certificateService.existsByNameInDbAndBI(name));
     }
 }

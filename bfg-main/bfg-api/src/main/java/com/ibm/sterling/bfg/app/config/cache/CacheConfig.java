@@ -30,12 +30,10 @@ public class CacheConfig {
             @Override
             protected Cache createConcurrentMapCache(String name) {
                 long timeOut = 10;
-                switch (name) {
-                    case CACHE_PERMISSIONS :
-                        timeOut = bpheadersTimeout;
-                        break;
-                    case CACHE_BP_HEADERS :
-                        timeOut = permissionsTimeout;
+                if (CACHE_PERMISSIONS.equals(name)) {
+                    timeOut = bpheadersTimeout;
+                } else if (CACHE_BP_HEADERS.equals(name)) {
+                    timeOut = permissionsTimeout;
                 }
                 return new ConcurrentMapCache(
                         name,

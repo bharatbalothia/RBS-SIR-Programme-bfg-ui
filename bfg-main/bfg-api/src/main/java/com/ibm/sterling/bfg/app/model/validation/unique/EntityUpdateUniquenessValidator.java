@@ -18,7 +18,7 @@ public class EntityUpdateUniquenessValidator implements ConstraintValidator<Enti
 
     @Override
     public boolean isValid(Entity entity, ConstraintValidatorContext constraintValidatorContext) {
-        Function<String, String> fieldMessage = (fieldName) ->
+        Function<String, String> fieldMessage = fieldName ->
                 new Formatter().format("%s has to be unique", fieldName).toString();
         Integer entityId = entity.getEntityId();
         Map<String, String> entityServiceMap = new HashMap<String, String>() {

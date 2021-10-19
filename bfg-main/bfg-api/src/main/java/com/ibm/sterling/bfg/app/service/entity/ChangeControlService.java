@@ -130,5 +130,6 @@ public class ChangeControlService {
         if (changeControlRepository.existsByResultMeta1AndResultMeta2AndStatus(entityName, service, PENDING))
             throw new StatusPendingException("Entity " + entityName +
                     " in pending state");
+
     }
 }

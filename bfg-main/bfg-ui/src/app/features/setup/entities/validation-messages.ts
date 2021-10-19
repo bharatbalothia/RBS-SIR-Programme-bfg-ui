@@ -39,6 +39,9 @@ export const ENTITY_VALIDATION_MESSAGES = {
         { type: 'required', message: `${getEntityDisplayName('responderDN')} is required` },
         { type: 'pattern', message: `${getEntityDisplayName('responderDN')} should be [ou={ou}]o={BIC8},o=swift format` }
     ],
+    e2eSigning: [
+        { type: 'required', message: `${getEntityDisplayName('e2eSigning')} is required` }
+    ],
     maxBulksPerFile: [
         { type: 'required', message: `${getEntityDisplayName('maxBulksPerFile')} is required` },
         { type: 'pattern', message: `${getEntityDisplayName('maxBulksPerFile')} must be a positive number` }

@@ -963,13 +963,20 @@
                         <app-tooltip [tip]="getTooltip('nonRepudiation', 'swift')"></app-tooltip>
                     </section>
                     <section class='radio-group-section' *ngIf="SWIFTDetailsFormGroup.get('e2eSigning')">
-                        <label class='radio-group-label'>{{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
+                        <label
+                            [ngClass]="['radio-group-label', SWIFTDetailsFormGroup.get('e2eSigning').hasError('required') ? 'mat-error' : '']">
+                            {{entityDisplayNames['e2eSigning'] || 'e2eSigning'}}:*</label>
                         <mat-radio-group formControlName='e2eSigning'>
                             <mat-radio-button value="None">None</mat-radio-button>
                             <mat-radio-button value="Crypto">Crypto</mat-radio-button>
                         </mat-radio-group>
                         <mat-error class="error-message" *ngIf="getErrorByField('e2eSigning')">
                             {{getErrorByField('e2eSigning')}}
+                        </mat-error>
+                        <mat-error *ngFor="let validation of entityValidationMessages.e2eSigning">
+                            <mat-error class="error-message"
+                                *ngIf="SWIFTDetailsFormGroup.get('e2eSigning').hasError(validation.type)">
+                                {{validation.message}}</mat-error>
                         </mat-error>
                         <app-tooltip [tip]="getTooltip('e2eSigning', 'swift')"></app-tooltip>
                     </section>

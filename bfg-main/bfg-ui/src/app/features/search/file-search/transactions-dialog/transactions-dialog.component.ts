@@ -103,7 +103,7 @@ export class TransactionsDialogComponent implements OnInit {
         this.dialog.open(DetailsDialogComponent, new DetailsDialogConfig({
           title: `SCT Transaction -  ${data.id}`,
           data,
-          getTabs: () => getTransactionDetailsTabs(data, ...actions),
+          getTabs: () => getTransactionDetailsTabs(data, actions),
           displayName: getFileSearchDisplayName,
           actionData: {
             actions

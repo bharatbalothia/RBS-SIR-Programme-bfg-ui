@@ -352,7 +352,7 @@ export class EntityCreateComponent implements OnInit {
             ],
             asyncValidators: this.entityValidators.entityExistsValidator(this.entityTypeFormGroup.controls.service),
           }],
-          routeInbound: [entity.routeInbound, Validators.required],
+          routeInbound: [!!entity.routeInbound, Validators.required],
           inboundRequestorDN: [entity.inboundRequestorDN, {
             validators: [
               Validators.pattern(SWIFT_DN)

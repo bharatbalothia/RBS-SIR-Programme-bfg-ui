@@ -184,7 +184,7 @@ export class EntityCreateComponent implements OnInit {
       snF: [entity.snF || false],
       deliveryNotification: [entity.deliveryNotification || false],
       nonRepudiation: [entity.nonRepudiation || false],
-      e2eSigning: [entity.e2eSigning || this.getEntityDefaultValue().e2eSigning, Validators.required],
+      e2eSigning: [entity.e2eSigning, Validators.required],
       deliveryNotifDN: [entity.deliveryNotifDN],
       deliveryNotifRT: [entity.deliveryNotifRT],
       requestRef: [entity.requestRef],

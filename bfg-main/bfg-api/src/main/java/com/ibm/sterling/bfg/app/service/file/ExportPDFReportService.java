@@ -5,7 +5,6 @@ import com.ibm.sterling.bfg.app.model.file.Transaction;
 import com.ibm.sterling.bfg.app.model.report.Column;
 import com.ibm.sterling.bfg.app.model.report.Table;
 import com.ibm.sterling.bfg.app.model.report.TableBuilder;
-import com.ibm.sterling.bfg.app.service.report.ConverterToPDF;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -39,8 +38,8 @@ public class ExportPDFReportService {
     private static final float FONT_SIZE = 10;
     private static final float ROW_HEIGHT = 15;
     private static final float CELL_MARGIN = 3;
-    private float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
-    private float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
+    private static final float TABLE_HEIGHT_LANDSCAPE = PAGE_SIZE.getWidth() - (2 * TABLE_MARGIN);
+    private static final float TABLE_HEIGHT = PAGE_SIZE.getHeight() - (2 * TABLE_MARGIN);
     private static final String DATE_FORMAT = "ddMMyy";
     private static final int NAME_LENGTH = 50;
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -25,7 +26,7 @@ public class VersionController {
     private PropertyService propertyService;
 
     @GetMapping
-    public ResponseEntity<?> getApplicationVersion() {
+    public ResponseEntity<Map<String, Object>> getApplicationVersion() {
         Map<String, Object> loginMap = new HashMap<>();
         loginMap.put("version", buildProperties.getVersion());
         try {
@@ -42,7 +43,7 @@ public class VersionController {
     }
 
     @GetMapping("f5")
-    public ResponseEntity<?> getF5Link() throws JsonProcessingException {
+    public ResponseEntity<List<Map<String, Object>>> getF5Link() throws JsonProcessingException {
         return ok(propertyService.getLinkF5());
     }
 

@@ -16,6 +16,7 @@ import com.ibm.sterling.bfg.app.repository.entity.EntityRepository;
 import com.ibm.sterling.bfg.app.service.audit.AdminAuditService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -151,6 +152,7 @@ class EntityServiceImplTest {
                 .thenReturn("TESTUSER");
         assertEquals(entity, service.saveEntityToChangeControl(entity, Operation.CREATE));
     }
+
 
     @Test
     void getEntityAfterApprove() throws Exception {

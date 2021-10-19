@@ -23,6 +23,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,7 +96,7 @@ public class AdminAuditService {
                     });
         } catch (JsonProcessingException e) {
             LOG.info("Failure on parsing the response from rest service");
-            return null;
+            return Collections.emptyList();
         }
     }
 
